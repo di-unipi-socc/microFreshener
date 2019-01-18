@@ -1,0 +1,60 @@
+ <!-- <div class="items-container">
+  <div appDraggable>
+      <svg>
+        <g  [nodeVisual]="service" 
+            [draggableNode]="node"
+            [draggableInGraph]="graph">
+        </g>
+      </svg>
+  </div>
+</div> -->
+
+<div class="svg-container">
+<svg>
+    <svg:circle ng-model="service"
+         (click)="onClickNode(service)"
+        class="service"
+        [attr.cx]="20"
+        [attr.cy]="20"
+        r="13" >
+    </svg:circle>
+
+    <svg:rect  ng-model="database"
+        class="database"
+        (click)="onClickNode(database)"
+        [attr.x]="10"
+        [attr.y]="50"
+        width="20" 
+        height="20" >
+    </svg:rect>
+    
+    <svg:rect  ng-model="communicationPattern"
+         (click)="onClickNode(communicationPattern)"
+        [attr.x]="10"
+        [attr.y]="80"
+        width="20" 
+        height="20" 
+        class="communicationpattern">
+    </svg:rect> 
+
+    <svg:line ng-model="deploymenttimelink"
+        (click)="onClickLink(deploymenttimelink)"
+        class="link"
+        stroke-dasharray="5,5" 
+        [attr.x1]="10"
+        [attr.y1]="120"
+        [attr.x2]="60"
+        [attr.y2]="120">
+    </svg:line>
+
+    <svg:line  ng-model="runtimelink" 
+            (click)="onClickLink(runtimelink)"
+            class="link"
+            [attr.x1]="10"
+            [attr.y1]="140"
+            [attr.x2]="60"
+            [attr.y2]="140">
+    </svg:line>
+</svg>
+
+</div>

@@ -1,0 +1,24 @@
+<svg:g width="10" height="10" [ngSwitch]="node.type">
+    <svg:circle *ngSwitchCase="'service'" 
+        class="service"
+        [attr.cx]="node.x"
+        [attr.cy]="node.y"
+        r="20">
+    </svg:circle>
+    <svg:rect *ngSwitchCase="'database'" 
+          class="database"
+        [attr.x]="node.x"
+        [attr.y]="node.y"
+        width="30" 
+        height="30" 
+        >
+    </svg:rect>
+    <svg:rect *ngSwitchCase="'communicationpattern'" 
+        class="communicationpattern"
+        [attr.x]="node.x"
+        [attr.y]="node.y"
+        width="30" 
+        height="30">
+        <!-- transform="rotate(45)"> -->
+    </svg:rect>
+</svg:g>

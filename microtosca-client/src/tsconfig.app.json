@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "types": [],
+    "paths": {      
+      "yfiles/*": ["../../../../lib/es6-modules/yfiles/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+   "../../../../ide-support/yfiles-api-es6-modules-webstorm.d.ts"
+  ],
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ]
+}
