@@ -5,6 +5,7 @@
         [attr.cy]="node.y"
         r="20">
     </svg:circle>
+    <text [attr.x]="node.x" [attr.y]="node.y"  font-family="Verdana" font-size="15" fill="black">{{node.name}}</text>
     <svg:rect *ngSwitchCase="'database'" 
           class="database"
         [attr.x]="node.x"

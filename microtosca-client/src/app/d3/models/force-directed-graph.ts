@@ -20,12 +20,15 @@ export class ForceDirectedGraph {
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;
         this.links = links;
-        
         // this.initSimulation(options);
     }
 
     public getNodes(){
       return this.nodes;
+    }
+
+    getNodeByName(name:string){
+      return this.nodes.find(x => x.name == name);
     }
 
     public getLinks(){
@@ -34,6 +37,16 @@ export class ForceDirectedGraph {
 
     public addNode(n:Node){
       this.nodes.push(n);
+    }
+
+    public addDeploymentTimeLink(source: Node, target: Node){
+        var l:DeploymentTimeLink = new DeploymentTimeLink(source, target);
+        this.links.push(l);
+    }
+
+    public addRunTimeLink(source: Node, target: Node){
+        var l:DeploymentTimeLink = new RunTimeLink(source, target);
+        this.links.push(l);
     }
 
     public addLink(l:Link){

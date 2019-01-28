@@ -1,0 +1,8 @@
+<p> Source Node:</p>
+<p-dropdown [options]="nodes" [(ngModel)]="selectedSourceNode" optionLabel="name"></p-dropdown>
+
+<p> Target Node:</p>
+<p-dropdown [options]="nodes" [(ngModel)]="selectedTargetNode" optionLabel="name"></p-dropdown>
+
+
+<button pButton icon="pi pi-search" (click)="selectedNodes(selectedSourceNode, selectedTargetNode)">Salva</button>

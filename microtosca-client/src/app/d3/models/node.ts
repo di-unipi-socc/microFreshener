@@ -11,12 +11,14 @@ export class Node implements d3.SimulationNodeDatum {
     fy?: number | null;
     
     id: number;
+    public name: string; // name of the node
     linkCount: number = 0;
     type: string;  // types of the node: service, database, communication pattern
     
-    constructor(id:number, type:string) {
+    constructor(id:number, name: string, type:string) {
         this.id = id;
         this.type = type;
+        this.name = name;
         this.x = 20;
         this.y = 20;
     }
@@ -24,19 +26,19 @@ export class Node implements d3.SimulationNodeDatum {
 
 // Implementing SimulationNodeDatum interface into our custom Node class
 export class Database extends Node {
-    constructor(id: number) { 
-            super(id, "database"); 
+    constructor(id: number, name:string) { 
+            super(id, name, "database"); 
     }
 }
 
 export class Service extends Node {
-    constructor(id: number) { 
-        super(id, "service"); 
+    constructor(id: number, name:string) { 
+        super(id, name, "service"); 
     }
 }
 
 export class CommunicationPattern extends Node {
-    constructor(id: number) { 
-        super(id, "communicationpattern"); 
+    constructor(id: number, name:string) { 
+        super(id,name, "communicationpattern"); 
     }
 }
