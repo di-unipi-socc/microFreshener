@@ -19,6 +19,8 @@ export class Node implements d3.SimulationNodeDatum {
 
     run_time_links:RunTimeLink[];              // list of run time links 
     deployment_time_links:DeploymentTimeLink[]; // list of the deployemnt time links starting froma node
+
+    antipatterns:Object[];
     
     constructor(id:number, name: string, type:string) {
         this.id = id;
@@ -32,6 +34,17 @@ export class Node implements d3.SimulationNodeDatum {
         this.fy = 20;
         this.run_time_links = [];
         this.deployment_time_links = [];
+        this.antipatterns = [];
+        //     {   'name': "deployment_interaction",
+        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
+        //     },
+        //     {   'name': "shared_persistency",
+        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
+        //     },
+        //     {   'name': "other",
+        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
+        //     }
+        // ];
     }
 
     public static fromJSON(json:Object):Node{

@@ -24,8 +24,9 @@ export class ForceDirectedGraph {
 
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;
-        // this.links = links;
-        this.initSimulation(options);
+        this.links = links;
+        // this.initSimulation(options);
+        // this.mySimulation();
     }
 
     public getNodes():Node[]{
@@ -35,6 +36,7 @@ export class ForceDirectedGraph {
     public static fromJSON(json:Object):ForceDirectedGraph{
       let graph = new ForceDirectedGraph([],[],{ width:600, height:500 } );
       let name  = json['name'];
+      console.log(name)
       for (let n of json['nodes']){
             let node:Node = Node.fromJSON(n)
             graph.addNode(node);
@@ -83,7 +85,20 @@ export class ForceDirectedGraph {
     
         this.initLinks();
     }
-    
+
+    // mySimulation(){
+    //   this.simulation = d3.forceSimulation(this.nodes)
+    //           .force('charge', d3.forceManyBody())
+    //           .force('center', d3.forceCenter(600 / 2, 500 / 2))
+    //           .on('tick', this.myTicked);
+
+    // }
+
+    // myTicked() {
+    //   console.log("My tick");
+    // }
+
+        
     initNodes() {
       if (!this.simulation) {
         throw new Error('simulation was not initialized yet');
@@ -106,38 +121,36 @@ export class ForceDirectedGraph {
   
     initSimulation(options) {
       if (!options || !options.width || !options.height) {
-        throw new Error('missing options when initializing simulation');
+          throw new Error('missing options when initializing simulation');
       }
-  
+
       /** Creating the simulation */
       if (!this.simulation) {
-        console.log("creaeing simualtion");
-        const ticker = this.ticker;
+          const ticker = this.ticker;
+          
   
-        this.simulation = d3.forceSimulation()
-          .force('charge',
-            d3.forceManyBody()
-              .strength(d => FORCES.CHARGE * d['r'])
-          )
-          .force('collide',
-            d3.forceCollide()
-              .strength(FORCES.COLLISION)
-              .radius(d => d['r'] + 5).iterations(2)
+          console.log("creating simulation");
+          // Creating the force simulation and defining the charges
+          this.simulation = d3.forceSimulation()
+          .force("charge",
+              d3.forceManyBody()
+                  .strength(FORCES.CHARGE)
           );
-  
-        // Connecting the d3 ticker to an angular event emitter
-        this.simulation.on('tick', function () {
-          ticker.emit(this);
-        });
-  
-        this.initNodes();
-        this.initLinks();
+
+          // Connecting the d3 ticker to an angular event emitter
+          this.simulation.on('tick', function () {
+              ticker.emit(this);
+              // console.log("tick emitted");
+          });
+
+          this.initNodes();
+          this.initLinks();
       }
-  
+
       /** Updating the central force of the simulation */
-      this.simulation.force('centers', d3.forceCenter(options.width / 2, options.height / 2));
-  
+      this.simulation.force("centers", d3.forceCenter(options.width / 2, options.height / 2));
+
       /** Restarting the simulation internal timer */
       this.simulation.restart();
-    }
+  }
 }

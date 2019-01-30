@@ -25,6 +25,10 @@ export class GraphEditorComponent implements OnInit {
     // });
   }
 
+  // ngAfterViewInit() {
+  //   this.gs.graph.initSimulation({width:600, height:500});
+  // }
+  
   onSelectedNode(n:Node){
     console.log(n);
   }

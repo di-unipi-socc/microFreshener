@@ -17,6 +17,9 @@ import { DynamicDialogModule} from 'primeng/dynamicdialog';
 import {InputTextModule} from 'primeng/inputtext';
 import {SidebarModule} from 'primeng/sidebar';
 import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from 'primeng/tooltip';
+import {DialogModule} from 'primeng/dialog';
+import {ListboxModule} from 'primeng/listbox';
 
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';
@@ -50,8 +53,8 @@ import { AddNodeComponent } from './add-node/add-node.component';
     InputTextModule,
     SidebarModule,
     ButtonModule,
-    HttpClientModule
-    
+    HttpClientModule,
+    ListboxModule
   ],
   providers: [
     D3Service

@@ -10,32 +10,54 @@ from rest_framework.response import Response
 import os
 import json 
 
+from microanalyser.analyser import MicroAnalyser
 from microanalyser.loader import JSONLoader
 from microanalyser.trasformer import JSONTransformer
 from microanalyser.model.template import MicroModel
 from microanalyser.model.nodes import Service, Database, CommunicationPattern
 
 
-micro_model = MicroModel("prova")
+loader = JSONLoader()
 transformer = JSONTransformer()
+
+
+file_name = 'data-from-client.json'
+
+@api_view(['GET'])
+@csrf_exempt
+def graph_analysis(request):
+    if request.method == 'GET':
+        mmodel = None
+        if(os.path.isfile(file_name)):
+            mmodel = loader.load(file_name)
+            analyser = MicroAnalyser(mmodel)
+            res = analyser.analyse()
+            print(res)
+            return  Response(res)
+        else:
+            return Response({"msg": "no model uploaded"})
 
 @api_view(['GET', 'POST'])
 @csrf_exempt
 def graph(request):
     if request.method == 'POST':
         data = request.data
-        loader = JSONLoader()
-        micro_model = loader.load_from_dict(data)
+        with open(file_name, 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        # micro_model = loader.load_from_dict(data)
+        # micro_model = loader.load('data-from-client.json')
         
-        with open('data.json', 'w') as outfile:
-            json.dump(transformer.transform(micro_model), outfile, indent=4)
+        # with open('data.json', 'w') as outfile:
+        #     json.dump(transformer.transform(micro_model), outfile, indent=4)
         return  Response( {"msg":"graph uploaded correclty"})
 
     if request.method == 'GET':
-        if(os.path.isfile('data.json') ):
-            with open('data.json') as f:
-                model = json.load(f)
-            return  Response(model)
+        mmodel = None
+        if(os.path.isfile(file_name)):
+            mmodel = loader.load(file_name)
+            dmodel = transformer.transform(mmodel)
+            return  Response(dmodel)
         else:
             return Response({"msg": "no model uploaded"})
 

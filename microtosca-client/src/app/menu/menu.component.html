@@ -6,9 +6,22 @@
       </app-menu-edit>
     </p-accordionTab>
     <p-accordionTab header="Analyse">
-      button analyse
+        
+      <button type="button" pButton (click)="analyse()" label="Analyse" class="ui-button-warning"></button>
+
    </p-accordionTab>
     <p-accordionTab header="Refactor">
-      button refactor
+
+        <ul >
+            <li *ngFor="let node of gs.graph.nodes">
+              <span class="badge">{{node.name}}</span> 
+                <ul >
+                <li *ngFor="let ant of node.antipatterns">
+                  <span class="badge">{{ant.name}}</span> 
+                </li>
+              </ul>
+
+            </li>
+          </ul>
     </p-accordionTab>
 </p-accordion>

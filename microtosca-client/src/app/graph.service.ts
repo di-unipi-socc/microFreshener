@@ -19,6 +19,8 @@ export class GraphService {
   private graphUrl = 'http://127.0.0.1:8000/graph/?format=json';  // URL to web api
   private graphUrlPost = 'http://127.0.0.1:8000/graph/';  // URL to web api
   private nodesUrl = 'http://127.0.0.1:8000/nodes/';  // URL to web api
+  private analysisUrl = 'http://127.0.0.1:8000/graph/analyse/';  // URL to web api
+
 
   constructor(private http: HttpClient) {
     var nodes: Node[] = [];
@@ -33,6 +35,9 @@ export class GraphService {
     var odb  = new Database(1, 'orderdb');
     nodes.push(odb);
 
+    // links.push(new RunTimeLink(nodes[0], nodes[1]));
+    // links.push(new DeploymentTimeLink(nodes[1], nodes[2]));
+
     s.addDeploymentTimeLink(odb);
     s.addRunTimeLink(odb);
     s.addRunTimeLink(cp);
@@ -44,6 +49,7 @@ export class GraphService {
     o.addRunTimeLink(cp);
 
     this.graph = new ForceDirectedGraph(nodes, links, { width:600, height:500 });
+    console.log(this.graph);
    }
 
   getNodes():Node[]{
@@ -66,6 +72,13 @@ export class GraphService {
     this.graph.addRunTimeLink(source, target);
   }
 
+  updateAntipatternsOnNodes(json:string){
+    this.getNodes().forEach((node)=>{
+          console.log(node.name);
+    })
+
+  }
+
   exportToJSON(){
     return JSON.stringify(this.graph);
   }
@@ -78,12 +91,11 @@ export class GraphService {
   }
 
   // download the graph stored into the server
-  downloadGraph(): Observable<Object> {
-    return this.http.get<Object>(this.graphUrl).pipe(
+  downloadGraph(): Observable<string> {
+    return this.http.get<string>(this.graphUrl).pipe(
       tap(_ => this.log(`fetched graph`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
-
   }
   
   // download the graph stored into the server
@@ -93,6 +105,13 @@ export class GraphService {
       // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
 
+  }
+
+  getAnalysis():Observable<string> {
+    return this.http.get<string>(this.analysisUrl).pipe(
+      tap(_ => this.log(`reqeusted analysis`)),
+      // catchError(this.handleError<Hero>(`getHero id=${id}`))
+    );
   }
 
   /** Log a HeroService message with the MessageService */

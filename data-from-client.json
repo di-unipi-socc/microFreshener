@@ -1,0 +1,107 @@
+{
+    "ticker": {
+        "_isScalar": false,
+        "observers": [],
+        "closed": false,
+        "isStopped": false,
+        "hasError": false,
+        "thrownError": null,
+        "__isAsync": false
+    },
+    "nodes": [
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "shipping",
+            "x": 20,
+            "y": 20,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ]
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "order",
+            "x": 20,
+            "y": 20,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ]
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "communicationpattern",
+            "name": "rabbitmq",
+            "x": 20,
+            "y": 20,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [],
+            "deployment_time_links": []
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "database",
+            "name": "orderdb",
+            "x": 20,
+            "y": 20,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [],
+            "deployment_time_links": []
+        }
+    ],
+    "links": [],
+    "name": "init name"
+}
