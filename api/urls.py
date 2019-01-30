@@ -12,8 +12,11 @@ from api import views
 # ]
 
 urlpatterns = [
-    path('snippets/', views.SnippetList.as_view()),
-    path('snippets/<int:pk>/', views.SnippetDetail.as_view()),
+    # path('snippets/', views.SnippetList.as_view()),
+    # path('snippets/<int:pk>/', views.SnippetDetail.as_view()),
+    path('graph/', views.graph),
+    path('nodes/', views.nodes),
+    path('nodes/<int:pk>/', views.node_detail),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

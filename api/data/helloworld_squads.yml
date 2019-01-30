@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Hello world of usign micro-tosca model
+
+imports:
+# - tosker: https://di-unipi-socc.github.io/tosker-types/tosker.yaml
+  - micro: ../../data/micro-tosca-types.yml
+
+topology_template:
+  node_templates:
+    order:
+      type: micro.nodes.Service
+      requirements:
+        - run_time: order_db
+        - run_time: rabbitmq
+        - run_time: shipping
+        - deployment_time: shipping
+        - deployment_time: order_db
+        
+    rabbitmq:
+      type: micro.nodes.MessageBroker
+
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+        - run_time: rabbitmq
+        - run_time: order_db
+        - deployment_time: order_db
+
+    order_db:
+      type: micro.nodes.Database
+
+  groups:
+      group1:
+        type: micro.groups.Squad
+        members: [ order, order_db ]
+      group2:
+        type: micro.groups.Squad
+        members: [ shipping, rabbitmq ]

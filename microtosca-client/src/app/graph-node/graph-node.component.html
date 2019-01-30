@@ -22,4 +22,15 @@
         height="30">
         <!-- transform="rotate(45)"> -->
     </svg:rect>
+
+    <g [linkVisual]="l" 
+        *ngFor="let l of node.getRunTimeLinks()"
+        (click)="onSelectedLink(l)">
+    </g> 
+    <g [linkVisual]="l" 
+        *ngFor="let l of node.getDeploymentLinks()"
+        (click)="onSelectedLink(l)">
+    </g> 
+
+  
 </svg:g>

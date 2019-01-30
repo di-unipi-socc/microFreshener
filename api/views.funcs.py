@@ -8,6 +8,7 @@ from api.models import Snippet
 from api.serializers import SnippetSerializer
 
 ## Function-based views 
+from rest_framework.decorators import api_view
 
 @api_view(['GET', 'POST'])
 def snippet_list(request, format=None):

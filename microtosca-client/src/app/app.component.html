@@ -10,8 +10,17 @@
         <app-graph-editor></app-graph-editor> 
 
     </div>
+    <p-sidebar [(visible)]="display" position="right">
+            Content
+         <button type="button" pButton (click)="upload()" label="Upload" class="ui-button-success"></button>
+         <button type="button" pButton (click)="download()" label="Download" class="ui-button-success"></button>
+
+    </p-sidebar>
+        
     <div class="p-col-12">
         Footer
+
+        <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button>
     </div>
 </div> 
 

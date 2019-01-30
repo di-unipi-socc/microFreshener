@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-
 import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+import { HttpClientModule }    from '@angular/common/http';
 
+//import my component
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
@@ -14,6 +15,8 @@ import {MessageService} from 'primeng/api';
 import {DropdownModule} from 'primeng/dropdown';
 import { DynamicDialogModule} from 'primeng/dynamicdialog';
 import {InputTextModule} from 'primeng/inputtext';
+import {SidebarModule} from 'primeng/sidebar';
+import {ButtonModule} from 'primeng/button';
 
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';
@@ -44,7 +47,10 @@ import { AddNodeComponent } from './add-node/add-node.component';
     AccordionModule,
     DynamicDialogModule,
     DropdownModule,
-    InputTextModule
+    InputTextModule,
+    SidebarModule,
+    ButtonModule,
+    HttpClientModule
     
   ],
   providers: [

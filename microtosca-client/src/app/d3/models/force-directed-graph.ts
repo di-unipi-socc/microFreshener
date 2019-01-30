@@ -2,6 +2,8 @@
 import { EventEmitter } from '@angular/core';
 import { Link, DeploymentTimeLink, RunTimeLink} from './link';
 import { Node } from './node';
+
+
 import * as d3 from 'd3';
 
 const FORCES = {
@@ -15,17 +17,26 @@ export class ForceDirectedGraph {
     public simulation: d3.Simulation<any, any>;
 
     public nodes: Node[] = [];
+    // TODO: delte the links array. each node has its own list of links
     public links: Link[] = [];
 
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;
-        this.links = links;
-        // this.initSimulation(options);
+        // this.links = links;
+        this.initSimulation(options);
     }
 
-    public getNodes(){
+    public getNodes():Node[]{
       return this.nodes;
     }
+
+    // toJSON(key){
+    //   console.log(key);
+    //   if(key)
+    //       return `Ora sono un oggetto nidificato sotto chiave '${key}'`;
+    //   else
+    //       return {"name":key, "nodes": this.nodes.map(function (n) { return n.toJSON(); })};
+    // }
 
     getNodeByName(name:string){
       return this.nodes.find(x => x.name == name);
@@ -40,18 +51,18 @@ export class ForceDirectedGraph {
     }
 
     public addDeploymentTimeLink(source: Node, target: Node){
-        var l:DeploymentTimeLink = new DeploymentTimeLink(source, target);
-        this.links.push(l);
+      source.addDeploymentTimeLink(target);
     }
 
     public addRunTimeLink(source: Node, target: Node){
-        var l:DeploymentTimeLink = new RunTimeLink(source, target);
-        this.links.push(l);
+        source.addRunTimeLink(target);
+        // var l:DeploymentTimeLink = new RunTimeLink(source, target);
+        // this.links.push(l);
     }
-
-    public addLink(l:Link){
-      this.links.push(l);
-    }
+   
+    // public addLink(l:Link){
+    //   this.links.push(l);
+    // }
 
     connectNodes(source, target) {
         let link;

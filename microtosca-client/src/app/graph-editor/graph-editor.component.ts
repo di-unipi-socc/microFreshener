@@ -13,13 +13,16 @@ export class GraphEditorComponent implements OnInit {
   // @ViewChild('directedGraph') directedGraph: ElementRef;
 
   private graph: ForceDirectedGraph;
-  _options = {width: 600, height:600};
 
-  constructor(private gs: GraphService) {
-    this.graph = gs.getGraph();
-   }
+  _options = {width: 600, height:500};
+
+  constructor(private gs: GraphService) {  }
 
   ngOnInit() {
+    this.graph = this.gs.getGraph();
+    this.graph.nodes.forEach( (node) => {
+        console.log(node);
+    });
   }
 
   onSelectedNode(n:Node){

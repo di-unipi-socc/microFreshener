@@ -15,6 +15,15 @@ export class Link implements d3.SimulationLinkDatum<Node> {
         this.target = target;
         this.type = type;
     }
+
+    // is called byt JSON.stringify()
+    toJSON(key){
+        if(this.target instanceof Node)
+            return {'target': this.target.name, 'type':this.type};
+        else
+            return {'target': this.target, 'type':this.type};
+    }    
+
 }
 
 export class RunTimeLink extends Link {
