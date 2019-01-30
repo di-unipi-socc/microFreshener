@@ -3,6 +3,7 @@ import {ForceDirectedGraph, Node, RunTimeLink,Link, Service, Database, Deploymen
 import { inspect } from 'util'; // for converting into json an object
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,7 +18,7 @@ export class GraphService {
 
   private graphUrl = 'http://127.0.0.1:8000/graph/?format=json';  // URL to web api
   private graphUrlPost = 'http://127.0.0.1:8000/graph/';  // URL to web api
-
+  private nodesUrl = 'http://127.0.0.1:8000/nodes/';  // URL to web api
 
   constructor(private http: HttpClient) {
     var nodes: Node[] = [];
@@ -53,7 +54,6 @@ export class GraphService {
     return this.graph;
   }
 
- 
   addNode(n:Node){
     this.graph.addNode(n);
   }
@@ -66,18 +66,6 @@ export class GraphService {
     this.graph.addRunTimeLink(source, target);
   }
 
-  getGraphFromServer() { 
-  }
-
-  exportGraph(){
-  //   this.graph.getNodes().forEach(function(node) {
-  //       // console.log(node.name);
-  //       console.log(node.toJson());
-      
-  //  });
-    // return JSON.stringify(this.graph).get;
-  }
-
   exportToJSON(){
     return JSON.stringify(this.graph);
   }
@@ -85,13 +73,32 @@ export class GraphService {
   /** POST: add a new hero to the server */
   uploadGraph (): Observable<ForceDirectedGraph> {
     var t = this.exportToJSON();
+    console.log(t);
     return this.http.post<ForceDirectedGraph>(this.graphUrlPost,t, httpOptions);
+  }
+
+  // download the graph stored into the server
+  downloadGraph(): Observable<Object> {
+    return this.http.get<Object>(this.graphUrl).pipe(
+      tap(_ => this.log(`fetched graph`)),
+      // catchError(this.handleError<Hero>(`getHero id=${id}`))
+    );
+
   }
   
   // download the graph stored into the server
-  downloadGraph(): Observable<ForceDirectedGraph> {
-    return this.http.get<ForceDirectedGraph>(this.graphUrl);
+  downloadNodes(): Observable<Node[]> {
+    return this.http.get<Node[]>(this.nodesUrl).pipe(
+      tap(_ => this.log(`fetched nodes`)),
+      // catchError(this.handleError<Hero>(`getHero id=${id}`))
+    );
 
+  }
+
+  /** Log a HeroService message with the MessageService */
+  private log(message: string) {
+    console.log(`GraphServiceService: ${message}`)
+    // this.messageService.add(`HeroService: ${message}`);
   }
 
 

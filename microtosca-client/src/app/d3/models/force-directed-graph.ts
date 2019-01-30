@@ -17,8 +17,10 @@ export class ForceDirectedGraph {
     public simulation: d3.Simulation<any, any>;
 
     public nodes: Node[] = [];
-    // TODO: delte the links array. each node has its own list of links
+    // TODO: delete the links array. each node has its own list of links
     public links: Link[] = [];
+
+    public name = "init name";
 
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;
@@ -30,13 +32,16 @@ export class ForceDirectedGraph {
       return this.nodes;
     }
 
-    // toJSON(key){
-    //   console.log(key);
-    //   if(key)
-    //       return `Ora sono un oggetto nidificato sotto chiave '${key}'`;
-    //   else
-    //       return {"name":key, "nodes": this.nodes.map(function (n) { return n.toJSON(); })};
-    // }
+    public static fromJSON(json:Object):ForceDirectedGraph{
+      let graph = new ForceDirectedGraph([],[],{ width:600, height:500 } );
+      let name  = json['name'];
+      for (let n of json['nodes']){
+            let node:Node = Node.fromJSON(n)
+            graph.addNode(node);
+      }
+      graph.getNodes().forEach((node)=> console.log(node));
+      return graph
+    }
 
     getNodeByName(name:string){
       return this.nodes.find(x => x.name == name);
@@ -106,6 +111,7 @@ export class ForceDirectedGraph {
   
       /** Creating the simulation */
       if (!this.simulation) {
+        console.log("creaeing simualtion");
         const ticker = this.ticker;
   
         this.simulation = d3.forceSimulation()

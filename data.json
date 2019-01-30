@@ -1,1 +1,75 @@
-{"name": "micro.tosca", "nodes": [{"name": "d1", "type": "database", "run_time_links": [], "deployment_time_links": []}, {"name": "s1", "type": "service", "run_time_links": [{"type": "runtime", "target": {"name": "s1"}}, {"type": "runtime", "target": {"name": "s1"}}], "deployment_time_links": []}, {"name": "cp1", "type": "communicationpattern", "run_time_links": [{"type": "runtime", "target": {"name": "cp1"}}, {"type": "runtime", "target": {"name": "cp1"}}], "deployment_time_links": []}]}
+{
+    "name": "micro.tosca",
+    "nodes": [
+        {
+            "name": "shipping",
+            "type": "service",
+            "run_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ]
+        },
+        {
+            "name": "order",
+            "type": "service",
+            "run_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                },
+                {
+                    "target": "prova",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ]
+        },
+        {
+            "name": "rabbitmq",
+            "type": "communicationpattern",
+            "run_time_links": [],
+            "deployment_time_links": []
+        },
+        {
+            "name": "orderdb",
+            "type": "database",
+            "run_time_links": [],
+            "deployment_time_links": []
+        },
+        {
+            "name": "prova",
+            "type": "database",
+            "run_time_links": [],
+            "deployment_time_links": []
+        }
+    ]
+}

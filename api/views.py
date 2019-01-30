@@ -24,21 +24,18 @@ transformer = JSONTransformer()
 def graph(request):
     if request.method == 'POST':
         data = request.data
-        # loader = JSONLoader()
-
-        # micro_model = loader.load_from_dict(data)
-        # micro_model.update()    
-        # print(data)
+        loader = JSONLoader()
+        micro_model = loader.load_from_dict(data)
         
-        # with open('data.json', 'w') as outfile:
-        #     json.dump(transformer.transform(micro_model), outfile)
-        return  Response( {"graph":data})
+        with open('data.json', 'w') as outfile:
+            json.dump(transformer.transform(micro_model), outfile, indent=4)
+        return  Response( {"msg":"graph uploaded correclty"})
 
     if request.method == 'GET':
         if(os.path.isfile('data.json') ):
             with open('data.json') as f:
                 model = json.load(f)
-            return  Response({"graph": model})
+            return  Response(model)
         else:
             return Response({"msg": "no model uploaded"})
 
@@ -47,7 +44,12 @@ def graph(request):
 @csrf_exempt
 def nodes(request):
     if request.method == 'GET':
-        return Response({"message": "Got some data!"})
+        if(os.path.isfile('data.json') ):
+            with open('data.json') as f:
+                model = json.load(f)
+            return  Response(model['nodes'])
+        else:
+            return Response({"msg": "no model uploaded"})
     if request.method == 'POST':
         data = request.data
         node = Service(data["name"])

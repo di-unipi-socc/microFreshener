@@ -12,17 +12,17 @@ export class GraphEditorComponent implements OnInit {
 
   // @ViewChild('directedGraph') directedGraph: ElementRef;
 
-  private graph: ForceDirectedGraph;
+  // private graph: ForceDirectedGraph;
 
   _options = {width: 600, height:500};
 
   constructor(private gs: GraphService) {  }
 
   ngOnInit() {
-    this.graph = this.gs.getGraph();
-    this.graph.nodes.forEach( (node) => {
-        console.log(node);
-    });
+    // this.graph = this.gs.graph; //getGraph();
+    // this.graph.nodes.forEach( (node) => {
+    //     console.log(node);
+    // });
   }
 
   onSelectedNode(n:Node){
