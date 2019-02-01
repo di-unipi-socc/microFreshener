@@ -5,19 +5,31 @@
         
       </app-menu-edit>
     </p-accordionTab>
+
     <p-accordionTab header="Analyse">
-        
+      <h3>Principles to analyse</h3>
+      <div class="ui-g" style="width:250px;margin-bottom:10px">
+          <div class="ui-g-12"  *ngFor="let principle of principles" >
+            <p-checkbox name="group2" value="{{principle}}" label="{{principle}}" [(ngModel)]="selectedPrinciples" inputId="{{principle}}">
+            </p-checkbox></div>
+      </div>
       <button type="button" pButton (click)="analyse()" label="Analyse" class="ui-button-warning"></button>
 
    </p-accordionTab>
+
     <p-accordionTab header="Refactor">
 
         <ul >
             <li *ngFor="let node of gs.graph.nodes">
               <span class="badge">{{node.name}}</span> 
                 <ul >
-                <li *ngFor="let ant of node.antipatterns">
-                  <span class="badge">{{ant.name}}</span> 
+                <li *ngFor="let principle of node.principles">
+                  <span class="badge">{{principle.name}}</span> 
+                    <ul >
+                      <li *ngFor="let antipattern of principle.antipatterns">
+                        <span class="badge">{{antipattern.name}}</span> 
+                      </li>
+                    </ul>
                 </li>
               </ul>
 

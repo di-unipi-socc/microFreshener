@@ -20,6 +20,7 @@ import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from 'primeng/tooltip';
 import {DialogModule} from 'primeng/dialog';
 import {ListboxModule} from 'primeng/listbox';
+import {CheckboxModule} from 'primeng/checkbox';
 
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';
@@ -54,7 +55,8 @@ import { AddNodeComponent } from './add-node/add-node.component';
     SidebarModule,
     ButtonModule,
     HttpClientModule,
-    ListboxModule
+    ListboxModule,
+    CheckboxModule
   ],
   providers: [
     D3Service

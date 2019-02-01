@@ -16,14 +16,14 @@ export class GraphNodeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.node.antipatterns);
+    console.log(this.node.principles);
   }
 
-  onSelectedAntipattern(ant){
-    console.log("selected antipattern");
+  onSelectedAntipattern(principle){
+    console.log("selected principles");
   }
 
   showDialog() {
     this.display = true;
-}
+ }
 }

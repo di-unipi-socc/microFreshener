@@ -72,13 +72,6 @@ export class GraphService {
     this.graph.addRunTimeLink(source, target);
   }
 
-  updateAntipatternsOnNodes(json:string){
-    this.getNodes().forEach((node)=>{
-          console.log(node.name);
-    })
-
-  }
-
   exportToJSON(){
     return JSON.stringify(this.graph);
   }

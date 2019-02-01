@@ -8,29 +8,30 @@ import  {GraphService} from "../graph.service";
 })
 export class MenuComponent implements OnInit {
  
+  principles:string[] = [];
+  selectedPrinciples: string[] = [];
 
   constructor( private gs: GraphService) {
+    // TODO: get the princniples with a dedicated services from the server
+    this.principles.push("Decentralized Data Management");
+    this.principles.push("Team-based Bounded Context");
+    this.principles.push("Independent Deployability");
+    this.principles.push("Horizzontal Scalability");
+    this.principles.push("Fault Tolerance");
+    this.selectedPrinciples = this.principles;
+
   } 
 
-  ngOnInit() {
-    //this.palette.div = this.paletteRef.nativeElement;
-    //console.log("initialized menu bar");
-  }
+  ngOnInit() {  }
 
   analyse(){
     this.gs.getAnalysis()
     .subscribe((data) => {
-    // console.log(data);
      data['nodes'].forEach(element => {
         console.log(element.name);
-        this.gs.graph.getNodeByName(element.name).antipatterns = element.antipatterns;
+        this.gs.graph.getNodeByName(element.name).principles = element.principles;
      });
-      //  this.gs.graph.getNodeByName()
-     
-
     });
-
-    console.log("anana");
   }
 
 }

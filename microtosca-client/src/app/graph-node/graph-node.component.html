@@ -36,7 +36,7 @@
 </svg:g>
 <svg:g>
 
-    <svg:rect  *ngFor="let ant of node.antipatterns; let i = index"
+    <svg:rect  *ngFor="let ant of node.getViolatedPrinciples(); let i = index"
         class="antippaterns"
         [attr.x]="node.x + 20 + (i*10) "
         [attr.y]="node.y + 20"

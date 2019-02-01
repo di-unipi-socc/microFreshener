@@ -1,21 +1,22 @@
 <div class="p-grid sample-layout">
+
     <div class="p-col-12">
             MicroTosca
     </div>
-    <div class="p-col-12 p-md-2">
+    <!-- menu sidebasr -->
+    <div class="p-col-12 p-md-3">
         <app-menu> </app-menu>
     </div>
-    <div class="p-col-12 p-md-10 p-col-nogutter">
+
+    <div class="p-col-12 p-md-9 p-col-nogutter">
         <!-- <app-graph-editor></app-graph-editor>  -->
         <app-graph-editor></app-graph-editor> 
 
     </div>
     <p-sidebar [(visible)]="display" position="right">
 
-         <button type="button" pButton (click)="upload()" label="Upload" class="ui-button-success"></button>
-         
-         <button type="button" pButton (click)="download()" label="Download" class="ui-button-success"></button>
-
+         <button type="button" pButton (click)="upload()" icon="pi pi-upload" label="Upload" class="ui-button-success"></button>
+         <button type="button" pButton (click)="download()" icon="pi pi-download" label="Download" class="ui-button-warning"></button>
 
     </p-sidebar>
         

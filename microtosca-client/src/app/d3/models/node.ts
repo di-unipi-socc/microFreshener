@@ -20,7 +20,8 @@ export class Node implements d3.SimulationNodeDatum {
     run_time_links:RunTimeLink[];              // list of run time links 
     deployment_time_links:DeploymentTimeLink[]; // list of the deployemnt time links starting froma node
 
-    antipatterns:Object[];
+    // TODO: implementare la classe  principles 
+    principles:any; // list of principles associated with a node. each principles has associated more antipatterns
     
     constructor(id:number, name: string, type:string) {
         this.id = id;
@@ -34,7 +35,7 @@ export class Node implements d3.SimulationNodeDatum {
         this.fy = 20;
         this.run_time_links = [];
         this.deployment_time_links = [];
-        this.antipatterns = [];
+        this.principles = [];
         //     {   'name': "deployment_interaction",
         //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
         //     },
@@ -45,6 +46,23 @@ export class Node implements d3.SimulationNodeDatum {
         //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
         //     }
         // ];
+    }
+    // return the antipatterns affecting a node
+    getViolatedPrinciples():any[]{
+        // let antipatterns = this.principles.filter(principle => { 
+        //     //  typeof principle.antipatterns  !== 'undefined' && 
+        //      principle.antipatterns.filter(length > 0;
+        //      console.log(principle.name);
+        //      console.log(principle.antipatterns);
+        // });
+        let antipatterns = this.principles.map(principle => { 
+            //  typeof principle.antipatterns  !== 'undefined' && 
+             principle.antipatterns.filter( antipattern => {
+                antipattern.cause.length > 0;
+             })
+        });
+        console.log(antipatterns);
+        return antipatterns;
     }
 
     public static fromJSON(json:Object):Node{
