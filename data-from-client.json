@@ -35,7 +35,8 @@
                     "target": "orderdb",
                     "type": "deploymenttime"
                 }
-            ]
+            ],
+            "principles": []
         },
         {
             "linkCount": 0,
@@ -71,7 +72,8 @@
                     "target": "orderdb",
                     "type": "deploymenttime"
                 }
-            ]
+            ],
+            "principles": []
         },
         {
             "linkCount": 0,
@@ -85,7 +87,8 @@
             "fx": 11,
             "fy": 20,
             "run_time_links": [],
-            "deployment_time_links": []
+            "deployment_time_links": [],
+            "principles": []
         },
         {
             "linkCount": 0,
@@ -99,7 +102,8 @@
             "fx": 11,
             "fy": 20,
             "run_time_links": [],
-            "deployment_time_links": []
+            "deployment_time_links": [],
+            "principles": []
         }
     ],
     "links": [],

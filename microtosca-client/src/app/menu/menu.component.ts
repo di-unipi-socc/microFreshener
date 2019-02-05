@@ -8,25 +8,29 @@ import  {GraphService} from "../graph.service";
 })
 export class MenuComponent implements OnInit {
  
-  principles:string[] = [];
-  selectedPrinciples: string[] = [];
+  principles:Object[] = [];
+  selectedPrinciples: Object[] = [];
 
   constructor( private gs: GraphService) {
-    // TODO: get the princniples with a dedicated services from the server
-    this.principles.push("Decentralized Data Management");
-    this.principles.push("Team-based Bounded Context");
-    this.principles.push("Independent Deployability");
-    this.principles.push("Horizzontal Scalability");
-    this.principles.push("Fault Tolerance");
-    this.selectedPrinciples = this.principles;
+    //TODO: get the princniples with a dedicated services from the server
+    this.principles.push({"name":"Decentralized Data Management", "value":"decentralizedData"});
+    this.principles.push({"name":"Bounded context", "value":"boundedContext"});
+    this.principles.push({"name":"Independent deployment", "value":"independentlyDeployable"});
+    this.principles.push({"name":"Horizzontal scalability", "value":"horizzontallyScalable"});
+    this.principles.push({"name":"Fault resilience", "value":"faultResilience"});
 
+    this.selectedPrinciples = this.principles;
   } 
 
   ngOnInit() {  }
 
   analyse(){
-    this.gs.getAnalysis()
-    .subscribe((data) => {
+    console.log("selected principles:")
+    let t:string[] = this.selectedPrinciples.map(principle => {return principle['value']});
+    console.log(t),
+
+    this.gs.getAnalysis(t)
+      .subscribe((data) => {
      data['nodes'].forEach(element => {
         console.log(element.name);
         this.gs.graph.getNodeByName(element.name).principles = element.principles;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {ForceDirectedGraph, Node, RunTimeLink,Link, Service, Database, DeploymentTimeLink, CommunicationPattern} from "./d3";
 import { inspect } from 'util'; // for converting into json an object
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -100,9 +100,13 @@ export class GraphService {
 
   }
 
-  getAnalysis():Observable<string> {
-    return this.http.get<string>(this.analysisUrl).pipe(
-      tap(_ => this.log(`reqeusted analysis`)),
+  getAnalysis(principles:string[]):Observable<string> {
+    const params = new HttpParams()
+      .set('principles', principles.join());
+      // .set('sort', SortOn);
+
+    return this.http.get<string>(this.analysisUrl, {params}).pipe(
+      tap(_ => this.log(`Send analysis`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
