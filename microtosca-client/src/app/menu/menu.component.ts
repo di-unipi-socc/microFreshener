@@ -12,7 +12,7 @@ export class MenuComponent implements OnInit {
   selectedPrinciples: Object[] = [];
 
   constructor( private gs: GraphService) {
-    //TODO: get the princniples with a dedicated services from the server
+    //TODO: get the princniples with a service from the server
     this.principles.push({"name":"Decentralized Data Management", "value":"decentralizedData"});
     this.principles.push({"name":"Bounded context", "value":"boundedContext"});
     this.principles.push({"name":"Independent deployment", "value":"independentlyDeployable"});

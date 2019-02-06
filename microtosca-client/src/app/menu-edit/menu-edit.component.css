@@ -1,7 +1,12 @@
 
-.svg-container {
+/* .svg-container {
     border: 2px dashed #000;
     background-color: rgb(161, 157, 157);
+} */
+
+.text-name {
+    stroke: rgb(0, 0, 0); 
+    fill: rgb(0, 0, 0);
 }
 
 .link {
@@ -20,9 +25,9 @@
     stroke-width:3;
     stroke:rgb(0,0,0);
 }
+
 .communicationpattern {
     fill:rgb(233, 59, 16);
     stroke-width:3;
     stroke:rgb(0,0,0);
-
 }

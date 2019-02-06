@@ -16,7 +16,10 @@ export class ForceDirectedGraph {
     public ticker: EventEmitter<d3.Simulation<Node, Link>> = new EventEmitter();
     public simulation: d3.Simulation<any, any>;
 
+    _options: Object;
+
     public nodes: Node[] = [];
+    
     // TODO: delete the links array. each node has its own list of links
     public links: Link[] = [];
 
@@ -25,8 +28,8 @@ export class ForceDirectedGraph {
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;
         this.links = links;
+        this._options = options; // added dido
         // this.initSimulation(options);
-        // this.mySimulation();
     }
 
     public getNodes():Node[]{
@@ -86,24 +89,48 @@ export class ForceDirectedGraph {
         this.initLinks();
     }
 
-    // mySimulation(){
-    //   this.simulation = d3.forceSimulation(this.nodes)
-    //           .force('charge', d3.forceManyBody())
-    //           .force('center', d3.forceCenter(600 / 2, 500 / 2))
-    //           .on('tick', this.myTicked);
+    mySimulation(){
+      // TODO: use widht and heigh passed as argument
+      var width = 600, height = 500
+      var nodes = [{}, {}, {}, {}, {}]
+      
+      this.simulation = d3.forceSimulation(nodes)
+        .force('charge', d3.forceManyBody())
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .on('tick', this.myTicked);
 
-    // }
+    }
 
-    // myTicked() {
-    //   console.log("My tick");
-    // }
+    myTicked() {
+      var nodes = [{}, {}, {}, {}, {}]
+      console.log("My tick");
+
+      var u = d3.select('svg')
+        .selectAll('circle')
+        .data(nodes);
+      
+      // u.enter()
+      //   .append('circle')
+      //   .attr('r', 5)
+      //   .merge(u)
+      //   .attr('cx', function(d) {
+      //     return d.x
+      //   })
+      //   .attr('cy', function(d) {
+      //     return d.y
+      //   })
+    
+      // u.exit().remove()
+    }
 
         
     initNodes() {
       if (!this.simulation) {
         throw new Error('simulation was not initialized yet');
       }
-  
+      console.log("inti node simulation on ");
+      console.log(this.nodes);
+
       this.simulation.nodes(this.nodes);
     }
   
@@ -111,6 +138,7 @@ export class ForceDirectedGraph {
       if (!this.simulation) {
         throw new Error('simulation was not initialized yet');
       }
+      console.log("inti links called");
   
       this.simulation.force('links',
         d3.forceLink(this.links)
@@ -118,18 +146,20 @@ export class ForceDirectedGraph {
           .strength(FORCES.LINKS)
       );
     }
+
+    
   
     initSimulation(options) {
       if (!options || !options.width || !options.height) {
           throw new Error('missing options when initializing simulation');
       }
 
+      console.log(options);
       /** Creating the simulation */
       if (!this.simulation) {
           const ticker = this.ticker;
-          
   
-          console.log("creating simulation");
+          console.log("Creating force simulation");
           // Creating the force simulation and defining the charges
           this.simulation = d3.forceSimulation()
           .force("charge",
@@ -139,7 +169,9 @@ export class ForceDirectedGraph {
 
           // Connecting the d3 ticker to an angular event emitter
           this.simulation.on('tick', function () {
+              // console.log("tick fired");
               ticker.emit(this);
+              
               // console.log("tick emitted");
           });
 

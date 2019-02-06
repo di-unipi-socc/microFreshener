@@ -5,7 +5,7 @@
         class="service"
         [attr.cx]="node.x"
         [attr.cy]="node.y"
-        r="20">
+        [attr.r]="node.raggio">
     </svg:circle>
     <text [attr.x]="node.x" [attr.y]="node.y"  font-family="Verdana" font-size="15" fill="black">{{node.name}}</text>
     <svg:rect *ngSwitchCase="'database'" 
@@ -29,6 +29,7 @@
         *ngFor="let l of node.getRunTimeLinks()"
         (click)="onSelectedLink(l)">
     </g> 
+
     <g [linkVisual]="l" 
         *ngFor="let l of node.getDeploymentLinks()"
         (click)="onSelectedLink(l)">

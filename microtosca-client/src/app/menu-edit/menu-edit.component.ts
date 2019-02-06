@@ -26,7 +26,6 @@ export class MenuEditComponent implements OnInit {
   // TODO: used to show messages 
   // msgs: Message[] = []; // show messages
 
-  _options = {width: 200, height:200};
 
   graph:ForceDirectedGraph = null;
   
@@ -38,7 +37,6 @@ export class MenuEditComponent implements OnInit {
      this.service = new Service(0,'');
      this.database = new Database(0,'');
      this.communicationPattern = new CommunicationPattern(0,'');
-
      this.deploymenttimelink = new DeploymentTimeLink(null, null);
      this.runtimelink = new RunTimeLink(null, null);
 
@@ -54,7 +52,7 @@ export class MenuEditComponent implements OnInit {
         });
         ref.onClose.subscribe((node) => {
           //TODO: show in a message the selected nodes
-          if (node.name) {
+          if (node['name']) {
             this.gs.addNode(new Database(2, node.name));
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
@@ -76,7 +74,6 @@ export class MenuEditComponent implements OnInit {
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
         });
-        
         
         break; 
       } 

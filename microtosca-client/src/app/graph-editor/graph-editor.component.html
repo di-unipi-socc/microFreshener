@@ -13,11 +13,11 @@
 
 <svg #svg [attr.width]="_options.width" [attr.height]="_options.height">
   <g [zoomableOf]="svg">
-    <g [linkVisual]="link" 
-      *ngFor="let link of  gs.graph.links"
+    <!-- <g [linkVisual]="link" 
+      *ngFor="let link of gs.graph.links"
       (click)="onSelectedLink(link)">
-    </g>
-    <g [nodeVisual]="node" 
+    </g> -->
+    <g  [nodeVisual]="node" 
         *ngFor="let node of  gs.graph.nodes"  
         [draggableNode]="node"
         [draggableInGraph]="graph"

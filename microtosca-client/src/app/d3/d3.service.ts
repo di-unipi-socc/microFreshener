@@ -12,7 +12,7 @@ export class D3Service {
     graph:  ForceDirectedGraph;
 
     constructor() { 
-      this.graph = new ForceDirectedGraph([], [], { width:200, height:200 });
+      // this.graph = new ForceDirectedGraph([], [], { width:200, height:200 });
     }
 
     public addNode(node:Node){
@@ -22,6 +22,8 @@ export class D3Service {
     public getGraph(){
       return this.graph;
     }
+
+    
 
     /** A method to bind a pan and zoom behaviour to an svg element */
     applyZoomableBehaviour(svgElement, containerElement) {

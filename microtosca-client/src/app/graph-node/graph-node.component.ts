@@ -16,7 +16,6 @@ export class GraphNodeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.node.principles);
   }
 
   onSelectedAntipattern(principle){

@@ -21,7 +21,7 @@ export class Node implements d3.SimulationNodeDatum {
     deployment_time_links:DeploymentTimeLink[]; // list of the deployemnt time links starting froma node
 
     // TODO: implementare la classe  principles 
-    principles:any; // list of principles associated with a node. each principles has associated more antipatterns
+    principles:any; // list of principles associated with a node. each principles has associated one or antipatterns violated
     
     constructor(id:number, name: string, type:string) {
         this.id = id;
@@ -61,7 +61,7 @@ export class Node implements d3.SimulationNodeDatum {
                 antipattern.cause.length > 0;
              })
         });
-        console.log(antipatterns);
+        // console.log(antipatterns);
         return antipatterns;
     }
 
@@ -89,7 +89,9 @@ export class Node implements d3.SimulationNodeDatum {
         return el;
     }
 
-
+    countOutgoingLinks(){
+        return this.run_time_links.length + this.deployment_time_links.length;
+    }
     getRunTimeLinks(){
         return this.run_time_links;
     }
@@ -127,8 +129,10 @@ export class Database extends Node {
 }
 
 export class Service extends Node {
+    raggio: number; 
     constructor(id: number, name:string) { 
         super(id, name, "service"); 
+        this.raggio = 10;
     }
 }
 
