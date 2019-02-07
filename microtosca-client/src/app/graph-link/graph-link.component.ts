@@ -26,8 +26,6 @@ export class GraphLinkComponent implements OnInit {
     return this._build_d_attribute(0);
     }
 
-  
-
     // build the d attribute fo drawing a curved lines
     _build_d_attribute(arc_flag:number ){
         let c = this.link.source.countOutgoingLinks();
