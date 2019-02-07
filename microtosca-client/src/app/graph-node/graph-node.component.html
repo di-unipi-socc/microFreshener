@@ -9,13 +9,16 @@
     </svg:circle>
     <text [attr.x]="node.x" [attr.y]="node.y"  font-family="Verdana" font-size="15" fill="black">{{node.name}}</text>
     <svg:rect *ngSwitchCase="'database'" 
-          class="database"
-        [attr.x]="node.x"
-        [attr.y]="node.y"
-        width="30" 
-        height="30" 
-        >
+                class="database"
+                [attr.x]="node.x"
+                [attr.y]="node.y"
+                rx= "8"
+                ry= "8"
+                width="30" 
+                height="30" 
+                >
     </svg:rect>
+
     <svg:rect *ngSwitchCase="'communicationpattern'" 
         class="communicationpattern"
         [attr.x]="node.x"
@@ -36,10 +39,9 @@
     </g> 
 </svg:g>
 <svg:g>
-
     <svg:rect  *ngFor="let ant of node.getViolatedPrinciples(); let i = index"
         class="antippaterns"
-        [attr.x]="node.x + 20 + (i*10) "
+        [attr.x]="node.x + (20*i)"
         [attr.y]="node.y + 20"
         width="8" 
         height="8"
@@ -47,3 +49,12 @@
         >
     </svg:rect>
 </svg:g> 
+
+
+<p-dialog header="Godfather I" [(visible)]="display" [modal]="true" [minY]="70" [baseZIndex]="10000">
+    <span>The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding. 
+        His beloved son Michael has just come home from the war, but does not intend to become part of his father's business. 
+        Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family, 
+        kind and benevolent to those who give respect,
+        but given to ruthless violence whenever anything stands against the good of the family.</span>
+</p-dialog>

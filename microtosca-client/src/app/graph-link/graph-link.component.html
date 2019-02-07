@@ -10,13 +10,20 @@
                 </svg:marker>
         </svg:defs>
         <svg:path *ngSwitchCase="'runtime'" 
+                [ngClass]="{
+                        'link-style': !link.isBadInteraction,
+                        'link-warning': link.isBadInteraction
+                }"
                 class="link-style"
                 fill="transparent"
                 [attr.d]=getDAttributeRuntime()
                 marker-end="url(#markerArrow)">
         </svg:path>
         <svg:path *ngSwitchCase="'deploymenttime'" 
-                class="link-style"
+                [ngClass]="{
+                        'link-style': !link.isBadInteraction,
+                        'link-warning': link.isBadInteraction
+                }"
                 stroke-dasharray="5,5" 
                 fill="transparent"
                 [attr.d]=getDAttributeDeployement()

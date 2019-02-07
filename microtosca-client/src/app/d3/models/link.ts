@@ -9,11 +9,15 @@ export class Link implements d3.SimulationLinkDatum<Node> {
     source: Node; //| string | number;
     target: Node;// | string | number;
 
+    isBadInteraction: boolean;
+
     type: string; // runtime, deploymenttime
+    
     constructor(source, target, type) {
         this.source = source;
         this.target = target;
         this.type = type;
+        this.isBadInteraction = false;
     }
 
     // is called byt JSON.stringify()
@@ -23,6 +27,10 @@ export class Link implements d3.SimulationLinkDatum<Node> {
         else
             return {'target': this.target, 'type':this.type};
     }    
+
+    setBadInteraction(){
+        this.isBadInteraction = true;
+    }
 
 }
 

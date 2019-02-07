@@ -11,8 +11,6 @@ export class GraphNodeComponent implements OnInit {
   @Input('nodeVisual') node: Node;
   display: boolean = false;
 
-
-
   constructor() { }
 
   ngOnInit() {
@@ -20,6 +18,9 @@ export class GraphNodeComponent implements OnInit {
 
   onSelectedAntipattern(principle){
     console.log("selected principles");
+    this.showDialog();
+    console.log("opende dialogs");
+
   }
 
   showDialog() {

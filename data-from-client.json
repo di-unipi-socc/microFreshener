@@ -14,8 +14,8 @@
             "id": 1,
             "type": "service",
             "name": "shipping",
-            "x": 20,
-            "y": 20,
+            "x": 40.238922119140625,
+            "y": 61.27685546875,
             "vx": 11,
             "vy": 20,
             "fx": 11,
@@ -36,15 +36,47 @@
                     "type": "deploymenttime"
                 }
             ],
-            "principles": []
+            "principles": [
+                {
+                    "name": "horizzontallyScalable",
+                    "antipatterns": [
+                        {
+                            "name": "direct_Interaction",
+                            "cause": [
+                                {
+                                    "source": "order (service)",
+                                    "target": "shipping (service)",
+                                    "type": "runtime"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "faultResilience",
+                    "antipatterns": [
+                        {
+                            "name": "direct_Interaction",
+                            "cause": [
+                                {
+                                    "source": "order (service)",
+                                    "target": "shipping (service)",
+                                    "type": "runtime"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "raggio": 20
         },
         {
             "linkCount": 0,
             "id": 1,
             "type": "service",
             "name": "order",
-            "x": 20,
-            "y": 20,
+            "x": 136.38973999023438,
+            "y": 21.773029327392578,
             "vx": 11,
             "vy": 20,
             "fx": 11,
@@ -73,15 +105,32 @@
                     "type": "deploymenttime"
                 }
             ],
-            "principles": []
+            "principles": [
+                {
+                    "name": "independentlyDeployable",
+                    "antipatterns": [
+                        {
+                            "name": "deployment_interaction",
+                            "cause": [
+                                {
+                                    "source": "order (service)",
+                                    "target": "shipping (service)",
+                                    "type": "deploymenttime"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "raggio": 20
         },
         {
             "linkCount": 0,
             "id": 1,
             "type": "communicationpattern",
             "name": "rabbitmq",
-            "x": 20,
-            "y": 20,
+            "x": 204,
+            "y": 68,
             "vx": 11,
             "vy": 20,
             "fx": 11,
@@ -95,17 +144,52 @@
             "id": 1,
             "type": "database",
             "name": "orderdb",
-            "x": 20,
-            "y": 20,
+            "x": 154,
+            "y": 161,
             "vx": 11,
             "vy": 20,
             "fx": 11,
             "fy": 20,
             "run_time_links": [],
             "deployment_time_links": [],
-            "principles": []
+            "principles": [
+                {
+                    "name": "decentralizedData",
+                    "antipatterns": [
+                        {
+                            "name": "shared_persitency",
+                            "cause": [
+                                {
+                                    "source": "shipping (service)",
+                                    "target": "orderdb (database)",
+                                    "type": "deploymenttime"
+                                },
+                                {
+                                    "source": "order (service)",
+                                    "target": "orderdb (database)",
+                                    "type": "deploymenttime"
+                                },
+                                {
+                                    "source": "shipping (service)",
+                                    "target": "orderdb (database)",
+                                    "type": "runtime"
+                                },
+                                {
+                                    "source": "order (service)",
+                                    "target": "orderdb (database)",
+                                    "type": "runtime"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "links": [],
-    "name": "init name"
+    "name": "init name",
+    "_options": {
+        "width": 600,
+        "height": 500
+    }
 }

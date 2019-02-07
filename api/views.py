@@ -29,15 +29,15 @@ def graph_analysis(request):
     # Run the analysis on all the nodes in the graph
     if request.method == 'GET':
         # /graph/analysis?principles=p1,p1,p2
-        principles = request.GET.get('principles').split(',')
+        # get the principle to check
+        principles = request.GET.get('principles').split(',') 
         print(principles)
-
         mmodel = None
         if(os.path.isfile(file_name)):
             mmodel = loader.load(file_name)
             analyser = MicroAnalyser(mmodel)
             res = analyser.analyse(principles_to_check=principles)
-            # print(res)
+            print(res)
             return Response(res)
         else:
             return Response({"msg": "no model uploaded"})

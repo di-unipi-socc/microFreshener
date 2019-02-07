@@ -28,7 +28,15 @@
                   <span class="badge">{{principle.name}}</span> 
                     <ul >
                       <li *ngFor="let antipattern of principle.antipatterns">
-                        <span class="badge">{{antipattern.name}}</span> 
+                        <span class="badge" (click)="onSelectedAntipattern(antipattern)">{{antipattern.name}}</span> 
+                          <span *ngFor="let cause of antipattern.cause">
+                            (source: {{cause.source}}, target:{{cause.target}}
+                          </span>
+                        <ul >
+                          <li *ngFor="let refactoring of antipattern.refactorings">
+                            <span class="badge">{{refactoring.name}}</span> 
+                          </li>
+                        </ul>
                       </li>
                     </ul>
                 </li>

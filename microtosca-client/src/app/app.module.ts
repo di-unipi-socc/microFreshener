@@ -30,6 +30,7 @@ import { GraphNodeComponent } from './graph-node/graph-node.component';
 import { GraphLinkComponent } from './graph-link/graph-link.component';
 import { NodeListComponent } from './node-list/node-list.component';
 import { AddNodeComponent } from './add-node/add-node.component';
+import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { AddNodeComponent } from './add-node/add-node.component';
     GraphLinkComponent,
     NodeListComponent,
     AddNodeComponent,
+    ModalRefactoringsComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +58,8 @@ import { AddNodeComponent } from './add-node/add-node.component';
     ButtonModule,
     HttpClientModule,
     ListboxModule,
-    CheckboxModule
+    CheckboxModule,
+    DialogModule
   ],
   providers: [
     D3Service

@@ -26,7 +26,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
   
 
   ngOnInit() {
-    
   }
 
   onSelectedNode(n:Node){

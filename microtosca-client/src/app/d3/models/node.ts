@@ -36,17 +36,8 @@ export class Node implements d3.SimulationNodeDatum {
         this.run_time_links = [];
         this.deployment_time_links = [];
         this.principles = [];
-        //     {   'name': "deployment_interaction",
-        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
-        //     },
-        //     {   'name': "shared_persistency",
-        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
-        //     },
-        //     {   'name': "other",
-        //         "cause": [ {"source": "order (service)", "target": "shipping (service)"}]
-        //     }
-        // ];
     }
+
     // return the antipatterns affecting a node
     getViolatedPrinciples():any[]{
         // let antipatterns = this.principles.filter(principle => { 
@@ -92,6 +83,15 @@ export class Node implements d3.SimulationNodeDatum {
     countOutgoingLinks(){
         return this.run_time_links.length + this.deployment_time_links.length;
     }
+
+    getRunTimeLinkTo(target):RunTimeLink{
+        return this.run_time_links.find(link => link.target.name == target);
+    }
+
+    getDeploymnetTimeLinkTo(target):DeploymentTimeLink{
+        return this.deployment_time_links.find(link => link.target.name == target);
+    }
+
     getRunTimeLinks(){
         return this.run_time_links;
     }
@@ -132,7 +132,7 @@ export class Service extends Node {
     raggio: number; 
     constructor(id: number, name:string) { 
         super(id, name, "service"); 
-        this.raggio = 10;
+        this.raggio = 20;
     }
 }
 

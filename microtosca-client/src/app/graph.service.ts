@@ -52,8 +52,14 @@ export class GraphService {
     console.log(this.graph);
    }
 
+   // apply refactorings
+
   getNodes():Node[]{
     return this.graph.getNodes();
+  }
+
+  getNode(name:string):Node{
+    return this.graph.getNodeByName(name);
   }
 
   getGraph():ForceDirectedGraph{
@@ -102,9 +108,7 @@ export class GraphService {
 
   getAnalysis(principles:string[]):Observable<string> {
     const params = new HttpParams()
-      .set('principles', principles.join());
-      // .set('sort', SortOn);
-
+      .set('principles', principles.join()); // create principles parameters separated by commma
     return this.http.get<string>(this.analysisUrl, {params}).pipe(
       tap(_ => this.log(`Send analysis`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))

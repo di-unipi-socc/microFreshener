@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import  {GraphService} from "../graph.service";
+import { RunTimeLink, DeploymentTimeLink } from '../d3';
 
 @Component({
   selector: 'app-menu',
@@ -27,15 +28,38 @@ export class MenuComponent implements OnInit {
   analyse(){
     console.log("selected principles:")
     let t:string[] = this.selectedPrinciples.map(principle => {return principle['value']});
-    console.log(t),
-
     this.gs.getAnalysis(t)
       .subscribe((data) => {
-     data['nodes'].forEach(element => {
-        console.log(element.name);
-        this.gs.graph.getNodeByName(element.name).principles = element.principles;
+        data['nodes'].forEach(element => {
+            // console.log(element);
+            this.gs.graph.getNodeByName(element.name).principles = element.principles;
      });
     });
   }
+
+  onSelectedAntipattern(antipattern){
+    console.log("antipattern selected");
+    console.log(antipattern);
+    // {name: "direct_Interaction", 
+    //   cause :[ {
+    //     source:"order (service)"
+    //     target: "shipping (service)"
+    //     type: "runtime"
+    //     }]
+    antipattern.cause.forEach(causa => {
+      console.log(causa);
+      let source  = this.gs.getNode(causa['source']);
+      console.log(causa['target']);
+      if(causa['type'] == "deploymenttime"){
+        let link = source.getDeploymnetTimeLinkTo(causa['target']);
+        link.setBadInteraction();
+      }
+      else{
+        let link= source.getRunTimeLinkTo(causa['target']);
+        link.setBadInteraction();
+      }
+    });
+
+    }
 
 }
