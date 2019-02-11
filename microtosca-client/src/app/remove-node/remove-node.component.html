@@ -1,0 +1,18 @@
+
+
+<div class="p-grid p-justify-center"> 
+    <!-- <div class="p-md-8"> --> 
+        <!-- <h3>Remove nodes</h3> -->
+        <p-listbox [options]="nodes" [(ngModel)]="selectedNodes" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="name">
+          <p-header>
+            nodes
+          </p-header>
+        </p-listbox>
+    <!-- </div> -->
+</div>
+
+<p>Selected nodes: <span *ngFor="let c of selectedNodes" style="margin-right: 10px">{{c.name}}</span></p>
+
+<div class="p-grid p-justify-end">
+    <p-button label="Remove"  icon="pi pi-trash" (onClick)="removeNodes()" styleClass="ui-button-danger"></p-button>
+</div>

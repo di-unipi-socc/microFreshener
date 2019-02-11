@@ -58,6 +58,18 @@ export class GraphService {
     return this.graph.getNodes();
   }
 
+  getServices():Node[]{
+    return this.getNodes().filter(node => node.constructor == Service);
+  }
+
+  getDatabase():Node[]{
+    return this.getNodes().filter(node => node.constructor == Database);
+  }
+  
+  getCommunicationPattern():Node[]{
+    return this.getNodes().filter(node => node.constructor == CommunicationPattern);
+  }
+
   getNode(name:string):Node{
     return this.graph.getNodeByName(name);
   }

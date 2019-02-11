@@ -14,8 +14,8 @@ import {Node} from "../d3";
 })
 export class AddLinkComponent implements OnInit {
   nodes : Node[];
-  selectedSourceNode: Node;
-  selectedTargetNode: Node;
+  selectedSourceNode: Node = null;
+  selectedTargetNode: Node = null;
 
   constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
 

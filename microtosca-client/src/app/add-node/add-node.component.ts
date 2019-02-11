@@ -11,16 +11,16 @@ import {DynamicDialogConfig} from 'primeng/api';
 })
 export class AddNodeComponent implements OnInit {
 
-  name: string;
+  name: string = null;
 
   constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
-    this.name = "";
+    this.name = null;
   }
 
   newNode(name:string){
-    this.ref.close({'name':name});
+    this.ref.close(name);
   }
 
 }

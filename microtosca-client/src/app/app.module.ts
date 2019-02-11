@@ -21,6 +21,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DialogModule} from 'primeng/dialog';
 import {ListboxModule} from 'primeng/listbox';
 import {CheckboxModule} from 'primeng/checkbox';
+import {ListboxModule} from 'primeng/listbox';
 
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';
@@ -31,6 +32,7 @@ import { GraphLinkComponent } from './graph-link/graph-link.component';
 import { AddLinkComponent } from './add-link/add-link.component';
 import { AddNodeComponent } from './add-node/add-node.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
+import { RemoveNodeComponent } from './remove-node/remove-node.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactori
     AddLinkComponent,
     AddNodeComponent,
     ModalRefactoringsComponent,
+    RemoveNodeComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,8 @@ import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactori
   bootstrap: [AppComponent],
   entryComponents: [
     AddLinkComponent,
-    AddNodeComponent
+    AddNodeComponent,
+    RemoveNodeComponent
   ]
 })
 export class AppModule { }
