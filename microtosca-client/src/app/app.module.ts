@@ -28,7 +28,7 @@ import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
 import { GraphNodeComponent } from './graph-node/graph-node.component';
 import { GraphLinkComponent } from './graph-link/graph-link.component';
-import { NodeListComponent } from './node-list/node-list.component';
+import { AddLinkComponent } from './add-link/add-link.component';
 import { AddNodeComponent } from './add-node/add-node.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 
@@ -41,7 +41,7 @@ import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactori
     GraphEditorComponent,
     GraphNodeComponent,
     GraphLinkComponent,
-    NodeListComponent,
+    AddLinkComponent,
     AddNodeComponent,
     ModalRefactoringsComponent,
   ],
@@ -67,7 +67,7 @@ import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactori
   ],
   bootstrap: [AppComponent],
   entryComponents: [
-    NodeListComponent,
+    AddLinkComponent,
     AddNodeComponent
   ]
 })

@@ -8,11 +8,11 @@ import {Node} from "../d3";
 
 
 @Component({
-  selector: 'app-node-list',
-  templateUrl: './node-list.component.html',
-  styleUrls: ['./node-list.component.css']
+  selector: 'add-link',
+  templateUrl: './add-link.component.html',
+  styleUrls: ['./add-link.component.css']
 })
-export class NodeListComponent implements OnInit {
+export class AddLinkComponent implements OnInit {
   nodes : Node[];
   selectedSourceNode: Node;
   selectedTargetNode: Node;

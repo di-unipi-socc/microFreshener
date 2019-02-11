@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Node, Link, Database, Service,ForceDirectedGraph, D3Service, CommunicationPattern, DeploymentTimeLink, RunTimeLink} from '../d3';
 import {GraphService} from "../graph.service";
 import {DialogService} from 'primeng/api';
-import {NodeListComponent} from '../node-list/node-list.component';
+import {AddLinkComponent} from '../add-link/add-link.component';
 import {AddNodeComponent} from '../add-node/add-node.component';
 
 import {MessageService} from 'primeng/api';
@@ -47,7 +47,7 @@ export class MenuEditComponent implements OnInit {
       case Database: { 
         console.log("Cliccked database");
         const ref = this.dialogService.open(AddNodeComponent, {
-          header: 'Add database node',
+          header: 'Add a Database',
           width: '90%'
         });
         ref.onClose.subscribe((node) => {
@@ -64,7 +64,7 @@ export class MenuEditComponent implements OnInit {
         console.log("Cliccked service");
         
         const ref = this.dialogService.open(AddNodeComponent, {
-          header: 'Add service node',
+          header: 'Add a Service',
           width: '90%'
         });
         ref.onClose.subscribe((node) => {
@@ -80,7 +80,7 @@ export class MenuEditComponent implements OnInit {
       case CommunicationPattern: {
         console.log("Cliccked communicationpattern");
         const ref = this.dialogService.open(AddNodeComponent, {
-          header: 'Add Communication pattern node',
+          header: 'Add a Communication pattern',
           width: '90%'
         });
         ref.onClose.subscribe((node) => {
@@ -105,8 +105,8 @@ export class MenuEditComponent implements OnInit {
     switch(link.constructor) { 
       case RunTimeLink: { 
         console.log("Cliccked runtime");
-        const ref = this.dialogService.open(NodeListComponent, {
-            header: 'Add runtime link',
+        const ref = this.dialogService.open(AddLinkComponent, {
+            header: 'Add Run-time interaction',
             width: '90%'
         });
 
@@ -120,8 +120,8 @@ export class MenuEditComponent implements OnInit {
         break; 
       }
       case DeploymentTimeLink: { 
-        const ref = this.dialogService.open(NodeListComponent, {
-          header: 'Add deployment time link',
+        const ref = this.dialogService.open(AddLinkComponent, {
+          header: 'Add Deployment-time interaction',
           width: '90%'
         });
 

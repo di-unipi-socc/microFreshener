@@ -48,7 +48,7 @@ export class GraphService {
     o.addDeploymentTimeLink(odb);
     o.addRunTimeLink(cp);
 
-    this.graph = new ForceDirectedGraph(nodes, links, { width:600, height:500 });
+    this.graph = new ForceDirectedGraph(nodes, links, { width:1000, height:700 });
     console.log(this.graph);
    }
 

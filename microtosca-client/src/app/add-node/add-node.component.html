@@ -1,20 +1,12 @@
-
-
-<div class="p-grid">
-    <div class="p-col">Nome</div>
-    <div class="p-col"><input  [(ngModel)]="name" type="text" pInputText /></div>
-    <div class="p-col"><button pButton icon="pi pi-check" (click)="newNode(name)">Salva</button></div>
+<div class="p-grid p-justify-center">
+    <div class="p-md-4">
+        <label for="name">Name </label>
+    </div>
+    <div class="p-md-4">
+         <input  placeholder="Insert the name" [(ngModel)]="name" type="text" pInputText />
+    </div>
 </div>
 
-<button pButton icon="pi pi-check"  iconPos="right"(click)="newNode(name)">Salva</button>
-
-
-<div class="ui-g">
-    <div class="ui-g-12 ui-md-6 ui-lg-3">
-        <label for="name">Name: </label>
-        <input  [(ngModel)]="name" type="text" pInputText />
-    </div>
-    <div class="ui-g-12 ui-md-6 ui-lg-3">
-        <button pButton icon="pi pi-check" (click)="newNode(name)">Salva</button>
-    </div>
+<div class="p-grid p-justify-end">
+    <p-button label="Save"  icon="pi pi-save" (onClick)="newNode(name)"></p-button>
 </div>

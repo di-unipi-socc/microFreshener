@@ -1,4 +1,135 @@
 <div class="svg-container">
+
+<h2> Nodes</h2>
+
+<!-- service  -->
+<div class="p-grid p-justify-between">
+    <div class="p-md-2 p-col-align-center">
+        <svg width="25" height="25">
+            <svg:circle ng-model="service"
+                (click)="onClickNode(service)"
+                class="service"
+                cx="13"
+                cy="13"
+                r="10" >
+            </svg:circle>
+        </svg>
+    </div>
+    <div class="p-md-6 p-col-align-center">Service</div>
+    <div class="p-md-4 p-col-align-center"> 
+        <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(service)"></button>
+        <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="onClickNode(service)"></button>
+    </div>
+</div>
+
+<!-- database -->
+<div class="p-grid p-justify-between">
+        <div class="p-md-2 p-col-align-center">
+            <svg width="25" height="25">
+                <svg:rect  ng-model="database"
+                    class="database"
+                    (click)="onClickNode(database)"
+                    x="5"
+                    y="5"
+                    width="20" 
+                    height="20" >
+                </svg:rect>
+            </svg>
+        </div>
+        <div class="p-md-6 p-col-align-center">Database</div>
+        <div class="p-md-4 p-col-align-center"> 
+            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(database)"></button>
+            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="onClickNode(database)"></button>
+        </div>
+</div>
+
+<!-- Communication patterns -->
+<div class="p-grid p-justify-between">
+        <div class="p-md-2 p-col-align-center">
+            <svg width="25" height="25">
+                <svg:rect  ng-model="communicationPattern"
+                    (click)="onClickNode(communicationPattern)"
+                    x="5"
+                    y="5"
+                    width="20" 
+                    height="20" 
+                    class="communicationpattern">
+                </svg:rect> 
+            </svg>
+        </div>
+        <div class="p-md-6 p-col-align-center">Communication Pattern</div>
+        <div class="p-md-4 p-col-align-center"> 
+            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(communicationPattern)"></button>
+            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="onClickNode(communicationPattern)"></button>
+        </div>
+</div>
+
+<h2>Interactions</h2>
+<!-- deploymenttimelink -->
+<div class="p-grid p-justify-between">
+        <div class="p-md-2 p-col-align-center">
+            <svg width="30" height="25">
+                <svg:defs>
+                        <svg:marker id="markerArrow" viewBox="0 -5 10 10"
+                                refX="6" 
+                                markerUnits="strokeWidth"
+                                markerWidth="2.5" markerHeight="2.5"
+                                orient="auto">
+                          <svg:path d="M0,-5L10,0L0,5" fill="#000000"/>
+                        </svg:marker>
+                </svg:defs>
+                <svg:line ng-model="deploymenttimelink"
+                    (click)="onClickLink(deploymenttimelink)"
+                    class="link"
+                    stroke-dasharray="4,4" 
+                    x1="0"
+                    y1="10"
+                    x2="25"
+                    y2="10"
+                    marker-end="url(#markerArrow)">
+                    </svg:line>
+            </svg>
+        </div>
+        <div class="p-md-6 p-col-align-center">Deployment-time Interaction</div>
+        <div class="p-md-4 p-col-align-center"> 
+            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickLink(deploymenttimelink)"></button>
+            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="onClickLink(deploymenttimelink)"></button>
+        </div>
+</div>
+
+<!-- runtime link -->
+<div class="p-grid p-justify-between">
+        <div class="p-md-2 p-col-align-center">
+            <svg width="30" height="25">
+                <svg:defs>
+                        <svg:marker id="markerArrow" viewBox="0 -5 10 10"
+                                refX="6" 
+                                markerUnits="strokeWidth"
+                                markerWidth="2.5" markerHeight="2.5"
+                                orient="auto">
+                            <svg:path d="M0,-5L10,0L0,5" fill="#000000"/>
+                        </svg:marker>
+                </svg:defs>
+                <svg:line ng-model="runtimelink"
+                    (click)="onClickLink(runtimelink)"
+                    class="link"
+                    x1="0"
+                    y1="10"
+                    x2="25"
+                    y2="10"
+                    marker-end="url(#markerArrow)">
+                </svg:line>
+            </svg>
+        </div>
+        <div class="p-md-6 p-col-align-center">Run-time Interaction</div>
+        <div class="p-md-4 p-col-align-center"> 
+            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickLink(runtimelink)"></button>
+            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="onClickLink(runtimelink)"></button>
+        </div>
+</div>
+
+
+<!--             
 <svg>
     <g>
         <svg:circle ng-model="service"
@@ -69,6 +200,6 @@
         </text>
     </g>
 
-</svg>
+</svg> -->
 
 </div>
