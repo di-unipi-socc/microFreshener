@@ -23,18 +23,15 @@ export class AppComponent {
       .subscribe(data => {
         this.closeSidebar();
         console.log(data);
-        alert("Uploaded correctly");
+        alert("Saved correctly");
       });
-
   }
 
   onUpload(event) {
-    for(let file of event.files) {
-        console.log(file);
-    }
+    console.log("upload handler");
+    this.download();
+    console.log("updated graph locally");
   }
-
-    // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
 
   download(){
     this.gs.downloadGraph()
@@ -44,7 +41,6 @@ export class AppComponent {
       this.gs.graph = ForceDirectedGraph.fromJSON(data);
     });
   }
-
   
   closeSidebar(){
      this.display = false;

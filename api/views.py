@@ -2,6 +2,11 @@ from api.models import Snippet
 from api.serializers import SnippetSerializer
 from rest_framework import mixins
 from rest_framework import generics
+from django.core.files.base import ContentFile
+from django.http import HttpResponse
+from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage
+
 
 # for function based api
 from rest_framework.decorators import api_view
@@ -42,27 +47,72 @@ def graph_analysis(request):
         else:
             return Response({"msg": "no model uploaded"})
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
+def graph_export(request):
+    # export the graph as json file
+    mmodel = None
+    if(os.path.isfile(file_name)):
+        mmodel = loader.load(file_name)
+        dmodel = transformer.transform(mmodel)
+        response = HttpResponse(ContentFile(json.dumps(dmodel)), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
+        return response 
+    else:
+        return Response({"msg": "no model uploaded"})
+
+
+
+@api_view(['POST'])
+@csrf_exempt
+def graph_import(request):
+    if request.method == 'POST':
+        print("£LKWELKJDòlkdj")
+        # data = request.data
+        graph_in_memory = request.FILES['graph']
+        print(graph_in_memory.name) 
+
+        with open(file_name, 'wb+') as destination:
+            for chunk in graph_in_memory.chunks():
+                print("wrinting chunk")
+                destination.write(chunk)
+
+        # with open('data.json', 'w') as outfile:
+        #      json.dump(transformer.transform(micro_model), outfile, indent=4)
+
+        # fs = FileSystemStorage()    
+        # filename = fs.save(graph_in_memory.name, graph_in_memory.read())
+        # uploaded_file_url = fs.url(filename)
+        # print(uploaded_file_url)
+
+        # path = default_storage.save(graph_in_memory.name, ContentFile(graph_in_memory))
+        # tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+        # print(tmp_file)
+
+        # print(type(request.FILES))
+        # parser_classes = (FileUploadParser, )
+
+        # micro_model = loader.load_from_dict(data)
+        # micro_model = loader.load('data-from-client.json')
+        return Response({"msg": "stored correctly"})
+
+        
+        
+@api_view(['GET','POST'])
 @csrf_exempt
 def graph(request):
     if request.method == 'POST':
         data = request.data
         with open(file_name, 'w') as outfile:
             json.dump(data, outfile, indent=4)
-
-        # micro_model = loader.load_from_dict(data)
-        # micro_model = loader.load('data-from-client.json')
-        
-        # with open('data.json', 'w') as outfile:
-        #     json.dump(transformer.transform(micro_model), outfile, indent=4)
         return  Response( {"msg":"graph uploaded correclty"})
 
     if request.method == 'GET':
+        # return the json file 
         mmodel = None
         if(os.path.isfile(file_name)):
             mmodel = loader.load(file_name)
             dmodel = transformer.transform(mmodel)
-            return  Response(dmodel)
+            return Response(dmodel)
         else:
             return Response({"msg": "no model uploaded"})
 

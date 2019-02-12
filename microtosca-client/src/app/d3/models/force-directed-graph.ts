@@ -59,10 +59,27 @@ export class ForceDirectedGraph {
     public static fromJSON(json:Object):ForceDirectedGraph{
       let graph = new ForceDirectedGraph([],[],{ width:600, height:500 } );
       let name  = json['name'];
-      console.log(name)
+      console.log("importing from JSON");
+      // add all the nodes in the graph
       for (let n of json['nodes']){
-            let node:Node = Node.fromJSON(n)
-            graph.addNode(node);
+          let node:Node = Node.fromJSON(n)
+          graph.addNode(node);
+      }
+
+      // update all the links among nodes (possible only after added all the nodes)
+      // TODO: remove this two for and let use a string instead of the node if the target node does not exist
+      for (let n of json['nodes']){
+         let node:Node = graph.getNodeByName(n['name']);
+         console.log("adding links to:");
+         console.log(node.name);
+         n['deployment_time_links'].forEach(dlink => {
+           console.log("adding deployment");
+           node.addDeploymentTimeLink(graph.getNodeByName(dlink['target']));
+         });
+         n['run_time_links'].forEach(rlink => {
+          console.log("adding run time");
+          node.addRunTimeLink(graph.getNodeByName(rlink['target']));
+        });
       }
       graph.getNodes().forEach((node)=> console.log(node));
       return graph

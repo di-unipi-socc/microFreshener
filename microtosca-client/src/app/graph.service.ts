@@ -112,12 +112,16 @@ export class GraphService {
     return JSON.stringify(this.graph);
   }
 
-  /** POST: add a new hero to the server */
+  /** POST: upload the local graph to the server */
   uploadGraph (): Observable<ForceDirectedGraph> {
-    var t = this.exportToJSON();
-    console.log(t);
-    return this.http.post<ForceDirectedGraph>(this.graphUrlPost,t, httpOptions);
+    var graphJson = this.exportToJSON();
+    console.log(graphJson);
+    return this.http.post<ForceDirectedGraph>(this.graphUrlPost, graphJson, httpOptions);
   }
+
+  // uploadFile():Observable<string>{
+  //   return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);
+  // }
 
   // download the graph stored into the server
   downloadGraph(): Observable<string> {

@@ -87,6 +87,7 @@ export class Node implements d3.SimulationNodeDatum{
              el = new Database(5, name);
         if(json['type'] == "communicationpattern")
              el = new CommunicationPattern(5, name);
+        
         return el;
     }
 

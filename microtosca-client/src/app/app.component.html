@@ -17,14 +17,28 @@
 
             <div class="p-grid p-align-end">
                 <div class="p-col">
-                <button type="button" pButton (click)="upload()" icon="pi pi-upload" label="Save" class="ui-button-success"></button>
-                <!-- <p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="*.json" 
-                    maxFileSize="1000000" (onUpload)="onUpload($event)">
-                </p-fileUpload>-->
+
+                  <button pButton type="button" (click)="upload()" label="Save" icon="pi pi-arrow-right"></button>
+
+                    <p-fileUpload mode="basic" 
+                                    name="graph" 
+                                    url="http://127.0.0.1:8000/graph/import/" 
+                                    accept=".json"
+                                    (onUpload)="onUpload($event)">
+                    </p-fileUpload>
+
+                    <!-- <p-fileUpload   customUpload="true"
+                                    mode="basic" 
+                                    (uploadHandler)="onUpload($event)" 
+                                    accept=".json">
+                    </p-fileUpload> -->
+                    
+
+
                 </div> 
 
                 <div class="p-col">
-                <button type="button" pButton (click)="download()" icon="pi pi-download" label="Export" class="ui-button-warning"></button>
+                   <a pButton href="http://127.0.0.1:8000/graph/export/" style="width: 100px"  label="Export" icon="pi pi-download" class="ui-button-warning"></a>
                 </div>
             </div>
 

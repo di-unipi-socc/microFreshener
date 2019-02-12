@@ -15,6 +15,8 @@ urlpatterns = [
     # path('snippets/', views.SnippetList.as_view()),
     # path('snippets/<int:pk>/', views.SnippetDetail.as_view()),
     path('graph/', views.graph),
+    path('graph/export/', views.graph_export),
+    path('graph/import/', views.graph_import),
     path('graph/analyse/', views.graph_analysis),
     path('nodes/', views.nodes),
     path('nodes/<int:pk>/', views.node_detail),
