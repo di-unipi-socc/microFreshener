@@ -36,6 +36,26 @@ export class ForceDirectedGraph {
       return this.nodes;
     }
 
+    public getDeploymentTimeLinks():DeploymentTimeLink[]{
+      var deplLinks:DeploymentTimeLink[] = []
+      this.nodes.forEach((node)=>{
+        node.getDeploymentLinks().forEach((link)=>deplLinks.push(link));
+
+      })
+      console.log(deplLinks);
+      return deplLinks;
+    }
+
+    public getRunTimeLinks():RunTimeLink[]{
+      var runLinks:RunTimeLink[] = []
+      this.nodes.forEach((node)=>{
+        node.getRunTimeLinks().forEach((link)=>runLinks.push(link));
+
+      })
+      console.log(runLinks);
+      return runLinks;
+    }
+
     public static fromJSON(json:Object):ForceDirectedGraph{
       let graph = new ForceDirectedGraph([],[],{ width:600, height:500 } );
       let name  = json['name'];
@@ -46,6 +66,10 @@ export class ForceDirectedGraph {
       }
       graph.getNodes().forEach((node)=> console.log(node));
       return graph
+    } 
+
+    getNode(node:Node):Node{
+      return this.nodes.find(x => x.name == node.name);
     }
 
     getNodeByName(name:string){
@@ -54,6 +78,30 @@ export class ForceDirectedGraph {
 
     public getLinks(){
       return this.links;
+    }
+
+    public removeNode(n:Node){
+      // remove the upcoming links from other nodes
+      n.up_deployment_time_requirements.forEach((link)=>{
+        link.source.removeDeploymentTimeLink(link);
+      });
+      n.up_run_time_requirements.forEach((link)=>{
+        link.source.removeRunTimeLink(link)
+      })
+      // remove the node
+      this.nodes= this.nodes.filter(node => node.name !== n.name)
+      console.log(this.nodes);
+    }
+
+    public removeLink(l:Link){
+      var sourceNode:Node = l.source;
+      if(l.constructor == RunTimeLink){
+        sourceNode.removeRunTimeLink(l);
+      }
+      else{
+        sourceNode.removeDeploymentTimeLink(l);
+      }
+
     }
 
     public addNode(n:Node){
@@ -69,10 +117,7 @@ export class ForceDirectedGraph {
         // var l:DeploymentTimeLink = new RunTimeLink(source, target);
         // this.links.push(l);
     }
-   
-    // public addLink(l:Link){
-    //   this.links.push(l);
-    // }
+  
 
     connectNodes(source, target) {
         let link;
@@ -122,8 +167,7 @@ export class ForceDirectedGraph {
     
       // u.exit().remove()
     }
-
-        
+ 
     initNodes() {
       if (!this.simulation) {
         throw new Error('simulation was not initialized yet');
@@ -147,8 +191,6 @@ export class ForceDirectedGraph {
       );
     }
 
-    
-  
     initSimulation(options) {
       if (!options || !options.width || !options.height) {
           throw new Error('missing options when initializing simulation');

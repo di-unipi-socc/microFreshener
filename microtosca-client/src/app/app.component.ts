@@ -28,6 +28,14 @@ export class AppComponent {
 
   }
 
+  onUpload(event) {
+    for(let file of event.files) {
+        console.log(file);
+    }
+  }
+
+    // this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+
   download(){
     this.gs.downloadGraph()
     .subscribe((data) => {

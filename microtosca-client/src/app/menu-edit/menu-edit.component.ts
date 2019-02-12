@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Node, Link, Database, Service,ForceDirectedGraph, D3Service, CommunicationPattern, DeploymentTimeLink, RunTimeLink} from '../d3';
-import {GraphService} from "../graph.service";
-import {DialogService} from 'primeng/api';
-import {AddLinkComponent} from '../add-link/add-link.component';
-import {AddNodeComponent} from '../add-node/add-node.component';
+import { GraphService } from "../graph.service";
+import { DialogService } from 'primeng/api';
+import { AddLinkComponent } from '../add-link/add-link.component';
+import { AddNodeComponent } from '../add-node/add-node.component';
 import { RemoveNodeComponent } from '../remove-node/remove-node.component';
+import { RemoveLinkComponent } from '../remove-link/remove-link.component';
+
+import {TreeNode} from 'primeng/api';
 
 
 import {MessageService} from 'primeng/api';
-import {Message} from 'primeng/api';
+
 
 
 @Component({
@@ -81,16 +84,17 @@ export class MenuEditComponent implements OnInit {
     });
   
     ref.onClose.subscribe((nodes) => {
-      //TODO: show in a message the selected nodes
       if (nodes) {
         console.log(nodes);
+        nodes.forEach(node => {
+          this.gs.removeNode(node);
+          
+        });
       }else
       console.log("no name inserted");
     });
     
   }
-
-
 
   onClickNode(node:Node){
     switch(node.constructor) { 
@@ -135,7 +139,7 @@ export class MenuEditComponent implements OnInit {
           header: 'Add a Communication pattern',
           width: '90%'
         });
-        ref.onClose.subscribe((node) => {
+        ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
             this.gs.addNode(new CommunicationPattern(2, name));
@@ -152,9 +156,9 @@ export class MenuEditComponent implements OnInit {
          break; 
       } 
     }
-   } 
+  } 
 
-   onClickLink(link:Link){
+  onClickLink(link:Link){
     switch(link.constructor) { 
       case RunTimeLink: { 
         console.log("Cliccked runtime");
@@ -184,6 +188,60 @@ export class MenuEditComponent implements OnInit {
           //TODO: show in a message the selected nidess
           if (nides.source && nides.target) {
             this.gs.addDeploymenttimeLink(nides.source, nides.target);
+            // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
+          }
+      });
+         break; 
+      } 
+      default : { 
+        console.log("LINK non riconosciuto");
+         break; 
+      } 
+   } 
+  }
+
+  removeLink(link:Link){
+    switch(link.constructor) { 
+      case RunTimeLink: { 
+
+        const ref = this.dialogService.open(RemoveLinkComponent, {
+            data: {
+              links: this.gs.getRunTimeLinks()
+          },
+            header: 'Remove Run-time interaction',
+            width: '90%'
+        });
+
+        ref.onClose.subscribe((links) => {
+          //TODO: show in a message the selected nodes
+          if (links) {
+            links.forEach((link)=>{
+              console.log("removed runtime links"+ link.source.name + " " + link.target.name);
+              this.gs.removeLink(link)}
+            );
+            // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
+          }
+          else
+          console.log("You must delect at lest two nodes")
+        });
+        break; 
+      }
+      case DeploymentTimeLink: { 
+        const ref = this.dialogService.open(RemoveLinkComponent, {
+          data: {
+            links: this.gs.getDeploymentTimeLinks()
+          },
+          header: 'Remove Deployment-time interaction',
+          width: '90%'
+        });
+
+        ref.onClose.subscribe((links) => {
+          //TODO: show in a message the selected nidess
+          if (links) {
+            links.forEach((link)=>{
+              console.log("removed deployment links"+ link.source.name + " " + link.target.name);
+              this.gs.removeLink(link)}
+            );
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
       });

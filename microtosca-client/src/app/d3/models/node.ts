@@ -1,8 +1,9 @@
 import { RunTimeLink, DeploymentTimeLink } from './link';
 import { json } from 'd3';
+import { Principle } from '../analysis/principles';
 
 // Implementing SimulationNodeDatum interface into our custom Node class
-export class Node implements d3.SimulationNodeDatum {
+export class Node implements d3.SimulationNodeDatum{
     index?: number;
     
     public x?: number;
@@ -20,6 +21,10 @@ export class Node implements d3.SimulationNodeDatum {
     run_time_links:RunTimeLink[];              // list of run time links 
     deployment_time_links:DeploymentTimeLink[]; // list of the deployemnt time links starting froma node
 
+    // reverse requirements
+    up_deployment_time_requirements:RunTimeLink[];
+    up_run_time_requirements:DeploymentTimeLink[];
+
     // TODO: implementare la classe  principles 
     principles:any; // list of principles associated with a node. each principles has associated one or antipatterns violated
     
@@ -35,25 +40,30 @@ export class Node implements d3.SimulationNodeDatum {
         this.fy = 20;
         this.run_time_links = [];
         this.deployment_time_links = [];
+        // reverse links
+        this.up_deployment_time_requirements = []
+        this.up_run_time_requirements = []
+
+        // list of violated principles
         this.principles = [];
     }
 
-    // return the antipatterns affecting a node
+    //TODO: principle class with associated a list of antipatterns and refactorings.
+    assignViolatedPrinciple(principle:Principle){
+        this.principles.push(principle);
+    }
+
+    // return the principles violated in  a node
     getViolatedPrinciples():any[]{
-        // let antipatterns = this.principles.filter(principle => { 
+        // filter the principles that has at least one antipatterns 
+        // let antipatterns = this.principles.map(principle => { 
         //     //  typeof principle.antipatterns  !== 'undefined' && 
-        //      principle.antipatterns.filter(length > 0;
-        //      console.log(principle.name);
-        //      console.log(principle.antipatterns);
+        //      principle.antipatterns.filter( antipattern => {
+        //         antipattern.cause.length > 0;
+        //      })
         // });
-        let antipatterns = this.principles.map(principle => { 
-            //  typeof principle.antipatterns  !== 'undefined' && 
-             principle.antipatterns.filter( antipattern => {
-                antipattern.cause.length > 0;
-             })
-        });
-        // console.log(antipatterns);
-        return antipatterns;
+        principlesForTreeModel:
+        return this.principles;
     }
 
     public static fromJSON(json:Object):Node{
@@ -92,6 +102,29 @@ export class Node implements d3.SimulationNodeDatum {
         return this.deployment_time_links.find(link => link.target.name == target);
     }
 
+    getOutgoingLinks(){
+        return this.run_time_links.concat(this.deployment_time_links);
+    }
+
+    removeRunTimeLink(l:RunTimeLink){
+        this.run_time_links= this.run_time_links.filter(link => link.target.name !== l.target.name)
+        // remove uplink form the target node
+        this._removeUpDeploymentTimeLink(l);
+    }
+
+    _removeUpRunTimeLink(l:RunTimeLink){
+        this.up_run_time_requirements= this.up_run_time_requirements.filter(link => link.source.name !== l.source.name)
+    }
+
+    removeDeploymentTimeLink(l:DeploymentTimeLink){
+        this.deployment_time_links= this.deployment_time_links.filter(link => link.target.name !== l.target.name)
+        this._removeUpDeploymentTimeLink(l);
+    }
+
+    _removeUpDeploymentTimeLink(l:RunTimeLink){
+        this.up_deployment_time_requirements= this.up_deployment_time_requirements.filter(link => link.source.name !== l.source.name)
+    }
+
     getRunTimeLinks(){
         return this.run_time_links;
     }
@@ -108,6 +141,7 @@ export class Node implements d3.SimulationNodeDatum {
         //     item.target.up_run_time_requirements.append(item)
         var link = new RunTimeLink(this, target);
         this.run_time_links.push(link);
+        target.up_run_time_requirements.push(link);
     }
     
     addDeploymentTimeLink(target:Node){
@@ -118,6 +152,7 @@ export class Node implements d3.SimulationNodeDatum {
         //     item.target.up_run_time_requirements.append(item)
         var link = new DeploymentTimeLink(this, target);
         this.deployment_time_links.push(link);
+        target.up_deployment_time_requirements.push(link);
     }
 }
 

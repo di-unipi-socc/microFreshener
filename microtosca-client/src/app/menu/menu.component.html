@@ -14,35 +14,26 @@
             </p-checkbox>
           </div>
       </div>
+
       <button type="button" pButton (click)="analyse()" label="Analyse" class="ui-button-warning"></button>
+
+      <h3>Results analysis</h3>
+      <p-tree [value]="nodes"  
+              selectionMode="checkbox"
+              (onNodeUnselect)="nodeUnSelect($event)"  
+              (onNodeSelect)="nodeSelect($event)" 
+              [propagateSelectionUp]="false" 
+              [propagateSelectionDown]="true"
+              [loading]="loading">
+              <ng-template let-node  pTemplate="principle">
+                  <i class="pi pi-times" style="color:red"></i>  {{node.label}}
+              </ng-template>
+    </p-tree>
 
    </p-accordionTab>
 
+   <!-- refactor tab -->
     <p-accordionTab header="Refactor">
-
-        <ul >
-            <li *ngFor="let node of gs.graph.nodes">
-              <span class="badge">{{node.name}}</span> 
-                <ul >
-                <li *ngFor="let principle of node.principles">
-                  <span class="badge">{{principle.name}}</span> 
-                    <ul >
-                      <li *ngFor="let antipattern of principle.antipatterns">
-                        <span class="badge" (click)="onSelectedAntipattern(antipattern)">{{antipattern.name}}</span> 
-                          <span *ngFor="let cause of antipattern.cause">
-                            (source: {{cause.source}}, target:{{cause.target}}
-                          </span>
-                        <ul >
-                          <li *ngFor="let refactoring of antipattern.refactorings">
-                            <span class="badge">{{refactoring.name}}</span> 
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                </li>
-              </ul>
-
-            </li>
-          </ul>
+      
     </p-accordionTab>
 </p-accordion>

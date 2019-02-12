@@ -28,8 +28,8 @@ export class Link implements d3.SimulationLinkDatum<Node> {
             return {'target': this.target, 'type':this.type};
     }    
 
-    setBadInteraction(){
-        this.isBadInteraction = true;
+    setBadInteraction(bool:boolean){
+        this.isBadInteraction = bool;
     }
 
 }

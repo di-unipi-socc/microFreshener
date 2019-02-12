@@ -53,6 +53,7 @@ export class GraphService {
    }
 
    // apply refactorings
+  
 
   getNodes():Node[]{
     return this.graph.getNodes();
@@ -65,13 +66,29 @@ export class GraphService {
   getDatabase():Node[]{
     return this.getNodes().filter(node => node.constructor == Database);
   }
-  
+
   getCommunicationPattern():Node[]{
     return this.getNodes().filter(node => node.constructor == CommunicationPattern);
   }
 
+  getRunTimeLinks():RunTimeLink[]{
+    return this.graph.getRunTimeLinks();
+  }
+
+  getDeploymentTimeLinks():DeploymentTimeLink[]{
+    return this.graph.getDeploymentTimeLinks();
+  }
+
+  removeLink(l:Link){
+    return this.graph.removeLink(l);
+  }
+
   getNode(name:string):Node{
     return this.graph.getNodeByName(name);
+  }
+
+  removeNode(node:Node){
+    return this.graph.removeNode(node);
   }
 
   getGraph():ForceDirectedGraph{
@@ -90,6 +107,7 @@ export class GraphService {
     this.graph.addRunTimeLink(source, target);
   }
 
+  // Export the graph to JSON
   exportToJSON(){
     return JSON.stringify(this.graph);
   }
@@ -118,9 +136,9 @@ export class GraphService {
 
   }
 
-  getAnalysis(principles:string[]):Observable<string> {
+  runRemoteAnalysis(principles:string[]):Observable<string> {
     const params = new HttpParams()
-      .set('principles', principles.join()); // create principles parameters separated by commma
+      .set('principles', principles.join()); // principles to be analysed: principles separated by commma
     return this.http.get<string>(this.analysisUrl, {params}).pipe(
       tap(_ => this.log(`Send analysis`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))

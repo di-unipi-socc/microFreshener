@@ -15,8 +15,18 @@
     </div>
     <p-sidebar [(visible)]="display" position="right">
 
-         <button type="button" pButton (click)="upload()" icon="pi pi-upload" label="Upload" class="ui-button-success"></button>
-         <button type="button" pButton (click)="download()" icon="pi pi-download" label="Download" class="ui-button-warning"></button>
+            <div class="p-grid p-align-end">
+                <div class="p-col">
+                <button type="button" pButton (click)="upload()" icon="pi pi-upload" label="Save" class="ui-button-success"></button>
+                <!-- <p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="*.json" 
+                    maxFileSize="1000000" (onUpload)="onUpload($event)">
+                </p-fileUpload>-->
+                </div> 
+
+                <div class="p-col">
+                <button type="button" pButton (click)="download()" icon="pi pi-download" label="Export" class="ui-button-warning"></button>
+                </div>
+            </div>
 
     </p-sidebar>
         

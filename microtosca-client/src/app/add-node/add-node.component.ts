@@ -16,11 +16,12 @@ export class AddNodeComponent implements OnInit {
   constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
-    this.name = null;
+    // this.name = null;
   }
 
-  newNode(name:string){
-    this.ref.close(name);
+  save(){
+    console.log(this.name),
+    this.ref.close(this.name);
   }
 
 }

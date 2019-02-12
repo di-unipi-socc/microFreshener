@@ -1,0 +1,28 @@
+  
+
+ 
+
+<div class="p-grid">
+    <div class="p-col-12 p-md-6 p-lg-3">
+        <p-listbox [options]="links" multiple="multiple" [(ngModel)]="selectedLink" checkbox="checkbox" filter="filter" optionLabel="source.name">
+            <p-header>
+              Link (source node)
+            </p-header>
+            <!-- <ng-template let-car pTemplate="item">
+                <div class="ui-helper-clearfix">
+                  <span style="float:right;margin:20px 10px 0 0">{{car.type}}</span>
+                </div>
+              </ng-template> -->
+          </p-listbox>
+    </div>
+    <div class="p-col-12 p-md-6 p-lg-3">
+      <h3>Links to remove</h3>
+        <li *ngFor="let link of selectedLink">
+            <span  style="margin-right: 10px">{{link.source.name}} --> {{link.target.name}}</span>
+          </li>
+    </div>
+</div>
+
+<div class="p-grid p-justify-end">
+    <p-button label="Remove"  icon="pi pi-trash" (onClick)="removeLinks()" styleClass="ui-button-danger"></p-button>
+</div>

@@ -21,8 +21,13 @@ import {TooltipModule} from 'primeng/tooltip';
 import {DialogModule} from 'primeng/dialog';
 import {ListboxModule} from 'primeng/listbox';
 import {CheckboxModule} from 'primeng/checkbox';
-import {ListboxModule} from 'primeng/listbox';
+import {FileUploadModule} from 'primeng/fileupload';
+// import {TreeModule} from 'primeng/tree';
+import {TreeModule } from 'primeng/primeng';
+import {TreeTableModule} from 'primeng/treetable'
 
+
+ 
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';
 import { MenuEditComponent } from './menu-edit/menu-edit.component';
@@ -33,6 +38,7 @@ import { AddLinkComponent } from './add-link/add-link.component';
 import { AddNodeComponent } from './add-node/add-node.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 import { RemoveNodeComponent } from './remove-node/remove-node.component';
+import { RemoveLinkComponent } from './remove-link/remove-link.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +53,8 @@ import { RemoveNodeComponent } from './remove-node/remove-node.component';
     AddNodeComponent,
     ModalRefactoringsComponent,
     RemoveNodeComponent,
+    RemoveLinkComponent,
+   
   ],
   imports: [
     BrowserModule,
@@ -62,17 +70,21 @@ import { RemoveNodeComponent } from './remove-node/remove-node.component';
     HttpClientModule,
     ListboxModule,
     CheckboxModule,
-    DialogModule
+    DialogModule,
+    FileUploadModule,
+    TreeModule,
+    TreeTableModule
   ],
   providers: [
     D3Service
     // MessageService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [
+  entryComponents: [ // entry componets used in DymanimcModal of PimeNg
     AddLinkComponent,
     AddNodeComponent,
-    RemoveNodeComponent
+    RemoveNodeComponent,
+    RemoveLinkComponent
   ]
 })
 export class AppModule { }

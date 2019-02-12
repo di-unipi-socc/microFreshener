@@ -26,5 +26,6 @@ export class Graph {
     public addNode(n:Node){
       this.nodes.push(n);
     }
-    
+
+ 
 }
