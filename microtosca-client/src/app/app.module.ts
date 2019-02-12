@@ -22,9 +22,10 @@ import {DialogModule} from 'primeng/dialog';
 import {ListboxModule} from 'primeng/listbox';
 import {CheckboxModule} from 'primeng/checkbox';
 import {FileUploadModule} from 'primeng/fileupload';
-// import {TreeModule} from 'primeng/tree';
 import {TreeModule } from 'primeng/primeng';
-import {TreeTableModule} from 'primeng/treetable'
+import {TreeTableModule} from 'primeng/treetable';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
 
  
@@ -73,11 +74,13 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     DialogModule,
     FileUploadModule,
     TreeModule,
-    TreeTableModule
+    TreeTableModule,
+    MessagesModule,
+    MessageModule
   ],
   providers: [
-    D3Service
-    // MessageService
+    D3Service,
+    MessageService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ // entry componets used in DymanimcModal of PimeNg

@@ -1,1 +1,162 @@
-{"name": "init name", "nodes": [{"name": "shipping", "type": "service", "run_time_links": [{"target": "orderdb", "type": "runtime"}], "deployment_time_links": [{"target": "orderdb", "type": "deploymenttime"}]}, {"name": "order", "type": "service", "run_time_links": [{"target": "shipping", "type": "runtime"}, {"target": "orderdb", "type": "runtime"}], "deployment_time_links": []}, {"name": "orderdb", "type": "database", "run_time_links": [], "deployment_time_links": []}]}
+{
+    "ticker": {
+        "_isScalar": false,
+        "observers": [],
+        "closed": false,
+        "isStopped": false,
+        "hasError": false,
+        "thrownError": null,
+        "__isAsync": false
+    },
+    "nodes": [
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "shipping",
+            "x": 20,
+            "y": 20,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_deployment_time_requirements": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_run_time_requirements": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                }
+            ],
+            "principles": [],
+            "raggio": 20
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "order",
+            "x": 364.01251220703125,
+            "y": 39.79999923706055,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_deployment_time_requirements": [],
+            "up_run_time_requirements": [],
+            "principles": [],
+            "raggio": 20
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "communicationpattern",
+            "name": "rabbitmq",
+            "x": 96.01249694824219,
+            "y": 89.80000305175781,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [],
+            "deployment_time_links": [],
+            "up_deployment_time_requirements": [],
+            "up_run_time_requirements": [
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                },
+                {
+                    "target": "rabbitmq",
+                    "type": "runtime"
+                }
+            ],
+            "principles": []
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "database",
+            "name": "orderdb",
+            "x": 188.0124969482422,
+            "y": 208.8000030517578,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [],
+            "deployment_time_links": [],
+            "up_deployment_time_requirements": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_run_time_requirements": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                }
+            ],
+            "principles": []
+        }
+    ],
+    "links": [],
+    "name": "init name",
+    "_options": {
+        "width": 1000,
+        "height": 700
+    }
+}

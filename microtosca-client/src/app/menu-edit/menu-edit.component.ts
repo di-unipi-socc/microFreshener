@@ -6,19 +6,13 @@ import { AddLinkComponent } from '../add-link/add-link.component';
 import { AddNodeComponent } from '../add-node/add-node.component';
 import { RemoveNodeComponent } from '../remove-node/remove-node.component';
 import { RemoveLinkComponent } from '../remove-link/remove-link.component';
-
-import {TreeNode} from 'primeng/api';
-
-
 import {MessageService} from 'primeng/api';
-
-
 
 @Component({
   selector: 'app-menu-edit',
   templateUrl: './menu-edit.component.html',
   styleUrls: ['./menu-edit.component.css'],
-  providers: [DialogService, MessageService]
+  providers: [DialogService]
 })
 export class MenuEditComponent implements OnInit {
   
@@ -88,7 +82,7 @@ export class MenuEditComponent implements OnInit {
         console.log(nodes);
         nodes.forEach(node => {
           this.gs.removeNode(node);
-          
+          this.messageService.add({severity:'success', summary:'Node removed correctly', detail: node.name});
         });
       }else
       console.log("no name inserted");
@@ -109,6 +103,7 @@ export class MenuEditComponent implements OnInit {
           if (name) {
             this.gs.addNode(new Database(2, name));
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
+            this.messageService.add({severity:'success', summary: "Database " + name+" added correctly", detail: node.name});
           }else
           console.log("no name inserted");
         });
@@ -117,18 +112,19 @@ export class MenuEditComponent implements OnInit {
       } 
       case Service: { 
         console.log("Cliccked service");
-        
         const ref = this.dialogService.open(AddNodeComponent, {
           header: 'Add a Service',
           width: '90%'
         });
-        ref.onClose.subscribe((node) => {
+        ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
             this.gs.addNode(new Service(2 ,name));
+            this.messageService.add({severity:'success', summary:"Service "+ name+ " added correctly", detail: node.name});
+
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }else
-          console.log("no name inserted");
+            console.log("no name inserted");
         });
         
         break; 
@@ -143,6 +139,8 @@ export class MenuEditComponent implements OnInit {
           //TODO: show in a message the selected nodes
           if (name) {
             this.gs.addNode(new CommunicationPattern(2, name));
+            this.messageService.add({severity:'success', summary:"Communication pattern " + name+" added  correctly", detail: node.name});
+
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }else
           console.log("no name inserted");

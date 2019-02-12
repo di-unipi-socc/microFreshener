@@ -10,30 +10,27 @@
 
     <div class="p-col-12 p-md-8 p-col-nogutter">
         <!-- <app-graph-editor></app-graph-editor>  -->
+        <p-messages [(value)]="msgs"></p-messages>
         <app-graph-editor></app-graph-editor> 
 
     </div>
     <p-sidebar [(visible)]="display" position="right">
+            <div class="p-grid p-align-center">
+                <div class="p-col">
+                  <button cslass="ui-button-success" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>
+                </div>
+            </div>
+
 
             <div class="p-grid p-align-end">
                 <div class="p-col">
-
-                  <button pButton type="button" (click)="upload()" label="Save" icon="pi pi-arrow-right"></button>
-
                     <p-fileUpload mode="basic" 
                                     name="graph" 
                                     url="http://127.0.0.1:8000/graph/import/" 
                                     accept=".json"
-                                    (onUpload)="onUpload($event)">
+                                    (onUpload)="onUpload($event)"
+                                    chooseLabel="Import">
                     </p-fileUpload>
-
-                    <!-- <p-fileUpload   customUpload="true"
-                                    mode="basic" 
-                                    (uploadHandler)="onUpload($event)" 
-                                    accept=".json">
-                    </p-fileUpload> -->
-                    
-
 
                 </div> 
 
