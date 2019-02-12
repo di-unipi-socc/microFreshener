@@ -26,7 +26,10 @@
               [propagateSelectionDown]="true"
               [loading]="loading">
               <ng-template let-node  pTemplate="principle">
-                  <i class="pi pi-times" style="color:red"></i>  {{node.label}}
+                   {{node.label}} <i class="pi pi-times" style="color:red"></i> 
+              </ng-template>
+              <ng-template let-node  pTemplate="ok">
+                 <span style="color:green">{{node.label}}  </span> <i class="pi pi-check" style="color:green"></i>
               </ng-template>
     </p-tree>
 

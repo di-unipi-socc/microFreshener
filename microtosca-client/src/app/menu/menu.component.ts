@@ -131,9 +131,16 @@ export class MenuComponent implements OnInit {
     this.nodes = [];
     this.gs.getNodes().forEach((node)=>{
       console.log("adding node");
-      var n = {'label': node.name, collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false, 'children':[]};
+      var principles = node.getViolatedPrinciples();
+      var n = {'label': node.name,  collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false};
+      if(principles.length == 0)
+        n['type'] = "ok"; // type used to show the grenn icon
+      else
+       n['children'] = [];
+
       this.nodes.push(n);
-      node.getViolatedPrinciples().forEach((principle)=>{
+
+      principles.forEach((principle)=>{
           var p = {'label':principle.name, selectable:false, 'type':"principle"};
           n['children'].push(p);
           if(principle['antipatterns']){
