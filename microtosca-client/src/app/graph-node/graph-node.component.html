@@ -7,7 +7,10 @@
         [attr.cy]="node.y"
         [attr.r]="node.raggio">
     </svg:circle>
-    <text [attr.x]="node.x" [attr.y]="node.y"  font-family="Verdana" font-size="15" fill="black">{{node.name}}</text>
+    <text *ngSwitchCase="'service'" [attr.x]="node.x" [attr.y]="node.y - (node.raggio + 10)"  class="node-name" >{{node.name}}</text>
+    <text *ngSwitchCase="'database'" [attr.x]="node.x" [attr.y]="node.y + 40"  class="node-name" >{{node.name}}</text>
+    <text *ngSwitchCase="'communicationpattern'" [attr.x]="node.x + 10" [attr.y]="node.y +40"  class="node-name" >{{node.name}}</text>
+   
     <svg:rect *ngSwitchCase="'database'" 
                 class="database"
                 [attr.x]="node.x"

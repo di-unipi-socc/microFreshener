@@ -155,5 +155,11 @@ export class GraphService {
     // this.messageService.add(`HeroService: ${message}`);
   }
 
+  clearBadInteractions(){
+    this.graph.getNodes().forEach((node)=>{
+      node.getOutgoingLinks().forEach((link)=> link.setBadInteraction(false))
+    })
+  }
+
 
 }

@@ -23,6 +23,7 @@
                 <button  (click)="display = true" pButton type="button"icon="pi pi-bars"></button>
             </div>
         </p-toolbar>
+        <p-messages [(value)]="msgs"></p-messages>
     </div>
 
     <!-- menu sidebar -->
@@ -31,7 +32,6 @@
     </div>
 
     <div class="p-col-12 p-md-8 p-col-nogutter">
-        <p-messages [(value)]="msgs"></p-messages>
         <app-graph-editor></app-graph-editor> 
     </div>
 

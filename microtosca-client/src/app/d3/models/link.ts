@@ -9,7 +9,7 @@ export class Link implements d3.SimulationLinkDatum<Node> {
     source: Node; //| string | number;
     target: Node;// | string | number;
 
-    isBadInteraction: boolean;
+    isBadInteraction: boolean; // used to show red links
 
     type: string; // runtime, deploymenttime
     

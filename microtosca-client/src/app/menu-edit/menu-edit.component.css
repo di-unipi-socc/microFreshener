@@ -4,6 +4,19 @@
     background-color: rgb(161, 157, 157);
 } */
 
+
+.service {
+    fill:#065143;
+}
+
+.database {
+    fill:#4E7F64;
+}
+
+.communicationpattern {
+    fill:#97CAA1;
+}
+
 .text-name {
     stroke: rgb(0, 0, 0); 
     fill: rgb(0, 0, 0);
@@ -12,24 +25,6 @@
 .link {
     stroke-width: 4;
     stroke: rgb(0, 0, 0);
-}
-
-.service {
-    fill:rgb(224, 221, 12);
-    /* stroke-width:3;
-    stroke:rgb(0,0,0); */
-}
-
-.database {
-    fill:rgb(0,0,255);
-    /* stroke-width:3;
-    stroke:rgb(0,0,0); */
-}
-
-.communicationpattern {
-    fill:rgb(233, 59, 16);
-    /* stroke-width:3;
-    stroke:rgb(0,0,0); */
 }
 
 .my-button {

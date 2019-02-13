@@ -1,20 +1,14 @@
 
 .service {
-    fill:rgb(224, 221, 12);
-    stroke-width:2;
-    stroke:rgb(0,0,0);
+    fill:#065143;
 }
 
 .database {
-    fill:rgb(0,0,255);
-    stroke-width:1;
-    stroke:rgb(0,0,0);
+    fill:#4E7F64;
 }
 
 .communicationpattern {
-    fill:rgb(233, 59, 16);
-    stroke-width:1;
-    stroke:rgb(0,0,0);
+    fill:#97CAA1;
 }
 
 .node-name {
@@ -22,7 +16,8 @@
   text-anchor: middle;
   alignment-baseline: central;
   font-weight: 300;
-  fill: white;
+  fill: #3C493F; 
+  /* #031926 */
 }
 
 .antippaterns {
