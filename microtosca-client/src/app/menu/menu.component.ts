@@ -18,11 +18,11 @@ export class MenuComponent implements OnInit {
 
   constructor( private gs: GraphService) {
     //TODO: get the princniples with a service from the server
-    this.principles.push({"name":"Decentralized Data Management", "value":"decentralizedData"});
-    this.principles.push({"name":"Bounded context", "value":"boundedContext"});
-    this.principles.push({"name":"Independent deployment", "value":"independentlyDeployable"});
-    this.principles.push({"name":"Horizzontal scalability", "value":"horizzontallyScalable"});
-    this.principles.push({"name":"Fault resilience", "value":"faultResilience"});
+
+    this.principles.push({"name":"Independent Deployability", "value":"IndependentDeployability"});
+    this.principles.push({"name":"Horizontal Scalability", "value":"HorizontalScalability"});
+    this.principles.push({"name":"Isolate Failure", "value":"IsolateFailure"});
+    this.principles.push({"name":"Decentralise Everything", "value":"DecentraliseEverything"});
 
     this.selectedPrinciples = this.principles;
   } 

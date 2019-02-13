@@ -23,7 +23,7 @@ export class ForceDirectedGraph {
     // TODO: delete the links array. each node has its own list of links
     public links: Link[] = [];
 
-    public name = "init name";
+    public name = "Simple app";
 
     constructor(nodes, links, options: { width, height }) {
         this.nodes = nodes;

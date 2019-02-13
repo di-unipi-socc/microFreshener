@@ -1,11 +1,13 @@
 
 <p-accordion [multiple]="true">
+    <!-- Editor tab -->
     <p-accordionTab header="Editor">
       <app-menu-edit> 
         
       </app-menu-edit>
     </p-accordionTab>
 
+    <!-- Analyser tab -->
     <p-accordionTab header="Analyser">
       <h3>Principles to analyse</h3>
       <div class="ui-g" style="width:250px;margin-bottom:10px">
@@ -15,10 +17,16 @@
           </div>
       </div>
 
-      <button type="button" pButton (click)="analyse()" label="Analyse" class="ui-button-warning"></button>
+      <div class="p-grid p-justify-end">
+        <button class="p-col-2" type="button" pButton (click)="analyse()" label="Analyse" class="ui-button-warning">
+        </button>
+      </div>
 
-      <h3>Results analysis</h3>
-      <p-tree [value]="nodes"  
+
+      <h3>Results of the analysis</h3>
+      <span *ngIf="nodes.length === 0" style="color:rgb(179, 15, 15)"> No results available </span>
+      <p-tree *ngIf="nodes.length > 0" 
+              [value]="nodes"  
               selectionMode="checkbox"
               (onNodeUnselect)="nodeUnSelect($event)"  
               (onNodeSelect)="nodeSelect($event)" 
@@ -37,6 +45,6 @@
 
    <!-- refactor tab -->
     <p-accordionTab header="Refactor">
-      
+      <h3>Apply the refactorings</h3>
     </p-accordionTab>
 </p-accordion>

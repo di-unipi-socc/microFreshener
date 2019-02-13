@@ -1,26 +1,46 @@
 <div class="p-grid sample-layout">
 
+    <!-- menu div -->
     <div class="p-col-12">
-            MicroTosca
+         <p-toolbar>
+            <div class="ui-toolbar-group-left">
+                <h3>{{title}}</h3>
+            </div>
+                <!-- <button pButton type="button" label="New" icon="pi pi-plus"></button>
+                <button pButton type="button" label="Upload" icon="pi pi-upload" class="ui-button-success"></button>
+                    
+                <i class="pi pi-bars"></i>
+                
+                <p-splitButton label="Save" icon="pi pi-check" [model]="items" styleClass="ui-button-warning"></p-splitButton>  -->
+       
+            
+            <div class="ui-toolbar-group-right">
+                <button pButton type="button"  #actualTarget icon="pi pi-user" (click)="op.show($event, actualTarget)" label="Admin" class="ui-button-success"> </button>
+                <p-overlayPanel #op>
+                        <div>Username: Admin</div>
+                        <div>Team: admin, dev</div>
+                </p-overlayPanel>
+                <button  (click)="display = true" pButton type="button"icon="pi pi-bars"></button>
+            </div>
+        </p-toolbar>
     </div>
-    <!-- menu sidebasr -->
+
+    <!-- menu sidebar -->
     <div class="p-col-12 p-md-4">
         <app-menu> </app-menu>
     </div>
 
     <div class="p-col-12 p-md-8 p-col-nogutter">
-        <!-- <app-graph-editor></app-graph-editor>  -->
         <p-messages [(value)]="msgs"></p-messages>
         <app-graph-editor></app-graph-editor> 
-
     </div>
+
     <p-sidebar [(visible)]="display" position="right">
             <div class="p-grid p-align-center">
                 <div class="p-col">
                   <button cslass="ui-button-success" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>
                 </div>
             </div>
-
 
             <div class="p-grid p-align-end">
                 <div class="p-col">
@@ -31,20 +51,17 @@
                                     (onUpload)="onUpload($event)"
                                     chooseLabel="Import">
                     </p-fileUpload>
-
                 </div> 
 
                 <div class="p-col">
                    <a pButton href="http://127.0.0.1:8000/graph/export/" style="width: 100px"  label="Export" icon="pi pi-download" class="ui-button-warning"></a>
                 </div>
             </div>
-
     </p-sidebar>
         
+    <!-- footer (for logo) -->
     <div class="p-col-12">
-        Footer
-
-        <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button>
+        <!-- <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button> -->
     </div>
 </div> 
 

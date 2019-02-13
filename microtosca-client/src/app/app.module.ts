@@ -26,6 +26,8 @@ import {TreeModule } from 'primeng/primeng';
 import {TreeTableModule} from 'primeng/treetable';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
+import {ToolbarModule} from 'primeng/toolbar';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 
 
  
@@ -76,7 +78,9 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     TreeModule,
     TreeTableModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    ToolbarModule,
+    OverlayPanelModule
   ],
   providers: [
     D3Service,

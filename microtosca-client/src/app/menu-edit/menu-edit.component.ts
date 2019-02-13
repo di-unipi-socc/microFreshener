@@ -22,15 +22,9 @@ export class MenuEditComponent implements OnInit {
   deploymenttimelink: Link;
   runtimelink: Link;
   
-  // TODO: used to show messages 
-  // msgs: Message[] = []; // show messages
+  name:string; // name of the app
 
-
-  graph:ForceDirectedGraph = null;
-  
-  constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) { 
-
-  }
+  constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) {   }
 
   ngOnInit() {
      this.service = new Service(0,'');
@@ -38,8 +32,14 @@ export class MenuEditComponent implements OnInit {
      this.communicationPattern = new CommunicationPattern(0,'');
      this.deploymenttimelink = new DeploymentTimeLink(null, null);
      this.runtimelink = new RunTimeLink(null, null);
+
+    this.name = this.gs.graph.name;
   }
 
+  saveName(){
+    this.gs.graph.name = this.name;
+    this.messageService.add({severity:'success', summary:'App renamed correctly', detail: "New name "+ this.name});
+  }
   removeNode(node:Node){
     var nodes:Node[] = null;
     var header:string = "";
@@ -251,7 +251,4 @@ export class MenuEditComponent implements OnInit {
       } 
    } 
   }
-
-
-
 }

@@ -16,7 +16,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
   // private graph: ForceDirectedGraph;
 
-  _options = {width: 600, height:500};
+  _options = {width: 1000, height:1000};
 
   constructor(private gs: GraphService, private ref: ChangeDetectorRef) {  }
 

@@ -1,10 +1,7 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
-import { D3Service} from './d3';
+import {Component} from '@angular/core';
 import {ForceDirectedGraph} from './d3'
-import  {GraphService} from "./graph.service";
-import { Node, RunTimeLink,Link, Service, Database, DeploymentTimeLink, CommunicationPattern} from "./d3";
+import {GraphService} from "./graph.service";
 import {MessageService} from 'primeng/api';
-import {Message} from 'primeng//api';
 
 
 @Component({
@@ -13,9 +10,9 @@ import {Message} from 'primeng//api';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Ciao microtosca-client';
+  title = 'MicroTosca Analyser';
 
-  display;
+  display:boolean = false;
 
   constructor(private gs: GraphService, private messageService: MessageService) {  }
 
