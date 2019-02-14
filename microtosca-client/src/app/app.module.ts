@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 
+
 // Import primeNG modules
 import {AccordionModule} from 'primeng/accordion';
 import {MessageService} from 'primeng/api';
@@ -28,8 +29,6 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {ToolbarModule} from 'primeng/toolbar';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
-
-
  
 //import d3js component
 import { D3Service, D3_DIRECTIVES} from './d3';

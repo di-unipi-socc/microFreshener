@@ -40,6 +40,7 @@ export class MenuEditComponent implements OnInit {
     this.gs.graph.name = this.name;
     this.messageService.add({severity:'success', summary:'App renamed correctly', detail: "New name "+ this.name});
   }
+
   removeNode(node:Node){
     var nodes:Node[] = null;
     var header:string = "";
@@ -138,7 +139,8 @@ export class MenuEditComponent implements OnInit {
         ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
-            this.gs.addNode(new CommunicationPattern(2, name));
+            this.gs.getGraphjoint().addService("test");
+            // this.gs.addNode(new CommunicationPattern(2, name));
             this.messageService.add({severity:'success', summary:"Communication pattern " + name+" added  correctly", detail: node.name});
 
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});

@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetect
 import { D3Service, ForceDirectedGraph, Node, Link, Service, Database } from '../d3';
 import  {GraphService} from "../graph.service";
 import * as d3 from 'd3';
+import * as joint from 'jointjs';
 
 @Component({
   selector: 'app-graph-editor',
@@ -16,16 +17,27 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
   // private graph: ForceDirectedGraph;
 
-  _options = {width: 1000, height:1000};
+  _options = {width: 500, height:300};
 
   constructor(private gs: GraphService, private ref: ChangeDetectorRef) {  }
 
   ngAfterViewInit() {
-    // this.gs.graph.initSimulation(this._options);
-  }
-  
 
-  ngOnInit() {
+    var g = <joint.dia.Graph><any>this.gs.graphjoint; // ATTENTION <any> cast for deiable error on casting
+
+      var paper = new joint.dia.Paper({
+        el: document.getElementById('myholder'),
+        model: g,
+        width: this._options.width,
+        height: this._options.height,
+        gridSize: 1
+    });
+  }
+
+  ngOnInit() { }
+
+  addNode(){
+    this.gs.getGraphjoint().addService("wq3");
   }
 
   onSelectedNode(n:Node){

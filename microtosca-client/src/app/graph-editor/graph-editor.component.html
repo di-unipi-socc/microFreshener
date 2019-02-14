@@ -1,22 +1,15 @@
-<!-- <svg #svg [attr.width]="_options.width" [attr.height]="_options.height">
-  <g [zoomableOf]="svg">
-    <svg [nodeVisual]="node" 
-        *ngFor="let node of gs.graph.nodes"  
-        [draggableNode]="node"
-        [draggableInGraph]="graph"
-        (click)="onSelectedNode(node)"
-        >
-    </svg>
-  </g>
-</svg>
- -->
 
+<div id="myholder"></div>
+
+<button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addNode()"></button>
+
+<!-- 
 <svg #svg [attr.width]="_options.width" [attr.height]="_options.height">
   <g [zoomableOf]="svg">
-    <!-- <g [linkVisual]="link" 
+    <! - - <g [linkVisual]="link" 
       *ngFor="let link of gs.graph.links"
       (click)="onSelectedLink(link)">
-    </g> -->
+    </g> - - >
     <g  [nodeVisual]="node" 
         *ngFor="let node of  gs.graph.nodes"  
         [draggableNode]="node"
@@ -25,4 +18,4 @@
         >
     </g>
   </g>
-</svg>
+</svg> -->

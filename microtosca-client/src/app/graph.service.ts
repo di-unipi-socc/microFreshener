@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import {ForceDirectedGraph, Node, RunTimeLink,Link, Service, Database, DeploymentTimeLink, CommunicationPattern} from "./d3";
-import { inspect } from 'util'; // for converting into json an object
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { tap, retry } from 'rxjs/operators';
+import * as joint from 'jointjs';
+
+import { GraphFactory } from './graph-factory';
+import { Graph } from './model/graph';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -15,6 +18,9 @@ const httpOptions = {
 export class GraphService {
 
   graph: ForceDirectedGraph = null;
+  graphjoint: Graph;
+  
+  graphFactory:GraphFactory; 
 
   private graphUrl = 'http://127.0.0.1:8000/graph/?format=json';  // URL to web api
   private graphUrlPost = 'http://127.0.0.1:8000/graph/';  // URL to web api
@@ -23,9 +29,12 @@ export class GraphService {
 
 
   constructor(private http: HttpClient) {
+    this.graphFactory = new GraphFactory();
+    
+    this.graphjoint =  this.graphFactory.getGraph("jointjs");
+
     var nodes: Node[] = [];
     var links: Link[] = [];
-
     var s = new Service(1,'shipping');
     nodes.push(s);
     var o = new Service(1,'order');
@@ -49,11 +58,13 @@ export class GraphService {
     o.addRunTimeLink(cp);
 
     this.graph = new ForceDirectedGraph(nodes, links, { width:2000, height:2000 });
-    console.log(this.graph);
+
+    console.log("created join graph");
    }
 
-   // apply refactorings
-  
+   getGraphjoint():Graph{
+    return this.graphjoint;
+   }
 
   getNodes():Node[]{
     return this.graph.getNodes();
