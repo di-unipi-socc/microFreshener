@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
 from django.core.files.storage import FileSystemStorage
-
+from django.conf import settings
 
 # for function based api
 from rest_framework.decorators import api_view
@@ -25,8 +25,8 @@ from microanalyser.model.nodes import Service, Database, CommunicationPattern
 loader = JSONLoader()
 transformer = JSONTransformer()
 
-
 file_name = 'data-from-client.json'
+model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 
 @api_view(['GET'])
 @csrf_exempt
@@ -38,8 +38,8 @@ def graph_analysis(request):
         principles = request.GET.get('principles').split(',') 
         print(principles)
         mmodel = None
-        if(os.path.isfile(file_name)):
-            mmodel = loader.load(file_name)
+        if(os.path.isfile(model_file_path)):
+            mmodel = loader.load(model_file_path)
             analyser = MicroAnalyser(mmodel)
             res = analyser.analyse(principles_to_check=principles)
             print(res)
@@ -51,8 +51,8 @@ def graph_analysis(request):
 def graph_export(request):
     # export the graph as json file
     mmodel = None
-    if(os.path.isfile(file_name)):
-        mmodel = loader.load(file_name)
+    if(os.path.isfile(model_file_path)):
+        mmodel = loader.load(model_file_path)
         dmodel = transformer.transform(mmodel)
         response = HttpResponse(ContentFile(json.dumps(dmodel)), content_type='application/json')
         response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
@@ -71,7 +71,7 @@ def graph_import(request):
         graph_in_memory = request.FILES['graph']
         print(graph_in_memory.name) 
 
-        with open(file_name, 'wb+') as destination:
+        with open(model_file_path, 'wb+') as destination:
             for chunk in graph_in_memory.chunks():
                 print("wrinting chunk")
                 destination.write(chunk)
@@ -102,15 +102,15 @@ def graph_import(request):
 def graph(request):
     if request.method == 'POST':
         data = request.data
-        with open(file_name, 'w') as outfile:
+        with open(model_file_path, 'w') as outfile:
             json.dump(data, outfile, indent=4)
         return  Response( {"msg":"graph uploaded correclty"})
 
     if request.method == 'GET':
         # return the json file 
         mmodel = None
-        if(os.path.isfile(file_name)):
-            mmodel = loader.load(file_name)
+        if(os.path.isfile(model_file_path)):
+            mmodel = loader.load(model_file_path)
             dmodel = transformer.transform(mmodel)
             return Response(dmodel)
         else:

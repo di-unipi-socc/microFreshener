@@ -1,0 +1,241 @@
+{
+    "ticker": {
+        "_isScalar": false,
+        "observers": [],
+        "closed": false,
+        "isStopped": false,
+        "hasError": false,
+        "thrownError": null,
+        "__isAsync": false
+    },
+    "nodes": [
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "shipping",
+            "x": -47.271095275878906,
+            "y": -63.79926681518555,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_deployment_time_requirements": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_run_time_requirements": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                }
+            ],
+            "principles": [
+                {
+                    "name": "HorizontalScalability",
+                    "antipatterns": [
+                        {
+                            "name": "Direct Interaction",
+                            "cause": [
+                                {
+                                    "source": "order",
+                                    "target": "shipping",
+                                    "type": "runtime"
+                                }
+                            ],
+                            "refactorings": [
+                                {
+                                    "name": "add messagge broker"
+                                },
+                                {
+                                    "name": "add circuit braker"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "raggio": 20
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "service",
+            "name": "order",
+            "x": 309.5265808105469,
+            "y": -87.95744323730469,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                }
+            ],
+            "deployment_time_links": [
+                {
+                    "target": "shipping",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_deployment_time_requirements": [],
+            "up_run_time_requirements": [],
+            "principles": [
+                {
+                    "name": "IndependentDeployability",
+                    "antipatterns": [
+                        {
+                            "name": "Deployment Interaction",
+                            "cause": [
+                                {
+                                    "source": "order",
+                                    "target": "shipping",
+                                    "type": "deploymenttime"
+                                }
+                            ],
+                            "refactorings": [
+                                {
+                                    "name": "promote interactions"
+                                },
+                                {
+                                    "name": "remove interaction"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "IsolateFailure",
+                    "antipatterns": [
+                        {
+                            "name": "Cascading Failure",
+                            "cause": [
+                                {
+                                    "source": "order",
+                                    "target": "shipping",
+                                    "type": "runtime"
+                                }
+                            ],
+                            "refactorings": [
+                                {
+                                    "name": "Add circuit breaker"
+                                },
+                                {
+                                    "name": "Add message broker"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "raggio": 20
+        },
+        {
+            "linkCount": 0,
+            "id": 1,
+            "type": "database",
+            "name": "orderdb",
+            "x": 129.3951416015625,
+            "y": 140.3922576904297,
+            "vx": 11,
+            "vy": 20,
+            "fx": 11,
+            "fy": 20,
+            "run_time_links": [],
+            "deployment_time_links": [],
+            "up_deployment_time_requirements": [
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "deploymenttime"
+                }
+            ],
+            "up_run_time_requirements": [
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                },
+                {
+                    "target": "orderdb",
+                    "type": "runtime"
+                }
+            ],
+            "principles": [
+                {
+                    "name": "DecentraliseEverything",
+                    "antipatterns": [
+                        {
+                            "name": "Shared Persistency",
+                            "cause": [
+                                {
+                                    "source": "shipping",
+                                    "target": "orderdb",
+                                    "type": "deploymenttime"
+                                },
+                                {
+                                    "source": "order",
+                                    "target": "orderdb",
+                                    "type": "deploymenttime"
+                                },
+                                {
+                                    "source": "shipping",
+                                    "target": "orderdb",
+                                    "type": "runtime"
+                                },
+                                {
+                                    "source": "order",
+                                    "target": "orderdb",
+                                    "type": "runtime"
+                                }
+                            ],
+                            "refactorings": [
+                                {
+                                    "name": "merge services"
+                                },
+                                {
+                                    "name": "split database"
+                                },
+                                {
+                                    "name": "add database manager"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "links": [],
+    "name": "Simple app",
+    "_options": {
+        "width": 2000,
+        "height": 2000
+    }
+}
