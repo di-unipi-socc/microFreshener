@@ -6,7 +6,6 @@ import * as joint from 'jointjs';
 
 @Component({
   selector: 'app-graph-editor',
-  // changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './graph-editor.component.html',
   styleUrls: ['./graph-editor.component.css']
 })
@@ -25,8 +24,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
     var g = <joint.dia.Graph><any>this.gs.graphjoint; // ATTENTION <any> cast for deiable error on casting
 
-      var paper = new joint.dia.Paper({
-        el: document.getElementById('myholder'),
+    var paper = new joint.dia.Paper({
+        el: document.getElementById('jointjsgraph'),
         model: g,
         width: this._options.width,
         height: this._options.height,
@@ -35,10 +34,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() { }
-
-  addNode(){
-    this.gs.getGraphjoint().addService("wq3");
-  }
 
   onSelectedNode(n:Node){
     console.log(n);

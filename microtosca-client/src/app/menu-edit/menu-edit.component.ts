@@ -102,7 +102,8 @@ export class MenuEditComponent implements OnInit {
         ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
-            this.gs.addNode(new Database(2, name));
+            // this.gs.addNode(new Database(2, name));
+            this.gs.getGraphjoint().addDatabase(name);
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
             this.messageService.add({severity:'success', summary: "Database " + name+" added correctly", detail: node.name});
           }else
@@ -120,7 +121,8 @@ export class MenuEditComponent implements OnInit {
         ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
-            this.gs.addNode(new Service(2 ,name));
+            this.gs.getGraphjoint().addService(name);
+            // this.gs.addNode(new Service(2 ,name));
             this.messageService.add({severity:'success', summary:"Service "+ name+ " added correctly", detail: node.name});
 
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
@@ -139,7 +141,7 @@ export class MenuEditComponent implements OnInit {
         ref.onClose.subscribe((name) => {
           //TODO: show in a message the selected nodes
           if (name) {
-            this.gs.getGraphjoint().addService("test");
+            this.gs.getGraphjoint().addCommunicationPattern(name,"mb");
             // this.gs.addNode(new CommunicationPattern(2, name));
             this.messageService.add({severity:'success', summary:"Communication pattern " + name+" added  correctly", detail: node.name});
 
