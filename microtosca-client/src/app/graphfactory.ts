@@ -13,7 +13,6 @@ export class GraphFactory {
         console.log("Facorty method getGraph "+typegraph);
         if (typegraph == "jointjs"){
             console.log("using jointJs graph");
-            
             return new JoinJsGraph();
         }
         if (typegraph =="d3")
