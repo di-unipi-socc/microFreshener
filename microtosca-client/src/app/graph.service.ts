@@ -17,8 +17,9 @@ const httpOptions = {
 })
 export class GraphService {
 
-  graph: ForceDirectedGraph = null;
-  graphjoint: Graph;
+  d3graph_tobecancelled: ForceDirectedGraph;
+  
+  graph: Graph;
   
   graphFactory:GraphFactory; 
 
@@ -29,9 +30,10 @@ export class GraphService {
 
 
   constructor(private http: HttpClient) {
+    // factory for creating the graph object used to store the model
     this.graphFactory = new GraphFactory();
     
-    this.graphjoint =  this.graphFactory.getGraph("jointjs");
+    this.graph =  this.graphFactory.getGraph("jointjs");
 
     var nodes: Node[] = [];
     var links: Link[] = [];
@@ -57,17 +59,15 @@ export class GraphService {
     o.addDeploymentTimeLink(odb);
     o.addRunTimeLink(cp);
 
-    this.graph = new ForceDirectedGraph(nodes, links, { width:2000, height:2000 });
-
-    console.log("created join graph");
+    this.d3graph_tobecancelled = new ForceDirectedGraph(nodes, links, { width:2000, height:2000 });
    }
 
-   getGraphjoint():Graph{
-    return this.graphjoint;
-   }
+  getGraph():Graph{
+    return this.graph;
+  }
 
   getNodes():Node[]{
-    return this.graph.getNodes();
+    return this.d3graph_tobecancelled.getNodes();
   }
 
   getServices():Node[]{
@@ -83,39 +83,39 @@ export class GraphService {
   }
 
   getRunTimeLinks():RunTimeLink[]{
-    return this.graph.getRunTimeLinks();
+    return this.d3graph_tobecancelled.getRunTimeLinks();
   }
 
   getDeploymentTimeLinks():DeploymentTimeLink[]{
-    return this.graph.getDeploymentTimeLinks();
+    return this.d3graph_tobecancelled.getDeploymentTimeLinks();
   }
 
   removeLink(l:Link){
-    return this.graph.removeLink(l);
+    return this.d3graph_tobecancelled.removeLink(l);
   }
 
   getNode(name:string):Node{
-    return this.graph.getNodeByName(name);
+    return this.d3graph_tobecancelled.getNodeByName(name);
   }
 
   removeNode(node:Node){
-    return this.graph.removeNode(node);
+    return this.d3graph_tobecancelled.removeNode(node);
   }
 
-  getGraph():ForceDirectedGraph{
-    return this.graph;
-  }
+  // getGraph():ForceDirectedGraph{
+  //   return this.graph;
+  // }
 
   addNode(n:Node){
-    this.graph.addNode(n);
+    this.d3graph_tobecancelled.addNode(n);
   }
 
   addDeploymenttimeLink(source:Node, target:Node){
-    this.graph.addDeploymentTimeLink(source, target);
+    this.d3graph_tobecancelled.addDeploymentTimeLink(source, target);
   }
 
   addRunTimeLink(source:Node, target:Node){
-    this.graph.addRunTimeLink(source, target);
+    this.d3graph_tobecancelled.addRunTimeLink(source, target);
   }
 
   // Export the graph to JSON
@@ -167,7 +167,7 @@ export class GraphService {
   }
 
   clearBadInteractions(){
-    this.graph.getNodes().forEach((node)=>{
+    this.d3graph_tobecancelled.getNodes().forEach((node)=>{
       node.getOutgoingLinks().forEach((link)=> link.setBadInteraction(false))
     })
   }

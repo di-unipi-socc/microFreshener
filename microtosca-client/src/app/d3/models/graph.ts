@@ -5,7 +5,7 @@ import { Node } from './node';
 import * as d3 from 'd3';
 
 
-export class Graph {
+export class D3Graph {
     public nodes: Node[] = [];
     public links: Link[] = [];
     public group: Node[]; // raggruppa i nou

@@ -3,6 +3,8 @@ import { EventEmitter } from '@angular/core';
 import { Link, DeploymentTimeLink, RunTimeLink} from './link';
 import { Node } from './node';
 
+import {Graph} from '../../model/graph';
+
 
 import * as d3 from 'd3';
 
@@ -12,7 +14,7 @@ const FORCES = {
     CHARGE: -1
 }
 
-export class ForceDirectedGraph {
+export class ForceDirectedGraph implements Graph{
     public ticker: EventEmitter<d3.Simulation<Node, Link>> = new EventEmitter();
     public simulation: d3.Simulation<any, any>;
 
@@ -31,7 +33,9 @@ export class ForceDirectedGraph {
         this._options = options; // added dido
         // this.initSimulation(options);
     }
-
+    addRunTimeInteraction(source:Node, target:Node){
+      
+    }
     public getNodes():Node[]{
       return this.nodes;
     }
@@ -124,6 +128,15 @@ export class ForceDirectedGraph {
     public addNode(n:Node){
       this.nodes.push(n);
     }
+
+    addService(name:string):void{}
+    removeService():void{}
+
+    addDatabase(name:string):void{}
+    removeDatabase():void{}
+
+    addCommunicationPattern(name:string, type:string):void{}
+    removeCommunicationPattern():void{}
 
     public addDeploymentTimeLink(source: Node, target: Node){
       source.addDeploymentTimeLink(target);
