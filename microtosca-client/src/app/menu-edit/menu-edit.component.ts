@@ -42,25 +42,25 @@ export class MenuEditComponent implements OnInit {
   }
 
   removeNode(node:Node){
-    var nodes:Node[] = null;
+    var nodes:joint.dia.Cell[] = null;
     var header:string = "";
 
     switch(node.constructor) { 
       case Database: { 
         console.log("Cliccked database");
-        nodes = this.gs.getDatabase()
+        nodes = this.gs.getGraph().getDatabase()
         header = 'Remove Databases';
         break; 
       } 
       case Service: { 
         console.log("Cliccked service");
-        nodes = this.gs.getServices();
+        nodes = this.gs.getGraph().getServices();
         header =  'Remove Services';
          break; 
       } 
       case CommunicationPattern: {
         console.log("Remove communicatio patterns");
-        nodes = this.gs.getCommunicationPattern()
+        nodes = this.gs.getGraph().getCommunicationPattern()
         header = 'Remove Communication Patterns';
         break; 
       }
@@ -82,7 +82,7 @@ export class MenuEditComponent implements OnInit {
       if (nodes) {
         console.log(nodes);
         nodes.forEach(node => {
-          this.gs.removeNode(node);
+          this.gs.getGraph().removeNode(node.id);
           this.messageService.add({severity:'success', summary:'Node removed correctly', detail: node.name});
         });
       }else
@@ -174,7 +174,8 @@ export class MenuEditComponent implements OnInit {
           if (nodes.source && nodes.target) {
             console.log(nodes.source);
             // this.gs.getGraph().addRunTimeInteraction()
-            this.gs.addRunTimeLink(nodes.source, nodes.target);
+            // this.gs.addRunTimeLink(nodes.source, nodes.target);
+            this.gs.getGraph().addRunTimeInteraction(nodes.source.id, nodes.target.id);
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
           else
@@ -188,10 +189,12 @@ export class MenuEditComponent implements OnInit {
           width: '90%'
         });
 
-        ref.onClose.subscribe((nides) => {
-          //TODO: show in a message the selected nidess
-          if (nides.source && nides.target) {
-            this.gs.addDeploymenttimeLink(nides.source, nides.target);
+        ref.onClose.subscribe((nodes) => {
+          //TODO: show in a message the selected nodess
+          if (nodes.source && nodes.target) {
+            // this.gs.addDeploymenttimeLink(nides.source, nides.target);
+            this.gs.getGraph().addDeploymentTimeInteraction(nodes.source.id, nodes.target.id);
+
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
       });
@@ -210,7 +213,7 @@ export class MenuEditComponent implements OnInit {
 
         const ref = this.dialogService.open(RemoveLinkComponent, {
             data: {
-              links: this.gs.getRunTimeLinks()
+              // links: this.gs.getRunTimeLinks()getGraph()
           },
             header: 'Remove Run-time interaction',
             width: '90%'
@@ -221,7 +224,8 @@ export class MenuEditComponent implements OnInit {
           if (links) {
             links.forEach((link)=>{
               console.log("removed runtime links"+ link.source.name + " " + link.target.name);
-              this.gs.removeLink(link)}
+              // this.gs.removeLink(link)
+            }
             );
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }
@@ -233,7 +237,7 @@ export class MenuEditComponent implements OnInit {
       case DeploymentTimeLink: { 
         const ref = this.dialogService.open(RemoveLinkComponent, {
           data: {
-            links: this.gs.getDeploymentTimeLinks()
+            // links: this.gs.getDeploymentTimeLinks()
           },
           header: 'Remove Deployment-time interaction',
           width: '90%'
@@ -244,7 +248,8 @@ export class MenuEditComponent implements OnInit {
           if (links) {
             links.forEach((link)=>{
               console.log("removed deployment links"+ link.source.name + " " + link.target.name);
-              this.gs.removeLink(link)}
+              // this.gs.removeLink(link)
+            }
             );
             // this.messageService.add({severity:'success', summary:'Service Message', detail:"MMM"});
           }

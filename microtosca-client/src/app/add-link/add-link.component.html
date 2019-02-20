@@ -1,11 +1,11 @@
 <div class="p-grid p-justify-center">
         <div class="p-md-4">
             <h3> Source Node</h3>
-            <p-dropdown [options]="nodes"  placeholder="Select a node" [(ngModel)]="selectedSourceNode" optionLabel="name"></p-dropdown>
+            <p-dropdown [options]="nodes"  placeholder="Select a node" [(ngModel)]="selectedSourceNode" optionLabel="attributes.attrs.label.text"></p-dropdown>
         </div>
         <div class="p-md-4">
             <h3> Target Node</h3>
-            <p-dropdown [options]="nodes"  placeholder="Select a node" [(ngModel)]="selectedTargetNode" optionLabel="name"></p-dropdown>
+            <p-dropdown [options]="nodes"  placeholder="Select a node" [(ngModel)]="selectedTargetNode" optionLabel="attributes.attrs.label.text"></p-dropdown>
         </div>
 </div>
 

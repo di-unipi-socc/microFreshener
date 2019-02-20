@@ -4,6 +4,7 @@ import {DynamicDialogRef} from 'primeng/api';
 import {DynamicDialogConfig} from 'primeng/api';
 
 import {Node} from "../d3";
+import * as joint from 'jointjs';
 
 
 
@@ -13,17 +14,18 @@ import {Node} from "../d3";
   styleUrls: ['./add-link.component.css']
 })
 export class AddLinkComponent implements OnInit {
-  nodes : Node[];
-  selectedSourceNode: Node = null;
-  selectedTargetNode: Node = null;
+  nodes: joint.dia.Cell[];
+  selectedSourceNode:joint.dia.Cell = null;
+  selectedTargetNode:joint.dia.Cell = null;
 
   constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
 
   ngOnInit() {
-    this.nodes = this.gs.getNodes();
+    this.nodes = this.gs.getGraph().getNodes();
+    // this.selectedSourceNode.get('name');
   }
 
-  selectedNodes(s: Node, t:Node) {
+  selectedNodes(s:joint.dia.Cell, t:joint.dia.Cell) {
     this.ref.close({'source':s, 'target':t});
   } 
 

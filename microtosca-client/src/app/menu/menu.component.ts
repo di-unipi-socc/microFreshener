@@ -131,44 +131,44 @@ export class MenuComponent implements OnInit {
         //run the analysis
         this.gs.runRemoteAnalysis(t)
           .subscribe((data) => {
-            data['nodes'].forEach(element => {
-              console.log(element);
-              console.log("Analysis received");
-              let node:Node= this.gs.graph.getNodeByName(element.name);
-              node.principles = element.principles;
-              // remove the red links setting the bad interatiosn to false
-              this.gs.clearBadInteractions();
+            // data['nodes'].forEach(element => {
+            //   console.log(element);
+            //   console.log("Analysis received");
+            //   let node:Node= this.gs.graph.getNodeByName(element.name);
+            //   node.principles = element.principles;
+            //   // remove the red links setting the bad interatiosn to false
+            //   this.gs.clearBadInteractions();
               
-            });
-            this.updatePrinciplesForTreeNode();
+            // });
+            // this.updatePrinciplesForTreeNode();
         });
       });
   }
 
   updatePrinciplesForTreeNode(){
     this.nodes = [];
-    this.gs.getNodes().forEach((node)=>{
-      console.log("adding node");
-      var principles = node.getViolatedPrinciples();
-      var n = {'label': node.name,  collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false};
-      if(principles.length == 0)
-        n['type'] = "ok"; // type used to show the green icon
-      else
-        n['children'] = [];
+    // this.gs.getNodes().forEach((node)=>{
+    //   console.log("adding node");
+    //   var principles = node.getViolatedPrinciples();
+    //   var n = {'label': node.name,  collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false};
+    //   if(principles.length == 0)
+    //     n['type'] = "ok"; // type used to show the green icon
+    //   else
+    //     n['children'] = [];
 
-      this.nodes.push(n);
+    //   this.nodes.push(n);
 
-      principles.forEach((principle)=>{
-          var p = {'label':principle.name, selectable:true, 'type':"principle"};
-          n['children'].push(p);
-          if(principle['antipatterns']){
-            p['children'] = [];
-            principle['antipatterns'].forEach((antipattern)=>{
-              p['children'].push({'label':antipattern.name, 'data': antipattern, 'type':"antipattern"})
-            })
-          }
-      })
-    })
+    //   principles.forEach((principle)=>{
+    //       var p = {'label':principle.name, selectable:true, 'type':"principle"};
+    //       n['children'].push(p);
+    //       if(principle['antipatterns']){
+    //         p['children'] = [];
+    //         principle['antipatterns'].forEach((antipattern)=>{
+    //           p['children'].push({'label':antipattern.name, 'data': antipattern, 'type':"antipattern"})
+    //         })
+    //       }
+    //   })
+    // })
     console.log(this.nodes);
   }
 
@@ -182,15 +182,15 @@ export class MenuComponent implements OnInit {
     //     type: "runtime"
     //     }]
     antipattern.cause.forEach(causa => {
-      let source  = this.gs.getNode(causa['source']);
-      if(causa['type'] == "deploymenttime"){
-        let link = source.getDeploymnetTimeLinkTo(causa['target']);
-        link.setBadInteraction(state);
-      }
-      else{
-        let link= source.getRunTimeLinkTo(causa['target']);
-        link.setBadInteraction(state);
-      }
+      // let source  = this.gs.getNode(causa['source']);
+      // if(causa['type'] == "deploymenttime"){
+      //   let link = source.getDeploymnetTimeLinkTo(causa['target']);
+      //   link.setBadInteraction(state);
+      // }
+      // else{
+      //   let link= source.getRunTimeLinkTo(causa['target']);
+      //   link.setBadInteraction(state);
+      // }
     });
 
     }
