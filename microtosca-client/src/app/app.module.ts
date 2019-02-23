@@ -30,7 +30,6 @@ import {ToolbarModule} from 'primeng/toolbar';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
  
 //import d3js component
-import { D3Service, D3_DIRECTIVES} from './d3';
 import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
 import { AddLinkComponent } from './add-link/add-link.component';
@@ -43,7 +42,6 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
   declarations: [
     AppComponent,
     MenuComponent,
-    ...D3_DIRECTIVES,
     MenuEditComponent,
     GraphEditorComponent,
     AddLinkComponent,
@@ -77,7 +75,6 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     OverlayPanelModule
   ],
   providers: [
-    D3Service,
     MessageService
   ],
   bootstrap: [AppComponent],

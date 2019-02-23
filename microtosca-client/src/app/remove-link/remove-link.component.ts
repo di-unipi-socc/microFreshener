@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {GraphService} from "../graph.service";
-import { Link } from "../d3";
-import {DynamicDialogConfig} from 'primeng/api';
-import {DynamicDialogRef} from 'primeng/api';
+import { GraphService } from "../graph.service";
+import { DynamicDialogConfig } from 'primeng/api';
+import { DynamicDialogRef } from 'primeng/api';
+import * as joint from 'jointjs';
 
 
 @Component({
@@ -11,11 +11,11 @@ import {DynamicDialogRef} from 'primeng/api';
   styleUrls: ['./remove-link.component.css']
 })
 export class RemoveLinkComponent implements OnInit {
-  links:Link[];
-  selectedLink: Link[] = [];
+  links: joint.dia.Link[];
+  selectedLink: joint.dia.Link[] = [];
 
-  constructor(private gs: GraphService, public ref: DynamicDialogRef,  public config: DynamicDialogConfig) { 
-    
+  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
+
   }
 
   ngOnInit() {
@@ -24,9 +24,9 @@ export class RemoveLinkComponent implements OnInit {
     this.links = this.config.data.links;
   }
 
-  removeLinks(){
+  removeLinks() {
     this.ref.close(this.selectedLink);
-   
+
   }
 }
 

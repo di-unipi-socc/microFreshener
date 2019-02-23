@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {ForceDirectedGraph} from './d3'
 import {GraphService} from "./graph.service";
 import {MessageService} from 'primeng/api';
 
@@ -36,7 +35,7 @@ export class AppComponent {
     .subscribe((data) => {
       this.closeSidebar();
       console.log(data);
-      this.gs.graph = ForceDirectedGraph.fromJSON(data);
+      // this.gs.graph = ForceDirectedGraph.fromJSON(data);
       this.messageService.add({severity:'success', summary:'Graph dowloaded correclty', detail:''});
     });
   }

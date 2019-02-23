@@ -13,8 +13,7 @@
     <div class="p-grid p-justify-between">
         <div class="p-md-2 p-col-align-center">
             <svg width="25" height="25">
-                <svg:circle ng-model="service"
-                    (click)="onClickNode(service)"
+                <svg:circle
                     class="service"
                     cx="13"
                     cy="13"
@@ -24,8 +23,8 @@
         </div>
         <div class="p-md-6 p-col-align-center">Service</div>
         <div class="p-md-4 p-col-align-center"> 
-            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(service)"></button>
-            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeNode(service)"></button>
+            <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addService()"></button>
+            <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeServices()"></button>
         </div>
     </div>
 
@@ -33,9 +32,8 @@
     <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="25" height="25">
-                    <svg:rect  ng-model="database"
+                    <svg:rect
                         class="database"
-                        (click)="onClickNode(database)"
                         x="5"
                         y="5"
                         width="20" 
@@ -45,8 +43,8 @@
             </div>
             <div class="p-md-6 p-col-align-center">Database</div>
             <div class="p-md-4 p-col-align-center"> 
-                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(database)"></button>
-                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeNode(database)"></button>
+                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addDatabase()"></button>
+                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeDatabases()"></button>
             </div>
     </div>
 
@@ -54,8 +52,7 @@
     <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="25" height="25">
-                    <svg:rect  ng-model="communicationPattern"
-                        (click)="onClickNode(communicationPattern)"
+                    <svg:rect 
                         x="5"
                         y="5"
                         width="20" 
@@ -66,8 +63,8 @@
             </div>
             <div class="p-md-6 p-col-align-center">Communication Pattern</div>
             <div class="p-md-4 p-col-align-center"> 
-                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickNode(communicationPattern)"></button>
-                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeNode(communicationPattern)"></button>
+                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addCommunicationPattern()"></button>
+                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeCommunicationPatterns()"></button>
             </div>
     </div>
 
@@ -85,8 +82,7 @@
                             <svg:path d="M0,-5L10,0L0,5" fill="#000000"/>
                             </svg:marker>
                     </svg:defs>
-                    <svg:line ng-model="deploymenttimelink"
-                        (click)="onClickLink(deploymenttimelink)"
+                    <svg:line
                         class="link"
                         stroke-dasharray="4,4" 
                         x1="0"
@@ -99,8 +95,8 @@
             </div>
             <div class="p-md-6 p-col-align-center">Deployment-time Interaction</div>
             <div class="p-md-4 p-col-align-center"> 
-                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickLink(deploymenttimelink)"></button>
-                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(deploymenttimelink)"></button>
+                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addDeploymentTimeInteraction()"></button>
+                <!-- <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(deploymenttimelink)"></button> -->
             </div>
     </div>
 
@@ -117,8 +113,7 @@
                                 <svg:path d="M0,-5L10,0L0,5" fill="#000000"/>
                             </svg:marker>
                     </svg:defs>
-                    <svg:line ng-model="runtimelink"
-                        (click)="onClickLink(runtimelink)"
+                    <svg:line
                         class="link"
                         x1="0"
                         y1="10"
@@ -130,8 +125,8 @@
             </div>
             <div class="p-md-6 p-col-align-center">Run-time Interaction</div>
             <div class="p-md-4 p-col-align-center"> 
-                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="onClickLink(runtimelink)"></button>
-                <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(runtimelink)"></button>
+                <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addRunTimeInteraction()"></button>
+                <!-- <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(runtimelink)"></button> -->
             </div>
     </div>
 

@@ -15,6 +15,7 @@ from rest_framework.response import Response
 import os
 import json 
 
+
 from microanalyser.analyser import MicroAnalyser
 from microanalyser.loader import JSONLoader
 from microanalyser.trasformer import JSONTransformer
@@ -28,9 +29,13 @@ transformer = JSONTransformer()
 file_name = 'data-from-client.json'
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 
+
 @api_view(['GET'])
-@csrf_exempt
 def graph_analysis(request):
+    """
+    get:
+    Analyse the graph.
+    """
     # Run the analysis on all the nodes in the graph
     if request.method == 'GET':
         # /graph/analysis?principles=p1,p1,p2
@@ -42,7 +47,7 @@ def graph_analysis(request):
             mmodel = loader.load(model_file_path)
             analyser = MicroAnalyser(mmodel)
             res = analyser.analyse(principles_to_check=principles)
-            print(res)
+            # print(res)
             return Response(res)
         else:
             return Response({"msg": "no model uploaded"})
@@ -60,13 +65,10 @@ def graph_export(request):
     else:
         return Response({"msg": "no model uploaded"})
 
-
-
 @api_view(['POST'])
 @csrf_exempt
 def graph_import(request):
     if request.method == 'POST':
-        print("£LKWELKJDòlkdj")
         # data = request.data
         graph_in_memory = request.FILES['graph']
         print(graph_in_memory.name) 
@@ -75,27 +77,8 @@ def graph_import(request):
             for chunk in graph_in_memory.chunks():
                 print("wrinting chunk")
                 destination.write(chunk)
-
-        # with open('data.json', 'w') as outfile:
-        #      json.dump(transformer.transform(micro_model), outfile, indent=4)
-
-        # fs = FileSystemStorage()    
-        # filename = fs.save(graph_in_memory.name, graph_in_memory.read())
-        # uploaded_file_url = fs.url(filename)
-        # print(uploaded_file_url)
-
-        # path = default_storage.save(graph_in_memory.name, ContentFile(graph_in_memory))
-        # tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-        # print(tmp_file)
-
-        # print(type(request.FILES))
-        # parser_classes = (FileUploadParser, )
-
-        # micro_model = loader.load_from_dict(data)
-        # micro_model = loader.load('data-from-client.json')
         return Response({"msg": "stored correctly"})
 
-        
         
 @api_view(['GET','POST'])
 @csrf_exempt
@@ -169,11 +152,11 @@ def node_detail(request):
 #         return self.destroy(request, *args, **kwargs)
 
 ## SHORTEST VERSION USING MIXINS
-class SnippetList(generics.ListCreateAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
+# class SnippetList(generics.ListCreateAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
 
 
-class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
+# class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer

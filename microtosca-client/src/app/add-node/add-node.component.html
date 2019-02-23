@@ -3,10 +3,21 @@
         <label for="name">Name </label>
     </div>
     <div class="p-md-4">
-         <input  placeholder="Insert the name" [(ngModel)]="name" type="text" pInputText />
+        <input placeholder="Insert the name" [(ngModel)]="name" type="text"
+            pInputText />
+    </div>
+</div>
+<div class="p-grid p-justify-center" *ngIf="addingCommunicationPattern">
+    <div class="p-md-4">
+        <label for="name">Type </label>
+    </div>
+    <div class="p-md-4">
+        <p-dropdown [options]="communicationPatternTypes" [(ngModel)]="selectedCommunicationPatternType" 
+            placeholder="Select a Type" optionLabel="name" [showClear]="true"></p-dropdown>
     </div>
 </div>
 
+
 <div class="p-grid p-justify-end">
-    <p-button label="Save"  icon="pi pi-save" (onClick)="save()"></p-button>
+    <p-button label="Save" icon="pi pi-save" (onClick)="save()"></p-button>
 </div>

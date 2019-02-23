@@ -1,0 +1,67 @@
+{
+    "name": "hello-world",
+    "nodes": [
+        {
+            "id": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "id": "9ea221e8-45da-4fe3-b268-c90f5d24f8b2",
+            "name": "orderdb",
+            "type": "database"
+        },
+        {
+            "id": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "id": "d140c5cd-be8d-4ac2-915f-9f2e4644304b",
+            "name": "rabbitmq",
+            "type": "communicationpattern"
+        }
+    ],
+    "links": [
+        {
+            "source": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "target": "9ea221e8-45da-4fe3-b268-c90f5d24f8b2",
+            "type": "runtime"
+        },
+        {
+            "source": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "target": "d140c5cd-be8d-4ac2-915f-9f2e4644304b",
+            "type": "runtime"
+        },
+        {
+            "source": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "target": "9ea221e8-45da-4fe3-b268-c90f5d24f8b2",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "target": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "type": "runtime"
+        },
+        {
+            "source": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "target": "9ea221e8-45da-4fe3-b268-c90f5d24f8b2",
+            "type": "runtime"
+        },
+        {
+            "source": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "target": "d140c5cd-be8d-4ac2-915f-9f2e4644304b",
+            "type": "runtime"
+        },
+        {
+            "source": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "target": "0411e186-5b10-4752-9500-a32fec6f4af1",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "0343160a-7e64-48ca-9716-3537c1076ce5",
+            "target": "9ea221e8-45da-4fe3-b268-c90f5d24f8b2",
+            "type": "deploymenttime"
+        }
+    ]
+}

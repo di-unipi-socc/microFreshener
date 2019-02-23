@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { GraphService } from "../graph.service";
 import * as joint from 'jointjs';
 
@@ -10,7 +10,7 @@ import * as joint from 'jointjs';
 
 export class GraphEditorComponent implements OnInit, AfterViewInit {
 
-    _options = { width: 1200, height:800 };
+    _options = { width: 1200, height: 800 };
 
     paper: joint.dia.Paper;
 
@@ -23,7 +23,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         this.paper = new joint.dia.Paper({
             el: document.getElementById('jointjsgraph'),
-            model: this.gs.getGraph().getJointGraph(),
+            model: this.gs.getGraph(),
             width: this._options.width,
             height: this._options.height,
             gridSize: 1,
@@ -32,55 +32,71 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             }
         });
 
-        var odb = this.gs.getGraph().addDatabase("orderdb");
         var s = this.gs.getGraph().addService("shipping");
+        var odb = this.gs.getGraph().addDatabase("orderdb");
         var o = this.gs.getGraph().addService("order");
+        var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", 'mb');
 
-        var r = this.gs.getGraph().addCommunicationPattern("rabbitmq", 'mb');
-
-        this.gs.getGraph().addRunTimeInteraction(o.id, odb.id);
-        this.gs.getGraph().addDeploymentTimeInteraction(s.id, o.id);
+        // shipping
         this.gs.getGraph().addRunTimeInteraction(s.id, odb.id);
+        this.gs.getGraph().addRunTimeInteraction(s.id, cp.id);
+        this.gs.getGraph().addDeploymentTimeInteraction(s.id, odb.id);
+        //order
+        this.gs.getGraph().addRunTimeInteraction(o.id, s.id);
+        this.gs.getGraph().addRunTimeInteraction(o.id, odb.id);
+        this.gs.getGraph().addRunTimeInteraction(o.id, cp.id);
 
-
+        this.gs.getGraph().addDeploymentTimeInteraction(o.id, s.id);
+        this.gs.getGraph().addDeploymentTimeInteraction(o.id, odb.id);
+        
+        this.applyDirectedGraphLayout();
         this.addLinkMouseOver();
-        this.addNodeMOuseOver();
+        this.addNodeMouseOver();
         this.createLink();
-
     }
 
-    createLink(){
-        // Create a new link by dragging
-        this.paper.on('blank:pointerdown', function(evt, x, y) {
-              var link = new joint.shapes.standard.Link();
-              link.set('source', { x: x, y: y });
-              link.set('target', { x: x, y: y });
-              link.addTo(this.model);
-              evt.data = { link: link, x: x, y: y };
-            })
-        
-        this.paper.on('blank:pointermove', function(evt, x, y) {
-              evt.data.link.set('target', { x: x, y: y });
-            });
+    applyDirectedGraphLayout(){
+        // Directed graph layout
+        joint.layout.DirectedGraph.layout(this.gs.getGraph(), {
+            nodeSep: 50,
+            edgeSep: 80,
+            rankDir: "TB", // TB
+            ranker: "tight-tree",
+            // setVertices: true,
+          });
+    }
 
-        this.paper.on('blank:pointerup', function(evt) {
-              var target = evt.data.link.get('target');
-              if (evt.data.x === target.x && evt.data.y === target.y) {
-                  // remove zero-length links
-                  evt.data.link.remove();
-              }
+    createLink() {
+        // Create a new link by dragging
+        this.paper.on('blank:pointerdown', function (evt, x, y) {
+            var link = new joint.shapes.standard.Link();
+            link.set('source', { x: x, y: y });
+            link.set('target', { x: x, y: y });
+            link.addTo(this.model);
+            evt.data = { link: link, x: x, y: y };
+        })
+
+        this.paper.on('blank:pointermove', function (evt, x, y) {
+            evt.data.link.set('target', { x: x, y: y });
+        });
+
+        this.paper.on('blank:pointerup', function (evt) {
+            var target = evt.data.link.get('target');
+            if (evt.data.x === target.x && evt.data.y === target.y) {
+                // remove zero-length links
+                evt.data.link.remove();
+            }
         });
     }
 
-    addNodeMOuseOver(){
-        this.paper.on('element:pointerclick', function(element){
+    addNodeMouseOver() {
+        this.paper.on('element:pointerclick', function (element) {
             console.log(element);
         });
     }
 
     addLinkMouseOver() {
         console.log("adding arrow interaction");
-
         this.paper.on('link:mouseenter', function (linkView) {
             var tools = [
                 // new joint.linkTools.SourceArrowhead(),
@@ -91,7 +107,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     vertexAdding: false
                 }),
                 new joint.linkTools.TargetAnchor(),
-                new joint.linkTools.Remove({ distance: 20 }),
+                new joint.linkTools.Remove(),
                 new joint.linkTools.Button({
                     markup: [{
                         tagName: 'circle',

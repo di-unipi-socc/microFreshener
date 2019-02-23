@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {GraphService} from "../graph.service";
-import {DynamicDialogRef} from 'primeng/api';
-import {DynamicDialogConfig} from 'primeng/api';
-
+import { GraphService } from "../graph.service";
+import { DynamicDialogRef } from 'primeng/api';
+import { DynamicDialogConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-add-node',
@@ -11,17 +10,27 @@ import {DynamicDialogConfig} from 'primeng/api';
 })
 export class AddNodeComponent implements OnInit {
 
-  name: string = null;
+  name: string;
+  selectedCommunicationPatternType: string;ù
+  communicationPatternTypes;
+  addingCommunicationPattern:boolean = false;
 
   constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
-    // this.name = null;
+    console.log(this.config.data);
+    this.addingCommunicationPattern = false;
+    if(this.config.data){
+      this.addingCommunicationPattern = this.config.data.showType;
+    }    
+    console.log(this.addingCommunicationPattern);
+    this.name = null;
+    //TODO: a service that get the types form the server
+    this.communicationPatternTypes = [{'name':'Message broker'}, {'name':'Message Router'},{'name':'Api Gateway'}];
   }
 
-  save(){
-    console.log(this.name),
-    this.ref.close(this.name);
+  save() {
+    this.ref.close({name: this.name, type: this.addingCommunicationPattern ?this.selectedCommunicationPatternType: null});
   }
 
 }

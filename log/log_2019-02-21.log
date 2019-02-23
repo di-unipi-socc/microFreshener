@@ -1,0 +1,563 @@
+2019-02-21 16:00:51,570 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/data-from-client.json
+2019-02-21 16:00:51,571 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:00:51,572 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:00:51,572 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:00:51,572 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:00:51,573 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:05:08,335 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/data-from-client.json
+2019-02-21 16:05:08,335 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:05:08,335 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:05:08,336 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:05:08,336 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:05:08,336 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:17:58,262 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/data-from-client.json
+2019-02-21 16:17:58,264 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:17:58,264 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:17:58,265 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:17:58,267 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:17:58,267 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:18:45,439 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/data-from-client.json
+2019-02-21 16:18:45,439 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:18:45,439 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:18:45,439 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:18:45,440 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:18:45,440 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:19:42,547 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/data-from-client.json
+2019-02-21 16:19:42,548 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:19:42,548 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:19:42,549 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:19:42,550 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:19:42,550 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:21:25,833 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-21 16:21:25,834 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:21:25,834 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:21:25,834 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:21:25,835 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:21:25,835 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-21 16:21:25,835 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:21:25,835 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-21 16:21:25,835 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-21 16:21:25,836 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:21:25,836 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:21:25,836 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-21 16:21:25,837 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-21 16:22:03,872 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-21 16:22:03,876 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:22:03,876 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:22:03,877 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:22:03,877 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:22:03,877 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-21 16:22:03,877 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:22:03,877 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-21 16:22:03,881 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-21 16:22:03,882 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:22:03,882 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:22:03,882 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-21 16:22:03,882 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-21 16:22:03,883 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-21 16:22:03,883 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-21 16:22:03,883 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:22:03,884 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-21 16:22:03,884 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:22:03,884 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-21 16:22:03,885 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:22:03,885 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-21 16:22:03,885 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:22:03,886 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-21 16:22:03,888 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:22:03,889 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:22:03,889 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:22:03,889 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:22:03,891 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-21 16:22:03,892 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:22:03,893 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-21 16:22:03,893 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:22:03,893 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-21 16:22:03,895 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:22:03,896 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-21 16:22:03,898 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:22:03,898 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-21 16:22:03,898 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:22:03,899 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:22:03,901 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:22:03,901 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:23:15,305 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-21 16:23:15,305 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:23:15,306 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:23:15,306 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:23:15,307 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:23:15,307 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-21 16:23:15,308 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:23:15,309 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-21 16:23:15,311 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-21 16:23:15,312 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:23:15,315 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:23:15,316 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-21 16:23:15,316 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-21 16:23:15,316 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-21 16:23:15,316 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-21 16:23:15,316 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:23:15,316 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-21 16:23:15,316 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:23:15,317 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:23:15,317 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:23:15,317 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:23:15,318 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:23:15,318 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:23:15,318 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:23:15,318 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:23:15,319 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:23:15,319 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:25:07,230 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-21 16:25:07,231 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-21 16:25:07,231 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-21 16:25:07,232 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-21 16:25:07,232 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-21 16:25:07,232 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-21 16:25:07,232 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:25:07,233 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-21 16:25:07,233 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-21 16:25:07,233 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-21 16:25:07,233 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-21 16:25:07,233 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-21 16:25:07,234 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-21 16:25:07,234 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-21 16:25:07,234 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-21 16:25:07,234 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:25:07,234 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-21 16:25:07,234 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:25:07,234 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-21 16:25:07,234 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:25:07,235 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-21 16:25:07,235 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:25:07,236 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-21 16:25:07,237 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:25:07,237 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:25:07,239 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:25:07,240 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:25:07,240 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-21 16:25:07,240 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:25:07,241 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-21 16:25:07,241 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:25:07,241 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-21 16:25:07,242 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:25:07,242 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-21 16:25:07,243 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-21 16:25:07,243 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-21 16:25:07,244 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-21 16:25:07,244 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-21 16:25:07,244 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-21 16:25:07,245 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:40:33,309 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 11:40:33,310 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 11:40:33,311 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 11:40:33,311 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 11:40:33,311 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 11:40:33,312 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 11:40:33,312 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 11:40:33,313 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 11:40:33,313 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 11:40:33,314 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 11:40:33,315 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 11:40:33,316 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 11:40:33,317 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 11:40:33,319 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 11:40:33,321 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 11:40:33,322 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:40:33,322 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 11:40:33,323 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:40:33,323 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 11:40:33,323 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:40:33,324 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 11:40:33,324 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:40:33,325 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 11:40:33,325 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:40:33,325 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:40:33,325 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:40:33,325 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:40:33,326 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 11:40:33,326 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:40:33,326 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 11:40:33,326 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:40:33,326 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 11:40:33,326 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:40:33,326 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 11:40:33,326 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:40:33,327 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 11:40:33,328 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:40:33,331 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:40:33,332 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:40:33,333 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:41:46,824 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 11:41:46,826 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 11:41:46,826 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 11:41:46,827 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 11:41:46,828 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 11:41:46,829 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 11:41:46,830 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 11:41:46,831 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 11:41:46,832 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 11:41:46,832 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 11:41:46,832 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 11:41:46,833 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 11:41:46,833 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 11:41:46,833 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 11:41:46,833 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 11:41:46,833 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:41:46,834 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 11:41:46,834 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:41:46,834 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 11:41:46,834 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:41:46,834 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 11:41:46,834 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:41:46,835 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 11:41:46,835 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:41:46,835 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:41:46,835 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:41:46,835 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:41:46,836 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 11:41:46,836 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:41:46,836 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 11:41:46,836 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:41:46,837 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 11:41:46,837 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:41:46,837 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 11:41:46,838 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:28:47,134 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:28:47,135 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:28:47,135 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:28:47,135 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:28:47,135 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:28:47,135 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:28:47,135 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:28:47,136 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:28:47,136 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:28:47,137 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:28:47,137 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:28:47,137 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:28:47,137 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:28:47,137 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:28:47,137 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:28:47,137 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:28:47,137 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:28:47,138 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:28:47,138 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:28:47,139 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:28:47,139 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:28:47,139 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:28:47,140 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:08,767 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:44:08,768 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:44:08,768 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:44:08,768 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:44:08,768 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:44:08,768 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:08,768 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:08,769 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:08,769 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:44:08,770 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:08,771 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:08,771 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:44:08,771 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:08,771 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:44:08,772 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:44:08,772 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:08,772 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:44:08,773 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:08,773 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:44:08,773 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:08,774 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:44:08,774 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:08,774 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:44:08,774 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:08,775 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:08,775 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:08,775 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:08,775 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:44:08,775 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:08,776 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:08,776 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:08,776 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:08,776 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:08,777 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:30,872 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:44:30,873 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:44:30,876 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:44:30,876 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:44:30,876 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:44:30,877 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:30,877 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:30,877 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:30,877 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:44:30,877 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:30,878 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:30,878 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:44:30,878 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:30,878 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:44:30,878 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:44:30,878 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:30,878 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:44:30,878 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:30,879 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:44:30,879 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:30,879 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:44:30,879 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:30,879 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:44:30,880 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:30,880 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:30,880 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:30,881 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:30,881 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:30,881 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:30,881 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:30,882 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:30,882 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:48,513 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:44:48,514 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:44:48,514 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:44:48,514 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:44:48,514 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:44:48,514 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:44:48,515 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:44:48,515 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:48,516 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:48,516 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:48,516 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:48,516 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:48,517 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:44:48,517 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:48,517 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:48,518 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:44:48,518 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:46:56,435 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:46:56,436 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:46:56,436 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:46:56,436 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:46:56,436 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:46:56,436 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:46:56,437 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:46:56,437 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:46:56,437 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:46:56,437 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:46:56,437 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:46:56,438 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:46:56,438 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:46:56,438 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:46:56,439 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:46:56,439 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:46:56,439 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:46:56,439 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:46:56,439 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:46:56,440 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:46:56,440 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:46:56,441 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:46:56,441 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:46:56,441 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:46:56,441 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:46:56,442 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:15,764 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:47:15,765 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:47:15,765 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:47:15,766 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:47:15,766 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:47:15,766 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:47:15,766 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:47:15,767 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:47:15,768 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:47:15,768 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:47:15,768 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:47:15,768 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:47:15,768 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:47:15,769 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:47:15,769 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:47:15,769 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:15,769 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:47:15,769 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:15,769 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:47:15,769 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:15,770 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:47:15,770 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:15,770 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:47:15,770 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:15,771 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:15,771 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:15,772 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:15,773 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:47:15,773 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:15,773 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:47:15,774 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:15,774 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:47:15,774 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:15,774 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:47:15,775 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:15,775 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:47:15,775 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:15,775 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:15,776 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:15,776 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:37,434 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 12:47:37,435 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 12:47:37,435 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 12:47:37,436 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 12:47:37,437 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 12:47:37,437 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 12:47:37,437 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:47:37,437 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 12:47:37,438 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 12:47:37,438 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 12:47:37,438 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 12:47:37,438 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 12:47:37,438 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 12:47:37,439 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 12:47:37,439 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 12:47:37,439 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:37,439 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 12:47:37,439 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:37,439 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 12:47:37,440 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:37,440 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 12:47:37,440 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:37,440 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 12:47:37,440 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:37,440 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:37,441 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:37,441 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:37,441 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 12:47:37,441 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 12:47:37,442 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 12:47:37,442 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 12:47:37,442 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 12:47:37,442 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 13:02:42,592 	 [INFO | json.py:18] > Loading JSON file: /home/dido/code/MicroAnalyserServer/media/microtosca.json
+2019-02-22 13:02:42,594 	 [DEBUG | template.py:83] > shipping (service): Added node
+2019-02-22 13:02:42,594 	 [DEBUG | template.py:83] > orderdb (database): Added node
+2019-02-22 13:02:42,595 	 [DEBUG | template.py:83] > order (service): Added node
+2019-02-22 13:02:42,596 	 [DEBUG | template.py:83] > rabbitmq (messagebroker): Added node
+2019-02-22 13:02:42,596 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to orderdb (database)
+2019-02-22 13:02:42,596 	 [DEBUG | nodes.py:116] > shipping (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 13:02:42,596 	 [DEBUG | nodes.py:124] > shipping (service): adding deployment link to orderdb (database)
+2019-02-22 13:02:42,596 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to shipping (service)
+2019-02-22 13:02:42,596 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to orderdb (database)
+2019-02-22 13:02:42,597 	 [DEBUG | nodes.py:116] > order (service): adding runtime link to rabbitmq (messagebroker)
+2019-02-22 13:02:42,597 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to shipping (service)
+2019-02-22 13:02:42,597 	 [DEBUG | nodes.py:124] > order (service): adding deployment link to orderdb (database)
+2019-02-22 13:02:42,597 	 [INFO | analyser.py:23] > Analyser - analysing ...
+2019-02-22 13:02:42,597 	 [DEBUG | analyser.py:91] > Analyser - analysing node shipping (service).
+2019-02-22 13:02:42,598 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 13:02:42,598 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node shipping (service)
+2019-02-22 13:02:42,598 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 13:02:42,599 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node shipping (service)
+2019-02-22 13:02:42,599 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 13:02:42,599 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node shipping (service)
+2019-02-22 13:02:42,600 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 13:02:42,600 	 [DEBUG | analyser.py:91] > Analyser - analysing node orderdb (database).
+2019-02-22 13:02:42,600 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 13:02:42,600 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 13:02:42,600 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 13:02:42,601 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 13:02:42,601 	 [DEBUG | analyser.py:91] > Analyser - analysing node order (service).
+2019-02-22 13:02:42,601 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 13:02:42,601 	 [DEBUG | antipatterns.py:61] > Deployment Interaction antipattern on node order (service)
+2019-02-22 13:02:42,601 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 13:02:42,601 	 [DEBUG | antipatterns.py:78] > Direct Interaction antipattern on node order (service)
+2019-02-22 13:02:42,602 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 13:02:42,606 	 [DEBUG | antipatterns.py:97] > Cascading Failure antipattern on node order (service)
+2019-02-22 13:02:42,607 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle
+2019-02-22 13:02:42,607 	 [DEBUG | analyser.py:91] > Analyser - analysing node rabbitmq (messagebroker).
+2019-02-22 13:02:42,607 	 [DEBUG | analyser.py:95] > Analyser - checking IndependentDeployability principle
+2019-02-22 13:02:42,607 	 [DEBUG | analyser.py:95] > Analyser - checking HorizontalScalability principle
+2019-02-22 13:02:42,608 	 [DEBUG | analyser.py:95] > Analyser - checking IsolateFailure principle
+2019-02-22 13:02:42,608 	 [DEBUG | analyser.py:95] > Analyser - checking DecentraliseEverything principle

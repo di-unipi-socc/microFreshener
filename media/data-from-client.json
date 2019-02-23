@@ -1,124 +1,47 @@
 {
-    "cells": [
+    "name": "hello-world",
+    "nodes": [
         {
-            "type": "standard.Rectangle",
-            "position": {
-                "x": 209,
-                "y": 336
-            },
-            "size": {
-                "width": 50,
-                "height": 50
-            },
-            "angle": 0,
-            "id": "f0674266-742d-485f-99a5-e9e0ee7cecd3",
-            "z": 1,
-            "attrs": {
-                "body": {
-                    "fill": "#4E7F64"
-                },
-                "label": {
-                    "fill": "white",
-                    "text": "orderdb"
-                }
-            }
+            "id": "119d9cf9-4c67-41ba-af49-457305013990",
+            "name": "orderdb",
+            "type": "database"
         },
         {
-            "type": "microtosca.Service",
-            "size": {
-                "width": 60,
-                "height": 60
-            },
-            "position": {
-                "x": 245,
-                "y": 94
-            },
-            "angle": 0,
-            "id": "b8d2349e-3872-4e90-86d8-b3c99d80ec83",
-            "z": 2,
-            "attrs": {}
+            "id": "844f7f11-af3c-4e32-9dc5-85cc9a15bb6b",
+            "name": "shipping",
+            "type": "service"
         },
         {
-            "type": "microtosca.Service",
-            "size": {
-                "width": 60,
-                "height": 60
-            },
-            "position": {
-                "x": 891,
-                "y": 61
-            },
-            "angle": 0,
-            "id": "b3a843b6-fa95-4652-ab4b-cb172c1255bc",
-            "z": 3,
-            "attrs": {}
+            "id": "48c2da16-4c2c-4d97-b756-1a0302800b32",
+            "name": "order",
+            "type": "service"
         },
         {
-            "type": "microtosca.CommunicationPattern",
-            "position": {
-                "x": 0,
-                "y": 0
-            },
-            "size": {
-                "width": 1,
-                "height": 1
-            },
-            "angle": 0,
-            "id": "fe06488a-58a4-4db5-a5f8-fa10681b26fb",
-            "z": 4,
-            "attrs": {}
+            "id": "02597cf4-bde0-40fe-9a60-b6ba3d3edfd6",
+            "name": "rabbitmq",
+            "type": "communicationpattern"
+        }
+    ],
+    "links": [
+        {
+            "source": "48c2da16-4c2c-4d97-b756-1a0302800b32",
+            "target": "119d9cf9-4c67-41ba-af49-457305013990",
+            "type": "runtime"
         },
         {
-            "type": "standard.Link",
-            "source": {
-                "id": "b3a843b6-fa95-4652-ab4b-cb172c1255bc"
-            },
-            "target": {
-                "id": "b8d2349e-3872-4e90-86d8-b3c99d80ec83"
-            },
-            "id": "dab9c220-942c-4650-99ee-955c17bdf91e",
-            "z": 6,
-            "attrs": {
-                "line": {
-                    "stroke": "#3c4260",
-                    "strokeWidth": 4,
-                    "targetMarker": {
-                        "d": "M 0 -5 L -10 0 L 0 5 Z"
-                    },
-                    "sourceMarker": {
-                        "type": "circle",
-                        "r": 5
-                    },
-                    "stroke-dasharray": "5,10,5"
-                }
-            }
+            "source": "844f7f11-af3c-4e32-9dc5-85cc9a15bb6b",
+            "target": "48c2da16-4c2c-4d97-b756-1a0302800b32",
+            "type": "deplymenttime"
         },
         {
-            "type": "microtosca.RunTimeLink",
-            "source": {
-                "id": "b8d2349e-3872-4e90-86d8-b3c99d80ec83"
-            },
-            "target": {
-                "id": "f0674266-742d-485f-99a5-e9e0ee7cecd3"
-            },
-            "id": "5a14c68f-06a6-4e47-a655-340cede596db",
-            "z": 7,
-            "attrs": {}
+            "source": "844f7f11-af3c-4e32-9dc5-85cc9a15bb6b",
+            "target": "119d9cf9-4c67-41ba-af49-457305013990",
+            "type": "runtime"
         },
         {
-            "type": "microtosca.Service",
-            "size": {
-                "width": 60,
-                "height": 60
-            },
-            "position": {
-                "x": 744,
-                "y": 246
-            },
-            "angle": 0,
-            "id": "a7310b84-f97a-4cda-9458-2098c5352e83",
-            "z": 8,
-            "attrs": {}
+            "source": "02597cf4-bde0-40fe-9a60-b6ba3d3edfd6",
+            "target": "844f7f11-af3c-4e32-9dc5-85cc9a15bb6b",
+            "type": "runtime"
         }
     ]
 }

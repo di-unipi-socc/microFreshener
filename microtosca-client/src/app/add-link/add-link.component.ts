@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {GraphService} from "../graph.service";
-import {DynamicDialogRef} from 'primeng/api';
-import {DynamicDialogConfig} from 'primeng/api';
+import { GraphService } from "../graph.service";
+import { DynamicDialogRef } from 'primeng/api';
+import { DynamicDialogConfig } from 'primeng/api';
 
-import {Node} from "../d3";
 import * as joint from 'jointjs';
-
-
 
 @Component({
   selector: 'add-link',
@@ -14,19 +11,21 @@ import * as joint from 'jointjs';
   styleUrls: ['./add-link.component.css']
 })
 export class AddLinkComponent implements OnInit {
-  nodes: joint.dia.Cell[];
-  selectedSourceNode:joint.dia.Cell = null;
-  selectedTargetNode:joint.dia.Cell = null;
+  sourceNodes: joint.dia.Cell[];
+  targetNodes: joint.dia.Cell[];
 
-  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
+  selectedSourceNode: joint.dia.Cell = null;
+  selectedTargetNode: joint.dia.Cell = null;
+
+  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
-    this.nodes = this.gs.getGraph().getNodes();
-    // this.selectedSourceNode.get('name');
+    this.sourceNodes = this.gs.getGraph().getServices().concat(this.gs.getGraph().getCommunicationPattern());
+    this.targetNodes = this.gs.getGraph().getNodes();
   }
 
-  selectedNodes(s:joint.dia.Cell, t:joint.dia.Cell) {
-    this.ref.close({'source':s, 'target':t});
-  } 
+  save() {
+    this.ref.close({ 'source': this.selectedSourceNode, 'target': this.selectedTargetNode });
+  }
 
 }

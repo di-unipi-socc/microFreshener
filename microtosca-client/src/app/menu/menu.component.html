@@ -34,11 +34,14 @@
               [propagateSelectionDown]="true"
               [loading]="loading">
               <ng-template let-node  pTemplate="principle">
-                   {{node.label}} <i class="pi pi-times" style="color:red"></i> 
+                  <span> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
               </ng-template>
               <ng-template let-node  pTemplate="ok">
                  <span style="color:green">{{node.label}}  </span> <i class="pi pi-check" style="color:green"></i>
               </ng-template>
+              <ng-template let-node  pTemplate="nok">
+                <span style="color:red"> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
+             </ng-template>
     </p-tree>
 
    </p-accordionTab>
