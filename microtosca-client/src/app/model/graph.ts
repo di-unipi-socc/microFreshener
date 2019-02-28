@@ -261,7 +261,7 @@ export class Graph extends joint.dia.Graph {
                     refWidth: '100%',
                     refHeight: '100%',
                     fill: 'white',
-                    stroke: '#C18C5D',
+                    stroke: '#F4A259',
                     strokeWidth: 8,
                     rx: 10,
                     ry: 10
@@ -377,7 +377,7 @@ export class Graph extends joint.dia.Graph {
     isCommunicationPattern(node: joint.dia.Cell) {
         return node.get('type') === 'microtosca.CommunicationPattern';
     }
-    
+
     applyLayout(){
         joint.layout.DirectedGraph.layout(this, {
           nodeSep: 50,

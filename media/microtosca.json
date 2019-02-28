@@ -70,14 +70,14 @@
             "id": "bb795fc1-12c3-4166-83ac-692a33bbb1a7",
             "name": "edge-router",
             "type": "communicationpattern"
+        },
+        {
+            "id": "8fd57886-c009-498c-8d1f-4c172fe96178",
+            "name": "loadb",
+            "type": "communicationpattern"
         }
     ],
     "links": [
-        {
-            "source": "3e4441fa-9a87-42db-b76d-e8ea782856c1",
-            "target": "8e956ddc-6ff1-4b86-9bd0-0be677775662",
-            "type": "runtime"
-        },
         {
             "source": "3e4441fa-9a87-42db-b76d-e8ea782856c1",
             "target": "8200a515-c997-45f0-915d-a064c648c976",
@@ -146,6 +146,16 @@
         {
             "source": "bb795fc1-12c3-4166-83ac-692a33bbb1a7",
             "target": "3e4441fa-9a87-42db-b76d-e8ea782856c1",
+            "type": "runtime"
+        },
+        {
+            "source": "3e4441fa-9a87-42db-b76d-e8ea782856c1",
+            "target": "8fd57886-c009-498c-8d1f-4c172fe96178",
+            "type": "runtime"
+        },
+        {
+            "source": "8fd57886-c009-498c-8d1f-4c172fe96178",
+            "target": "8e956ddc-6ff1-4b86-9bd0-0be677775662",
             "type": "runtime"
         }
     ]
