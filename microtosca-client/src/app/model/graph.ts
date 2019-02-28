@@ -10,7 +10,7 @@ export class Graph extends joint.dia.Graph {
         this.name = name;
         this.defineLinkClass();
     }
-
+    // joint class that define the shape of the links
     defineLinkClass(){
         // MicroTosca RunTimeLink
         joint.dia.Link.define('MicroTosca.RunTimeLink', {
@@ -110,6 +110,7 @@ export class Graph extends joint.dia.Graph {
             return name === this.getNameOfNode(node)
         });
     }
+
     getNameOfNode(node:joint.dia.Cell){
         return node.attr("label/text");
     }
@@ -376,7 +377,7 @@ export class Graph extends joint.dia.Graph {
     isCommunicationPattern(node: joint.dia.Cell) {
         return node.get('type') === 'microtosca.CommunicationPattern';
     }
-
+    
     applyLayout(){
         joint.layout.DirectedGraph.layout(this, {
           nodeSep: 50,
@@ -385,6 +386,6 @@ export class Graph extends joint.dia.Graph {
           // ranker: "tight-tree",
           setVertices: false,
         });
-      }
+    }
 
 }

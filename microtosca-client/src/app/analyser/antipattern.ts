@@ -4,7 +4,7 @@ export class Antipattern {
 
     name: string;
     refactorings: Refactoring[];
-    // cause
+    cause:Object[];
 
     constructor(name: string) {
         this.name = name;

@@ -37,6 +37,7 @@ export class ANode {
 
             principle['antipatterns'].forEach((antipattern) =>{
                 var a:Antipattern = new Antipattern(antipattern.name);
+                a.cause = antipattern['cause'];
                 p.addAntipattern(a);
             });
             anode.addViolatedPrinciple(p);

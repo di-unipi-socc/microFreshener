@@ -25,24 +25,30 @@
 
       <h3>Results of the analysis</h3>
       <span *ngIf="nodes.length === 0" style="color:rgb(179, 15, 15)"> No results available </span>
-      <p-tree *ngIf="nodes.length > 0" 
-              [value]="nodes"  
-              selectionMode="checkbox"
-              (onNodeUnselect)="nodeUnSelect($event)"  
-              (onNodeSelect)="nodeSelect($event)" 
-              [propagateSelectionUp]="false" 
-              [propagateSelectionDown]="true"
-              [loading]="loading">
-              <ng-template let-node  pTemplate="principle">
-                  <span> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
+
+
+       <p-tree [style]="{'width':'500px'}"  *ngIf="nodes.length > 0" 
+                [value]="nodes"  
+                selectionMode="checkbox"
+                (onNodeUnselect)="nodeUnSelect($event)"  
+                (onNodeSelect)="nodeSelect($event)" 
+                [propagateSelectionUp]="false" 
+                [propagateSelectionDown]="true"
+                [loading]="loading">
+                <ng-template let-node  pTemplate="principle">
+                    <span> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
+                </ng-template>
+                <ng-template let-node  pTemplate="antipattern">
+                  {{node.label}} (<span *ngFor="let causa of node.data.cause">{{causa.source}} -> {{causa.target}}, </span>)
+                </ng-template>
+                <ng-template let-node  pTemplate="ok">
+                  <span style="color:green">{{node.label}}  </span> <i class="pi pi-check" style="color:green"></i>
+                </ng-template>
+                <ng-template let-node  pTemplate="nok">
+                  <span style="color:red"> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
               </ng-template>
-              <ng-template let-node  pTemplate="ok">
-                 <span style="color:green">{{node.label}}  </span> <i class="pi pi-check" style="color:green"></i>
-              </ng-template>
-              <ng-template let-node  pTemplate="nok">
-                <span style="color:red"> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
-             </ng-template>
-    </p-tree>
+      </p-tree>
+
 
    </p-accordionTab>
 

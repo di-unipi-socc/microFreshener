@@ -192,6 +192,7 @@ export class MenuComponent implements OnInit {
     //     type: "runtime"
     //     }]
     antipattern.cause.forEach(causa => {
+      console.log(causa);
       // let source  = this.gs.getNode(causa['source']);
       // if(causa['type'] == "deploymenttime"){
       //   let link = source.getDeploymnetTimeLinkTo(causa['target']);
