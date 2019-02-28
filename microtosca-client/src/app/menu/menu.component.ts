@@ -141,7 +141,7 @@ export class MenuComponent implements OnInit {
   }
 
   updatePrinciplesForTreeNode(anodes:ANode[]) {
-    // this.nodes = [];
+   this.nodes = [];
     anodes.forEach((anode)=>{
       var n = {'label': anode.name,  collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false};
       n['type'] = (anode.hasViolatedPrinciples()) ? "nok" :"ok";

@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {GraphService} from "./graph.service";
 import {MessageService} from 'primeng/api';
+import { Graph } from './model/graph';
 
 
 @Component({
@@ -35,7 +36,8 @@ export class AppComponent {
     .subscribe((data) => {
       this.closeSidebar();
       console.log(data);
-      // this.gs.graph = ForceDirectedGraph.fromJSON(data);
+      this.gs.getGraph().builtFromJSON(data);
+      this.gs.getGraph().applyLayout();
       this.messageService.add({severity:'success', summary:'Graph dowloaded correclty', detail:''});
     });
   }

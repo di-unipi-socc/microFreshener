@@ -46,7 +46,7 @@
                 <div class="p-col">
                     <p-fileUpload mode="basic" 
                                     name="graph" 
-                                    url="http://127.0.0.1:8000/graph/import/" 
+                                    url="http://127.0.0.1:8000/v2/graph/import/" 
                                     accept=".json"
                                     (onUpload)="onUpload($event)"
                                     chooseLabel="Import">
@@ -54,7 +54,7 @@
                 </div> 
 
                 <div class="p-col">
-                   <a pButton href="http://127.0.0.1:8000/graph/export/" style="width: 100px"  label="Export" icon="pi pi-download" class="ui-button-warning"></a>
+                   <a pButton href="http://127.0.0.1:8000/v2/graph/export/" style="width: 100px"  label="Export" icon="pi pi-download" class="ui-button-warning"></a>
                 </div>
             </div>
     </p-sidebar>

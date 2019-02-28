@@ -8,9 +8,8 @@ from api import v2view
 urlpatterns = [
     path('graph/', v2view.graph),
     path('graph/analyse/', v2view.graph_analysis),
-    
-    # path('graph/export/', v2view.graph_export),
-    # path('graph/import/', v2view.graph_import),
+    path('graph/export/', v2view.graph_export),
+    path('graph/import/', v2view.graph_import),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

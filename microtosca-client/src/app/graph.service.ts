@@ -13,28 +13,34 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class GraphService {
-  
+
   graph: Graph;
 
   private graphUrl = 'http://127.0.0.1:8000/v2/graph/?format=json';  // URL to web api
-  private graphUrlPost = 'http://127.0.0.1:8000/v2/graph/';  // URL to web api
+  private graphUrlPost = 'http://127.0.0.1:8000/v2/graph/';         // URL to web api
   private analysisUrl = 'http://127.0.0.1:8000/v2/graph/analyse/';  // URL to web api
 
   constructor(private http: HttpClient) {
-    this.graph =  new Graph('hello-world');
-   }
+    this.graph = new Graph('hello-world');
+  }
 
-  getGraph():Graph{
+  getGraph(): Graph {
     return this.graph;
   }
 
+  setGraph(g: Graph) {
+    this.graph = g;
+    console.log(g.name);
+    console.log("updated graph");
+  }
+
   // Export the graph to JSON
-  exportToJSON(){
+  exportToJSON() {
     return JSON.stringify(this.graph.toJSON());
   }
 
   /** POST: upload the local graph to the server */
-  uploadGraph (): Observable<string> {
+  uploadGraph(): Observable<string> {
     var graphJson = this.exportToJSON();
     console.log(graphJson);
     return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);

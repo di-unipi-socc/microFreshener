@@ -1,4 +1,5 @@
 import * as joint from 'jointjs';
+import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic/src/platform_providers';
 
 
 export class Graph extends joint.dia.Graph {
@@ -7,6 +8,88 @@ export class Graph extends joint.dia.Graph {
     constructor(name: string) {
         super();
         this.name = name;
+        this.defineLinkClass();
+    }
+
+    defineLinkClass(){
+        // MicroTosca RunTimeLink
+        joint.dia.Link.define('MicroTosca.RunTimeLink', {
+            attrs: {
+                line: {
+                    connection: true,
+                    stroke: '#333333',
+                    strokeWidth: 4,
+                    strokeLinejoin: 'round',
+                    targetMarker: {
+                        type: 'path',
+                        d: 'M 10 -5 0 0 10 5 z'
+                    }
+                },
+                wrapper: {
+                    connection: true,
+                    strokeWidth: 10,
+                    strokeLinejoin: 'round'
+                }
+            }
+        }, {
+            markup: [{
+                tagName: 'path',
+                selector: 'wrapper',
+                attributes: {
+                    'fill': 'none',
+                    'cursor': 'pointer',
+                    'stroke': 'transparent'
+                }
+            }, {
+                tagName: 'path',
+                selector: 'line',
+                attributes: {
+                    'fill': 'none',
+                    'pointer-events': 'none'
+                }
+            }]
+        });
+
+        // MicroTosca DeployemntTime Link
+        joint.dia.Link.define('MicroTosca.DeploymentTimeLink', {
+            attrs: {
+                line: {
+                    connection: true,
+                    stroke: '#333333',
+                    strokeWidth: 2,
+                    strokeLinejoin: 'round',
+                    strokeDasharray: "5,10,5",
+                    targetMarker: {
+                        type: 'path',
+                        d: 'M 10 -5 0 0 10 5 z'
+                    }
+                },
+                wrapper: {
+                    connection: true,
+                    strokeWidth: 10,
+                    strokeLinejoin: 'round'
+                }
+            }
+        }, {
+            markup: [{
+                tagName: 'path',
+                selector: 'wrapper',
+                attributes: {
+                    'fill': 'none',
+                    'cursor': 'pointer',
+                    'stroke': 'transparent'
+                }
+            }, {
+                tagName: 'path',
+                selector: 'line',
+                attributes: {
+                    'fill': 'none',
+                    'pointer-events': 'none'
+                }
+            }]
+        });
+
+        
     }
 
     setName(name: string) {
@@ -21,8 +104,36 @@ export class Graph extends joint.dia.Graph {
         return this.getCell(id);
     }
 
+    findNodeByName(name:string): joint.dia.Cell{
+        return this.getNodes().find(node => {
+            console.log("finding" + this.getNameOfNode(node));
+            return name === this.getNameOfNode(node)
+        });
+    }
     getNameOfNode(node:joint.dia.Cell){
         return node.attr("label/text");
+    }
+
+    builtFromJSON(json:string){
+        this.removeCells(this.getCells());
+        // var g = new Graph(json['name']);
+        console.log("removed cells");
+        this.name = json['name'];
+        json['nodes'].forEach(node => {
+            if(node.type == "service")
+                this.addService(node.name)
+            if(node.type == "database")
+                this.addDatabase(node.name);
+             if (node.type == "communicationpattern")
+                this.addCommunicationPattern(node.name, node.type);
+        });
+        json['links'].forEach((link) => {
+            if(link.type == "deploymenttime")
+                this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
+            if(link.type = "runtime")
+                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
+
+        });
     }
 
     toJSON() {
@@ -39,12 +150,12 @@ export class Graph extends joint.dia.Graph {
 
         })
         this.getLinks().forEach((link)=>{
-             var dlink = {'source': link.getSourceElement().get('id'), 
+            var dlink = {'source': link.getSourceElement().get('id'), 
              'target': link.getTargetElement().get('id'), 
             }
-            if(link.get('type') === 'microtosca.RunTimeLink')
+            if(link.get('type') === 'MicroTosca.RunTimeLink')
               dlink['type'] = "runtime";
-            if  (link.get('type') === 'microtosca.DeploymentTimeLink')
+            if  (link.get('type') === 'MicroTosca.DeploymentTimeLink')
               dlink['type'] = "deploymenttime";
             data['links'].push(dlink);
         })
@@ -77,14 +188,27 @@ export class Graph extends joint.dia.Graph {
     }
 
     addService(name: string): joint.dia.Cell {
-        var service = joint.shapes.basic.Circle.define('microtosca.Service', {
+        var service = joint.dia.Element.define('microtosca.Service',{
+            size: { width: 80, height: 80 },
             attrs: {
                 body: {
-                    fill: '#065143'
+                    refCx: '50%',
+                    refCy: '50%',
+                    refR: '50%',
+                    strokeWidth: 8,
+                    stroke: '#74F2CE',
+                    fill: '#FFFFFF'
                 },
                 label: {
-                    text: name,
-                    fill: 'white'
+                    textVerticalAnchor: 'middle',
+                    textAnchor: 'middle',
+                    refX: '50%',
+                    refY: '50%',
+                    fontSize: 15,
+                    fill: '#333333'
+                },
+                r : {
+
                 }
             }
         }, {
@@ -94,162 +218,151 @@ export class Graph extends joint.dia.Graph {
                 }, {
                     tagName: 'text',
                     selector: 'label'
-                }]
+                },{
+                    tagName: 'rect',
+                    selector: 'r'
+                },],
+                setName: function(text) {
+                    return this.attr('label/text', text || '');
+                },
+                addPrinciples: function(number){
+                    for (var _i = 0; _i < number; _i++) {
+                      
+                        this.attr({r: {
+                            ref: 'body',
+                            refX: '100%',
+                            x: 100 *_i, // additional x offset
+                            refY: '100%',
+                            y: 10, // additional y offset
+                            refWidth: '50%',
+                            refHeight: '50%',
+                        }});
+                        console.log("added"+_i);
+                    }
+                    
+                    
+                }
             });
         var customRectangle = new service();
+        customRectangle.setName(name);
         customRectangle.addTo(this);
-        // var s = new Service(name);
-        // s.getInstance().addTo(this)
         return customRectangle;
     }
 
     addDatabase(name: string): joint.dia.Cell {
-        var database = joint.shapes.standard.Rectangle.define('microtosca.Database', {
+        var database = joint.dia.Element.define('microtosca.Database',{
+            size: {
+                width: 75,
+                height: 75
+            },
             attrs: {
                 body: {
-                    fill: '#4E7F64'
+                    refWidth: '100%',
+                    refHeight: '100%',
+                    fill: 'white',
+                    stroke: '#C18C5D',
+                    strokeWidth: 8,
+                    rx: 10,
+                    ry: 10
                 },
                 label: {
-                    text: name,
-                    fill: 'white'
+                    refX: '50%',
+                    refY: '50%',
+                    yAlignment: 'middle',
+                    xAlignment: 'middle',
+                    fontSize: 15
                 }
             }
         }, {
-                markup: [{
-                    tagName: 'rect',
-                    selector: 'body',
-                },
-                {
-                    tagName: 'text',
-                    selector: 'label'
-                }]
-            });
-        // var rect = new joint.shapes.standard.Rectangle();
-        // rect.position(0, 0);
-        // rect.resize(50, 50);
-        // rect.attr({
-        //     body: {
-        //         fill: '#4E7F64'
-        //     },
-        //     label: {
-        //         text: name,
-        //         fill: 'white'
-        //     }
-        // });
-
+            markup: [{
+                tagName: 'rect',
+                selector: 'body',
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            }],
+            setName: function(text) {
+                return this.attr('label/text', text || '');
+            }
+        });
+        
         var d = new database();
-        d.position(20, 20);
+        d.setName(name);
         d.addTo(this);
-        d.resize(50, 50);
         return d;
     }
 
     addCommunicationPattern(name: string, type: string): joint.dia.Cell {
-        var dt = joint.shapes.standard.Polygon.define('microtosca.CommunicationPattern', {
+        var cp = joint.dia.Element.define('microtosca.CommunicationPattern', {
+            size:{width: 100, height:100},
             attrs: {
                 body: {
-                    fill: "#97CAA1",
-                    refPoints: "0,10 10,0 20,10 10,20"
+                    refPoints: "0,10 10,0 20,10 10,20",
+                    strokeWidth: 8,
+                    stroke: '#005E7C',
+                    fill: '#FFFFFF'
                 },
                 label: {
-                    text: name,
-                    fill: 'white'
-                }
-            },
-        },
-            {
-                markup: [{
-                    tagName: 'polygon',
-                    selector: 'body',
+                    textVerticalAnchor: 'middle',
+                    textAnchor: 'middle',
+                    refX: '50%',
+                    refY: '50%',
+                    fontSize: 14,
+                    fill: '#333333'
                 },
-                {
-                    tagName: 'text',
-                    selector: 'label'
-                }]
+                type:{
+                    textVerticalAnchor: 'middle',
+                    textAnchor: 'middle',
+                    refX: '50%',
+                    refY: '75%',
+                    fontSize: 13,
+                    fill: '#333333'
+                }
             }
-        );
-
-        // var polygon = new joint.shapes.standard.Polygon();
-        // polygon.attr('root/title', 'joint.shapes.standard.Polygon');
-        // polygon.attr('body/fill', '#97CAA1;');
-        // polygon.attr('label/text', name);
-        // // polygon.attr('body/class', 'service');
-        // polygon.attr('text/fill', "white");
-        // polygon.attr('body/refPoints', '0,10 10,0 20,10 10,20');
-        var d = new dt();
-        d.resize(50, 50);
-        d.position(20, 20);
+        }, {
+            markup: [{
+                tagName: 'polygon',
+                selector: 'body'
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            },{
+                tagName: 'text',
+                selector: 'type'
+            }],
+            setName: function(text) {
+                console.log(this.attr());
+                return this.attr('label/text', text || '');
+            },
+            setType: function(text) {
+                return this.attr('type/text', `(${text})` || '');
+            }
+        });
+        
+        var d = new cp();
+        d.setName(name);
+        d.setType(type);
         d.addTo(this);
         return d;
     }
 
-    addRunTimeInteraction(source: string | number, target: string | number): joint.shapes.standard.Link {
-        var rt = joint.shapes.standard.Link.define('microtosca.RunTimeLink', {
-            attrs: {
-                line: {
-                    stroke: "#3c4260",
-                    strokeWidth: 4,
-                    targetMarker: {
-                        // if no fill or stroke specified, marker inherits the line color
-                        'd': 'M 0 -5 L -10 0 L 0 5 Z'
-                    },
-                    sourceMarker: {
-                        // the marker can be an arbitrary SVGElement
-                        'type': 'circle',
-                        'r': 5
-                    }
-                },
-            }
+    addRunTimeInteraction(source: joint.dia.Cell, target: joint.dia.Cell): joint.shapes.standard.Link {
+        var link = new joint.shapes.MicroTosca.RunTimeLink({
+            source: { id: source.id },
+            target: { id: target.id },
         });
 
-        // var link = new joint.shapes.standard.Link();
-        // link.attr({
-        //     line: {
-        //         stroke: "#3c4260",
-        //         strokeWidth: 4,
-        //         targetMarker: {
-        //             // if no fill or stroke specified, marker inherits the line color
-        //             'd': 'M 0 -5 L -10 0 L 0 5 Z'
-        //         },
-        //         sourceMarker: {
-        //             // the marker can be an arbitrary SVGElement
-        //             'type': 'circle',
-        //             'r': 5
-        //         }
-        //     }
-        // });
-        var link = new rt();
-        link.source(this.getCell(source));
-        link.target(this.getCell(target));
-        link.addTo(this);
+        this.addCell(link);
         return link;
     }
 
-    addDeploymentTimeInteraction(source: string | number, target: string | number): joint.shapes.standard.Link {
-        var dtl = joint.shapes.standard.Link.define('microtosca.DeploymentTimeLink', {
-            attrs: {
-                line: {
-                    stroke: "#3c4260",
-                    strokeDasharray: "5,10,5",
-                    strokeWidth: 4,
-                    targetMarker: {
-                        // if no fill or stroke specified, marker inherits the line color
-                        'd': 'M 0 -5 L -10 0 L 0 5 Z'
-                    },
-                    sourceMarker: {
-                        // the marker can be an arbitrary SVGElement
-                        'type': 'circle',
-                        'r': 5
-                    }
-                },
-            }
+    addDeploymentTimeInteraction(source: joint.dia.Cell, target: joint.dia.Cell): joint.shapes.standard.Link {
+        var link = new joint.shapes.MicroTosca.DeploymentTimeLink({
+            source: { id: source.id },
+            target: { id: target.id },
         });
-
-        var dpLink = new dtl();
-        dpLink.source(this.getCell(source));
-        dpLink.target(this.getCell(target));
-        dpLink.addTo(this);
-        return dpLink;
+        this.addCell(link);
+        return link;
     }
 
     isService(node: joint.dia.Cell) {
@@ -264,5 +377,14 @@ export class Graph extends joint.dia.Graph {
         return node.get('type') === 'microtosca.CommunicationPattern';
     }
 
+    applyLayout(){
+        joint.layout.DirectedGraph.layout(this, {
+          nodeSep: 50,
+          edgeSep: 80,
+          rankDir: "TB", // TB
+          // ranker: "tight-tree",
+          setVertices: false,
+        });
+      }
 
 }

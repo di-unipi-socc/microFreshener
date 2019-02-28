@@ -56,8 +56,8 @@ export class MenuEditComponent implements OnInit {
     });
     ref.onClose.subscribe((data) => {
       if (data.name && data.type) {
-        this.gs.getGraph().addCommunicationPattern(data.name, data.type);
-        this.messageService.add({ severity: 'success', summary: "CommunicationPattern " + data.name + " added correctly", detail: data.name });
+        this.gs.getGraph().addCommunicationPattern(data.name, data.type.name);
+        this.messageService.add({ severity: 'success', summary: `CommunicationPattern ${data.name} ${data.type.name}  added correctly`, detail: data.name });
       } else
         this.messageService.add({ severity: 'error', summary: "No name or type inserted", });
     });
@@ -152,7 +152,7 @@ export class MenuEditComponent implements OnInit {
     ref.onClose.subscribe((nodes) => {
     //TODO: show in a message the selected nodes
     if (nodes.source && nodes.target) {
-      this.gs.getGraph().addDeploymentTimeInteraction(nodes.source.id, nodes.target.id);
+      this.gs.getGraph().addDeploymentTimeInteraction(nodes.source, nodes.target);
       this.messageService.add({severity:'success', summary:'Deployment time interaction added succesfully'});
     }
     else
@@ -170,12 +170,16 @@ export class MenuEditComponent implements OnInit {
     ref.onClose.subscribe((nodes) => {
     //TODO: show in a message the selected nodes
     if (nodes.source && nodes.target) {
-      this.gs.getGraph().addRunTimeInteraction(nodes.source.id, nodes.target.id);
+      this.gs.getGraph().addRunTimeInteraction(nodes.source, nodes.target);
       this.messageService.add({severity:'success', summary:'Run time interaction added succesfully'});
     }
     else
       this.messageService.add({severity:'error', summary:'At least two nodes must be selected'});
    });
 
+  }
+
+  applyLayout(){
+    this.gs.getGraph().applyLayout();
   }
 }

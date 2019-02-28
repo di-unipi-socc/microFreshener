@@ -75,3 +75,31 @@ def graph(request):
             return Response(dmodel)
         else:
             return Response({"msg": "no model uploaded"})
+
+
+@api_view(['GET'])
+def graph_export(request):
+    # export the graph as json file
+    mmodel = None
+    if(os.path.isfile(model_file_path)):
+        mmodel = loader.load(model_file_path)
+        dmodel = transformer.transform(mmodel)
+        response = HttpResponse(ContentFile(json.dumps(dmodel)), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
+        return response 
+    else:
+        return Response({"msg": "no model uploaded"})
+
+@api_view(['POST'])
+@csrf_exempt
+def graph_import(request):
+    if request.method == 'POST':
+        # data = request.data
+        graph_in_memory = request.FILES['graph']
+        print(graph_in_memory.name) 
+
+        with open(model_file_path, 'wb+') as destination:
+            for chunk in graph_in_memory.chunks():
+                print("wrinting chunk")
+                destination.write(chunk)
+        return Response({"msg": "stored correctly"})

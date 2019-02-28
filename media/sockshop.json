@@ -1,0 +1,152 @@
+{
+    "name": "sockshop",
+    "nodes": [
+        {
+            "id": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "name": "front-end",
+            "type": "service"
+        },
+        {
+            "id": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "id": "8ca7c9da-0526-4516-b867-f065ec9287de",
+            "name": "ordersdb",
+            "type": "database"
+        },
+        {
+            "id": "fa380d9b-a836-450b-97f6-94dd850f69e2",
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "id": "a5f2982d-29c0-46c0-b97a-260c09e153d2",
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "id": "1fb0f385-0a73-401e-a11e-77663497385f",
+            "name": "carts",
+            "type": "service"
+        },
+        {
+            "id": "39d1cec3-dd96-4fb3-a6ed-4120d60ee38f",
+            "name": "carts-db",
+            "type": "database"
+        },
+        {
+            "id": "876b34dc-b214-45c2-9741-7b4118619948",
+            "name": "catalogue-db",
+            "type": "database"
+        },
+        {
+            "id": "02888d54-3218-4755-aaf6-83ccea0b05b9",
+            "name": "catalogue",
+            "type": "service"
+        },
+        {
+            "id": "1e6dd5da-38c2-4fc9-821f-86826f6d4fa8",
+            "name": "user-db",
+            "type": "database"
+        },
+        {
+            "id": "3fffecc5-77d3-4de3-b8de-6f8d0019b0e0",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "id": "6793f424-e06d-4685-8269-a198bd054c62",
+            "name": "rabbitmq",
+            "type": "communicationpattern"
+        },
+        {
+            "id": "4b9a20cb-abd5-4a05-9f69-ecb0f7934541",
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "id": "3cf6354a-93d7-417b-9d65-83d2d5c70e1b",
+            "name": "edge-router",
+            "type": "communicationpattern"
+        }
+    ],
+    "links": [
+        {
+            "source": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "target": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "type": "runtime"
+        },
+        {
+            "source": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "target": "8ca7c9da-0526-4516-b867-f065ec9287de",
+            "type": "runtime"
+        },
+        {
+            "source": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "target": "fa380d9b-a836-450b-97f6-94dd850f69e2",
+            "type": "runtime"
+        },
+        {
+            "source": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "target": "a5f2982d-29c0-46c0-b97a-260c09e153d2",
+            "type": "runtime"
+        },
+        {
+            "source": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "target": "a5f2982d-29c0-46c0-b97a-260c09e153d2",
+            "type": "runtime"
+        },
+        {
+            "source": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "target": "1fb0f385-0a73-401e-a11e-77663497385f",
+            "type": "runtime"
+        },
+        {
+            "source": "1fb0f385-0a73-401e-a11e-77663497385f",
+            "target": "39d1cec3-dd96-4fb3-a6ed-4120d60ee38f",
+            "type": "runtime"
+        },
+        {
+            "source": "02888d54-3218-4755-aaf6-83ccea0b05b9",
+            "target": "876b34dc-b214-45c2-9741-7b4118619948",
+            "type": "runtime"
+        },
+        {
+            "source": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "target": "02888d54-3218-4755-aaf6-83ccea0b05b9",
+            "type": "runtime"
+        },
+        {
+            "source": "a5f2982d-29c0-46c0-b97a-260c09e153d2",
+            "target": "1e6dd5da-38c2-4fc9-821f-86826f6d4fa8",
+            "type": "runtime"
+        },
+        {
+            "source": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "target": "3fffecc5-77d3-4de3-b8de-6f8d0019b0e0",
+            "type": "runtime"
+        },
+        {
+            "source": "3fffecc5-77d3-4de3-b8de-6f8d0019b0e0",
+            "target": "6793f424-e06d-4685-8269-a198bd054c62",
+            "type": "runtime"
+        },
+        {
+            "source": "4b9a20cb-abd5-4a05-9f69-ecb0f7934541",
+            "target": "6793f424-e06d-4685-8269-a198bd054c62",
+            "type": "runtime"
+        },
+        {
+            "source": "3cf6354a-93d7-417b-9d65-83d2d5c70e1b",
+            "target": "79ab7332-9006-499b-aadb-cb08970f641f",
+            "type": "runtime"
+        },
+        {
+            "source": "ba9a7f21-94db-465a-ac8b-f3f725b6b897",
+            "target": "1fb0f385-0a73-401e-a11e-77663497385f",
+            "type": "runtime"
+        }
+    ]
+}
