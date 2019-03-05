@@ -25,7 +25,7 @@ SECRET_KEY = 'po+a%^4%qnuf6zpiluf0&zfrdt978n0#lrg0-q_%#s8f&(epcy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'neri.di.unipi.it']
 
 
 # Application definition
@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
 
 
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
 CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:4200',

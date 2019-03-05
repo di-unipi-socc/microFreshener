@@ -89,7 +89,7 @@ export class Graph extends joint.dia.Graph {
             }]
         });
 
-        
+
     }
 
     setName(name: string) {
@@ -116,6 +116,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     builtFromJSON(json:string){
+
         this.removeCells(this.getCells());
         // var g = new Graph(json['name']);
         console.log("removed cells");
@@ -151,8 +152,8 @@ export class Graph extends joint.dia.Graph {
 
         })
         this.getLinks().forEach((link)=>{
-            var dlink = {'source': link.getSourceElement().get('id'), 
-             'target': link.getTargetElement().get('id'), 
+            var dlink = {'source': link.getSourceElement().get('id'),
+             'target': link.getTargetElement().get('id'),
             }
             if(link.get('type') === 'MicroTosca.RunTimeLink')
               dlink['type'] = "runtime";
@@ -160,7 +161,7 @@ export class Graph extends joint.dia.Graph {
               dlink['type'] = "deploymenttime";
             data['links'].push(dlink);
         })
-  
+
        return data;
     }
 
@@ -173,6 +174,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     getLinks():joint.dia.Link[]{
+      
         return super.getLinks();// .filter(node => node.isLink());
     }
 
@@ -228,7 +230,7 @@ export class Graph extends joint.dia.Graph {
                 },
                 addPrinciples: function(number){
                     for (var _i = 0; _i < number; _i++) {
-                      
+
                         this.attr({r: {
                             ref: 'body',
                             refX: '100%',
@@ -240,8 +242,8 @@ export class Graph extends joint.dia.Graph {
                         }});
                         console.log("added"+_i);
                     }
-                    
-                    
+
+
                 }
             });
         var customRectangle = new service();
@@ -286,7 +288,7 @@ export class Graph extends joint.dia.Graph {
                 return this.attr('label/text', text || '');
             }
         });
-        
+
         var d = new database();
         d.setName(name);
         d.addTo(this);
@@ -339,7 +341,7 @@ export class Graph extends joint.dia.Graph {
                 return this.attr('type/text', `(${text})` || '');
             }
         });
-        
+
         var d = new cp();
         d.setName(name);
         d.setType(type);
