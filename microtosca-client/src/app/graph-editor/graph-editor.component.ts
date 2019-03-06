@@ -38,7 +38,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.createSampleGraph();
         this.applyDirectedGraphLayout();
     }
-
     createSampleGraph(){
         var s = this.gs.getGraph().addService("shipping");
         var odb = this.gs.getGraph().addDatabase("orderdb");
