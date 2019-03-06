@@ -1,0 +1,252 @@
+{
+    "name": "extra-riot-agent",
+    "nodes": [
+        {
+            "id": "cf35b1b6-c459-4343-bb18-8e6d039d13c0",
+            "name": "Brk",
+            "type": "communicationpattern"
+        },
+        {
+            "id": "9f3ec991-6daa-475d-a692-8a002c2645e0",
+            "name": "Jtl",
+            "type": "service"
+        },
+        {
+            "id": "63c3219e-5d9b-4209-9520-8bfa312eca8a",
+            "name": "Tlg",
+            "type": "service"
+        },
+        {
+            "id": "365125c4-34da-4472-b641-46c2b633109b",
+            "name": "InfDB",
+            "type": "database"
+        },
+        {
+            "id": "3b8ade0e-e91a-4a23-8afd-d46fdcec1b69",
+            "name": "Chr",
+            "type": "service"
+        },
+        {
+            "id": "cf72e116-31b6-4eef-a928-949426c60689",
+            "name": "Inf",
+            "type": "service"
+        },
+        {
+            "id": "de871dc2-e031-45c8-b104-534f8f915b81",
+            "name": "Kpc",
+            "type": "service"
+        },
+        {
+            "id": "03e702bf-03fd-4603-8c86-19275f7b115e",
+            "name": "Dsh",
+            "type": "service"
+        },
+        {
+            "id": "3af4b90c-4fb1-4b56-a9a0-05c5a7f153e2",
+            "name": "Cnf",
+            "type": "service"
+        },
+        {
+            "id": "a5a087df-fce7-465e-a34e-ae9386105063",
+            "name": "InfUp",
+            "type": "service"
+        },
+        {
+            "id": "6aaba662-6ad5-4493-84ec-495e51ddc00f",
+            "name": "FltDB",
+            "type": "database"
+        },
+        {
+            "id": "278820f5-39be-4f6d-a1f2-869c0f0d0b1f",
+            "name": "GUI",
+            "type": "service"
+        },
+        {
+            "id": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "name": "Kpr",
+            "type": "service"
+        },
+        {
+            "id": "0942b1dd-c90e-4c79-b3a8-5bf017376622",
+            "name": "KprDB",
+            "type": "database"
+        },
+        {
+            "id": "07269251-0e0c-4740-9b90-fbe1a0243835",
+            "name": "NsqDB",
+            "type": "database"
+        },
+        {
+            "id": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "name": "CldAdm",
+            "type": "service"
+        },
+        {
+            "id": "c97d675e-ad3e-465e-b851-6766a88ab2e0",
+            "name": "CldAdmDB",
+            "type": "database"
+        },
+        {
+            "id": "aec14d13-82ec-459d-9e3d-00de95aedd4d",
+            "name": "SftDB",
+            "type": "database"
+        },
+        {
+            "id": "32f5796e-e4c7-4235-8628-e4ab68ef2e5c",
+            "name": "Ans",
+            "type": "service"
+        },
+        {
+            "id": "aa0a02d0-8f5b-423e-a328-04f40f59c759",
+            "name": "SftMngDB",
+            "type": "database"
+        },
+        {
+            "id": "1dbd8afc-916b-4623-81ee-c6503332f24c",
+            "name": "Agent",
+            "type": "service"
+        }
+    ],
+    "links": [
+        {
+            "source": "9f3ec991-6daa-475d-a692-8a002c2645e0",
+            "target": "cf35b1b6-c459-4343-bb18-8e6d039d13c0",
+            "type": "runtime"
+        },
+        {
+            "source": "63c3219e-5d9b-4209-9520-8bfa312eca8a",
+            "target": "cf35b1b6-c459-4343-bb18-8e6d039d13c0",
+            "type": "runtime"
+        },
+        {
+            "source": "63c3219e-5d9b-4209-9520-8bfa312eca8a",
+            "target": "365125c4-34da-4472-b641-46c2b633109b",
+            "type": "runtime"
+        },
+        {
+            "source": "3b8ade0e-e91a-4a23-8afd-d46fdcec1b69",
+            "target": "365125c4-34da-4472-b641-46c2b633109b",
+            "type": "runtime"
+        },
+        {
+            "source": "cf72e116-31b6-4eef-a928-949426c60689",
+            "target": "365125c4-34da-4472-b641-46c2b633109b",
+            "type": "runtime"
+        },
+        {
+            "source": "cf72e116-31b6-4eef-a928-949426c60689",
+            "target": "de871dc2-e031-45c8-b104-534f8f915b81",
+            "type": "runtime"
+        },
+        {
+            "source": "de871dc2-e031-45c8-b104-534f8f915b81",
+            "target": "365125c4-34da-4472-b641-46c2b633109b",
+            "type": "runtime"
+        },
+        {
+            "source": "de871dc2-e031-45c8-b104-534f8f915b81",
+            "target": "a5a087df-fce7-465e-a34e-ae9386105063",
+            "type": "runtime"
+        },
+        {
+            "source": "03e702bf-03fd-4603-8c86-19275f7b115e",
+            "target": "3b8ade0e-e91a-4a23-8afd-d46fdcec1b69",
+            "type": "runtime"
+        },
+        {
+            "source": "3af4b90c-4fb1-4b56-a9a0-05c5a7f153e2",
+            "target": "cf72e116-31b6-4eef-a928-949426c60689",
+            "type": "runtime"
+        },
+        {
+            "source": "3af4b90c-4fb1-4b56-a9a0-05c5a7f153e2",
+            "target": "6aaba662-6ad5-4493-84ec-495e51ddc00f",
+            "type": "runtime"
+        },
+        {
+            "source": "a5a087df-fce7-465e-a34e-ae9386105063",
+            "target": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "type": "runtime"
+        },
+        {
+            "source": "278820f5-39be-4f6d-a1f2-869c0f0d0b1f",
+            "target": "03e702bf-03fd-4603-8c86-19275f7b115e",
+            "type": "runtime"
+        },
+        {
+            "source": "278820f5-39be-4f6d-a1f2-869c0f0d0b1f",
+            "target": "3af4b90c-4fb1-4b56-a9a0-05c5a7f153e2",
+            "type": "runtime"
+        },
+        {
+            "source": "278820f5-39be-4f6d-a1f2-869c0f0d0b1f",
+            "target": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "type": "runtime"
+        },
+        {
+            "source": "278820f5-39be-4f6d-a1f2-869c0f0d0b1f",
+            "target": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "type": "runtime"
+        },
+        {
+            "source": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "target": "0942b1dd-c90e-4c79-b3a8-5bf017376622",
+            "type": "runtime"
+        },
+        {
+            "source": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "target": "07269251-0e0c-4740-9b90-fbe1a0243835",
+            "type": "runtime"
+        },
+        {
+            "source": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "target": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "type": "runtime"
+        },
+        {
+            "source": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "target": "aa0a02d0-8f5b-423e-a328-04f40f59c759",
+            "type": "runtime"
+        },
+        {
+            "source": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "target": "c97d675e-ad3e-465e-b851-6766a88ab2e0",
+            "type": "runtime"
+        },
+        {
+            "source": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "target": "32f5796e-e4c7-4235-8628-e4ab68ef2e5c",
+            "type": "runtime"
+        },
+        {
+            "source": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "target": "aec14d13-82ec-459d-9e3d-00de95aedd4d",
+            "type": "runtime"
+        },
+        {
+            "source": "32f5796e-e4c7-4235-8628-e4ab68ef2e5c",
+            "target": "63c3219e-5d9b-4209-9520-8bfa312eca8a",
+            "type": "runtime"
+        },
+        {
+            "source": "1dbd8afc-916b-4623-81ee-c6503332f24c",
+            "target": "cf35b1b6-c459-4343-bb18-8e6d039d13c0",
+            "type": "runtime"
+        },
+        {
+            "source": "1dbd8afc-916b-4623-81ee-c6503332f24c",
+            "target": "6ef93ba7-858b-441e-b47d-b1b12bbfa071",
+            "type": "runtime"
+        },
+        {
+            "source": "1dbd8afc-916b-4623-81ee-c6503332f24c",
+            "target": "830f9d8c-eae2-4383-8ab6-e9b96393d813",
+            "type": "runtime"
+        },
+        {
+            "source": "1dbd8afc-916b-4623-81ee-c6503332f24c",
+            "target": "aec14d13-82ec-459d-9e3d-00de95aedd4d",
+            "type": "runtime"
+        }
+    ]
+}

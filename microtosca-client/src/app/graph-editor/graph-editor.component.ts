@@ -13,7 +13,7 @@ import { g } from 'jointjs';
 
 export class GraphEditorComponent implements OnInit, AfterViewInit {
 
-    _options = { width: 1200, height: 800 };
+    _options = { width: 3000, height: 3000 };
 
     paper: joint.dia.Paper;
 

@@ -1,10 +1,8 @@
-import { Injectable, asNativeElements } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-
-
+import {environment} from '../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
-
 
 import { ANode } from "./analyser/node";
 
@@ -17,9 +15,10 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
+
 export class AnalyserService {
 
-  private analysisUrl = 'http://127.0.0.1:8000/v2/graph/analyse/';  // URL to web api
+  private analysisUrl = environment.serverUrl  +'/v2/graph/analyse/';  // URL to web api
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 

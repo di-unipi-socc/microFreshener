@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import {environment} from '../environments/environment';
 
 import { Graph } from './model/graph';
 
@@ -16,9 +17,9 @@ export class GraphService {
 
   graph: Graph;
 
-  private graphUrl = 'http://neri.di.unipi.it:8000/v2/graph/?format=json';  // URL to web api
-  private graphUrlPost = 'http://neri.di.unipi.it:8000/v2/graph/';         // URL to web api
-  private analysisUrl = 'http://neri.di.unipi.it:8000/v2/graph/analyse/';  // URL to web api
+  private graphUrl = environment.serverUrl +'/v2/graph/?format=json';  // URL to web api
+  private graphUrlPost = environment.serverUrl + '/v2/graph/';         // URL to web api
+  private analysisUrl = environment.serverUrl + '/v2/graph/analyse/';  // URL to web api
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('hello-world');
