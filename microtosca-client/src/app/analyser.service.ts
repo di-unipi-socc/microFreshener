@@ -18,6 +18,8 @@ const httpOptions = {
 
 export class AnalyserService {
 
+
+  
   private analysisUrl = environment.serverUrl  +'/v2/graph/analyse/';  // URL to web api
 
   constructor(private http: HttpClient, private gs: GraphService) { }

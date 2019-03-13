@@ -48,11 +48,11 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addRunTimeInteraction(s, odb);
         this.gs.getGraph().addRunTimeInteraction(s, cp);
         this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
+        
         //order
         this.gs.getGraph().addRunTimeInteraction(o, s);
         this.gs.getGraph().addRunTimeInteraction(o, odb);
         this.gs.getGraph().addRunTimeInteraction(o, cp);
-
         this.gs.getGraph().addDeploymentTimeInteraction(o, s);
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
     }

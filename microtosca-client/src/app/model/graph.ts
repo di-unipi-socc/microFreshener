@@ -380,14 +380,66 @@ export class Graph extends joint.dia.Graph {
         return node.get('type') === 'microtosca.CommunicationPattern';
     }
 
-    applyLayout(){
-        joint.layout.DirectedGraph.layout(this, {
-          nodeSep: 50,
-          edgeSep: 80,
-          rankDir: "TB", // TB
-          // ranker: "tight-tree",
-          setVertices: false,
-        });
+    applyLayout(rankdir:string){
+        // rankdir: one of "TB" (top-to-bottom) / "BT" (bottom-to-top) / "LR" (left-to-right) / "RL" (right-to-left))
+        switch(rankdir) { 
+            case "TB": { 
+                joint.layout.DirectedGraph.layout(this, {
+                    nodeSep: 10,
+                    edgeSep: 30,
+                    rankSep: 30,
+                    rankDir: "TB", 
+                    setVertices: true,
+                    ranker:"longest-path",
+                    marginY:100,
+                    marginX:100,
+                  }); 
+               break; 
+            } 
+            case "BT": { 
+                joint.layout.DirectedGraph.layout(this, {
+                    nodeSep: 10,
+                    edgeSep: 30,
+                    rankSep: 30,
+                    rankDir: "BT",
+                    setVertices: true,
+                    ranker:"longest-path",
+                    marginY:100,
+                    marginX:100,
+                  }); 
+               break; 
+            }
+            case "LR": { 
+                joint.layout.DirectedGraph.layout(this, {
+                    nodeSep: 10,
+                    edgeSep: 30,
+                    rankSep: 30,
+                    rankDir: "LR",
+                    setVertices: true,
+                    ranker:"longest-path",
+                    marginY:100,
+                    marginX:100,
+                  }); 
+               break; 
+            } 
+            case "RL": { 
+                joint.layout.DirectedGraph.layout(this, {
+                    nodeSep: 10,
+                    edgeSep: 30,
+                    rankSep: 30,
+                    rankDir: "RL",
+                    setVertices: true,
+                    ranker:"longest-path",
+                    marginY:100,
+                    marginX:100,
+                  }); 
+               break; 
+            } 
+            default: { 
+               break; 
+            } 
+         } 
+        
     }
 
 }

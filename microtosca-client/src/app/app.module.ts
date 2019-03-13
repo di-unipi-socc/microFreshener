@@ -28,7 +28,9 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {ToolbarModule} from 'primeng/toolbar';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {SplitButtonModule} from 'primeng/splitbutton';
  
+import {MenuModule} from 'primeng/menu';
 //import d3js component
 import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
@@ -72,7 +74,9 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     MessagesModule,
     MessageModule,
     ToolbarModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    MenuModule,
+    SplitButtonModule
   ],
   providers: [
     MessageService

@@ -26,7 +26,7 @@ from microanalyser.model.nodes import Service, Database, CommunicationPattern
 loader = JSONLoader()
 transformer = JSONTransformer()
 
-file_name = "microtosca.json"
+file_name = "helloworld.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 
 
@@ -67,10 +67,20 @@ def graph(request):
         return  Response( {"msg":"graph {} uploaded correctly".format(data['name'])})
 
     if request.method == 'GET':
+        model_path = model_file_path
+        if "example" in request.GET:
+            ex = request.GET['example']
+            if(ex == "extra"):
+                model_path = os.path.join(settings.MEDIA_ROOT, "extra-riot.json")
+            elif (ex =="sockshop"):
+                model_path = os.path.join(settings.MEDIA_ROOT, "sockshop.json")
+            elif (ex =="helloworld"):
+                model_path = os.path.join(settings.MEDIA_ROOT, "helloworld.json")
+   
         # return the json file 
         mmodel = None
-        if(os.path.isfile(model_file_path)):
-            mmodel = loader.load(model_file_path)
+        if(os.path.isfile(model_path)):
+            mmodel = loader.load(model_path)
             dmodel = transformer.transform(mmodel)
             return Response(dmodel)
         else:

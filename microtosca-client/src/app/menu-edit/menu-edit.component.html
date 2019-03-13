@@ -1,5 +1,7 @@
 <div class="svg-container">
 
+<p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
+
 <h3>Name of the app</h3>
 <span class="ui-float-label">
     <div class="ui-inputgroup">
@@ -130,6 +132,8 @@
             </div>
     </div>
     
-    <button cslass="ui-button-success" pButton type="button" (click)="applyLayout()" label="Layout" icon="pi pi-save"></button>
+    <!-- <button cslass="ui-button-success" pButton type="button" (click)="applyLayout()" label="Layout" icon="pi pi-sitemap"></button> -->
+    <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" (onClick)="save()" [model]="items"></p-splitButton>
 
+    <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" (onClick)="save()" [model]="items"></p-splitButton>
 </div>

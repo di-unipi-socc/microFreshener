@@ -6,6 +6,8 @@ import { AddNodeComponent } from '../add-node/add-node.component';
 import { RemoveNodeComponent } from '../remove-node/remove-node.component';
 import { RemoveLinkComponent } from '../remove-link/remove-link.component';
 import { MessageService } from 'primeng/api';
+import {MenuItem} from 'primeng/api';
+
 
 import * as joint from 'jointjs';
 
@@ -19,15 +21,54 @@ export class MenuEditComponent implements OnInit {
 
   name: string; // name of the app
 
+  items: MenuItem[];
+  examples: MenuItem[];
+
   constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) { }
 
   ngOnInit() {
     this.name = this.gs.getGraph().getName();
+    this.items = [
+      // "TB" (top-to-bottom) / "BT" (bottom-to-top) / "LR" (left-to-right) / "RL" (right-to-left))
+      {label: 'Botton-to-top', command: () => {
+        this.gs.getGraph().applyLayout("BT");
+      }},
+      {label: 'Top-to-bottom', command: () => {
+        this.gs.getGraph().applyLayout("TB");
+      }},
+      {label: 'Left-to-right', command: () => {
+        this.gs.getGraph().applyLayout("LR");
+      }},
+      {label: 'Right-to-left', command: () => {
+        this.gs.getGraph().applyLayout("RL");
+      }},
+  ];
+  this.examples = [
+    {label: 'Hello world', command: () => {
+      this.downloadExample("helloworld");
+    }},
+    {label: 'Extra', command: () => {
+      this.downloadExample("extra");
+    }},
+    {label: 'Sockshop', command: () => {
+      this.downloadExample("sockshop");
+    }},
+];
   }
 
   saveName() {
    this.gs.getGraph().setName(this.name);
    this.messageService.add({ severity: 'success', summary: 'App renamed correctly', detail: "New name " + this.name });
+  }
+
+  downloadExample(name:string){
+    this.gs.downloadExample(name)
+    .subscribe((data) => {
+      console.log(data);
+      this.gs.getGraph().builtFromJSON(data);
+      this.gs.getGraph().applyLayout("LR");
+      this.messageService.add({severity:'success', summary:'Graph dowloaded correclty', detail:''});
+    });
   }
 
   addService() {
@@ -179,7 +220,4 @@ export class MenuEditComponent implements OnInit {
 
   }
 
-  applyLayout(){
-    this.gs.getGraph().applyLayout();
-  }
 }

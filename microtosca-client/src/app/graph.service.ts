@@ -59,6 +59,14 @@ export class GraphService {
     );
   }
 
+  downloadExample(name:string): Observable<string> {
+    let params = new HttpParams().set("example",name);
+    return this.http.get<string>(this.graphUrl, { params: params }).pipe(
+      tap(_ => this.log(`fetched example ${name}`)),
+      // catchError(this.handleError<Hero>(`getHero id=${id}`))
+    );
+  }
+
   /** Log a HeroService message with the MessageService */
   private log(message: string) {
     console.log(`GraphServiceService: ${message}`)
