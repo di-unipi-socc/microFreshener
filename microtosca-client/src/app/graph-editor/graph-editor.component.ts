@@ -29,7 +29,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             height: this._options.height,
             gridSize: 1,
         });
-
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
         this.addLinkMouseOver();

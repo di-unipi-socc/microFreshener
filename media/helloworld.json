@@ -2,65 +2,65 @@
     "name": "hello-world",
     "nodes": [
         {
-            "id": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
+            "id": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
             "name": "shipping",
             "type": "service"
         },
         {
-            "id": "53689620-5132-44cc-bc8a-971fb8d86b80",
+            "id": "61911040-cb64-45ce-a4e1-2d3d0af0b92f",
             "name": "orderdb",
             "type": "database"
         },
         {
-            "id": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
+            "id": "788d45fe-ce40-4aa6-955f-9ba65898c642",
             "name": "order",
             "type": "service"
         },
         {
-            "id": "403eab8d-2f6f-401c-bf27-05d9799b8ae4",
+            "id": "ea45cc6e-4b05-4a3c-b85c-c5d5460a2646",
             "name": "rabbitmq",
             "type": "communicationpattern"
         }
     ],
     "links": [
         {
-            "source": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
-            "target": "53689620-5132-44cc-bc8a-971fb8d86b80",
+            "source": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
+            "target": "61911040-cb64-45ce-a4e1-2d3d0af0b92f",
             "type": "runtime"
         },
         {
-            "source": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
-            "target": "403eab8d-2f6f-401c-bf27-05d9799b8ae4",
+            "source": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
+            "target": "ea45cc6e-4b05-4a3c-b85c-c5d5460a2646",
             "type": "runtime"
         },
         {
-            "source": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
-            "target": "53689620-5132-44cc-bc8a-971fb8d86b80",
+            "source": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
+            "target": "61911040-cb64-45ce-a4e1-2d3d0af0b92f",
             "type": "deploymenttime"
         },
         {
-            "source": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
-            "target": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
+            "source": "788d45fe-ce40-4aa6-955f-9ba65898c642",
+            "target": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
             "type": "runtime"
         },
         {
-            "source": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
-            "target": "53689620-5132-44cc-bc8a-971fb8d86b80",
+            "source": "788d45fe-ce40-4aa6-955f-9ba65898c642",
+            "target": "61911040-cb64-45ce-a4e1-2d3d0af0b92f",
             "type": "runtime"
         },
         {
-            "source": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
-            "target": "403eab8d-2f6f-401c-bf27-05d9799b8ae4",
+            "source": "788d45fe-ce40-4aa6-955f-9ba65898c642",
+            "target": "ea45cc6e-4b05-4a3c-b85c-c5d5460a2646",
             "type": "runtime"
         },
         {
-            "source": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
-            "target": "0d8d8e1e-82d5-4571-9718-632cc0d7c99e",
+            "source": "788d45fe-ce40-4aa6-955f-9ba65898c642",
+            "target": "f101141e-d21e-44cc-a544-955ffcb8f5e1",
             "type": "deploymenttime"
         },
         {
-            "source": "7bdf1aab-90b2-4294-b747-af8ff4cb6b7c",
-            "target": "53689620-5132-44cc-bc8a-971fb8d86b80",
+            "source": "788d45fe-ce40-4aa6-955f-9ba65898c642",
+            "target": "61911040-cb64-45ce-a4e1-2d3d0af0b92f",
             "type": "deploymenttime"
         }
     ]

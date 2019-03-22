@@ -1,7 +1,6 @@
 import * as joint from 'jointjs';
 import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic/src/platform_providers';
 
-
 export class Graph extends joint.dia.Graph {
     name: string;
 
@@ -13,7 +12,8 @@ export class Graph extends joint.dia.Graph {
     // joint class that define the shape of the links
     defineLinkClass(){
         // MicroTosca RunTimeLink
-        joint.dia.Link.define('MicroTosca.RunTimeLink', {
+        
+         joint.dia.Link.define('MicroTosca.RunTimeLink', {
             attrs: {
                 line: {
                     connection: true,
@@ -126,7 +126,7 @@ export class Graph extends joint.dia.Graph {
                 this.addService(node.name)
             if(node.type == "database")
                 this.addDatabase(node.name);
-             if (node.type == "communicationpattern")
+            if (node.type == "communicationpattern")
                 this.addCommunicationPattern(node.name, node.type);
         });
         json['links'].forEach((link) => {
@@ -208,7 +208,9 @@ export class Graph extends joint.dia.Graph {
                     refX: '50%',
                     refY: '50%',
                     fontSize: 15,
-                    fill: '#333333'
+                    fill: '#333333',
+                    // TODO: setName()  generate an error, so the text is setted here.
+                    text: name || ''
                 },
                 r : {
 
@@ -247,7 +249,7 @@ export class Graph extends joint.dia.Graph {
                 }
             });
         var customRectangle = new service();
-        customRectangle.setName(name);
+        // customRectangle.setName(name);
         customRectangle.addTo(this);
         return customRectangle;
     }
@@ -273,7 +275,9 @@ export class Graph extends joint.dia.Graph {
                     refY: '50%',
                     yAlignment: 'middle',
                     xAlignment: 'middle',
-                    fontSize: 15
+                    fontSize: 15,
+                    // TODO: setName()  generate an error, so the text is setted here.
+                    text: name || ''
                 }
             }
         }, {
@@ -290,7 +294,7 @@ export class Graph extends joint.dia.Graph {
         });
 
         var d = new database();
-        d.setName(name);
+        // d.setName(name);
         d.addTo(this);
         return d;
     }
@@ -311,7 +315,9 @@ export class Graph extends joint.dia.Graph {
                     refX: '50%',
                     refY: '50%',
                     fontSize: 14,
-                    fill: '#333333'
+                    fill: '#333333',
+                     // TODO: setName()  generate an error, so the text is setted here.
+                    text: name || ''
                 },
                 type:{
                     textVerticalAnchor: 'middle',
@@ -319,7 +325,9 @@ export class Graph extends joint.dia.Graph {
                     refX: '50%',
                     refY: '75%',
                     fontSize: 13,
-                    fill: '#333333'
+                    fill: '#333333',
+                     // TODO: setType()  generate an error, so the text is setted here.
+                    text: type || ''
                 }
             }
         }, {
@@ -343,13 +351,14 @@ export class Graph extends joint.dia.Graph {
         });
 
         var d = new cp();
-        d.setName(name);
-        d.setType(type);
+        // d.setName(name);
+        // d.setType(type);
         d.addTo(this);
         return d;
     }
 
     addRunTimeInteraction(source: joint.dia.Cell, target: joint.dia.Cell): joint.shapes.standard.Link {
+
         var link = new joint.shapes.MicroTosca.RunTimeLink({
             source: { id: source.id },
             target: { id: target.id },

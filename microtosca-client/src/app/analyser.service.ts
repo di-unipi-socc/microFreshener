@@ -27,7 +27,7 @@ export class AnalyserService {
   runRemoteAnalysis(principles: string[]): Observable<ANode[]> {
     const params = new HttpParams()
       .set('principles', principles.join()); // principles to be analysed: principles separated by commma
-
+      
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
@@ -39,7 +39,6 @@ export class AnalyserService {
           return analysedNodes;
         }),
         tap(_ => this.log(`Send analysis`),
-
         ),
         catchError((e: Response) => throwError(e))
       );

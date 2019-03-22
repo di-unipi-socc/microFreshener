@@ -17,6 +17,7 @@ import json
 
 
 from microanalyser.analyser import MicroAnalyser
+from microanalyser.analyser.builder import AnalyserBuilder
 from microanalyser.loader import JSONLoader
 from microanalyser.trasformer import JSONTransformer
 from microanalyser.model.template import MicroModel
@@ -43,9 +44,12 @@ def graph_analysis(request):
         mmodel = None
         if(os.path.isfile(model_file_path)):
             mmodel = loader.load(model_file_path)
-            analyser = MicroAnalyser(mmodel)
-            res = analyser.analyse(principles_to_check=principles)
-            # print(res)
+            builder = AnalyserBuilder(mmodel)
+            for principle in principles:
+                builder.add_smells_related_to_principle(principle)
+            analyser = builder.build()
+            res = analyser.run()  
+            print(res)
             return Response(res)
         else:
             return Response({"msg": "No model uploaded"})

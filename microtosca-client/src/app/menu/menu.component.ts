@@ -140,18 +140,22 @@ export class MenuComponent implements OnInit {
       });
   }
 
+
+
   updatePrinciplesForTreeNode(anodes:ANode[]) {
    this.nodes = [];
     anodes.forEach((anode)=>{
       var n = {'label': anode.name,  collapsedIcon: 'fa-folder', expandedIcon: 'fa-folder-open', selectable:false};
-      n['type'] = (anode.hasViolatedPrinciples()) ? "nok" :"ok";
+      n['type'] = (anode.hasSmells()) ? "nok" :"ok";
       n['children'] = [];
-      anode.getViolatedPrinciples().forEach((principle)=>{
-        var p = {'label':principle.name, selectable:true, 'type':"principle", 'children':[]};
-        n['children'].push(p);
-        principle.getAntipatterns().forEach((antipattern)=>{
-            p['children'].push({'label':antipattern.name, 'data': antipattern, 'type':"antipattern"})
+      anode.getSmells().forEach((smell)=>{
+        var p = {'label':smell.name, selectable:true, 'type':"smell", 'children':[]};
+        smell.getCause().forEach((causa)=>{
+            // console.log(causa);
+            // console.log("O£JOEJ");
+            p['children'].push({'data': causa, 'type':"causa"})
         })
+        n['children'].push(p);
       })
       this.nodes.push(n);
     })

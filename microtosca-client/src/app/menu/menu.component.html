@@ -35,11 +35,14 @@
                 [propagateSelectionUp]="false" 
                 [propagateSelectionDown]="true"
                 [loading]="loading">
-                <ng-template let-node  pTemplate="principle">
+                <ng-template let-node  pTemplate="smell">
                     <span> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
                 </ng-template>
-                <ng-template let-node  pTemplate="antipattern">
-                  {{node.label}} (<span *ngFor="let causa of node.data.cause">{{causa.source}} -> {{causa.target}}, </span>)
+                <!-- <ng-template let-node  pTemplate="causa">
+                  <span *ngFor="let causa of node.data.cause"> {{causa.source}} -> {{causa.target}}, </span>)
+                </ng-template> -->
+                <ng-template let-node  pTemplate="causa">
+                  <span> {{node['source']}} -> {{node['target']}} </span>
                 </ng-template>
                 <ng-template let-node  pTemplate="ok">
                   <span style="color:green">{{node.label}}  </span> <i class="pi pi-check" style="color:green"></i>
