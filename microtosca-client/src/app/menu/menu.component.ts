@@ -140,8 +140,6 @@ export class MenuComponent implements OnInit {
       });
   }
 
-
-
   updatePrinciplesForTreeNode(anodes:ANode[]) {
    this.nodes = [];
     anodes.forEach((anode)=>{
