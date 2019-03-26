@@ -28,6 +28,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             width: this._options.width,
             height: this._options.height,
             gridSize: 1,
+            defaultLink: new joint.shapes.microtosca.RunTimeLink(),
+            linkPinning: false // do not allow link without a target node
         });
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
