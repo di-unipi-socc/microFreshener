@@ -1,0 +1,12 @@
+<h3>Principles to analyse</h3>
+<div class="ui-g" style="width:250px;margin-bottom:10px">
+    <div class="ui-g-12"  *ngFor="let principle of principles" >
+      <p-checkbox name="group2" [value]="principle" label="{{principle.name}}" [(ngModel)]="selectedPrinciples" inputId="{{principle.value}}">
+      </p-checkbox>
+    </div>
+</div>
+
+<div class="p-grid p-justify-end">
+  <button class="p-col-2" type="button" pButton (click)="save()" label="Save" class="ui-button-success">
+  </button>
+</div>

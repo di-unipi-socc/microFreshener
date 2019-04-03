@@ -1,13 +1,40 @@
+<div class="p-grid">
+    <div class="p-col">
+        <p-panel header="Godfather">
+            <span>Name</span>
+            <span class="ui-float-label">
+                <div class="ui-inputgroup">
+                    <input type="text" pInputText placeholder="Keyword"  [(ngModel)]="name">   
+                    <button pButton type="button" icon="pi pi-check"  (click)="saveName()" class="ui-button-warn"></button>      
+                </div>
+            </span>
 
+        <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
+        </p-panel>
+    </div>
+    <div class="p-col">
+        <p-panel header="Graph Editor">
+            <app-menu-edit>  </app-menu-edit>
+        </p-panel>
+    </div>
+    <div class="p-col">
+        <p-panel header="Analyse">
+            The story begins as Don Vito Corleone, the head of a New York Mafia family, oversees his daughter's wedding.
+            His beloved son Michael has just come home from the war, but does not intend to become part of his father's business.
+            Through Michael's life the nature of the family business becomes clear. The business of the family is just like the head of the family,
+            kind and benevolent to those who give respect, but given to ruthless violence whenever anything stands against the good of the family.
+        </p-panel>
+    </div>
+</div>
+
+<!-- 
 <p-accordion [multiple]="true">
-    <!-- Editor tab -->
     <p-accordionTab header="Editor">
       <app-menu-edit> 
         
       </app-menu-edit>
     </p-accordionTab>
 
-    <!-- Analyser tab -->
     <p-accordionTab header="Analyser">
       <h3>Principles to analyse</h3>
       <div class="ui-g" style="width:250px;margin-bottom:10px">
@@ -38,9 +65,7 @@
                 <ng-template let-node  pTemplate="smell">
                     <span> {{node.label}} </span><i class="pi pi-times" style="color:red"></i> 
                 </ng-template>
-                <!-- <ng-template let-node  pTemplate="causa">
-                  <span *ngFor="let causa of node.data.cause"> {{causa.source}} -> {{causa.target}}, </span>)
-                </ng-template> -->
+
                 <ng-template let-node  pTemplate="causa">
                   <span> {{node['source']}} -> {{node['target']}} </span>
                 </ng-template>
@@ -55,8 +80,7 @@
 
    </p-accordionTab>
 
-   <!-- refactor tab -->
     <p-accordionTab header="Refactor">
       <h3>Apply the refactorings</h3>
     </p-accordionTab>
-</p-accordion>
+</p-accordion> -->

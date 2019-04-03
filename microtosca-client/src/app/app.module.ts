@@ -13,7 +13,7 @@ import { MenuComponent } from './menu/menu.component';
 import {AccordionModule} from 'primeng/accordion';
 import {MessageService} from 'primeng/api';
 import {DropdownModule} from 'primeng/dropdown';
-import { DynamicDialogModule} from 'primeng/dynamicdialog';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {InputTextModule} from 'primeng/inputtext';
 import {SidebarModule} from 'primeng/sidebar';
 import {ButtonModule} from 'primeng/button';
@@ -29,8 +29,11 @@ import {MessageModule} from 'primeng/message';
 import {ToolbarModule} from 'primeng/toolbar';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {SplitButtonModule} from 'primeng/splitbutton';
- 
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import {MenubarModule} from 'primeng/menubar';
 import {MenuModule} from 'primeng/menu';
+import {PanelModule} from 'primeng/panel';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 //import d3js component
 import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
@@ -39,6 +42,8 @@ import { AddNodeComponent } from './add-node/add-node.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 import { RemoveNodeComponent } from './remove-node/remove-node.component';
 import { RemoveLinkComponent } from './remove-link/remove-link.component';
+import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
+import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +56,8 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     ModalRefactoringsComponent,
     RemoveNodeComponent,
     RemoveLinkComponent,
-   
+    DialogAnalysisComponent,
+    DialogSmellComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +82,11 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     ToolbarModule,
     OverlayPanelModule,
     MenuModule,
-    SplitButtonModule
+    SplitButtonModule,
+    ProgressSpinnerModule,
+    MenubarModule,
+    PanelModule,
+    InputTextareaModule
   ],
   providers: [
     MessageService
@@ -86,7 +96,9 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
     AddLinkComponent,
     AddNodeComponent,
     RemoveNodeComponent,
-    RemoveLinkComponent
+    RemoveLinkComponent,
+    DialogAnalysisComponent,
+    DialogSmellComponent
   ]
 })
 export class AppModule { }

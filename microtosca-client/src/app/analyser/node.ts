@@ -45,17 +45,22 @@ export class ANode {
 
     hasViolatedPrinciples():boolean{
         return this.violatedPrinciples.length > 0;
-    }
-
-  
+    }  
 
     static fromJSON(data:string){
         var anode: ANode = new ANode(data['name'], data['id']);
         data['smells'].forEach((smell)=>{
+            console.log(smell);
+
             var s:Smell = new Smell(smell.name);
             smell['cause'].forEach((causa) =>{
                 s.addCause(causa);
             });
+            if(smell['refactorings']){
+                smell['refactorings'].forEach((ref) =>{
+                    s.addRefactoring(ref);
+                });
+            }
             anode.addSmell(s);
         });
         return anode;

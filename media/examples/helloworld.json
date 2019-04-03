@@ -1,0 +1,59 @@
+{
+    "name": "hello-world",
+    "nodes": [
+        {
+            "id": "297dba48-382b-44d9-b76e-d877d97faeb2",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "id": "323a7b96-d32f-4140-9c80-bdb91e91ceac",
+            "name": "orderdb",
+            "type": "database"
+        },
+        {
+            "id": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "id": "9a517596-23c7-4831-bf0f-412b3acbf159",
+            "name": "rabbitmq",
+            "type": "communicationpattern"
+        }
+    ],
+    "links": [
+        {
+            "source": "297dba48-382b-44d9-b76e-d877d97faeb2",
+            "target": "323a7b96-d32f-4140-9c80-bdb91e91ceac"
+        },
+        {
+            "source": "297dba48-382b-44d9-b76e-d877d97faeb2",
+            "target": "9a517596-23c7-4831-bf0f-412b3acbf159"
+        },
+        {
+            "source": "297dba48-382b-44d9-b76e-d877d97faeb2",
+            "target": "323a7b96-d32f-4140-9c80-bdb91e91ceac"
+        },
+        {
+            "source": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "target": "297dba48-382b-44d9-b76e-d877d97faeb2"
+        },
+        {
+            "source": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "target": "323a7b96-d32f-4140-9c80-bdb91e91ceac"
+        },
+        {
+            "source": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "target": "9a517596-23c7-4831-bf0f-412b3acbf159"
+        },
+        {
+            "source": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "target": "297dba48-382b-44d9-b76e-d877d97faeb2"
+        },
+        {
+            "source": "cd24f9af-e9e4-4511-9b5b-628945caeb22",
+            "target": "323a7b96-d32f-4140-9c80-bdb91e91ceac"
+        }
+    ]
+}

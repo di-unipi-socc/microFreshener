@@ -1,8 +1,6 @@
 import { Refactoring } from "./refactoring";
 import * as joint from 'jointjs';
 import { GraphService } from "../graph.service";
-import { json } from 'd3';
-
 
 export class Analyser {
 
@@ -11,6 +9,11 @@ export class Analyser {
 
     constructor(private gs: GraphService) {
         this.nodes = {};
+        console.log("ANALYSER CREATEA");
+        this.gs.getGraph().ticker.subscribe((evt)=>{
+            console.log("analyser received evt");
+            console.log(evt);
+        })
     }
 
     //TODO: implement the analysis at client side.

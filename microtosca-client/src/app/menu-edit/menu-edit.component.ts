@@ -9,8 +9,6 @@ import { MessageService } from 'primeng/api';
 import {MenuItem} from 'primeng/api';
 
 
-import * as joint from 'jointjs';
-
 @Component({
   selector: 'app-menu-edit',
   templateUrl: './menu-edit.component.html',

@@ -1,25 +1,38 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {DialogService} from 'primeng/api';
+import { MessageService } from 'primeng/primeng';
+import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
 import * as joint from 'jointjs';
-import * as _ from "lodash";
+import '../model/microtosca';
+import * as _ from 'lodash';    
+import * as $ from 'jquery';
 import { g } from 'jointjs';
+import { Analyser } from '../analyser/analyser';
+import { Smell } from '../analyser/smell';
+
 
 
 @Component({
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html',
-    styleUrls: ['./graph-editor.component.css']
+    styleUrls: ['./graph-editor.component.css'],
+    providers: [DialogService]
 })
-
 export class GraphEditorComponent implements OnInit, AfterViewInit {
 
-    _options = { width: 3000, height: 3000 };
-
+    _options = { width: 2000, height: 1500 };
+  
     paper: joint.dia.Paper;
+    analyser:Analyser;
 
-    constructor(private gs: GraphService) { }
+    constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) {
 
-    ngOnInit() { }
+    }
+
+    ngOnInit() { 
+     
+    }
 
     ngAfterViewInit() {
         this.paper = new joint.dia.Paper({
@@ -29,18 +42,26 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             height: this._options.height,
             gridSize: 1,
             defaultLink: new joint.shapes.microtosca.RunTimeLink(),
-            linkPinning: false // do not allow link without a target node
+            linkPinning: false, // do not allow link without a target node
+            restrictTranslate: true,
         });
+
+        this.createSampleGraph();
+
+
+        //bind events
+        this.bindEvents();
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
         this.addLinkMouseOver();
-        this.addNodeMouseOver();
 
-        this.createSampleGraph();
+        // this.createSampleGraph();
         this.applyDirectedGraphLayout();
     }
     createSampleGraph(){
         var s = this.gs.getGraph().addService("shipping");
+        
+
         var odb = this.gs.getGraph().addDatabase("orderdb");
         var o = this.gs.getGraph().addService("order");
         var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", 'mb');
@@ -56,6 +77,69 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addRunTimeInteraction(o, cp);
         this.gs.getGraph().addDeploymentTimeInteraction(o, s);
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
+        // s.addSmell( new EndpointBasedServiceInteractionSmell("jj"));
+        // o.addSmell(2);
+    }
+
+
+    bindEvents(){
+        // this.paper.on("blank:pointerclick",(evt,x,y,)=>{
+        //     console.log(evt);
+        //     console.log(x,y);
+        //     this.gs.getGraph().ticker.emit(x);
+        // })
+        // this.paper.on("blank:contextmenu", function (evt,x,y,){
+        //     console.log(evt);
+        //     console.log(x,y);
+        // })
+
+        // this.paper.on("cell:contextmenu", function (cellview, evt,x,y){
+        //     // console.log(cellview.model.addSmell(2));
+        //     console.log(x,y);
+
+        // })
+        this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt,x,y)=>{
+            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            console.log("EBSI EVENT FIRED");
+            var model = cellview.model;
+            var smell:Smell = model.getSmell("EndpointBasedServiceInteraction");
+            const ref = this.dialogService.open(DialogSmellComponent, {
+                data: {
+                    model: model,
+                    selectedsmell: smell
+                },
+                header: `Smell: ${smell.name}  Node: ${model.getName()}` ,
+                width: '90%'
+            });
+
+            ref.onClose.subscribe((any) => {
+                // this.messageService.add({severity:'info', summary: 'Smell clodes'});
+            });
+
+            console.log(model);
+        })
+
+        this.paper.on("smell:sp:pointerdown", function (cellview, evt,x,y){
+            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            console.log("SHARED PERSITENCY EVENT FIRED");
+            var model = cellview.model;
+            console.log(model);
+        })
+        
+        this.paper.on("smell:wsi:pointerdown", function (cellview, evt,x,y){
+            evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+            console.log("WSI  EVENT FIRED");
+            var model = cellview.model;
+            console.log(model);
+        })
+
+        this.paper.on('cell:pointerdblclick', (elementView) =>{
+            var currentElement = elementView.model;
+            currentElement.attr('body/stroke', 'orange');
+            this.gs.getGraph().ticker.emit(2);
+            console.log(elementView.model);
+        });
+        
     }
 
     bindInteractionEvents(adjustVertices, graph, paper) {
@@ -104,12 +188,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                 // remove zero-length links
                 evt.data.link.remove();
             }
-        });
-    }
-
-    addNodeMouseOver() {
-        this.paper.on('element:pointerclick', function (element) {
-            console.log(element);
         });
     }
 
@@ -335,6 +413,5 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             }
         }
     }
-    
     
 }

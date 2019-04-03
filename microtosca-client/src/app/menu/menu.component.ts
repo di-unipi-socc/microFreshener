@@ -5,20 +5,29 @@ import { TreeNode, MessageService } from 'primeng/primeng';
 import { AnalyserService } from '../analyser.service';
 import { ANode } from '../analyser/node';
 import { Antipattern } from '../analyser/antipattern';
+import { DialogService } from 'primeng/api';
+import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
+
+import {MenuItem} from 'primeng/api';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.css'],
+  providers: [DialogService]
 })
 export class MenuComponent implements OnInit {
 
   principles: Object[] = [];
   selectedPrinciples: Object[] = [];
 
+  items: MenuItem[];
+
+
+
   nodes: TreeNode[]; // nodes to be shown in the tree (primeNg)
 
-  constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService) {
+  constructor(private gs: GraphService, private as: AnalyserService,  public dialogService: DialogService, private messageService: MessageService) {
     //TODO: get the princniples with a service from the server
     this.principles.push({ "name": "Independent Deployability", "value": "IndependentDeployability" });
     this.principles.push({ "name": "Horizontal Scalability", "value": "HorizontalScalability" });
@@ -29,71 +38,34 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    /*
-    [
-      {'label': node1}
-    ]
+    this.items = [
+      {
+          label: 'File',
+          items: [{
+                  label: 'New', 
+                  icon: 'pi pi-fw pi-plus',
+                  items: [
+                      {label: 'Project'},
+                      {label: 'Other'},
+                  ]
+              },
+              {label: 'Open'},
+              {label: 'Quit'}
+          ]
+      },
+      {
+          label: 'Edit',
+          icon: 'pi pi-fw pi-pencil',
+          items: [
+              {label: 'Delete', icon: 'pi pi-fw pi-trash'},
+              {label: 'Refresh', icon: 'pi pi-fw pi-refresh'}
+          ]
+      }
+  ];
 
-    */
     this.nodes = [];
-    // {
-    //   label: 'node1',
-    //   collapsedIcon: 'fa-folder',
-    //   expandedIcon: 'fa-folder-open',
-    //   children: [
-    //     {
-    //       label: 'antipattern 1',
-    //       collapsedIcon: 'fa-folder',
-    //       expandedIcon: 'fa-folder-open',
-    //       children: [
-    //         {
-    //           label: 'refactoring1',
-    //           icon: 'fa-file-o'
-    //         },
-    //         {
-    //           label: 'refactorin 2',
-    //           icon: 'fa-file-o'
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       label: 'antipattern2',
-    //       collapsedIcon: 'fa-folder',
-    //       expandedIcon: 'fa-folder-open',
-    //       children: [
-    //         {
-    //           label: 'refactoring1',
-    //           icon: 'fa-file-o'
-    //         },
-    //       ]
-    //     },
-
-    //   ]
-    // },
-    // {
-    //   label: 'node2 ',
-    //   collapsedIcon: 'fa-folder',
-    //   expandedIcon: 'fa-folder-open',
-    //   children: [
-    //     {
-    //       label: 'antipattern2 ',
-    //       collapsedIcon: 'fa-folder',
-    //       expandedIcon: 'fa-folder-open',
-    //       children: [
-    //         {
-    //           label: 'refactoring1',
-    //           icon: 'fa-file-o'
-    //         },
-    //         {
-    //           label: 'refactoring  2',
-    //           collapsedIcon: 'fa-folder',
-    //           expandedIcon: 'fa-folder-open'
-    //         },
-    //       ]
-    //     },
-    //   ]
-    // }
-    // ];
+  
+  
   }
 
   nodeSelect(event) {
@@ -122,22 +94,29 @@ export class MenuComponent implements OnInit {
   }
 
   analyse() {
-    console.log("selected principles:")
-    let parameters: string[] = this.selectedPrinciples.map(principle => { return principle['value'] });
+    const ref = this.dialogService.open(DialogAnalysisComponent, {
+      header: 'Select Analysis to perform',
+      width: '40%'
+    });
+    ref.onClose.subscribe(() => {
+        this.messageService.add({ severity: 'success', summary: "Analysis sufccesfully" });
+    });
+    // console.log("selected principles:")
+    // let parameters: string[] = this.selectedPrinciples.map(principle => { return principle['value'] });
 
-    this.gs.uploadGraph()
-      .subscribe(data => {
-        console.log(data);
-        console.log("Graph uploaded correctly to the server");
+    // this.gs.uploadGraph()
+    //   .subscribe(data => {
+    //     console.log(data);
+    //     console.log("Graph uploaded correctly to the server");
 
-        //run the analysis
-        this.as.runRemoteAnalysis(parameters)
-          .subscribe((anodes:ANode[]) => {
-            console.log(anodes);
-            this.messageService.add({ severity: 'success', summary: 'Analyse received succesfully' });
-            this.updatePrinciplesForTreeNode(anodes);
-          });
-      });
+    //     //run the analysis
+    //     this.as.runRemoteAnalysis(parameters)
+    //       .subscribe((anodes:ANode[]) => {
+    //         console.log(anodes);
+    //         this.messageService.add({ severity: 'success', summary: 'Analyse received succesfully' });
+    //         this.updatePrinciplesForTreeNode(anodes);
+    //       });
+    //   });
   }
 
   updatePrinciplesForTreeNode(anodes:ANode[]) {

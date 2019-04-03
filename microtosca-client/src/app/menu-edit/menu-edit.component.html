@@ -1,18 +1,33 @@
-<div class="svg-container">
-
-<p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
-
-<h3>Name of the app</h3>
-<span class="ui-float-label">
-    <div class="ui-inputgroup">
-        <input type="text" pInputText placeholder="Keyword"  [(ngModel)]="name">   
-        <button pButton type="button" icon="pi pi-check"  (click)="saveName()" class="ui-button-warn"></button>      
-    </div>
-</span>
 
 <h3>Nodes</h3>
+     <div class="p-grid">
+            <div class="p-col-6">
+              <div class="box"><button pButton icon="pi pi-plus" type="button" label="Add Service" class="ui-button-success my-button" (click)="addService()"></button></div>
+            </div>
+            <div class="p-col-6">
+                <div class="box"><button pButton icon="pi pi-trash" type="button" label="Remove Service" class="ui-button-danger" (click)="removeServices()"></button></div>
+            </div>
+            <div class="p-col-6">
+                <div class="box"><button pButton icon="pi pi-plus" type="button" label="Add Database" class="ui-button-success my-button" (click)="addDatabase()"></button></div>
+            </div>
+            <div class="p-col-6">
+                <div class="box"><button pButton icon="pi pi-trash" type="button" label="Remove Database" class="ui-button-danger" (click)="removeDatabases()"></button></div>
+            </div>
+            <div class="p-col-6">
+                <div class="box"><button pButton icon="pi pi-plus" type="button" label="Add Comm. Pattern"  class="ui-button-success my-button" (click)="addCommunicationPattern()"></button></div>
+            </div>
+            <div class="p-col-6">
+                <div class="box"><button pButton icon="pi pi-trash" type="button" label="Remove Comm. Pattern"  class="ui-button-danger" (click)="removeCommunicationPatterns()"></button></div>
+            </div>
+        </div>
+<p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" (onClick)="save()" [model]="items"></p-splitButton>
+<!-- <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton> -->
+
+
+
+<!-- <h3>Nodes</h3> -->
     <!-- service  -->
-    <div class="p-grid p-justify-between">
+    <!-- <div class="p-grid p-justify-between">
         <div class="p-md-2 p-col-align-center">
             <svg width="25" height="25">
                 <svg:circle
@@ -28,10 +43,10 @@
             <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addService()"></button>
             <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeServices()"></button>
         </div>
-    </div>
+    </div> -->
 
     <!-- database -->
-    <div class="p-grid p-justify-between">
+    <!-- <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="25" height="25">
                     <svg:rect
@@ -48,10 +63,10 @@
                 <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addDatabase()"></button>
                 <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeDatabases()"></button>
             </div>
-    </div>
+    </div> -->
 
     <!-- Communication patterns -->
-    <div class="p-grid p-justify-between">
+    <!-- <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="25" height="25">
                     <svg:rect 
@@ -68,10 +83,9 @@
                 <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addCommunicationPattern()"></button>
                 <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeCommunicationPatterns()"></button>
             </div>
-    </div>
+    </div> -->
 
-<h3>Interactions</h3>
-    <!-- deploymenttimelink -->
+<!-- <h3>Interactions</h3>
     <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="30" height="25">
@@ -98,11 +112,9 @@
             <div class="p-md-6 p-col-align-center">Deployment-time Interaction</div>
             <div class="p-md-4 p-col-align-center"> 
                 <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addDeploymentTimeInteraction()"></button>
-                <!-- <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(deploymenttimelink)"></button> -->
             </div>
     </div>
 
-    <!-- runtime link -->
     <div class="p-grid p-justify-between">
             <div class="p-md-2 p-col-align-center">
                 <svg width="30" height="25">
@@ -128,12 +140,6 @@
             <div class="p-md-6 p-col-align-center">Run-time Interaction</div>
             <div class="p-md-4 p-col-align-center"> 
                 <button pButton icon="pi pi-plus" type="button" class="ui-button-success my-button" (click)="addRunTimeInteraction()"></button>
-                <!-- <button pButton icon="pi pi-trash" type="button" class="ui-button-danger" (click)="removeLink(runtimelink)"></button> -->
             </div>
     </div>
-    
-    <!-- <button cslass="ui-button-success" pButton type="button" (click)="applyLayout()" label="Layout" icon="pi pi-sitemap"></button> -->
-    <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" (onClick)="save()" [model]="items"></p-splitButton>
-
-    <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" (onClick)="save()" [model]="items"></p-splitButton>
-</div>
+     -->

@@ -3,12 +3,17 @@ import { Refactoring } from "./refactoring";
 export class Smell {
 
     name: string;
-    refactorings: Refactoring[];
+    refactorings: Object[];
     cause:Object[];
 
-    constructor(name: string) {
+    constructor(name:string) {
         this.name = name;
         this.cause = [];
+        this.refactorings = [];
+    }
+
+    addRefactoring(reafctor:Object){
+        this.refactorings.push(reafctor);
     }
 
     addCause(causa:Object){
@@ -19,4 +24,12 @@ export class Smell {
         return this.cause;
     }
 
+    getDescription():string{
+        var descr = "";
+        this.cause.forEach(causa=>{
+            descr +=  `${causa['type']} interaction from  ${causa['source']} to ${causa['target']} \n`;
+        })
+
+        return descr;
+    }
 }

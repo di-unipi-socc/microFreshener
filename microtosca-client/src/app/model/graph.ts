@@ -1,9 +1,12 @@
+import { EventEmitter, Output } from '@angular/core';
+
 import * as joint from 'jointjs';
 import './microtosca';
-import { INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic/src/platform_providers';
 
 export class Graph extends joint.dia.Graph {
     name: string;
+    public ticker: EventEmitter<Number> = new EventEmitter();
+    // public ticker: EventEmitter<number> = new EventEmitter();
 
     constructor(name: string) {
         super();
@@ -18,8 +21,12 @@ export class Graph extends joint.dia.Graph {
         return this.name;
     }
 
-    getNode(id: string | number): joint.dia.Cell {
-        return this.getCell(id);
+    getNode(id: string | number): joint.shapes.microtosca.Node{
+        return <joint.shapes.microtosca.Node>this.getCell(id);
+    }
+
+    getNodes(): joint.shapes.microtosca.Node[] {
+        return <joint.shapes.microtosca.Node[]>this.getCells().filter(node => !node.isLink());
     }
 
     findNodeByName(name:string): joint.dia.Cell{
@@ -58,6 +65,7 @@ export class Graph extends joint.dia.Graph {
 
     toJSON() {
         var data: Object = { 'name': this.name, 'nodes': [], 'links': [] };
+        
         this.getNodes().forEach((node: joint.dia.Cell) => {
             var dnode = { 'id': node.get('id'), 'name': this.getNameOfNode(node)};
             if (this.isService(node))
@@ -69,13 +77,14 @@ export class Graph extends joint.dia.Graph {
             data['nodes'].push(dnode);
 
         })
+        
         this.getLinks().forEach((link)=>{
             var dlink = {'source': link.getSourceElement().get('id'),
              'target': link.getTargetElement().get('id'),
             }
-            if(link.get('type') === 'MicroTosca.RunTimeLink')
+            if(link.get('type') === 'microtosca.RunTimeLink')
               dlink['type'] = "runtime";
-            if  (link.get('type') === 'MicroTosca.DeploymentTimeLink')
+            if  (link.get('type') === 'microtosca.DeploymentTimeLink')
               dlink['type'] = "deploymenttime";
             data['links'].push(dlink);
         })
@@ -87,9 +96,7 @@ export class Graph extends joint.dia.Graph {
         return this.getNode(id).remove();
     }
 
-    getNodes(): joint.dia.Cell[] {
-        return this.getCells().filter(node => !node.isLink());
-    }
+    
 
     getLinks():joint.dia.Link[]{
       
@@ -108,21 +115,21 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isCommunicationPattern(node));
     }
 
-    addService(name: string): joint.dia.Cell {
+    addService(name: string): joint.shapes.microtosca.Service {
         let service = new joint.shapes.microtosca.Service();
         service.setName(name);
         service.addTo(this);
         return service;
     }
 
-    addDatabase(name: string): joint.dia.Cell {
+    addDatabase(name: string): joint.shapes.microtosca.Database {
         let database = new joint.shapes.microtosca.Database();
         database.setName(name);
         database.addTo(this);
         return database;
     }
 
-    addCommunicationPattern(name: string, type: string): joint.dia.Cell {
+    addCommunicationPattern(name: string, type: string): joint.shapes.microtosca.CommunicationPattern {
         let cp  = new joint.shapes.microtosca.CommunicationPattern();
         cp.setName(name);
         cp.setType(type);

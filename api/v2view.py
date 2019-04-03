@@ -15,7 +15,6 @@ from rest_framework.response import Response
 import os
 import json 
 
-
 from microanalyser.analyser import MicroAnalyser
 from microanalyser.analyser.builder import AnalyserBuilder
 from microanalyser.loader import JSONLoader
@@ -27,8 +26,9 @@ from microanalyser.model.nodes import Service, Database, CommunicationPattern
 loader = JSONLoader()
 transformer = JSONTransformer()
 
-file_name = "helloworld.json"
+file_name = "default.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
 
 
 @api_view(['GET'])
@@ -75,11 +75,11 @@ def graph(request):
         if "example" in request.GET:
             ex = request.GET['example']
             if(ex == "extra"):
-                model_path = os.path.join(settings.MEDIA_ROOT, "extra-riot.json")
+                model_path = os.path.join(examples_path, "extra-riot.json")
             elif (ex =="sockshop"):
-                model_path = os.path.join(settings.MEDIA_ROOT, "sockshop.json")
+                model_path = os.path.join(examples_path, "sockshop.json")
             elif (ex =="helloworld"):
-                model_path = os.path.join(settings.MEDIA_ROOT, "helloworld.json")
+                model_path = os.path.join(examples_path, "helloworld.json")
    
         # return the json file 
         mmodel = None

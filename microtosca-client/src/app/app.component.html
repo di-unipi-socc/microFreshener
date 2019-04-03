@@ -4,51 +4,41 @@
     <div class="p-col-12">
          <p-toolbar>
             <div class="ui-toolbar-group-left">
-                <h3>{{title}}</h3>
+                <h1>{{title}}</h1>
             </div>
 
-            <div class="ui-toolbar-group-left">
-               
-            </div>
 
-                <!-- <button pButton type="button" label="New" icon="pi pi-plus"></button>
-                <button pButton type="button" label="Upload" icon="pi pi-upload" class="ui-button-success"></button>
-                    
-                <i class="pi pi-bars"></i>
-                
-                <p-splitButton label="Save" icon="pi pi-check" [model]="items" styleClass="ui-button-warning"></p-splitButton>  -->
-            
             <div class="ui-toolbar-group-right">
-                <!-- <button pButton type="button"  #actualTarget icon="pi pi-user" (click)="op.show($event, actualTarget)" label="Admin" class="ui-button-success"> </button> -->
-                <!-- <p-overlayPanel #op>
-                        <div>Username: Admin</div>
-                        <div>Team: admin, dev</div>
-                </p-overlayPanel> -->
-                <!-- <button  (click)="display = true" pButton type="button"icon="pi pi-bars"></button> -->
+                <button pButton type="button" (click)="analyse()" icon="pi pi-search"></button>
+                
+                <button cslass="ui-button-primary" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>
+                
+                <a pButton href="http://127.0.0.1:8000/v2/graph/export/" style="width: 100px" icon="pi pi-download" class="ui-button-warning"></a>
                 <p-fileUpload mode="basic" 
                             name="graph" 
+                            icon="pi-upload"
                             url="http://127.0.0.1:8000/v2/graph/import/" 
                             accept=".json"
                             (onUpload)="onUpload($event)"
                             chooseLabel="Import">
-                </p-fileUpload>
-
+                    </p-fileUpload>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
-                <button type="button" pButton icon="pi pi-cog" (click)="menu.toggle($event)">
 
+                <button type="button" pButton icon="pi pi-user" (click)="menu.toggle($event)">
                 </button>
             </div>
         </p-toolbar>
-        <p-messages [(value)]="msgs"></p-messages>
+      
     </div>
 
     <!-- menu sidebar -->
-    <div class="p-col-12 p-md-4">
-        <app-menu> </app-menu>
+    <div class="p-col-12">
+        <!-- <app-menu> </app-menu> -->
+        <p-messages [(value)]="msgs"></p-messages>
     </div>
 
     <div class="p-col-12 p-md-8 p-col-nogutter">
-        <app-graph-editor></app-graph-editor> 
+        <app-graph-editor ></app-graph-editor> 
     </div>
 
     <!-- sidebar -->
