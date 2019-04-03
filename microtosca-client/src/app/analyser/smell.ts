@@ -15,6 +15,9 @@ export class Smell {
     addRefactoring(reafctor:Object){
         this.refactorings.push(reafctor);
     }
+    getRefactorings(){
+        return this.refactorings;
+    }
 
     addCause(causa:Object){
         this.cause.push(causa);

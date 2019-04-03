@@ -11,16 +11,16 @@ import { Smell } from '../analyser/smell';
 })
 export class DialogSmellComponent implements OnInit {
   actions: Object[] =[];
-  selectedAction:number; 
+  selectedAction:Object ={}; 
 
   jointNodeModel;
   smell:Smell;
-  description:string;
+  smellDescription:string;
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig,  private messageService: MessageService,) { 
     this.actions = [
-      {"label": "Ignore Once", "value": 0 },
-      {"label": "Ignore Always", "value": 1 }];
+      {"label": "Ignore Once", "value": {"description": "ignore the smell"}},
+      {"label": "Ignore Always", "value": {"description":"Ignore the smell always"} }];
   }
 
 
@@ -29,16 +29,14 @@ export class DialogSmellComponent implements OnInit {
     if(this.config.data){
       this.jointNodeModel = this.config.data.model;
       this.smell = <Smell>this.config.data.selectedsmell;
-      console.log(this.smell);
-      this.description = this.smell.getDescription();
-      if(this.smell['refactorings']){
-        this.smell['refactorings'].forEach(ref=>{
-          this.actions.push({"label":ref['name'],"value":ref['name']});
-          console.log("PISHES REACTOIRNSA");
-        })
-      }
+
+      this.smellDescription = this.smell.getDescription();
+
+      this.smell.getRefactorings().forEach(ref=>{
+        this.actions.push({"label":ref['name'],"value":{"description": ref['description']}});
+      })
     }  
-    // console.log(this.smell).get;
+
   }
 
   save(){

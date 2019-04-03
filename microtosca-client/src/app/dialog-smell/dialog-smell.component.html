@@ -1,12 +1,18 @@
 
 <div class="p-grid">
-    <textarea pInputTextarea [(ngModel)]="description"></textarea>
+    <textarea pInputTextarea [(ngModel)]="smellDescription"></textarea>
 </div>
 
 
 
 <p-dropdown [options]="actions" [(ngModel)]="selectedAction"></p-dropdown>
 
+
+<!-- <div class="p-grid">
+    <textarea pInputTextarea [(ngModel)]="description"></textarea>
+</div> -->
+
+<p>Action description: {{selectedAction['description'] || 'none'}}</p>
 
 <div class="p-grid p-justify-end">
   <button class="p-col-2" type="button" pButton (click)="save()" label="Save" class="ui-button-success">
