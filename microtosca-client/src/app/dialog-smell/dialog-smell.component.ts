@@ -10,41 +10,40 @@ import { Smell } from '../analyser/smell';
   styleUrls: ['./dialog-smell.component.css']
 })
 export class DialogSmellComponent implements OnInit {
-  actions: Object[] =[];
-  selectedAction:Object ={}; 
+  actions: Object[] = [];
+  selectedAction: Object = {};
 
   jointNodeModel;
-  smell:Smell;
-  smellDescription:string;
+  smell: Smell;
+  smellDescription: string;
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig,  private messageService: MessageService,) { 
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService, ) {
     this.actions = [
-      {"label": "Ignore Once", "value": {"description": "ignore the smell"}},
-      {"label": "Ignore Always", "value": {"description":"Ignore the smell always"} }];
+      { "label": "Ignore Once", "value": { "description": "ignore the smell" } },
+      { "label": "Ignore Always", "value": { "description": "Ignore the smell always" } }];
   }
 
 
   ngOnInit() {
 
-    if(this.config.data){
+    if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = <Smell>this.config.data.selectedsmell;
 
       this.smellDescription = this.smell.getDescription();
 
-      this.smell.getRefactorings().forEach(ref=>{
-        this.actions.push({"label":ref['name'],"value":{"description": ref['description']}});
+      this.smell.getRefactorings().forEach(ref => {
+        this.actions.push({ "label": ref['name'], "value": { "description": ref['description'] } });
       })
-    }  
-
+    }
   }
 
-  save(){
+  save() {
     console.log(this.selectedAction);
-    if (this.selectedAction == 0){
+    if (this.selectedAction == 0) {
       this.jointNodeModel.addIgnoreOnceSmell(this.smell);
       this.messageService.add({ severity: 'success', summary: 'Ingnore once selected' });
-    }else if  (this.selectedAction == 1){
+    } else if (this.selectedAction == 1) {
       this.jointNodeModel.addIgnoreAlwaysSmell(this.smell);
       this.messageService.add({ severity: 'success', summary: 'Ingnore always selected' });
     }

@@ -9,6 +9,9 @@
 
 
             <div class="ui-toolbar-group-right">
+                <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
+                <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" [model]="layouts"></p-splitButton>
+
                 <button pButton type="button" (click)="analyse()" icon="pi pi-search"></button>
                 
                 <button cslass="ui-button-primary" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>

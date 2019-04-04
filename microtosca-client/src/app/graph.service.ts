@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import {environment} from '../environments/environment';
+import { environment } from '../environments/environment';
 
 import { Graph } from './model/graph';
 
@@ -17,7 +17,7 @@ export class GraphService {
 
   graph: Graph;
 
-  private graphUrl = environment.serverUrl +'/v2/graph/?format=json';  // URL to web api
+  private graphUrl = environment.serverUrl + '/v2/graph/?format=json';  // URL to web api
   private graphUrlPost = environment.serverUrl + '/v2/graph/';         // URL to web api
   private analysisUrl = environment.serverUrl + '/v2/graph/analyse/';  // URL to web api
 
@@ -31,11 +31,9 @@ export class GraphService {
 
   setGraph(g: Graph) {
     this.graph = g;
-    console.log(g.name);
-    console.log("updated graph");
   }
 
-  // Export the graph to JSON
+  /** Export the graph to JSON format*/
   exportToJSON() {
     return JSON.stringify(this.graph.toJSON());
   }
@@ -47,9 +45,6 @@ export class GraphService {
     return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);
   }
 
-  // uploadFile():Observable<string>{
-  //   return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);
-  // }
 
   // download the graph stored into the server
   downloadGraph(): Observable<string> {
@@ -59,8 +54,8 @@ export class GraphService {
     );
   }
 
-  downloadExample(name:string): Observable<string> {
-    let params = new HttpParams().set("example",name);
+  downloadExample(name: string): Observable<string> {
+    let params = new HttpParams().set("example", name);
     return this.http.get<string>(this.graphUrl, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))

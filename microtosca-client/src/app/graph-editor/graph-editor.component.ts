@@ -1,17 +1,15 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import {DialogService} from 'primeng/api';
+import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
 import * as joint from 'jointjs';
 import '../model/microtosca';
-import * as _ from 'lodash';    
+import * as _ from 'lodash';
 import * as $ from 'jquery';
 import { g } from 'jointjs';
 import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
-
-
 
 @Component({
     selector: 'app-graph-editor',
@@ -22,16 +20,16 @@ import { Smell } from '../analyser/smell';
 export class GraphEditorComponent implements OnInit, AfterViewInit {
 
     _options = { width: 2000, height: 1500 };
-  
+
     paper: joint.dia.Paper;
-    analyser:Analyser;
+    analyser: Analyser;
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) {
 
     }
 
-    ngOnInit() { 
-     
+    ngOnInit() {
+
     }
 
     ngAfterViewInit() {
@@ -48,7 +46,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         this.createSampleGraph();
 
-
         //bind events
         this.bindEvents();
         // enable interactions
@@ -58,31 +55,31 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
     }
-    createSampleGraph(){
-        var s = this.gs.getGraph().addService("shipping");
-        
+    createSampleGraph() {
+        // add external user node
+        var u = this.gs.getGraph().addExternaluser("Ext user");
 
+        // nodes
+        var s = this.gs.getGraph().addService("shipping");
         var odb = this.gs.getGraph().addDatabase("orderdb");
         var o = this.gs.getGraph().addService("order");
         var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", 'mb');
 
-        // shipping
+        // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);
         this.gs.getGraph().addRunTimeInteraction(s, cp);
         this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
-        
-        //order
+
+        // order interactions
         this.gs.getGraph().addRunTimeInteraction(o, s);
         this.gs.getGraph().addRunTimeInteraction(o, odb);
         this.gs.getGraph().addRunTimeInteraction(o, cp);
         this.gs.getGraph().addDeploymentTimeInteraction(o, s);
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
-        // s.addSmell( new EndpointBasedServiceInteractionSmell("jj"));
-        // o.addSmell(2);
     }
 
 
-    bindEvents(){
+    bindEvents() {
         // this.paper.on("blank:pointerclick",(evt,x,y,)=>{
         //     console.log(evt);
         //     console.log(x,y);
@@ -98,48 +95,63 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         //     console.log(x,y);
 
         // })
-        this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt,x,y)=>{
+        this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("EBSI EVENT FIRED");
             var model = cellview.model;
-            var smell:Smell = model.getSmell("EndpointBasedServiceInteraction");
+            var smell: Smell = model.getSmell("EndpointBasedServiceInteractionSmell");
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
                     model: model,
                     selectedsmell: smell
                 },
-                header: `Smell: ${smell.name}  Node: ${model.getName()}` ,
+                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
                 width: '90%'
             });
 
             ref.onClose.subscribe((any) => {
+                // TODO: apply the actions selected from the popup.
                 // this.messageService.add({severity:'info', summary: 'Smell clodes'});
             });
-
-            console.log(model);
         })
 
-        this.paper.on("smell:sp:pointerdown", function (cellview, evt,x,y){
+        this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
-            console.log("SHARED PERSITENCY EVENT FIRED");
+            console.log("SHARED PERSISTENCY EVENT FIRED");
             var model = cellview.model;
-            console.log(model);
-        })
-        
-        this.paper.on("smell:wsi:pointerdown", function (cellview, evt,x,y){
-            evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
-            console.log("WSI  EVENT FIRED");
-            var model = cellview.model;
-            console.log(model);
+            var smell: Smell = model.getSmell("SharedPersistencySmell");
+            const ref = this.dialogService.open(DialogSmellComponent, {
+                data: {
+                    model: model,
+                    selectedsmell: smell
+                },
+                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
+                width: '90%'
+            });
         })
 
-        this.paper.on('cell:pointerdblclick', (elementView) =>{
+        this.paper.on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
+            evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+            console.log("WOBBLY SERVICE INTERACTION EVENT FIRED");
+            var model = cellview.model;
+            var smell: Smell = model.getSmell("WobblyServiceInteractionSmell");
+            const ref = this.dialogService.open(DialogSmellComponent, {
+                data: {
+                    model: model,
+                    selectedsmell: smell
+                },
+                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
+                width: '90%'
+            });
+        })
+
+        this.paper.on('cell:pointerdblclick', (elementView) => {
             var currentElement = elementView.model;
             currentElement.attr('body/stroke', 'orange');
             this.gs.getGraph().ticker.emit(2);
             console.log(elementView.model);
         });
-        
+
     }
 
     bindInteractionEvents(adjustVertices, graph, paper) {
@@ -157,7 +169,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         paper.on('cell:pointerup', adjustGraphVertices);
     }
 
-    applyDirectedGraphLayout(){
+    applyDirectedGraphLayout() {
         // Directed graph layout
         joint.layout.DirectedGraph.layout(this.gs.getGraph(), {
             nodeSep: 50,
@@ -165,7 +177,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             rankDir: "TB", // TB
             // ranker: "tight-tree",
             setVertices: false,
-          });
+        });
     }
 
     createLink() {
@@ -303,13 +315,13 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         // if `cell` is a view, find its model
         cell = cell.model || cell;
-    
+
         if (cell instanceof joint.dia.Element) {
             // `cell` is an element
 
             _.chain(graph.getConnectedLinks(cell))
-                .groupBy((link) =>{
-    
+                .groupBy((link) => {
+
                     // the key of the group is the model id of the link's source or target
                     // cell id is omitted
                     return _.omit([link.source().id, link.target().id], cell.id)[0];
@@ -322,66 +334,66 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     if (key !== 'undefined') this.adjustVertices(graph, _.first(group));
                 })
                 .value();
-    
+
             return;
         }
-    
+
         // `cell` is a link
         // get its source and target model IDs
         var sourceId = cell.get('source').id || cell.previous('source').id;
         var targetId = cell.get('target').id || cell.previous('target').id;
-    
+
         // if one of the ends is not a model
         // (if the link is pinned to paper at a point)
         // the link is interpreted as having no siblings
         if (!sourceId || !targetId) return;
-    
+
         // identify link siblings
-        var siblings = _.filter(graph.getLinks(), function(sibling) {
-    
+        var siblings = _.filter(graph.getLinks(), function (sibling) {
+
             var siblingSourceId = sibling.source().id;
             var siblingTargetId = sibling.target().id;
-    
+
             // if source and target are the same
             // or if source and target are reversed
             return ((siblingSourceId === sourceId) && (siblingTargetId === targetId))
                 || ((siblingSourceId === targetId) && (siblingTargetId === sourceId));
         });
-    
+
         var numSiblings = siblings.length;
         switch (numSiblings) {
-    
+
             case 0: {
                 // the link has no siblings
                 break;
-    
+
             } case 1: {
                 // there is only one link
                 // no vertices needed
                 cell.unset('vertices');
                 break;
-    
+
             } default: {
                 // there are multiple siblings
                 // we need to create vertices
-    
+
                 // find the middle point of the link
                 var sourceCenter = graph.getCell(sourceId).getBBox().center();
                 var targetCenter = graph.getCell(targetId).getBBox().center();
-                var midPoint =  new g.Line(sourceCenter, targetCenter).midpoint();
-    
+                var midPoint = new g.Line(sourceCenter, targetCenter).midpoint();
+
                 // find the angle of the link
                 var theta = sourceCenter.theta(targetCenter);
-    
+
                 // constant
                 // the maximum distance between two sibling links
                 var GAP = 20;
-    
-                _.each(siblings, function(sibling, index) {
-    
+
+                _.each(siblings, function (sibling, index) {
+
                     // we want offset values to be calculated as 0, 20, 20, 40, 40, 60, 60 ...
                     var offset = GAP * Math.ceil(index / 2);
-    
+
                     // place the vertices at points which are `offset` pixels perpendicularly away
                     // from the first link
                     //
@@ -393,25 +405,25 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     //  |
                     //  v  even indices
                     var sign = ((index % 2) ? 1 : -1);
-    
+
                     // to assure symmetry, if there is an even number of siblings
                     // shift all vertices leftward perpendicularly away from the centerline
                     if ((numSiblings % 2) === 0) {
                         offset -= ((GAP / 2) * sign);
                     }
-    
+
                     // make reverse links count the same as non-reverse
                     var reverse = ((theta < 180) ? 1 : -1);
-    
+
                     // we found the vertex
                     var angle = g.toRad(theta + (sign * reverse * 90));
                     var vertex = g.Point.fromPolar(offset, angle, midPoint);
-    
+
                     // replace vertices array with `vertex`
                     sibling.vertices([vertex]);
                 });
             }
         }
     }
-    
+
 }

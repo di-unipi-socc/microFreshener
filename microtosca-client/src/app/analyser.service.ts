@@ -33,9 +33,10 @@ export class AnalyserService {
   }
 
   runRemoteAnalysis(principles: string[]): Observable<ANode[]> {
-    const params = new HttpParams()
-      .set('principles', principles.join()); // principles to be analysed: principles separated by commma
-      
+    const params = new HttpParams().set('principles', principles.join()); // principles to be analysed: principles separated by commma
+    
+    // TODO: the analysi should send allso the ingore once, ingore always smell for the nodes.
+    // Myabe instead of a get is s POST operation.
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
