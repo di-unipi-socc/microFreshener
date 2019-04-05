@@ -109,8 +109,8 @@ export class Graph extends joint.dia.Graph {
         return data;
     }
 
-    removeNode(id: string | number) {
-        return this.getNode(id).remove();
+    removeNode(name: string ) {
+        return this.getNode(name).remove();
     }
 
     getLinks(): joint.dia.Link[] {
