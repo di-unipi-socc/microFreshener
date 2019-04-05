@@ -1,67 +1,232 @@
 {
-    "name": "hello-world",
+    "name": "extra-riot-agent",
     "nodes": [
         {
-            "id": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
-            "name": "shipping",
+            "name": "Brk",
+            "type": "communicationpattern"
+        },
+        {
+            "name": "Jtl",
             "type": "service"
         },
         {
-            "id": "2443c2ae-b3b6-4edb-8cf3-9b3345f579c6",
-            "name": "orderdb",
+            "name": "Tlg",
+            "type": "service"
+        },
+        {
+            "name": "InfDB",
             "type": "database"
         },
         {
-            "id": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "name": "order",
+            "name": "Chr",
             "type": "service"
         },
         {
-            "id": "136a9917-05a9-46ba-a028-9ee3c4fd1065",
-            "name": "rabbitmq",
-            "type": "communicationpattern"
+            "name": "Inf",
+            "type": "service"
+        },
+        {
+            "name": "Kpc",
+            "type": "service"
+        },
+        {
+            "name": "Dsh",
+            "type": "service"
+        },
+        {
+            "name": "Cnf",
+            "type": "service"
+        },
+        {
+            "name": "InfUp",
+            "type": "service"
+        },
+        {
+            "name": "FltDB",
+            "type": "database"
+        },
+        {
+            "name": "GUI",
+            "type": "service"
+        },
+        {
+            "name": "Kpr",
+            "type": "service"
+        },
+        {
+            "name": "KprDB",
+            "type": "database"
+        },
+        {
+            "name": "NsqDB",
+            "type": "database"
+        },
+        {
+            "name": "CldAdm",
+            "type": "service"
+        },
+        {
+            "name": "CldAdmDB",
+            "type": "database"
+        },
+        {
+            "name": "SftDB",
+            "type": "database"
+        },
+        {
+            "name": "Ans",
+            "type": "service"
+        },
+        {
+            "name": "SftMngDB",
+            "type": "database"
+        },
+        {
+            "name": "Agent",
+            "type": "service"
         }
     ],
     "links": [
         {
-            "source": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
-            "target": "2443c2ae-b3b6-4edb-8cf3-9b3345f579c6",
+            "source": "Jtl",
+            "target": "Brk",
             "type": "runtime"
         },
         {
-            "source": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
-            "target": "136a9917-05a9-46ba-a028-9ee3c4fd1065",
+            "source": "Tlg",
+            "target": "Brk",
             "type": "runtime"
         },
         {
-            "source": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
-            "target": "2443c2ae-b3b6-4edb-8cf3-9b3345f579c6",
-            "type": "deploymenttime"
-        },
-        {
-            "source": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "target": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
+            "source": "Tlg",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "target": "2443c2ae-b3b6-4edb-8cf3-9b3345f579c6",
+            "source": "Chr",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "target": "136a9917-05a9-46ba-a028-9ee3c4fd1065",
+            "source": "Inf",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "target": "dd6e8259-4a08-490b-ba77-4526cc80d6db",
-            "type": "deploymenttime"
+            "source": "Inf",
+            "target": "Kpc",
+            "type": "runtime"
         },
         {
-            "source": "5a227b40-e4a3-4ac6-a56f-cc11664857d1",
-            "target": "2443c2ae-b3b6-4edb-8cf3-9b3345f579c6",
-            "type": "deploymenttime"
+            "source": "Kpc",
+            "target": "InfDB",
+            "type": "runtime"
+        },
+        {
+            "source": "Kpc",
+            "target": "InfUp",
+            "type": "runtime"
+        },
+        {
+            "source": "Dsh",
+            "target": "Chr",
+            "type": "runtime"
+        },
+        {
+            "source": "Cnf",
+            "target": "Inf",
+            "type": "runtime"
+        },
+        {
+            "source": "Cnf",
+            "target": "FltDB",
+            "type": "runtime"
+        },
+        {
+            "source": "InfUp",
+            "target": "CldAdm",
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Dsh",
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Cnf",
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Kpr",
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "CldAdm",
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "KprDB",
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "NsqDB",
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "CldAdm",
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "SftMngDB",
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "CldAdmDB",
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "Ans",
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "SftDB",
+            "type": "runtime"
+        },
+        {
+            "source": "Ans",
+            "target": "Tlg",
+            "type": "runtime"
+        },
+        {
+            "source": "Agent",
+            "target": "Brk",
+            "type": "runtime"
+        },
+        {
+            "source": "Agent",
+            "target": "Kpr",
+            "type": "runtime"
+        },
+        {
+            "source": "Agent",
+            "target": "CldAdm",
+            "type": "runtime"
+        },
+        {
+            "source": "Agent",
+            "target": "SftDB",
+            "type": "runtime"
         }
-    ]
+    ],
+    "groups": []
 }

@@ -46,6 +46,15 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         this.createSampleGraph();
 
+        
+        this.gs.getGraph().getNodes().forEach(node=>{
+            console.log("node: ", node.getName());
+        }),
+        this.gs.getGraph().getExternalUserNodes().forEach(node=>{
+            console.log("Memeber attached to", node.getName());
+            console.log(this.gs.getGraph().getOutboundNeighbors(node));
+        }),
+
         //bind events
         this.bindEvents();
         // enable interactions
@@ -58,12 +67,14 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
     createSampleGraph() {
         // add external user node
         var u = this.gs.getGraph().addExternaluser("Ext user");
+        u.setGroupName("edgenodes");
 
         // nodes
         var s = this.gs.getGraph().addService("shipping");
-        var odb = this.gs.getGraph().addDatabase("orderdb");
+        var odb = this.gs.getGraph().addDatabase("order_db");
         var o = this.gs.getGraph().addService("order");
         var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", 'mb');
+        var gw = this.gs.getGraph().addCommunicationPattern("gateway", 'mr');
 
         // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);
@@ -76,6 +87,19 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addRunTimeInteraction(o, cp);
         this.gs.getGraph().addDeploymentTimeInteraction(o, s);
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
+
+        // squads
+        // var g = this.gs.getGraph().addSquadGroup("team1");
+
+        // ext user interactions
+        this.gs.getGraph().addRunTimeInteraction(u, s);
+        this.gs.getGraph().addRunTimeInteraction(u, o);
+        this.gs.getGraph().addRunTimeInteraction(u, gw);
+
+        
+        // gateway interaction
+        this.gs.getGraph().addRunTimeInteraction(gw, s);
+
     }
 
 
@@ -95,6 +119,42 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         //     console.log(x,y);
 
         // })
+
+        // First, unembed the cell that has just been grabbed by the user.
+        this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+
+            var cell = cellView.model;
+
+            if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+                // Show the dragged element above all the other cells (except when the
+                // element is a parent).
+                cell.toFront();
+            }
+
+            if (cell.get('parent')) {
+                this.gs.getGraph().getCell(cell.get('parent')).unembed(cell);
+            }
+        });
+
+        // When the dragged cell is dropped over another cell, let it become a child of the
+        // element below.
+        this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
+            var cell = cellView.model;
+            if(!cell.isLink()){ // otherwise Error when cell.getBBox() is called.
+                var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
+
+                if (cellViewsBelow.length) {
+                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
+                    var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
+
+                    // Prevent recursive embedding.
+                    if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
+                        cellViewBelow.model.embed(cell);
+                    }
+                }
+            }
+        });
+
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("EBSI EVENT FIRED");
@@ -152,6 +212,67 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             console.log(elementView.model);
         });
 
+        // for parent 
+        this.gs.getGraph().on('change:size', function(cell, newPosition, opt) {
+        
+            if (opt.skipParentHandler) return;
+            
+            if (cell.get('embeds') && cell.get('embeds').length) {
+                // If we're manipulating a parent element, let's store
+                // it's original size to a special property so that
+                // we can shrink the parent element back while manipulating
+                // its children.
+                cell.set('originalSize', cell.get('size'));
+            }
+        });
+
+        // this.gs.getGraph().on('change:position', (cell, newPosition, opt) =>{
+
+        //     if (opt.skipParentHandler) return;
+    
+        //     if (cell.get('embeds') && cell.get('embeds').length) {
+        //         // If we're manipulating a parent element, let's store
+        //         // it's original position to a special property so that
+        //         // we can shrink the parent element back while manipulating
+        //         // its children.
+        //         cell.set('originalPosition', cell.get('position'));
+        //     }
+            
+        //     var parentId = cell.get('parent');
+        //     if (!parentId) return;
+    
+        //     var parent = this.gs.getGraph().getCell(parentId);
+        //     var parentBbox = parent.getBBox();
+    
+        //     if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
+        //     if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
+            
+        //     var originalPosition = parent.get('originalPosition');
+        //     var originalSize = parent.get('originalSize');
+            
+        //     var newX = originalPosition.x;
+        //     var newY = originalPosition.y;
+        //     var newCornerX = originalPosition.x + originalSize.width;
+        //     var newCornerY = originalPosition.y + originalSize.height;
+            
+        //     _.each(parent.getEmbeddedCells(), (child)=> {
+    
+        //         var childBbox = child.getBBox();
+                
+        //         if (childBbox.x < newX) { newX = childBbox.x; }
+        //         if (childBbox.y < newY) { newY = childBbox.y; }
+        //         if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
+        //         if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
+        //     });
+    
+        //     // Note that we also pass a flag so that we know we shouldn't adjust the
+        //     // `originalPosition` and `originalSize` in our handlers as a reaction
+        //     // on the following `set()` call.
+        //     parent.set({
+        //         position: { x: newX, y: newY },
+        //         size: { width: newCornerX - newX, height: newCornerY - newY }
+        //     }, { skipParentHandler: true });
+        // });
     }
 
     bindInteractionEvents(adjustVertices, graph, paper) {

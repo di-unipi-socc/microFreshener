@@ -7,7 +7,7 @@ import * as $ from 'jquery';
 declare module 'jointjs' {
     namespace shapes {
         namespace microtosca {
-            class Node extends joint.dia.Cell {
+            class Node extends joint.dia.Element {
                 setName(name): void;
                 getName(): String;
                 addSmell(smell: Smell): void;
@@ -32,7 +32,13 @@ declare module 'jointjs' {
                 setType(t: String): void;
                 // resetSmells():void
             }
-            class ExternalUser extends joint.dia.Cell {
+            class ExternalUser extends joint.dia.Element {
+                setName(name:string): void;
+                getName(): String;
+                setGroupName(name:string): void;
+                getGroupName(): String
+            }
+            class Squad extends joint.dia.Cell {
                 setName(name): void;
             }
             class RunTimeLink extends joint.dia.Link {
@@ -321,6 +327,7 @@ joint.dia.Element.define('microtosca.ExternalUser', {
             text: name || '',
         },
     },
+    name: '' // name of the group. each nodes connected to this node are considered memebre of the EdgeGroup
 }, {
         markup: [{
             tagName: 'circle',
@@ -334,10 +341,57 @@ joint.dia.Element.define('microtosca.ExternalUser', {
         },
         setName: function (text) {
             return this.attr('label/text', text || '');
+        },
+        setGroupName: function(name:string){
+            this.name = name;
+        },
+        getGroupName: function(){
+           return this.name
         }
     });
 
-
+joint.dia.Element.define('microtosca.Squad', {
+        position: { x: 20, y: 20 },
+        size: {
+            width: 200,
+            height: 200
+        },
+        attrs: {
+            body: {
+                refWidth: '100%',
+                refHeight: '100%',
+                fill: "none",
+                stroke: '#7e7e77',
+                strokeWidth: 2,
+                strokeDasharray : "10,5",
+                rx: 10,
+                ry: 10,
+            },
+            label: {
+                refX: '50%',
+                refY: '0%',
+                // yAlignment: 'hanging',
+                xAlignment: 'center',
+                fontSize: 15,
+                text: name || '',
+            }
+        },
+        smells: [] // list of smells that affects a single node
+    }, {
+            markup: [{
+                tagName: 'rect',
+                selector: 'body',
+            }, {
+                tagName: 'text',
+                selector: 'label'
+            }],
+            getName: function () {
+                return this.attr('label/text');
+            },
+            setName: function (text) {
+                return this.attr('label/text', text || '');
+            },
+        });
 joint.dia.Link.define('microtosca.RunTimeLink', {
     attrs: {
         line: {

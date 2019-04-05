@@ -12,11 +12,9 @@ export class ANode {
     violatedPrinciples: Principle[];
     name: string;
     smells: Smell[];
-    id: string;
 
-    constructor(name:string, id:string) {
+    constructor(name:string) {
         this.name = name;
-        this.id = id;
         // TODO: to be reomoved beacuse a node has only the list of smells and not the principles
         this.violatedPrinciples = [];
         this.smells = [];
@@ -48,10 +46,8 @@ export class ANode {
     }  
 
     static fromJSON(data:string){
-        var anode: ANode = new ANode(data['name'], data['id']);
+        var anode: ANode = new ANode(data['name']);
         data['smells'].forEach((smell)=>{
-            console.log(smell);
-
             var s:Smell = new Smell(smell.name);
             smell['cause'].forEach((causa) =>{
                 s.addCause(causa);

@@ -21,19 +21,24 @@ export class Graph extends joint.dia.Graph {
         return this.name;
     }
 
-    getNode(id: string | number): joint.shapes.microtosca.Node {
-        return <joint.shapes.microtosca.Node>this.getCell(id);
+    getNode(name: string): joint.shapes.microtosca.Node {
+        for (let node of this.getElements()) {
+            if ((<joint.shapes.microtosca.Node>node).getName() == name)
+                return <joint.shapes.microtosca.Node>node;
+        }
+        return null;
+
     }
+
 
     /**Return all the nodes in the graph (without the ExternalUser node) */
     getNodes(): joint.shapes.microtosca.Node[] {
-        return <joint.shapes.microtosca.Node[]>this.getCells().filter(node => !node.isLink() && !this.isExternalUser(node));
+        return <joint.shapes.microtosca.Node[]>this.getElements().filter(node => !this.isExternalUser(node));
     }
 
     findNodeByName(name: string): joint.dia.Cell {
         return this.getNodes().find(node => {
-            console.log("finding" + this.getNameOfNode(node));
-            return name === this.getNameOfNode(node)
+            return name === this.getNameOfNode(node);
         });
     }
 
@@ -65,29 +70,23 @@ export class Graph extends joint.dia.Graph {
     }
 
     toJSON() {
-        var data: Object = { 'name': this.name, 'nodes': [], 'links': [] };
+        var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
         // TODO: node can be of type joint.microtosca.Node insted fo Cell
         this.getNodes().forEach((node: joint.dia.Cell) => {
-            if (!this.isExternalUser(node)) { // external user node
-                var dnode = { 'id': node.get('id'), 'name': this.getNameOfNode(node) };
-                if (this.isService(node))
-                    dnode['type'] = "service";
-                if (this.isDatabase(node))
-                    dnode['type'] = "database";
-                if (this.isCommunicationPattern(node))
-                    dnode['type'] = "communicationpattern";
-                data['nodes'].push(dnode);
-            }else{
-                console.log("EXTERNAL USER FOUND");
-            }
-
-
+            var dnode = { 'name': this.getNameOfNode(node) }; // 'id': node.get('id'),
+            if (this.isService(node))
+                dnode['type'] = "service";
+            if (this.isDatabase(node))
+                dnode['type'] = "database";
+            if (this.isCommunicationPattern(node))
+                dnode['type'] = "communicationpattern";
+            data['nodes'].push(dnode);
         })
-
+        // Add links
         this.getLinks().forEach((link) => {
             var dlink = {
-                'source': link.getSourceElement().get('id'),
-                'target': link.getTargetElement().get('id'),
+                'source': this.getNameOfNode(link.getSourceElement()), //.get('id'),
+                'target': this.getNameOfNode(link.getTargetElement()) //.get('id'),
             }
             if (link.get('type') === 'microtosca.RunTimeLink')
                 dlink['type'] = "runtime";
@@ -95,6 +94,17 @@ export class Graph extends joint.dia.Graph {
                 dlink['type'] = "deploymenttime";
             data['links'].push(dlink);
         })
+        // Add EdgeGroups
+        this.getExternalUserNodes().forEach(node => {
+            var edgeGroup = { 'name': node.getGroupName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
+            let members = [];
+            this.getOutboundNeighbors(node).forEach(neigbor => {
+                members.push((<joint.shapes.microtosca.Node>neigbor).getName());
+            })
+            edgeGroup['members'] = members;
+            data['groups'].push(edgeGroup)
+        });
+        console.log(data['groups']);
 
         return data;
     }
@@ -104,8 +114,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     getLinks(): joint.dia.Link[] {
-
-        return super.getLinks();// .filter(node => node.isLink());
+        return super.getLinks().filter(link => !this.isExternalUser(link.getSourceElement()));
     }
 
     getServices(): joint.dia.Cell[] {
@@ -118,6 +127,21 @@ export class Graph extends joint.dia.Graph {
 
     getCommunicationPattern(): joint.dia.Cell[] {
         return this.getNodes().filter(node => this.isCommunicationPattern(node));
+    }
+
+    getExternalUserNodes(): joint.shapes.microtosca.ExternalUser[] {
+        return <joint.shapes.microtosca.ExternalUser[]>this.getCells().filter(node => this.isExternalUser(node));
+    }
+
+    getOutboundNeighbors(client: joint.dia.Element): joint.dia.Cell[] {
+        return <joint.dia.Cell[]>this.getNeighbors(client, { outbound: true });
+    }
+
+    addSquadGroup(name: string): joint.shapes.microtosca.Squad {
+        let g = new joint.shapes.microtosca.Squad();
+        g.setName(name);
+        g.addTo(this);
+        return g;
     }
 
     addExternaluser(name: string): joint.shapes.microtosca.ExternalUser {
@@ -167,20 +191,24 @@ export class Graph extends joint.dia.Graph {
         return link;
     }
 
+    isSquadGroup(node: joint.dia.Cell) {
+        return node instanceof joint.shapes.microtosca.Squad;
+    }
+
     isExternalUser(node: joint.dia.Cell) {
-        return node.get('type') === 'microtosca.ExternalUser';
+        return node instanceof joint.shapes.microtosca.ExternalUser;
     }
 
     isService(node: joint.dia.Cell) {
-        return node.get('type') === 'microtosca.Service';
+        return node instanceof joint.shapes.microtosca.Service;
     }
 
     isDatabase(node: joint.dia.Cell) {
-        return node.get('type') === 'microtosca.Database';
+        return node instanceof joint.shapes.microtosca.Database;
     }
 
     isCommunicationPattern(node: joint.dia.Cell) {
-        return node.get('type') === 'microtosca.CommunicationPattern';
+        return node instanceof joint.shapes.microtosca.CommunicationPattern;
     }
 
     applyLayout(rankdir: string) {

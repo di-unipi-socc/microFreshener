@@ -41,8 +41,8 @@ export class DialogAnalysisComponent implements OnInit {
         this.as.runRemoteAnalysis(parameters)
           .subscribe((anodes:ANode[]) => {
             anodes.forEach((node)=>{
-              // console.log(node);
-              let n = this.gs.getGraph().getNode(node.id);
+             console.log(node);
+              let n = this.gs.getGraph().getNode(node.name);
               node.getSmells().forEach((smell)=>{
                 n.addSmell(smell);
               })

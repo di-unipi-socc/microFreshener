@@ -25,7 +25,7 @@ export class Analyser {
     addNodeAnalysis(analysis_json: string) {
 
         analysis_json['nodes'].forEach(node => {
-            let jnode: joint.dia.Cell = this.gs.getGraph().getNode(node['id'])
+            let jnode: joint.dia.Cell = this.gs.getGraph().getNode(node['name'])
             console.log(node);
             var n = {
                 'label': this.gs.getGraph().getNameOfNode(jnode),

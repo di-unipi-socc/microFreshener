@@ -2,230 +2,230 @@
     "name": "extra-riot",
     "nodes": [
         {
-            "id": "0f7e1b8b-7688-4070-9e42-b66ff23a63cf",
+            "id": "Brk",
             "name": "Brk",
             "type": "communicationpattern"
         },
         {
-            "id": "d4be7b5e-2da2-40d4-9e74-46dd4348ddd8",
+            "id": "Jtl",
             "name": "Jtl",
             "type": "service"
         },
         {
-            "id": "d0a52155-f02a-4641-a365-45870516feaf",
+            "id": "Tlg",
             "name": "Tlg",
             "type": "service"
         },
         {
-            "id": "711b1af6-7560-4874-9514-2b658fc6e6fa",
+            "id": "InfDB",
             "name": "InfDB",
             "type": "database"
         },
         {
-            "id": "adeacb94-9c6d-4711-9fb5-55cdf4e37a32",
+            "id": "Chr",
             "name": "Chr",
             "type": "service"
         },
         {
-            "id": "31a0f8fb-e4bb-4370-978c-8aef686ca111",
+            "id": "Inf",
             "name": "Inf",
             "type": "service"
         },
         {
-            "id": "19423ff5-6437-48b5-9792-c68c3bf6a83a",
+            "id": "Kpc",
             "name": "Kpc",
             "type": "service"
         },
         {
-            "id": "85d12baa-7f50-487e-875b-981e66fb5db0",
+            "id": "Dsh",
             "name": "Dsh",
             "type": "service"
         },
         {
-            "id": "93b50cee-b1d4-477b-a383-d7e6a4e5bbb5",
+            "id": "Cnf",
             "name": "Cnf",
             "type": "service"
         },
         {
-            "id": "ed92f4ca-2b21-498c-8a97-b3be6758ea96",
+            "id": "InfUp",
             "name": "InfUp",
             "type": "service"
         },
         {
-            "id": "7c755219-14f6-4be1-bb1e-dec94bb0f126",
+            "id": "FltDB",
             "name": "FltDB",
             "type": "database"
         },
         {
-            "id": "902e528c-6270-4ae4-aaa9-b1d15d686ff0",
+            "id": "GUI",
             "name": "GUI",
             "type": "service"
         },
         {
-            "id": "7407cc93-61b1-43e0-ab87-16775705f511",
+            "id": "Kpr",
             "name": "Kpr",
             "type": "service"
         },
         {
-            "id": "c4b3d266-fa8e-4ded-bdf0-feaab8650c02",
+            "id": "KprDB",
             "name": "KprDB",
             "type": "database"
         },
         {
-            "id": "b7c8a48d-5f93-4045-8d53-5ee3fa29ed63",
+            "id": "NsqDB",
             "name": "NsqDB",
             "type": "database"
         },
         {
-            "id": "fe9817be-a826-4209-bc28-81bb9341f915",
+            "id": "CldAdm",
             "name": "CldAdm",
             "type": "service"
         },
         {
-            "id": "0356b7cb-35bf-467e-b0b0-979fc4741153",
+            "id": "CldAdmDB",
             "name": "CldAdmDB",
             "type": "database"
         },
         {
-            "id": "3f5d9340-11cc-445e-a8d5-29984293ef67",
+            "id": "SftDB",
             "name": "SftDB",
             "type": "database"
         },
         {
-            "id": "0e6b3480-0135-4ff6-a2d9-357fd7684762",
+            "id": "Ans",
             "name": "Ans",
             "type": "service"
         },
         {
-            "id": "225f42ef-cde8-43cb-a237-1798f6d4f703",
+            "id": "SftMngDB",
             "name": "SftMngDB",
             "type": "database"
         }
     ],
     "links": [
         {
-            "source": "d4be7b5e-2da2-40d4-9e74-46dd4348ddd8",
-            "target": "0f7e1b8b-7688-4070-9e42-b66ff23a63cf",
+            "source": "Jtl",
+            "target": "Brk",
             "type": "runtime"
         },
         {
-            "source": "d0a52155-f02a-4641-a365-45870516feaf",
-            "target": "0f7e1b8b-7688-4070-9e42-b66ff23a63cf",
+            "source": "Tlg",
+            "target": "Brk",
             "type": "runtime"
         },
         {
-            "source": "d0a52155-f02a-4641-a365-45870516feaf",
-            "target": "711b1af6-7560-4874-9514-2b658fc6e6fa",
+            "source": "Tlg",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "adeacb94-9c6d-4711-9fb5-55cdf4e37a32",
-            "target": "711b1af6-7560-4874-9514-2b658fc6e6fa",
+            "source": "Chr",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "31a0f8fb-e4bb-4370-978c-8aef686ca111",
-            "target": "711b1af6-7560-4874-9514-2b658fc6e6fa",
+            "source": "Inf",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "31a0f8fb-e4bb-4370-978c-8aef686ca111",
-            "target": "19423ff5-6437-48b5-9792-c68c3bf6a83a",
+            "source": "Inf",
+            "target": "Kpc",
             "type": "runtime"
         },
         {
-            "source": "19423ff5-6437-48b5-9792-c68c3bf6a83a",
-            "target": "711b1af6-7560-4874-9514-2b658fc6e6fa",
+            "source": "Kpc",
+            "target": "InfDB",
             "type": "runtime"
         },
         {
-            "source": "19423ff5-6437-48b5-9792-c68c3bf6a83a",
-            "target": "ed92f4ca-2b21-498c-8a97-b3be6758ea96",
+            "source": "Kpc",
+            "target": "InfUp",
             "type": "runtime"
         },
         {
-            "source": "85d12baa-7f50-487e-875b-981e66fb5db0",
-            "target": "adeacb94-9c6d-4711-9fb5-55cdf4e37a32",
+            "source": "Dsh",
+            "target": "Chr",
             "type": "runtime"
         },
         {
-            "source": "85d12baa-7f50-487e-875b-981e66fb5db0",
-            "target": "93b50cee-b1d4-477b-a383-d7e6a4e5bbb5",
+            "source": "Dsh",
+            "target": "Cnf",
             "type": "runtime"
         },
         {
-            "source": "93b50cee-b1d4-477b-a383-d7e6a4e5bbb5",
-            "target": "31a0f8fb-e4bb-4370-978c-8aef686ca111",
+            "source": "Cnf",
+            "target": "Inf",
             "type": "runtime"
         },
         {
-            "source": "93b50cee-b1d4-477b-a383-d7e6a4e5bbb5",
-            "target": "7c755219-14f6-4be1-bb1e-dec94bb0f126",
+            "source": "Cnf",
+            "target": "FltDB",
             "type": "runtime"
         },
         {
-            "source": "ed92f4ca-2b21-498c-8a97-b3be6758ea96",
-            "target": "fe9817be-a826-4209-bc28-81bb9341f915",
+            "source": "InfUp",
+            "target": "CldAdm",
             "type": "runtime"
         },
         {
-            "source": "902e528c-6270-4ae4-aaa9-b1d15d686ff0",
-            "target": "85d12baa-7f50-487e-875b-981e66fb5db0",
+            "source": "GUI",
+            "target": "Dsh",
             "type": "runtime"
         },
         {
-            "source": "902e528c-6270-4ae4-aaa9-b1d15d686ff0",
-            "target": "93b50cee-b1d4-477b-a383-d7e6a4e5bbb5",
+            "source": "GUI",
+            "target": "Cnf",
             "type": "runtime"
         },
         {
-            "source": "902e528c-6270-4ae4-aaa9-b1d15d686ff0",
-            "target": "7407cc93-61b1-43e0-ab87-16775705f511",
+            "source": "GUI",
+            "target": "Kpr",
             "type": "runtime"
         },
         {
-            "source": "902e528c-6270-4ae4-aaa9-b1d15d686ff0",
-            "target": "fe9817be-a826-4209-bc28-81bb9341f915",
+            "source": "GUI",
+            "target": "CldAdm",
             "type": "runtime"
         },
         {
-            "source": "7407cc93-61b1-43e0-ab87-16775705f511",
-            "target": "c4b3d266-fa8e-4ded-bdf0-feaab8650c02",
+            "source": "Kpr",
+            "target": "KprDB",
             "type": "runtime"
         },
         {
-            "source": "7407cc93-61b1-43e0-ab87-16775705f511",
-            "target": "b7c8a48d-5f93-4045-8d53-5ee3fa29ed63",
+            "source": "Kpr",
+            "target": "NsqDB",
             "type": "runtime"
         },
         {
-            "source": "7407cc93-61b1-43e0-ab87-16775705f511",
-            "target": "fe9817be-a826-4209-bc28-81bb9341f915",
+            "source": "Kpr",
+            "target": "CldAdm",
             "type": "runtime"
         },
         {
-            "source": "fe9817be-a826-4209-bc28-81bb9341f915",
-            "target": "0356b7cb-35bf-467e-b0b0-979fc4741153",
+            "source": "CldAdm",
+            "target": "CldAdmDB",
             "type": "runtime"
         },
         {
-            "source": "fe9817be-a826-4209-bc28-81bb9341f915",
-            "target": "0e6b3480-0135-4ff6-a2d9-357fd7684762",
+            "source": "CldAdm",
+            "target": "Ans",
             "type": "runtime"
         },
         {
-            "source": "0e6b3480-0135-4ff6-a2d9-357fd7684762",
-            "target": "d0a52155-f02a-4641-a365-45870516feaf",
+            "source": "Ans",
+            "target": "Tlg",
             "type": "runtime"
         },
         {
-            "source": "7407cc93-61b1-43e0-ab87-16775705f511",
-            "target": "225f42ef-cde8-43cb-a237-1798f6d4f703",
+            "source": "Kpr",
+            "target": "SftMngDB",
             "type": "runtime"
         },
         {
-            "source": "fe9817be-a826-4209-bc28-81bb9341f915",
-            "target": "3f5d9340-11cc-445e-a8d5-29984293ef67",
+            "source": "CldAdm",
+            "target": "SftDB",
             "type": "runtime"
         }
     ]

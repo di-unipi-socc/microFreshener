@@ -1,5 +1,4 @@
-from api.models import Snippet
-from api.serializers import SnippetSerializer
+
 from rest_framework import mixins
 from rest_framework import generics
 from django.core.files.base import ContentFile

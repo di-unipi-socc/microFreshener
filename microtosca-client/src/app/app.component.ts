@@ -89,6 +89,9 @@ export class AppComponent {
       {label: 'Extra', command: () => {
         this.downloadExample("extra");
       }},
+      {label: 'Extra (agent)', command: () => {
+        this.downloadExample("extra-agent");
+      }},
       {label: 'Sockshop', command: () => {
         this.downloadExample("sockshop");
       }},

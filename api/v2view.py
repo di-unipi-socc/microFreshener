@@ -1,5 +1,3 @@
-from api.models import Snippet
-from api.serializers import SnippetSerializer
 from rest_framework import mixins
 from rest_framework import generics
 from django.core.files.base import ContentFile
@@ -13,7 +11,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 import os
-import json 
+import json
 
 from microanalyser.analyser import MicroAnalyser
 from microanalyser.analyser.builder import AnalyserBuilder
@@ -24,7 +22,7 @@ from microanalyser.model.nodes import Service, Database, CommunicationPattern
 
 
 loader = JSONLoader()
-transformer = JSONTransformer()
+jsonTransformer = JSONTransformer()
 
 file_name = "default.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
@@ -39,7 +37,7 @@ def graph_analysis(request):
     """
     if request.method == 'GET':
         # get the principle to check graph/analysis?principles=p1,p1,p2
-        principles = request.GET.get('principles').split(',') 
+        principles = request.GET.get('principles').split(',')
         print(principles)
         mmodel = None
         if(os.path.isfile(model_file_path)):
@@ -48,13 +46,14 @@ def graph_analysis(request):
             for principle in principles:
                 builder.add_smells_related_to_principle(principle)
             analyser = builder.build()
-            res = analyser.run()  
-            print(res)
+            res = analyser.run()
+            #print(res)
             return Response(res)
         else:
             return Response({"msg": "No model uploaded"})
-        
-@api_view(['GET','POST'])
+
+
+@api_view(['GET', 'POST'])
 @csrf_exempt
 def graph(request):
     """
@@ -68,7 +67,7 @@ def graph(request):
         data = request.data
         with open(model_file_path, 'w') as outfile:
             json.dump(data, outfile, indent=4)
-        return  Response( {"msg":"graph {} uploaded correctly".format(data['name'])})
+        return Response({"msg": "graph {} uploaded correctly".format(data['name'])})
 
     if request.method == 'GET':
         model_path = model_file_path
@@ -76,16 +75,18 @@ def graph(request):
             ex = request.GET['example']
             if(ex == "extra"):
                 model_path = os.path.join(examples_path, "extra-riot.json")
-            elif (ex =="sockshop"):
+            elif (ex == "extra-agent"):
+                model_path = os.path.join(examples_path, "extra-riot-agent.json")
+            elif (ex == "sockshop"):
                 model_path = os.path.join(examples_path, "sockshop.json")
-            elif (ex =="helloworld"):
+            elif (ex == "helloworld"):
                 model_path = os.path.join(examples_path, "helloworld.json")
-   
-        # return the json file 
+
+        # return the json file
         mmodel = None
         if(os.path.isfile(model_path)):
             mmodel = loader.load(model_path)
-            dmodel = transformer.transform(mmodel)
+            dmodel = jsonTransformer.transform(mmodel)
             return Response(dmodel)
         else:
             return Response({"msg": "no model uploaded"})
@@ -97,12 +98,14 @@ def graph_export(request):
     mmodel = None
     if(os.path.isfile(model_file_path)):
         mmodel = loader.load(model_file_path)
-        dmodel = transformer.transform(mmodel)
-        response = HttpResponse(ContentFile(json.dumps(dmodel)), content_type='application/json')
+        dmodel = jsonTransformer.transform(mmodel)
+        response = HttpResponse(ContentFile(
+            json.dumps(dmodel)), content_type='application/json')
         response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
-        return response 
+        return response
     else:
         return Response({"msg": "no model uploaded"})
+
 
 @api_view(['POST'])
 @csrf_exempt
@@ -110,7 +113,7 @@ def graph_import(request):
     if request.method == 'POST':
         # data = request.data
         graph_in_memory = request.FILES['graph']
-        print(graph_in_memory.name) 
+        print(graph_in_memory.name)
 
         with open(model_file_path, 'wb+') as destination:
             for chunk in graph_in_memory.chunks():
