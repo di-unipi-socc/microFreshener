@@ -77,19 +77,15 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isCommunicationPattern(node));
     }
 
-    // getExternalUserNodes(): joint.shapes.microtosca.ExternalUser[] {
-    //     return <joint.shapes.microtosca.ExternalUser[]>this.getCells().filter(node => this.isExternalUser(node));
-    // }
-
     getEdgeGroups(): joint.shapes.microtosca.EdgeGroup[] {
-        return this.getGroups().filter(group => this.isEdgeGroup(group));
+        return <joint.shapes.microtosca.EdgeGroup[]>this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
     getOutboundNeighbors(client: joint.dia.Cell):joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
     }
 
-    addSquadGroupGroup(name: string): joint.shapes.microtosca.SquadGroup {
+    addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
@@ -105,13 +101,6 @@ export class Graph extends joint.dia.Graph {
             this.addRunTimeInteraction(g, node);
         });
         return g;
-    }
-
-    addExternaluser(name: string): joint.shapes.microtosca.ExternalUser {
-        let extuser = new joint.shapes.microtosca.ExternalUser();
-        extuser.setName(name);
-        extuser.addTo(this);
-        return extuser;
     }
 
     addService(name: string): joint.shapes.microtosca.Service {
@@ -171,12 +160,6 @@ export class Graph extends joint.dia.Graph {
         return node.attributes['type'] == "microtosca.EdgeGroup";
         // return node instanceof joint.shapes.microtosca.Group;
     }
-
-    isExternalUser(node: joint.dia.Cell) {
-        return node instanceof joint.shapes.microtosca.ExternalUser;
-    }
-
-
 
     isService(node: joint.dia.Cell): boolean {
         return node.attributes['type'] == "microtosca.Service";

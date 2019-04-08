@@ -1,0 +1,15 @@
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-2">
+        <div class="box">Name:</div>
+    </div>
+    <div class="p-col-8">
+        <input placeholder="Insert the name" [(ngModel)]="teamName" type="text"
+            pInputText />
+    </div>
+</div>
+
+
+<div class="p-grid p-justify-end">
+    <p-button label="Save" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+</div>

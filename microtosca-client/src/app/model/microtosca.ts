@@ -32,20 +32,17 @@ declare module 'jointjs' {
                 setType(t: String): void;
                 // resetSmells():void
             }
-            class Group extends joint.dia.Element{
+            class Group extends joint.dia.Element {
                 setName(name): void;
                 getName(): String;
-                setExternalUserName(name:string): void;
-                getExternalUserName(): string;
                 addSmell(smell: Smell): void;
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
                 resetSmells(): void
             }
-            class ExternalUser extends Group{
-             
-            }
             class EdgeGroup extends Group {
+                setExternalUserName(name: string): void;
+                getExternalUserName(): string;
             }
             class SquadGroup extends Group {
             }
@@ -126,7 +123,7 @@ joint.dia.Element.define('microtosca.Service', {
         }, {
             tagName: 'rect',
             selector: 'wsi'
-        },{
+        }, {
             tagName: 'rect',
             selector: 'NoApiGateway'
         }],
@@ -156,6 +153,7 @@ joint.dia.Element.define('microtosca.Service', {
             this.attributes.smells = [];
             this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
             this.attr('wsi/visibility', 'hidden');
+            this.attr('NoApiGateway/visibility', 'hidden');
             console.log("Resetted smelles");
         },
         _hideSmell(smell: Smell) {
@@ -169,7 +167,7 @@ joint.dia.Element.define('microtosca.Service', {
             else if (smell.name == "WobblyServiceInteractionSmell") {
                 this.attr('wsi/visibility', 'visible');
             }
-            else if (smell.name == "NoApiGateway"){
+            else if (smell.name == "NoApiGateway") {
                 this.attr('NoApiGateway/visibility', 'visible');
             }
             // console.log(this);
@@ -324,56 +322,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             //     }
         }
     });
-
-
-joint.dia.Element.define('microtosca.ExternalUser', {
-    size: {
-        width: 75,
-        height: 75
-    },
-    attrs: {
-        body: {
-            refCx: '50%',
-            refCy: '50%',
-            refR: '50%',
-            strokeWidth: 8,
-            stroke: '#C2C2C2',
-            fill: "#C2C2C2",
-            magnet: true
-        },
-        label: {
-            refX: '50%',
-            refY: '50%',
-            yAlignment: 'middle',
-            xAlignment: 'middle',
-            fontSize: 15,
-            text: name || '',
-        },
-    },
-    name: '', 
-}, {
-        markup: [{
-            tagName: 'circle',
-            selector: 'body',
-        }, {
-            tagName: 'text',
-            selector: 'label'
-        }],
-        getName: function () {
-            return this.name
-        },
-        setName: function (text) {
-            this.name = text;
-        },
-        setExternalUserName: function(name:string){
-            return this.attr('label/text', name || '');
-        },
-        getExternalUserName: function(){
-            return this.attr('label/text');
-        },
-        
-    });
-
 joint.dia.Element.define('microtosca.EdgeGroup', {
     size: {
         width: 75,
@@ -411,73 +359,73 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         getName: function () {
             return this.name
         },
-        setName: function (text:string) {
+        setName: function (text: string) {
             this.name = text;
         },
-        setExternalUserName: function(name:string){
+        setExternalUserName: function (name: string) {
             return this.attr('label/text', name || '');
         },
-        getExternalUserName: function(){
+        getExternalUserName: function () {
             return this.attr('label/text');
         },
-        addSmell: function(smell: Smell){
+        addSmell: function (smell: Smell) {
             this.attributes.smells.push(smell);
         },
-        getSmell:function(name: string){
+        getSmell: function (name: string) {
             return this.attributes.smells.find(smell => {
                 return name === smell.name;
             });
         },
-        getSmells:function(): Smell[]{
+        getSmells: function (): Smell[] {
             return this.attributes.smells;
         },
-        resetSmells: function(): void{
+        resetSmells: function (): void {
             this.attributes.smells = [];
         }
     });
 
 joint.dia.Element.define('microtosca.SquadGroup', {
-        position: { x: 20, y: 20 },
-        size: {
-            width: 200,
-            height: 200
+    position: { x: 20, y: 20 },
+    size: {
+        width: 200,
+        height: 200
+    },
+    attrs: {
+        body: {
+            refWidth: '100%',
+            refHeight: '100%',
+            fill: "none",
+            stroke: '#7e7e77',
+            strokeWidth: 2,
+            strokeDasharray: "10,5",
+            rx: 10,
+            ry: 10,
         },
-        attrs: {
-            body: {
-                refWidth: '100%',
-                refHeight: '100%',
-                fill: "none",
-                stroke: '#7e7e77',
-                strokeWidth: 2,
-                strokeDasharray : "10,5",
-                rx: 10,
-                ry: 10,
-            },
-            label: {
-                refX: '50%',
-                refY: '0%',
-                // yAlignment: 'hanging',
-                xAlignment: 'center',
-                fontSize: 15,
-                text: name || '',
-            }
+        label: {
+            refX: '50%',
+            refY: '0%',
+            // yAlignment: 'hanging',
+            xAlignment: 'center',
+            fontSize: 15,
+            text: name || '',
+        }
+    },
+    smells: [] // list of smells that affects a single node
+}, {
+        markup: [{
+            tagName: 'rect',
+            selector: 'body',
+        }, {
+            tagName: 'text',
+            selector: 'label'
+        }],
+        getName: function () {
+            return this.attr('label/text');
         },
-        smells: [] // list of smells that affects a single node
-    }, {
-            markup: [{
-                tagName: 'rect',
-                selector: 'body',
-            }, {
-                tagName: 'text',
-                selector: 'label'
-            }],
-            getName: function () {
-                return this.attr('label/text');
-            },
-            setName: function (text) {
-                return this.attr('label/text', text || '');
-            },
-        });
+        setName: function (text) {
+            return this.attr('label/text', text || '');
+        },
+    });
 joint.dia.Link.define('microtosca.RunTimeLink', {
     attrs: {
         line: {

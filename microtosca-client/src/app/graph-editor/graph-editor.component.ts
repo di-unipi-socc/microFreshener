@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
+import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
+import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -52,7 +54,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         //bind events
         this.bindEvents();
-        
+
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
         this.addLinkMouseOver();
@@ -95,11 +97,50 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
-       this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+        this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+    }
 
+    addTeam() {
+        const ref = this.dialogService.open(DialogAddTeamComponent, {
+            header: 'Add Team',
+            width: '50%',
+            // height: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            this.gs.getGraph().addTeamGroup(data.name);
+            this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
+        });
 
     }
 
+    addNode() {
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            width: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            // { name: this.name, type: this.selectedNodeType, ctype: this.selectedCommunicationPatternType }
+            let message = "";
+            switch (data.type) {
+                case "service":
+                    this.gs.getGraph().addService(data.name);
+                    message += `Service ${data.name} added correctly`;
+                    break;
+                case "database":
+                    this.gs.getGraph().addDatabase(data.name);
+                    message += `Database ${data.name} ${data.ctype} added correctly`;
+                    break;
+                case "communicationPattern":
+                    this.gs.getGraph().addCommunicationPattern(data.name, data.ctype);
+                    message += `Communication Pattern ${data.name} ${data.ctype} added correctly`;
+                    break;
+                default:
+                    this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
+                    break;
+            }
+            this.messageService.add({ severity: 'success', summary: message });
+        });
+    }
 
     bindEvents() {
         // this.paper.on("blank:pointerclick",(evt,x,y,)=>{
@@ -192,7 +233,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                 // this.messageService.add({severity:'info', summary: 'Smell clodes'});
             });
         })
-        
+
 
         this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)

@@ -11,7 +11,7 @@ import { DynamicDialogConfig } from 'primeng/api';
 export class AddNodeComponent implements OnInit {
 
   name: string;
-  selectedCommunicationPatternType: string;ù
+  selectedCommunicationPatternType: string;
   communicationPatternTypes;
   addingCommunicationPattern:boolean = false;
 

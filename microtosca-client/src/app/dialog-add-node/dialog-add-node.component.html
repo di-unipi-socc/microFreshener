@@ -1,0 +1,43 @@
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-2">
+        <div class="box">Name:</div>
+    </div>
+    <div class="p-col-8">
+        <input placeholder="Insert the name" [(ngModel)]="name" type="text"
+            pInputText />
+    </div>
+</div>
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-2">
+        <div class="box">Node</div>
+    </div>
+    <div class="p-col-8">
+        <p-radioButton name="group1" value="service"
+            label="Service" [(ngModel)]="selectedNodeType" inputId="opt1"></p-radioButton>
+        <p-radioButton name="group1" value="database"
+            label="Database" [(ngModel)]="selectedNodeType" inputId="opt2"></p-radioButton>
+        <p-radioButton name="group1"
+            value="communicationPattern" label="communicationPattern"
+            (onClick)="checkedCommPattern()"
+            [(ngModel)]="selectedNodeType" inputId="opt3"></p-radioButton>
+    </div>
+</div>
+
+
+<div class="p-grid p-justify-center" *ngIf="showCommunicationPatternType">
+    <div class="p-md-2">
+        <label for="name">Type </label>
+    </div>
+    <div class="p-md-8">
+        <p-dropdown [options]="communicationPatternTypes"
+            [(ngModel)]="selectedCommunicationPatternType"
+            placeholder="Select a Type" optionLabel="name" [showClear]="true"></p-dropdown>
+    </div>
+</div>
+
+
+<div class="p-grid p-justify-end">
+    <p-button label="Save" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+</div>

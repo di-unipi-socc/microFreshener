@@ -8,6 +8,17 @@ import { HttpClientModule }    from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
+import { MenuEditComponent } from './menu-edit/menu-edit.component';
+import { GraphEditorComponent } from './graph-editor/graph-editor.component';
+import { AddLinkComponent } from './add-link/add-link.component';
+import { AddNodeComponent } from './add-node/add-node.component';
+import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
+import { RemoveNodeComponent } from './remove-node/remove-node.component';
+import { RemoveLinkComponent } from './remove-link/remove-link.component';
+import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
+import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
+import { DialogAddNodeComponent } from './dialog-add-node/dialog-add-node.component';
+
 
 // Import primeNG modules
 import {AccordionModule} from 'primeng/accordion';
@@ -34,16 +45,9 @@ import {MenubarModule} from 'primeng/menubar';
 import {MenuModule} from 'primeng/menu';
 import {PanelModule} from 'primeng/panel';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-//import d3js component
-import { MenuEditComponent } from './menu-edit/menu-edit.component';
-import { GraphEditorComponent } from './graph-editor/graph-editor.component';
-import { AddLinkComponent } from './add-link/add-link.component';
-import { AddNodeComponent } from './add-node/add-node.component';
-import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
-import { RemoveNodeComponent } from './remove-node/remove-node.component';
-import { RemoveLinkComponent } from './remove-link/remove-link.component';
-import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
-import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import { DialogAddTeamComponent } from './dialog-add-team/dialog-add-team.component';
+
 
 @NgModule({
   declarations: [
@@ -57,7 +61,10 @@ import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
     RemoveNodeComponent,
     RemoveLinkComponent,
     DialogAnalysisComponent,
-    DialogSmellComponent
+    DialogSmellComponent,
+    DialogAddNodeComponent,
+    DialogAddNodeComponent,
+    DialogAddTeamComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,7 +93,8 @@ import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
     ProgressSpinnerModule,
     MenubarModule,
     PanelModule,
-    InputTextareaModule
+    InputTextareaModule,
+    RadioButtonModule
   ],
   providers: [
     MessageService
@@ -98,7 +106,9 @@ import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
     RemoveNodeComponent,
     RemoveLinkComponent,
     DialogAnalysisComponent,
-    DialogSmellComponent
+    DialogSmellComponent,
+    DialogAddNodeComponent,
+    DialogAddTeamComponent
   ]
 })
 export class AppModule { }
