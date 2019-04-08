@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
+import { GraphService } from "../graph.service";
+import * as joint from 'jointjs';
+import '../model/microtosca';
 
 @Component({
   selector: 'app-dialog-add-team',
@@ -10,11 +13,15 @@ import { DynamicDialogConfig } from 'primeng/api';
 export class DialogAddTeamComponent implements OnInit {
 
   teamName: string;
+  nodes: joint.shapes.microtosca.Node[];
+  selectedNodes: joint.shapes.microtosca.Node[];
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
+  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
     this.teamName = null;
+    this.selectedNodes = [];
+    this.nodes = this.gs.getGraph().getNodes();
   }
 
 
@@ -22,8 +29,9 @@ export class DialogAddTeamComponent implements OnInit {
     return this.teamName == null;
   }
 
-  save(){
-    this.ref.close({ name: this.teamName});
+  save() {
+    console.log(this.selectedNodes),
+    this.ref.close({ name: this.teamName, nodes: this.selectedNodes});
   }
 
 }

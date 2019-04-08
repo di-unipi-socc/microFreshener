@@ -85,10 +85,13 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
     }
 
-    addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
+    addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
+        nodes.forEach(node => {
+            g.embed(node);
+        });
         return g;
     }
 

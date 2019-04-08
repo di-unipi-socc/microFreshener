@@ -91,7 +91,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        // var g = this.gs.getGraph().addSquadGroupGroup("team1");
+        var g = this.gs.getGraph().addTeamGroup("team1",[s,o]);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
@@ -107,7 +107,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             // height: '50%'
         });
         ref.onClose.subscribe((data) => {
-            this.gs.getGraph().addTeamGroup(data.name);
+            this.gs.getGraph().addTeamGroup(data.name, data.nodes);
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
         });
 

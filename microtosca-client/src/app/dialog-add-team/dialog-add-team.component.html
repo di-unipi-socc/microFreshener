@@ -9,6 +9,19 @@
     </div>
 </div>
 
+<div class="p-grid p-justify-center"> 
+    <div class="p-col-2">
+        <div class="box">Members:</div>
+    </div>
+    <div class="p-col-8">
+        <p-listbox [options]="nodes" [(ngModel)]="selectedNodes" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="attributes.attrs.label.text">
+        </p-listbox>
+    </div>
+</div>
+
+<!-- <p>Selected nodes: <span *ngFor="let c of selectedNodes" style="margin-right: 10px">{{c.attributes.attrs.label.text}}</span></p> -->
+
+
 
 <div class="p-grid p-justify-end">
     <p-button label="Save" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
