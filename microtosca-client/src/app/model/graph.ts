@@ -91,6 +91,7 @@ export class Graph extends joint.dia.Graph {
         g.addTo(this);
         nodes.forEach(node => {
             g.embed(node);
+           
         });
         return g;
     }

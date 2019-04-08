@@ -408,6 +408,18 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             xAlignment: 'center',
             fontSize: 15,
             text: name || '',
+        },
+        icon: {
+            refX: '100%',
+            refY: '0%',
+            fill: '#FC2B01',
+            event: 'team:minimize:pointerdown',
+            visibility: "visible",
+            ref: 'body',
+            refWidth: '5%',
+            refHeight: '5%',
+            xAlignment: 'center',
+        
         }
     },
     smells: [] // list of smells that affects a single node
@@ -418,6 +430,9 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'text',
             selector: 'label'
+        },{
+            tagName: 'rect',
+            selector: 'icon'
         }],
         getName: function () {
             return this.attr('label/text');

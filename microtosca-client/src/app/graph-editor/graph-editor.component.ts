@@ -91,7 +91,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        var g = this.gs.getGraph().addTeamGroup("team1",[s,o]);
+        var g = this.gs.getGraph().addTeamGroup("team1", [s, o]);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
@@ -143,6 +143,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
     }
 
     bindEvents() {
+        this.expandTeamAreaToCoverChildren();
+        this.bindTeamMinimizeEvent();
         // this.paper.on("blank:pointerclick",(evt,x,y,)=>{
         //     console.log(evt);
         //     console.log(x,y);
@@ -272,8 +274,29 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             console.log(elementView.model);
         });
 
-        // for parent 
+    }
+    bindTeamMinimizeEvent(){
+        this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
+            console.log("MIMIMZE");
+            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            var cell = cellview.model;
+            var embeddedCells = cell.getEmbeddedCells();
+            console.log(embeddedCells)
+            _.each(embeddedCells, function(child) {
+                // child.set('hidden');
+                child.set('hidden', !child.get('hidden'))
+            })
+        })
+        
+        this.gs.getGraph().on('change:hidden', function(cell, changed, opt) {
+            cell.attr('./opacity', cell.get('hidden') ? 0 : 1);
+        })
+    }
+
+    expandTeamAreaToCoverChildren() {
+
         this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
+            console.log("Change size", cell);
 
             if (opt.skipParentHandler) return;
 
@@ -286,53 +309,65 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             }
         });
 
-        // this.gs.getGraph().on('change:position', (cell, newPosition, opt) =>{
+        this.gs.getGraph().on('change:position', (cell, newPosition, opt) => {
 
-        //     if (opt.skipParentHandler) return;
+            if (opt.skipParentHandler) return;
 
-        //     if (cell.get('embeds') && cell.get('embeds').length) {
-        //         // If we're manipulating a parent element, let's store
-        //         // it's original position to a special property so that
-        //         // we can shrink the parent element back while manipulating
-        //         // its children.
-        //         cell.set('originalPosition', cell.get('position'));
-        //     }
+            if (cell.get('embeds') && cell.get('embeds').length) {
+                // If we're manipulating a parent element, let's store
+                // it's original position to a special property so that
+                // we can shrink the parent element back while manipulating
+                // its children.
+                cell.set('originalPosition', cell.get('position'));
+                console.log("Manipulating parent posistion", cell.get('position'));
+            }
 
-        //     var parentId = cell.get('parent');
-        //     if (!parentId) return;
+            // DIDO
+            // var parentId = cell.get('parent');
+            // console.log(cell.attr);
+            // if (!parentId) return;
 
-        //     var parent = this.gs.getGraph().getCell(parentId);
-        //     var parentBbox = parent.getBBox();
+            // var parent = this.gs.getGraph().getCell(parentId);
+            /// DIDO
+            var parent = cell.getParentCell();
+    
+            if(! parent) return;
+            console.log("found parent");
 
-        //     if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
-        //     if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
+            var parentBbox = parent.getBBox();
+            // var parentBbox = this.gs.getGraph().getBBox([parent]);
 
-        //     var originalPosition = parent.get('originalPosition');
-        //     var originalSize = parent.get('originalSize');
+            if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
+            if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
 
-        //     var newX = originalPosition.x;
-        //     var newY = originalPosition.y;
-        //     var newCornerX = originalPosition.x + originalSize.width;
-        //     var newCornerY = originalPosition.y + originalSize.height;
+            var originalPosition = parent.get('originalPosition');
+            var originalSize = parent.get('originalSize');
 
-        //     _.each(parent.getEmbeddedCells(), (child)=> {
+            var newX = originalPosition.x;
+            var newY = originalPosition.y;
+            var newCornerX = originalPosition.x + originalSize.width;
+            var newCornerY = originalPosition.y + originalSize.height;
 
-        //         var childBbox = child.getBBox();
+            _.each(parent.getEmbeddedCells(), (child) => {
+                console.log("Embedde cell", cell);
+                var childBbox = (<joint.dia.Element>child).getBBox();
+                // var childBbox = this.gs.getGraph().getCell(child);
 
-        //         if (childBbox.x < newX) { newX = childBbox.x; }
-        //         if (childBbox.y < newY) { newY = childBbox.y; }
-        //         if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
-        //         if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
-        //     });
+                if (childBbox.x < newX) { newX = childBbox.x; }
+                if (childBbox.y < newY) { newY = childBbox.y; }
+                if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
+                if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
+            });
 
-        //     // Note that we also pass a flag so that we know we shouldn't adjust the
-        //     // `originalPosition` and `originalSize` in our handlers as a reaction
-        //     // on the following `set()` call.
-        //     parent.set({
-        //         position: { x: newX, y: newY },
-        //         size: { width: newCornerX - newX, height: newCornerY - newY }
-        //     }, { skipParentHandler: true });
-        // });
+            // Note that we also pass a flag so that we know we shouldn't adjust the
+            // `originalPosition` and `originalSize` in our handlers as a reaction
+            // on the following `set()` call.
+            parent.set({
+                position: { x: newX, y: newY },
+                size: { width: newCornerX - newX, height: newCornerY - newY }
+            }, { skipParentHandler: true });
+
+        });
     }
 
     bindInteractionEvents(adjustVertices, graph, paper) {
