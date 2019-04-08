@@ -1,232 +1,82 @@
 {
-    "name": "extra-riot-agent",
+    "name": "hello-world",
     "nodes": [
         {
-            "name": "Brk",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "database"
+        },
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
             "type": "communicationpattern"
         },
         {
-            "name": "Jtl",
-            "type": "service"
-        },
-        {
-            "name": "Tlg",
-            "type": "service"
-        },
-        {
-            "name": "InfDB",
-            "type": "database"
-        },
-        {
-            "name": "Chr",
-            "type": "service"
-        },
-        {
-            "name": "Inf",
-            "type": "service"
-        },
-        {
-            "name": "Kpc",
-            "type": "service"
-        },
-        {
-            "name": "Dsh",
-            "type": "service"
-        },
-        {
-            "name": "Cnf",
-            "type": "service"
-        },
-        {
-            "name": "InfUp",
-            "type": "service"
-        },
-        {
-            "name": "FltDB",
-            "type": "database"
-        },
-        {
-            "name": "GUI",
-            "type": "service"
-        },
-        {
-            "name": "Kpr",
-            "type": "service"
-        },
-        {
-            "name": "KprDB",
-            "type": "database"
-        },
-        {
-            "name": "NsqDB",
-            "type": "database"
-        },
-        {
-            "name": "CldAdm",
-            "type": "service"
-        },
-        {
-            "name": "CldAdmDB",
-            "type": "database"
-        },
-        {
-            "name": "SftDB",
-            "type": "database"
-        },
-        {
-            "name": "Ans",
-            "type": "service"
-        },
-        {
-            "name": "SftMngDB",
-            "type": "database"
-        },
-        {
-            "name": "Agent",
-            "type": "service"
+            "name": "gateway",
+            "type": "communicationpattern"
         }
     ],
     "links": [
         {
-            "source": "Jtl",
-            "target": "Brk",
+            "source": "shipping",
+            "target": "order_db",
             "type": "runtime"
         },
         {
-            "source": "Tlg",
-            "target": "Brk",
+            "source": "shipping",
+            "target": "rabbitmq",
             "type": "runtime"
         },
         {
-            "source": "Tlg",
-            "target": "InfDB",
+            "source": "shipping",
+            "target": "order_db",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
             "type": "runtime"
         },
         {
-            "source": "Chr",
-            "target": "InfDB",
+            "source": "order",
+            "target": "order_db",
             "type": "runtime"
         },
         {
-            "source": "Inf",
-            "target": "InfDB",
+            "source": "order",
+            "target": "rabbitmq",
             "type": "runtime"
         },
         {
-            "source": "Inf",
-            "target": "Kpc",
-            "type": "runtime"
+            "source": "order",
+            "target": "shipping",
+            "type": "deploymenttime"
         },
         {
-            "source": "Kpc",
-            "target": "InfDB",
-            "type": "runtime"
+            "source": "order",
+            "target": "order_db",
+            "type": "deploymenttime"
         },
         {
-            "source": "Kpc",
-            "target": "InfUp",
-            "type": "runtime"
-        },
-        {
-            "source": "Dsh",
-            "target": "Chr",
-            "type": "runtime"
-        },
-        {
-            "source": "Cnf",
-            "target": "Inf",
-            "type": "runtime"
-        },
-        {
-            "source": "Cnf",
-            "target": "FltDB",
-            "type": "runtime"
-        },
-        {
-            "source": "InfUp",
-            "target": "CldAdm",
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Dsh",
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Cnf",
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Kpr",
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "CldAdm",
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "KprDB",
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "NsqDB",
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "CldAdm",
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "SftMngDB",
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "CldAdmDB",
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "Ans",
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "SftDB",
-            "type": "runtime"
-        },
-        {
-            "source": "Ans",
-            "target": "Tlg",
-            "type": "runtime"
-        },
-        {
-            "source": "Agent",
-            "target": "Brk",
-            "type": "runtime"
-        },
-        {
-            "source": "Agent",
-            "target": "Kpr",
-            "type": "runtime"
-        },
-        {
-            "source": "Agent",
-            "target": "CldAdm",
-            "type": "runtime"
-        },
-        {
-            "source": "Agent",
-            "target": "SftDB",
+            "source": "gateway",
+            "target": "shipping",
             "type": "runtime"
         }
     ],
-    "groups": []
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "gateway"
+            ]
+        }
+    ]
 }

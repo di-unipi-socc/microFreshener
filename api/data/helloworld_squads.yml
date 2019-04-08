@@ -32,8 +32,8 @@ topology_template:
 
   groups:
       group1:
-        type: micro.groups.Squad
+        type: micro.groups.SquadGroup
         members: [ order, order_db ]
       group2:
-        type: micro.groups.Squad
+        type: micro.groups.SquadGroup
         members: [ shipping, rabbitmq ]

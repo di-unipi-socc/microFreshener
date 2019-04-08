@@ -39,19 +39,22 @@ export class DialogAnalysisComponent implements OnInit {
         console.log("Graph uploaded correctly to the server", data);
         // run the analysis into the server
         this.as.runRemoteAnalysis(parameters)
-          .subscribe((anodes:ANode[]) => {
-            anodes.forEach((node)=>{
-             console.log(node);
-              let n = this.gs.getGraph().getNode(node.name);
-              node.getSmells().forEach((smell)=>{
-                n.addSmell(smell);
-              })
-              
-            })
-            // console.log(anodes);
-            // TODO: where to put the analysed nodes ??
-            this.messageService.add({ severity: 'success', summary: 'Analyse received succesfully' });
+          .subscribe(data=>{
+            //TODO: pas to the close a error code () checkin the 
             this.ref.close();
+          
+            // (anodes:ANode[]) => {
+            // anodes.forEach((node)=>{
+            //   // update the smells into the UI.
+
+            //   let n = this.gs.getGraph().getNode(node.name);
+            //   node.getSmells().forEach((smell)=>{
+            //     n.addSmell(smell);
+            //   })
+            // })
+            // // TODO: where to put the analysed nodes ??
+            // this.messageService.add({ severity: 'success', summary: 'Analyse received succesfully' });
+            
             // this.updatePrinciplesForTreeNode(anodes);
           });
       });

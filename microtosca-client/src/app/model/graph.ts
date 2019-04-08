@@ -1,7 +1,7 @@
-import { EventEmitter, Output } from '@angular/core';
-
+import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
+
 
 export class Graph extends joint.dia.Graph {
     name: string;
@@ -27,13 +27,23 @@ export class Graph extends joint.dia.Graph {
                 return <joint.shapes.microtosca.Node>node;
         }
         return null;
-
     }
 
+    getGroup(name: string): joint.shapes.microtosca.Group {
+        return this.getGroups().find(group => group.getName() == name);
+    }
 
-    /**Return all the nodes in the graph (without the ExternalUser node) */
+    /**Return all the nodes in the graph  */
     getNodes(): joint.shapes.microtosca.Node[] {
-        return <joint.shapes.microtosca.Node[]>this.getElements().filter(node => !this.isExternalUser(node));
+        return <joint.shapes.microtosca.Node[]>this.getElements().filter(node => this.isNode(node));
+        // return <joint.shapes.microtosca.Node[]>this.getElements().filter((node) => {
+        //     return <joint.shapes.microtosca.Node>node instanceof joint.shapes.microtosca.Node;
+        // })
+    }
+
+    /**Return all the group in the graph  */
+    getGroups(): joint.shapes.microtosca.Group[] {
+        return <joint.shapes.microtosca.Group[]>this.getElements().filter(node => this.isGroup(node));
     }
 
     findNodeByName(name: string): joint.dia.Cell {
@@ -46,75 +56,13 @@ export class Graph extends joint.dia.Graph {
         return node.attr("label/text");
     }
 
-    builtFromJSON(json: string) {
 
-        this.removeCells(this.getCells());
-        // var g = new Graph(json['name']);
-        console.log("removed cells");
-        this.name = json['name'];
-        json['nodes'].forEach(node => {
-            if (node.type == "service")
-                this.addService(node.name)
-            if (node.type == "database")
-                this.addDatabase(node.name);
-            if (node.type == "communicationpattern")
-                this.addCommunicationPattern(node.name, node.type);
-        });
-        json['links'].forEach((link) => {
-            if (link.type == "deploymenttime")
-                this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
-            if (link.type = "runtime")
-                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
-
-        });
-    }
-
-    toJSON() {
-        var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
-        // TODO: node can be of type joint.microtosca.Node insted fo Cell
-        this.getNodes().forEach((node: joint.dia.Cell) => {
-            var dnode = { 'name': this.getNameOfNode(node) }; // 'id': node.get('id'),
-            if (this.isService(node))
-                dnode['type'] = "service";
-            if (this.isDatabase(node))
-                dnode['type'] = "database";
-            if (this.isCommunicationPattern(node))
-                dnode['type'] = "communicationpattern";
-            data['nodes'].push(dnode);
-        })
-        // Add links
-        this.getLinks().forEach((link) => {
-            var dlink = {
-                'source': this.getNameOfNode(link.getSourceElement()), //.get('id'),
-                'target': this.getNameOfNode(link.getTargetElement()) //.get('id'),
-            }
-            if (link.get('type') === 'microtosca.RunTimeLink')
-                dlink['type'] = "runtime";
-            if (link.get('type') === 'microtosca.DeploymentTimeLink')
-                dlink['type'] = "deploymenttime";
-            data['links'].push(dlink);
-        })
-        // Add EdgeGroups
-        this.getExternalUserNodes().forEach(node => {
-            var edgeGroup = { 'name': node.getGroupName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
-            let members = [];
-            this.getOutboundNeighbors(node).forEach(neigbor => {
-                members.push((<joint.shapes.microtosca.Node>neigbor).getName());
-            })
-            edgeGroup['members'] = members;
-            data['groups'].push(edgeGroup)
-        });
-        console.log(data['groups']);
-
-        return data;
-    }
-
-    removeNode(name: string ) {
+    removeNode(name: string) {
         return this.getNode(name).remove();
     }
 
     getLinks(): joint.dia.Link[] {
-        return super.getLinks().filter(link => !this.isExternalUser(link.getSourceElement()));
+        return super.getLinks().filter(link => !this.isGroup(link.getSourceElement()));
     }
 
     getServices(): joint.dia.Cell[] {
@@ -129,18 +77,33 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isCommunicationPattern(node));
     }
 
-    getExternalUserNodes(): joint.shapes.microtosca.ExternalUser[] {
-        return <joint.shapes.microtosca.ExternalUser[]>this.getCells().filter(node => this.isExternalUser(node));
+    // getExternalUserNodes(): joint.shapes.microtosca.ExternalUser[] {
+    //     return <joint.shapes.microtosca.ExternalUser[]>this.getCells().filter(node => this.isExternalUser(node));
+    // }
+
+    getEdgeGroups(): joint.shapes.microtosca.EdgeGroup[] {
+        return this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
-    getOutboundNeighbors(client: joint.dia.Element): joint.dia.Cell[] {
-        return <joint.dia.Cell[]>this.getNeighbors(client, { outbound: true });
+    getOutboundNeighbors(client: joint.dia.Cell):joint.shapes.microtosca.Node[] {
+        return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
     }
 
-    addSquadGroup(name: string): joint.shapes.microtosca.Squad {
-        let g = new joint.shapes.microtosca.Squad();
+    addSquadGroupGroup(name: string): joint.shapes.microtosca.SquadGroup {
+        let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
+        return g;
+    }
+
+    addEdgeGroup(name: string, nodes: joint.shapes.microtosca.Node[]) {
+        let g = new joint.shapes.microtosca.EdgeGroup();
+        g.setName(name);
+        g.setExternalUserName("Ext user"); // default name for the external user node
+        g.addTo(this);
+        nodes.forEach(node => {
+            this.addRunTimeInteraction(g, node);
+        });
         return g;
     }
 
@@ -191,25 +154,126 @@ export class Graph extends joint.dia.Graph {
         return link;
     }
 
+    isNode(node: joint.dia.Cell): boolean {
+        return this.isService(node) || this.isDatabase(node) || this.isCommunicationPattern(node);
+    }
+
+    isGroup(group: joint.dia.Cell): boolean {
+        return this.isSquadGroup(group) || this.isEdgeGroup(group);
+    }
+
     isSquadGroup(node: joint.dia.Cell) {
-        return node instanceof joint.shapes.microtosca.Squad;
+        return node.attributes['type'] == "microtosca.SquadGroup";
+        // return node instanceof joint.shapes.microtosca.SquadGroup;
+    }
+
+    isEdgeGroup(node: joint.dia.Cell) {
+        return node.attributes['type'] == "microtosca.EdgeGroup";
+        // return node instanceof joint.shapes.microtosca.Group;
     }
 
     isExternalUser(node: joint.dia.Cell) {
         return node instanceof joint.shapes.microtosca.ExternalUser;
     }
 
-    isService(node: joint.dia.Cell) {
-        return node instanceof joint.shapes.microtosca.Service;
+
+
+    isService(node: joint.dia.Cell): boolean {
+        return node.attributes['type'] == "microtosca.Service";
+        // return node instanceof joint.shapes.microtosca.Service;
     }
 
-    isDatabase(node: joint.dia.Cell) {
-        return node instanceof joint.shapes.microtosca.Database;
+    isDatabase(node: joint.dia.Cell): boolean {
+        return node.attributes['type'] == "microtosca.Database";
+        // return node instanceof joint.shapes.microtosca.Database;
     }
 
     isCommunicationPattern(node: joint.dia.Cell) {
-        return node instanceof joint.shapes.microtosca.CommunicationPattern;
+        return node.attributes['type'] == "microtosca.CommunicationPattern";
+        // return node instanceof joint.shapes.microtosca.CommunicationPattern;
     }
+
+    builtFromJSON(json: string) {
+
+        this.removeCells(this.getCells());
+        // var g = new Graph(json['name']);
+        this.name = json['name'];
+        json['nodes'].forEach(node => {
+            if (node.type == "service")
+                this.addService(node.name)
+            else if (node.type == "database")
+                this.addDatabase(node.name);
+            else if (node.type == "communicationpattern")
+                this.addCommunicationPattern(node.name, node.type);
+            else
+                // TODO: thorow an exception
+                console.log("ERROR: node type not recognized");
+        });
+        json['links'].forEach((link) => {
+            if (link.type == "deploymenttime")
+                this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
+            else if (link.type = "runtime")
+                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
+        });
+        json['groups'].forEach(group => {
+            let group_name = group['name'];
+            if (group['type'] == "edgegroup") {
+                let nodes: joint.shapes.microtosca.Node[] = [];
+                group.members.forEach(member => {
+                    nodes.push(this.getNode(member))
+                });
+                this.addEdgeGroup(group_name, nodes);
+            }
+
+        })
+    }
+
+    toJSON() {
+        var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
+        // TODO: node can be of type joint.microtosca.Node insted fo Cell
+        this.getNodes().forEach((node: joint.shapes.microtosca.Node) => {
+            var dnode = { 'name': node.getName() }; // 'id': node.get('id'),
+            if (this.isService(node))
+                dnode['type'] = "service";
+            else if (this.isDatabase(node))
+                dnode['type'] = "database";
+            else if (this.isCommunicationPattern(node))
+                dnode['type'] = "communicationpattern";
+            else
+                // TODO: throw an exception
+                throw new Error(`Node type of ${dnode} not recognized`);
+            data['nodes'].push(dnode);
+        })
+        // Add links
+        this.getLinks().forEach((link) => {
+            var dlink = {
+                'source': this.getNameOfNode(link.getSourceElement()), 
+                'target': this.getNameOfNode(link.getTargetElement()) 
+            }
+            // if (link.get('type') === 'microtosca.RunTimeLink')
+            if (link instanceof joint.shapes.microtosca.RunTimeLink)
+                dlink['type'] = "runtime";
+            else if (link instanceof joint.shapes.microtosca.DeploymentTimeLink)
+                dlink['type'] = "deploymenttime";
+            else
+                throw new Error(`Link type of ${link} not recognized`);
+            data['links'].push(dlink);
+        })
+        // Add EdgeGroups
+        this.getEdgeGroups().forEach(node => {
+            var edgeGroup = { 'name': node.getName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
+            let members = [];
+            this.getOutboundNeighbors(node).forEach(neigbor => {
+                members.push((<joint.shapes.microtosca.Node>neigbor).getName());
+            })
+            edgeGroup['members'] = members;
+            data['groups'].push(edgeGroup)
+        });
+        console.log(data['groups']);
+
+        return data;
+    }
+
 
     applyLayout(rankdir: string) {
         var nodeSepator = 50;

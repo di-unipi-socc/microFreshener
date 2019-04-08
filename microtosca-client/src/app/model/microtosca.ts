@@ -32,14 +32,22 @@ declare module 'jointjs' {
                 setType(t: String): void;
                 // resetSmells():void
             }
-            class ExternalUser extends joint.dia.Element {
-                setName(name:string): void;
-                getName(): String;
-                setGroupName(name:string): void;
-                getGroupName(): String
-            }
-            class Squad extends joint.dia.Cell {
+            class Group extends joint.dia.Element{
                 setName(name): void;
+                getName(): String;
+                setExternalUserName(name:string): void;
+                getExternalUserName(): string;
+                addSmell(smell: Smell): void;
+                getSmell(name: string): Smell;
+                getSmells(): Smell[];
+                resetSmells(): void
+            }
+            class ExternalUser extends Group{
+             
+            }
+            class EdgeGroup extends Group {
+            }
+            class SquadGroup extends Group {
             }
             class RunTimeLink extends joint.dia.Link {
             }
@@ -86,6 +94,16 @@ joint.dia.Element.define('microtosca.Service', {
             event: 'smell:WobblyServiceInteractionSmell:pointerdown',
             visibility: "hidden",
             ref: 'body',
+            refX: '50%',
+            refY: '100%',
+            refWidth: '25%',
+            refHeight: '25%',
+        },
+        NoApiGateway: { // WobblyServiceInteractionSmell
+            fill: '#FF0000',
+            event: 'smell:NoApiGateway:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
             refX: '100%',
             refY: '100%',
             refWidth: '25%',
@@ -108,6 +126,9 @@ joint.dia.Element.define('microtosca.Service', {
         }, {
             tagName: 'rect',
             selector: 'wsi'
+        },{
+            tagName: 'rect',
+            selector: 'NoApiGateway'
         }],
         addIgnoreOnceSmell(smell: Smell) {
             this._hideSmell(smell);
@@ -130,7 +151,6 @@ joint.dia.Element.define('microtosca.Service', {
             return this.attributes.smells.find(smell => {
                 return name === smell.name;
             });
-            return null;
         },
         resetSmells: function () {
             this.attributes.smells = [];
@@ -148,6 +168,9 @@ joint.dia.Element.define('microtosca.Service', {
             }
             else if (smell.name == "WobblyServiceInteractionSmell") {
                 this.attr('wsi/visibility', 'visible');
+            }
+            else if (smell.name == "NoApiGateway"){
+                this.attr('NoApiGateway/visibility', 'visible');
             }
             // console.log(this);
         }
@@ -327,7 +350,7 @@ joint.dia.Element.define('microtosca.ExternalUser', {
             text: name || '',
         },
     },
-    name: '' // name of the group. each nodes connected to this node are considered memebre of the EdgeGroup
+    name: '', 
 }, {
         markup: [{
             tagName: 'circle',
@@ -337,20 +360,83 @@ joint.dia.Element.define('microtosca.ExternalUser', {
             selector: 'label'
         }],
         getName: function () {
-            return this.attr('label/text');
+            return this.name
         },
         setName: function (text) {
-            return this.attr('label/text', text || '');
+            this.name = text;
         },
-        setGroupName: function(name:string){
-            this.name = name;
+        setExternalUserName: function(name:string){
+            return this.attr('label/text', name || '');
         },
-        getGroupName: function(){
-           return this.name
+        getExternalUserName: function(){
+            return this.attr('label/text');
+        },
+        
+    });
+
+joint.dia.Element.define('microtosca.EdgeGroup', {
+    size: {
+        width: 75,
+        height: 75
+    },
+    attrs: {
+        body: {
+            refCx: '50%',
+            refCy: '50%',
+            refR: '50%',
+            strokeWidth: 8,
+            stroke: '#C2C2C2',
+            fill: "#C2C2C2",
+            magnet: true
+        },
+        label: {
+            refX: '50%',
+            refY: '50%',
+            yAlignment: 'middle',
+            xAlignment: 'middle',
+            fontSize: 15,
+            text: name || '',
+        },
+    },
+    name: '', // name of the group. each nodes connected to this node are considered memeber of the EdgeGroup
+    smells: [] // list of smells that affects a single node
+}, {
+        markup: [{
+            tagName: 'circle',
+            selector: 'body',
+        }, {
+            tagName: 'text',
+            selector: 'label'
+        }],
+        getName: function () {
+            return this.name
+        },
+        setName: function (text:string) {
+            this.name = text;
+        },
+        setExternalUserName: function(name:string){
+            return this.attr('label/text', name || '');
+        },
+        getExternalUserName: function(){
+            return this.attr('label/text');
+        },
+        addSmell: function(smell: Smell){
+            this.attributes.smells.push(smell);
+        },
+        getSmell:function(name: string){
+            return this.attributes.smells.find(smell => {
+                return name === smell.name;
+            });
+        },
+        getSmells:function(): Smell[]{
+            return this.attributes.smells;
+        },
+        resetSmells: function(): void{
+            this.attributes.smells = [];
         }
     });
 
-joint.dia.Element.define('microtosca.Squad', {
+joint.dia.Element.define('microtosca.SquadGroup', {
         position: { x: 20, y: 20 },
         size: {
             width: 200,

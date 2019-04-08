@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/api';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
 import { MenuItem } from 'primeng/api';
+import { AnalyserService } from './analyser.service';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class AppComponent {
   examples:MenuItem[];
 
 
-  constructor(private gs: GraphService, private messageService: MessageService, public dialogService: DialogService) {
+  constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
     this.items = [
       {
         label: 'File',
@@ -105,8 +106,33 @@ export class AppComponent {
       width: '70%'
     });
     ref.onClose.subscribe(() => {
+      this._showSmells()
       this.messageService.add({ severity: 'success', summary: "Analysis sufccesfully" });
     });
+  }
+
+  _showSmells(){
+    this.as.analysednodes.forEach((node)=>{
+        let n = this.gs.getGraph().getNode(node.name);
+        node.getSmells().forEach((smell)=>{
+          n.addSmell(smell);
+        })
+      })
+    this.as.analysedgroups.forEach((group)=>{
+        console.log("group :", group.name);
+        let g = this.gs.getGraph().getGroup(group.name);
+        group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
+          smell.getCause().forEach(name=>{
+            // visualizza lo smell in ogni nodo del gruppo che non ha davanti un Gateways
+            console.log(name);
+            let node = this.gs.getGraph().getNode(<string>name);
+            node.addSmell(smell);
+          })
+          g.addSmell(smell);
+        })
+        console.log(g);
+      })    
+    
   }
 
   upload() {

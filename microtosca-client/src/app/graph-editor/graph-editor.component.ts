@@ -6,7 +6,6 @@ import { GraphService } from "../graph.service";
 import * as joint from 'jointjs';
 import '../model/microtosca';
 import * as _ from 'lodash';
-import * as $ from 'jquery';
 import { g } from 'jointjs';
 import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
@@ -46,17 +45,14 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         this.createSampleGraph();
 
-        
-        this.gs.getGraph().getNodes().forEach(node=>{
-            console.log("node: ", node.getName());
-        }),
-        this.gs.getGraph().getExternalUserNodes().forEach(node=>{
-            console.log("Memeber attached to", node.getName());
-            console.log(this.gs.getGraph().getOutboundNeighbors(node));
-        }),
+        // console.log(this.gs.getGraph().getNodes());
+
+        console.log(this.gs.getGraph().getGroup('edgenodes'));
+
 
         //bind events
         this.bindEvents();
+        
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
         this.addLinkMouseOver();
@@ -65,9 +61,13 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.applyDirectedGraphLayout();
     }
     createSampleGraph() {
-        // add external user node
-        var u = this.gs.getGraph().addExternaluser("Ext user");
-        u.setGroupName("edgenodes");
+        // this.gs.downloadExample("helloworld")
+        //     .subscribe((data) => {
+        //       console.log(data);
+        //       this.gs.getGraph().builtFromJSON(data);
+        //       this.gs.getGraph().applyLayout("LR");
+        //       this.messageService.add({severity:'success', summary:'Graph dowloaded correclty', detail:''});
+        //     });
 
         // nodes
         var s = this.gs.getGraph().addService("shipping");
@@ -89,16 +89,14 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        // var g = this.gs.getGraph().addSquadGroup("team1");
+        // var g = this.gs.getGraph().addSquadGroupGroup("team1");
 
-        // ext user interactions
-        this.gs.getGraph().addRunTimeInteraction(u, s);
-        this.gs.getGraph().addRunTimeInteraction(u, o);
-        this.gs.getGraph().addRunTimeInteraction(u, gw);
-
-        
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
+
+        // add EdgeGroup 
+       this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+
 
     }
 
@@ -140,7 +138,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         // element below.
         this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
             var cell = cellView.model;
-            if(!cell.isLink()){ // otherwise Error when cell.getBBox() is called.
+            if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
                 var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
 
                 if (cellViewsBelow.length) {
@@ -174,6 +172,27 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                 // this.messageService.add({severity:'info', summary: 'Smell clodes'});
             });
         })
+
+        this.paper.on("smell:NoApiGateway:pointerdown", (cellview, evt, x, y) => {
+            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            console.log("No ApGateway EVENT FIRED");
+            var model = cellview.model;
+            var smell: Smell = model.getSmell("NoApiGateway");
+            const ref = this.dialogService.open(DialogSmellComponent, {
+                data: {
+                    model: model,
+                    selectedsmell: smell
+                },
+                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
+                width: '90%'
+            });
+
+            ref.onClose.subscribe((any) => {
+                // TODO: apply the actions selected from the popup.
+                // this.messageService.add({severity:'info', summary: 'Smell clodes'});
+            });
+        })
+        
 
         this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
@@ -213,10 +232,10 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         });
 
         // for parent 
-        this.gs.getGraph().on('change:size', function(cell, newPosition, opt) {
-        
+        this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
+
             if (opt.skipParentHandler) return;
-            
+
             if (cell.get('embeds') && cell.get('embeds').length) {
                 // If we're manipulating a parent element, let's store
                 // it's original size to a special property so that
@@ -229,7 +248,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         // this.gs.getGraph().on('change:position', (cell, newPosition, opt) =>{
 
         //     if (opt.skipParentHandler) return;
-    
+
         //     if (cell.get('embeds') && cell.get('embeds').length) {
         //         // If we're manipulating a parent element, let's store
         //         // it's original position to a special property so that
@@ -237,34 +256,34 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         //         // its children.
         //         cell.set('originalPosition', cell.get('position'));
         //     }
-            
+
         //     var parentId = cell.get('parent');
         //     if (!parentId) return;
-    
+
         //     var parent = this.gs.getGraph().getCell(parentId);
         //     var parentBbox = parent.getBBox();
-    
+
         //     if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
         //     if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
-            
+
         //     var originalPosition = parent.get('originalPosition');
         //     var originalSize = parent.get('originalSize');
-            
+
         //     var newX = originalPosition.x;
         //     var newY = originalPosition.y;
         //     var newCornerX = originalPosition.x + originalSize.width;
         //     var newCornerY = originalPosition.y + originalSize.height;
-            
+
         //     _.each(parent.getEmbeddedCells(), (child)=> {
-    
+
         //         var childBbox = child.getBBox();
-                
+
         //         if (childBbox.x < newX) { newX = childBbox.x; }
         //         if (childBbox.y < newY) { newY = childBbox.y; }
         //         if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
         //         if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
         //     });
-    
+
         //     // Note that we also pass a flag so that we know we shouldn't adjust the
         //     // `originalPosition` and `originalSize` in our handlers as a reaction
         //     // on the following `set()` call.

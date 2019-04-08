@@ -5,6 +5,7 @@ import {environment} from '../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
 
 import { ANode } from "./analyser/node";
+import {AGroup} from "./analyser/group";
 
 import { GraphService } from './graph.service';
 
@@ -22,6 +23,7 @@ export class AnalyserService {
   private analysisUrl = environment.serverUrl  +'/v2/graph/analyse/';  // URL to web api
   
   analysednodes:ANode[] = []; // list of analysed node;
+  analysedgroups:AGroup[] = []; // list of analysed node;
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 
@@ -32,7 +34,7 @@ export class AnalyserService {
       });
   }
 
-  runRemoteAnalysis(principles: string[]): Observable<ANode[]> {
+  runRemoteAnalysis(principles: string[]): Observable<Boolean> {
     const params = new HttpParams().set('principles', principles.join()); // principles to be analysed: principles separated by commma
     
     // TODO: the analysi should send allso the ingore once, ingore always smell for the nodes.
@@ -46,7 +48,12 @@ export class AnalyserService {
           response['nodes'].forEach((node) => {
             this.analysednodes.push(ANode.fromJSON(node));
           });
-          return this.analysednodes;
+          this.analysedgroups =[];
+          response['groups'].forEach((group) => {
+            this.analysedgroups.push(AGroup.fromJSON(group));
+          });
+          console.log(this.analysedgroups);
+          return true;
         }),
         tap(_ => this.log(`Send analysis`),
         ),
