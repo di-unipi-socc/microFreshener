@@ -18,19 +18,12 @@ declare module 'jointjs' {
                 addIgnoreAlwaysSmell(smell: Smell): void;
             }
             class Service extends Node {
-                // setName(name): void;
-                // resetSmells():void
-                // addSmell(smell:Smell): void;
             }
             class Database extends Node {
-                // setName(name): void;
-                // resetSmells():void
-                // static staticTest(): void;
             }
             class CommunicationPattern extends Node {
-                // setName(name): void;
-                setType(t: String): void;
-                // resetSmells():void
+                setConcreteType(ctype: String): void;
+                getConcreteType(): string;
             }
             class Group extends joint.dia.Element {
                 setName(name): void;
@@ -274,7 +267,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refY: '75%',
             fontSize: 13,
             fill: '#333333',
-            // TODO: setType()  generate an error, so the text is setted here.
+            // TODO: setConcreteType()  generate an error, so the text is setted here.
             text: ''
         }
     },
@@ -300,8 +293,11 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             console.log(this.attr());
             return this.attr('label/text', text || '');
         },
-        setType: function (text) {
-            return this.attr('type/text', `(${text})` || '');
+        setConcreteType: function (text) {
+            return this.attr('type/text', `${text}` || '');
+        },
+        getConcreteType: function () {
+            return this.attr('type/text');
         },
         resetSmells: function () {
             this.attributes.smells = [];
@@ -419,7 +415,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             refWidth: '5%',
             refHeight: '5%',
             xAlignment: 'center',
-        
+
         }
     },
     smells: [] // list of smells that affects a single node
@@ -430,7 +426,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'text',
             selector: 'label'
-        },{
+        }, {
             tagName: 'rect',
             selector: 'icon'
         }],

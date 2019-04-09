@@ -1,6 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
+import { ConcreteTypes } from "../model/type";
 
 
 export class Graph extends joint.dia.Graph {
@@ -81,7 +82,7 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.EdgeGroup[]>this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
-    getOutboundNeighbors(client: joint.dia.Cell):joint.shapes.microtosca.Node[] {
+    getOutboundNeighbors(client: joint.dia.Element): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
     }
 
@@ -91,7 +92,7 @@ export class Graph extends joint.dia.Graph {
         g.addTo(this);
         nodes.forEach(node => {
             g.embed(node);
-           
+
         });
         return g;
     }
@@ -124,7 +125,7 @@ export class Graph extends joint.dia.Graph {
     addCommunicationPattern(name: string, type: string): joint.shapes.microtosca.CommunicationPattern {
         let cp = new joint.shapes.microtosca.CommunicationPattern();
         cp.setName(name);
-        cp.setType(type);
+        cp.setConcreteType(type);
         cp.addTo(this);
         return cp;
     }
@@ -190,8 +191,10 @@ export class Graph extends joint.dia.Graph {
                 this.addService(node.name)
             else if (node.type == "database")
                 this.addDatabase(node.name);
-            else if (node.type == "communicationpattern")
-                this.addCommunicationPattern(node.name, node.type);
+            else if (node.type == "communicationpattern") {
+                var concrete_type = node["ctype"];
+                this.addCommunicationPattern(node.name, concrete_type);
+            }
             else
                 // TODO: thorow an exception
                 console.log("ERROR: node type not recognized");
@@ -224,8 +227,10 @@ export class Graph extends joint.dia.Graph {
                 dnode['type'] = "service";
             else if (this.isDatabase(node))
                 dnode['type'] = "database";
-            else if (this.isCommunicationPattern(node))
-                dnode['type'] = "communicationpattern";
+            else if (this.isCommunicationPattern(node)) {
+                dnode['type'] = "communicationpattern"
+                dnode['ctype'] = (<joint.shapes.microtosca.CommunicationPattern>node).getConcreteType();
+            }
             else
                 // TODO: throw an exception
                 throw new Error(`Node type of ${dnode} not recognized`);
@@ -234,8 +239,8 @@ export class Graph extends joint.dia.Graph {
         // Add links
         this.getLinks().forEach((link) => {
             var dlink = {
-                'source': this.getNameOfNode(link.getSourceElement()), 
-                'target': this.getNameOfNode(link.getTargetElement()) 
+                'source': this.getNameOfNode(link.getSourceElement()),
+                'target': this.getNameOfNode(link.getTargetElement())
             }
             // if (link.get('type') === 'microtosca.RunTimeLink')
             if (link instanceof joint.shapes.microtosca.RunTimeLink)

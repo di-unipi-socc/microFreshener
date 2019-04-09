@@ -3,6 +3,8 @@ import { GraphService } from "../graph.service";
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 
+import {ConcreteTypes} from "../model/type";
+
 @Component({
   selector: 'app-add-node',
   templateUrl: './add-node.component.html',
@@ -26,10 +28,14 @@ export class AddNodeComponent implements OnInit {
     console.log(this.addingCommunicationPattern);
     this.name = null;
     //TODO: a service that get the types form the server
-    this.communicationPatternTypes = [{'name':'Message broker'}, {'name':'Message Router'},{'name':'Api Gateway'}];
+    this.communicationPatternTypes = [
+    {'label':'Message broker', 'value':ConcreteTypes.MESSAGE_BROKER},
+    {'label':'Circuit breaker', 'value':ConcreteTypes.CIRCUIT_BREAKER},
+    {'label':'Api Gateway', 'value':ConcreteTypes.API_GATEWAY}];
   }
 
   save() {
+    console.log(this.selectedCommunicationPatternType);
     this.ref.close({name: this.name, type: this.addingCommunicationPattern ?this.selectedCommunicationPatternType: null});
   }
 

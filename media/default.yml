@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+description: ''
+imports:
+- micro: ../../data/micro-tosca-types.yml
+topology_template:
+  node_templates:
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+      - deployment_time: order_db
+      - deployment_time: rabbitmq
+      - run_time: order_db
+    order_db:
+      type: micro.nodes.Database
+    order:
+      type: micro.nodes.Service
+      requirements:
+      - deployment_time: shipping
+      - deployment_time: order_db
+      - deployment_time: rabbitmq
+      - run_time: shipping
+      - run_time: order_db
+    rabbitmq:
+      type: micro.nodes.CommunicationPattern
+    gateway:
+      type: micro.nodes.CommunicationPattern
+      requirements:
+      - deployment_time: shipping
+  groups:
+    edgenodes:
+      type: micro.groups.Edge
+      members:
+      - order
+      - gateway

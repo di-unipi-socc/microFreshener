@@ -15,18 +15,23 @@ import json
 
 from microanalyser.analyser import MicroAnalyser
 from microanalyser.analyser.builder import AnalyserBuilder
-from microanalyser.loader import JSONLoader
-from microanalyser.trasformer import JSONTransformer
+from microanalyser.loader import JSONLoader, YMLLoader
+from microanalyser.trasformer import JSONTransformer, YMLTransformer
 from microanalyser.model.template import MicroModel
 from microanalyser.model.nodes import Service, Database, CommunicationPattern
 
 
 loader = JSONLoader()
+ymlLoader = YMLLoader()
 jsonTransformer = JSONTransformer()
+ymlTransformer = YMLTransformer()
+
 
 file_name = "default.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
+uploads_path = os.path.join(settings.MEDIA_ROOT, "uploads")
+file_uploads_path = os.path.join(uploads_path, "upload.yml")
 
 
 @api_view(['GET'])
@@ -97,11 +102,15 @@ def graph_export(request):
     # export the graph as json file
     mmodel = None
     if(os.path.isfile(model_file_path)):
+        # mmodel = loader.load(model_file_path)
+        # dmodel = jsonTransformer.transform(mmodel)
+        # response = HttpResponse(ContentFile(
+        #     json.dumps(dmodel)), content_type='application/json')
+        # response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
         mmodel = loader.load(model_file_path)
-        dmodel = jsonTransformer.transform(mmodel)
-        response = HttpResponse(ContentFile(
-            json.dumps(dmodel)), content_type='application/json')
-        response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
+        yml_string = ymlTransformer.transform(mmodel)
+        response = HttpResponse(ContentFile(yml_string), content_type='application/yml')
+        response['Content-Disposition'] = 'attachment; filename="micro-tosca.yml'
         return response
     else:
         return Response({"msg": "no model uploaded"})
@@ -111,12 +120,15 @@ def graph_export(request):
 @csrf_exempt
 def graph_import(request):
     if request.method == 'POST':
-        # data = request.data
+        # import yml file tinto the upload diectory
         graph_in_memory = request.FILES['graph']
-        print(graph_in_memory.name)
-
-        with open(model_file_path, 'wb+') as destination:
+        with open(file_uploads_path, 'wb+') as destination:
             for chunk in graph_in_memory.chunks():
-                print("wrinting chunk")
                 destination.write(chunk)
+        # From yml to json
+        model = ymlLoader.load(path_to_yml=file_uploads_path)
+        d_model = jsonTransformer.transform(model)
+
+        with open(model_file_path, 'w') as destination:
+            json.dump(d_model, destination)
         return Response({"msg": "stored correctly"})

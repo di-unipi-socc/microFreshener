@@ -139,7 +139,6 @@ export class AppComponent {
     this.gs.uploadGraph()
       .subscribe(data => {
         this.closeSidebar();
-        console.log(data);
         this.messageService.add({ severity: 'success', summary: 'Saved correctly', detail: '' });
       });
   }

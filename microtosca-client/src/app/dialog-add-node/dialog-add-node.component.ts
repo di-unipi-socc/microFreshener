@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
+import {ConcreteTypes} from "../model/type";
 
 
 @Component({
@@ -26,7 +27,11 @@ export class DialogAddNodeComponent implements OnInit {
     this.showCommunicationPatternType = false;
     this.selectedCommunicationPatternType = null;
     //TODO:  add an angular service that get the types form the server
-    this.communicationPatternTypes = [{ 'name': 'Message broker' }, { 'name': 'Message Router' }, { 'name': 'Api Gateway' }];
+    this.communicationPatternTypes = [
+      {'label':'Message broker', 'value':ConcreteTypes.MESSAGE_BROKER},
+      {'label':'Circuit breaker', 'value':ConcreteTypes.CIRCUIT_BREAKER},
+      {'label':'Api Gateway', 'value':ConcreteTypes.API_GATEWAY}];
+
   }
 
   checkedCommPattern() {
@@ -38,6 +43,8 @@ export class DialogAddNodeComponent implements OnInit {
   }
 
   save() {
+    console.log(this.selectedCommunicationPatternType);
+
     this.ref.close({ name: this.name, type: this.selectedNodeType, ctype: this.selectedCommunicationPatternType });
   }
 
