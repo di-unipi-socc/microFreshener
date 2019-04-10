@@ -70,6 +70,17 @@ joint.dia.Element.define('microtosca.Service', {
             text: 'caio',
             // magnet: true 
         },
+        delete: {
+            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            event: 'node:delete:pointerdown',
+            ref: 'body',
+            refX: '-30%',
+            refY: '-30%',
+            refWidth: '5%',
+            refHeight: '5%',
+            fill: '#F78686',
+            magnet: false 
+        },
         EndpointBasedServiceInteraction: { // endpointBasesdServiceInteraction
             fill: '#00ff00',
             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
@@ -119,6 +130,9 @@ joint.dia.Element.define('microtosca.Service', {
         }, {
             tagName: 'rect',
             selector: 'NoApiGateway'
+        },{
+            tagName: "path",
+            selector: "delete"
         }],
         addIgnoreOnceSmell(smell: Smell) {
             this._hideSmell(smell);

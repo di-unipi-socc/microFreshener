@@ -1,23 +1,27 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
+import { ConfirmationService } from 'primeng/api';
+import { Message } from 'primeng/components/common/api';
+
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
-import * as joint from 'jointjs';
-import '../model/microtosca';
-import * as _ from 'lodash';
-import { g } from 'jointjs';
 import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import {ConcreteTypes} from "../model/type";
+import { ConcreteTypes } from "../model/type";
+
+import * as joint from 'jointjs';
+import '../model/microtosca';
+import * as _ from 'lodash';
+import { g } from 'jointjs';
 
 @Component({
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html',
     styleUrls: ['./graph-editor.component.css'],
-    providers: [DialogService]
+    providers: [DialogService, ConfirmationService]
 })
 export class GraphEditorComponent implements OnInit, AfterViewInit {
 
@@ -26,7 +30,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
     paper: joint.dia.Paper;
     analyser: Analyser;
 
-    constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService) {
+    constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
 
     }
 
@@ -117,7 +121,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
     addNode() {
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
-            width: '50%'
+            width: '80%'
         });
         ref.onClose.subscribe((data) => {
             // { name: this.name, type: this.selectedNodeType, ctype: this.selectedCommunicationPatternType }
@@ -143,14 +147,32 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         });
     }
 
+
     bindEvents() {
         this.expandTeamAreaToCoverChildren();
+
         this.bindTeamMinimizeEvent();
-        // this.paper.on("blank:pointerclick",(evt,x,y,)=>{
-        //     console.log(evt);
-        //     console.log(x,y);
-        //     this.gs.getGraph().ticker.emit(x);
-        // })
+
+        this.paper.on("node:delete:pointerdown", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
+            var cell = cellView.model;
+            console.log("DELETE NODE EVENT");
+            this.confirmationService.confirm({
+                message: 'Do you want to delete this node?',
+                header: 'Node Deletion Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    cell.remove();
+                    this.messageService.clear();
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Node deleted succesfully' });
+                },  
+                reject: () => {
+                    this.messageService.clear();
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Node is not deleted'});
+                }
+            });
+
+        })
         // this.paper.on("blank:contextmenu", function (evt,x,y,){
         //     console.log(evt);
         //     console.log(x,y);
@@ -276,20 +298,20 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         });
 
     }
-    bindTeamMinimizeEvent(){
+    bindTeamMinimizeEvent() {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             console.log("MIMIMZE");
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             var cell = cellview.model;
             var embeddedCells = cell.getEmbeddedCells();
             console.log(embeddedCells)
-            _.each(embeddedCells, function(child) {
+            _.each(embeddedCells, function (child) {
                 // child.set('hidden');
                 child.set('hidden', !child.get('hidden'))
             })
         })
-        
-        this.gs.getGraph().on('change:hidden', function(cell, changed, opt) {
+
+        this.gs.getGraph().on('change:hidden', function (cell, changed, opt) {
             cell.attr('./opacity', cell.get('hidden') ? 0 : 1);
         })
     }
@@ -331,8 +353,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             // var parent = this.gs.getGraph().getCell(parentId);
             /// DIDO
             var parent = cell.getParentCell();
-    
-            if(! parent) return;
+
+            if (!parent) return;
             console.log("found parent");
 
             var parentBbox = parent.getBBox();

@@ -18,7 +18,7 @@ import { RemoveLinkComponent } from './remove-link/remove-link.component';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
 import { DialogAddNodeComponent } from './dialog-add-node/dialog-add-node.component';
-
+import { DialogAddTeamComponent } from './dialog-add-team/dialog-add-team.component';
 
 // Import primeNG modules
 import {AccordionModule} from 'primeng/accordion';
@@ -46,7 +46,7 @@ import {MenuModule} from 'primeng/menu';
 import {PanelModule} from 'primeng/panel';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {RadioButtonModule} from 'primeng/radiobutton';
-import { DialogAddTeamComponent } from './dialog-add-team/dialog-add-team.component';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
 
 @NgModule({
@@ -94,7 +94,8 @@ import { DialogAddTeamComponent } from './dialog-add-team/dialog-add-team.compon
     MenubarModule,
     PanelModule,
     InputTextareaModule,
-    RadioButtonModule
+    RadioButtonModule,
+    ConfirmDialogModule
   ],
   providers: [
     MessageService

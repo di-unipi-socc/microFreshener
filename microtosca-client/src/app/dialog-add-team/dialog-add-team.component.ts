@@ -22,6 +22,7 @@ export class DialogAddTeamComponent implements OnInit {
     this.teamName = null;
     this.selectedNodes = [];
     this.nodes = this.gs.getGraph().getNodes();
+
   }
 
 

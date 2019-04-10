@@ -1,1 +1,141 @@
-{"name": "micro.tosca", "nodes": [{"name": "shipping", "type": "service"}, {"name": "order_db", "type": "database"}, {"name": "order", "type": "service"}, {"name": "rabbitmq", "type": "communicationpattern", "ctype": "MessageBroker"}, {"name": "gateway", "type": "communicationpattern", "ctype": "ApiGateway"}], "links": [{"target": "rabbitmq", "source": "shipping", "type": "runtime"}, {"target": "order_db", "source": "order", "type": "runtime"}, {"target": "rabbitmq", "source": "order", "type": "runtime"}, {"target": "order_db", "source": "order", "type": "deploymenttime"}, {"target": "shipping", "source": "gateway", "type": "runtime"}], "groups": [{"name": "edgenodes", "type": "edgegroup", "members": ["order", "gateway"]}]}
+{
+    "name": "sockshop",
+    "nodes": [
+        {
+            "name": "front-end",
+            "type": "service"
+        },
+        {
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "name": "ordersdb",
+            "type": "database"
+        },
+        {
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "name": "carts",
+            "type": "service"
+        },
+        {
+            "name": "carts-db",
+            "type": "database"
+        },
+        {
+            "name": "catalogue-db",
+            "type": "database"
+        },
+        {
+            "name": "catalogue",
+            "type": "service"
+        },
+        {
+            "name": "user-db",
+            "type": "database"
+        },
+        {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "communicationpattern",
+            "ctype": "MessageBroker"
+        },
+        {
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "name": "edge-router",
+            "type": "communicationpattern",
+            "ctype": "ApiGateway"
+        }
+    ],
+    "links": [
+        {
+            "source": "front-end",
+            "target": "orders",
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "payment",
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "user",
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "carts",
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "catalogue",
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "ordersdb",
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "user",
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "shipping",
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "carts",
+            "type": "runtime"
+        },
+        {
+            "source": "user",
+            "target": "user-db",
+            "type": "runtime"
+        },
+        {
+            "source": "carts",
+            "target": "carts-db",
+            "type": "runtime"
+        },
+        {
+            "source": "catalogue",
+            "target": "catalogue-db",
+            "type": "runtime"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "type": "runtime"
+        },
+        {
+            "source": "queue-master",
+            "target": "rabbitmq",
+            "type": "runtime"
+        },
+        {
+            "source": "edge-router",
+            "target": "front-end",
+            "type": "runtime"
+        }
+    ],
+    "groups": []
+}
