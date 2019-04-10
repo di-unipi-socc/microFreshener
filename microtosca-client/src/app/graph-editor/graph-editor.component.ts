@@ -23,7 +23,7 @@ import { g } from 'jointjs';
     styleUrls: ['./graph-editor.component.css'],
     providers: [DialogService, ConfirmationService]
 })
-export class GraphEditorComponent implements OnInit, AfterViewInit {
+export class GraphEditorComponent implements OnInit {
 
     _options = { width: 2000, height: 1500 };
 
@@ -38,9 +38,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
 
-    }
-
-    ngAfterViewInit() {
         this.paper = new joint.dia.Paper({
             el: document.getElementById('jointjsgraph'),
             model: this.gs.getGraph(),
@@ -54,16 +51,13 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         this.createSampleGraph();
 
-        // console.log(this.gs.getGraph().getNodes());
-
-        console.log(this.gs.getGraph().getGroup('edgenodes'));
-
+        this.name = this.gs.getGraph().getName();
 
         //bind events
         this.bindEvents();
 
         // enable interactions
-        // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
+        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
@@ -183,7 +177,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${cell.getName()} deleted succesfully` });
                 },
                 reject: () => {
-                    cell.hideDeleteButton();
+                    cell.hideIcons();
                     this.messageService.clear();
                     this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${cell.getName()} not deleted` });
                 }
@@ -191,28 +185,32 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         })
     }
-    bindMouseOverNode(){
-        this.paper.on("cell:contextmenu", (cellView, evt, x, y, ) => {
+    bindMouseOverNode() {
+        this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            cell.showDeleteButton();
-            console.log("MOUSER OVER NODE");
+            if (cell.isElement()) {
+                cell.showIcons();
+                console.log("MOUSER OVER NODE");
+            }
+
         })
 
-        this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var cell = cellView.model;
-            cell.hideDeleteButton()
-            console.log("MOUSER OUT NODE");
-        })
-        
+        // this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
+        //     evt.stopPropagation();
+        //     var cell = cellView.model;
+        //     if (cell.isElement()) {
+        //         cell.hideIcons()
+        //         console.log("MOUSER OUT NODE");
+        //     }
+        // })
+
 
     }
 
     bindClickOnSmells() {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
-            console.log("EBSI EVENT FIRED");
             var model = cellview.model;
             var smell: Smell = model.getSmell("EndpointBasedServiceInteractionSmell");
             const ref = this.dialogService.open(DialogSmellComponent, {
@@ -220,8 +218,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     model: model,
                     selectedsmell: smell
                 },
-                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
-                width: '90%'
+                header: `Smell details`,
+                width: '50%'
             });
 
             ref.onClose.subscribe((any) => {
@@ -240,8 +238,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     model: model,
                     selectedsmell: smell
                 },
-                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
-                width: '90%'
+                header: `Smell details`,
+                width: '50%'
             });
 
             ref.onClose.subscribe((any) => {
@@ -260,8 +258,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     model: model,
                     selectedsmell: smell
                 },
-                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
-                width: '90%'
+                header: `Smell details`,
+                width: '50%'
             });
         })
 
@@ -275,8 +273,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                     model: model,
                     selectedsmell: smell
                 },
-                header: `Smell: ${smell.name}  Node: ${model.getName()}`,
-                width: '90%'
+                header: `Smell details`,
+                width: '50%'
             });
         })
     }
@@ -319,7 +317,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
 
     }
-    
+
     bindTeamMinimize() {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)

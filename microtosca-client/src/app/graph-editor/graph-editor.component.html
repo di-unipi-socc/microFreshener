@@ -3,13 +3,14 @@
 <button pButton icon="pi pi-plus" type="button"  style="font-size: 1em" label="Node" class="ui-button-success" (click)="addNode()"></button>
 <button pButton icon="pi pi-plus" type="button"  style="font-size: 1em" label="Team" class="ui-button-success" (click)="addTeam()"></button>
 
-<span>Name</span>
+<span>Name:</span>
 <span class="ui-float-label">
     <div class="ui-inputgroup">
         <input type="text" pInputText placeholder="Name"  [(ngModel)]="name">   
         <button pButton type="button" icon="pi pi-check"  (click)="saveName()" class="ui-button-warn"></button>      
     </div>
 </span>
+
 <div id="jointjsgraph"> </div>
 
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>

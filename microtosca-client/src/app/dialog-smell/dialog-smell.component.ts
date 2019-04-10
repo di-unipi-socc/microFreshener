@@ -15,7 +15,6 @@ export class DialogSmellComponent implements OnInit {
 
   jointNodeModel;
   smell: Smell;
-  smellDescription: string;
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService, ) {
     this.actions = [
@@ -29,9 +28,6 @@ export class DialogSmellComponent implements OnInit {
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = <Smell>this.config.data.selectedsmell;
-
-      this.smellDescription = this.smell.getDescription();
-
       this.smell.getRefactorings().forEach(ref => {
         this.actions.push({ "label": ref['name'], "value": { "description": ref['description'] } });
       })

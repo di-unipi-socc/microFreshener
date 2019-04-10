@@ -105,9 +105,9 @@ export class AppComponent {
       header: 'Check the principles to analyse',
       width: '70%'
     });
-    ref.onClose.subscribe(() => {
+    ref.onClose.subscribe((data) => {
       this._showSmells()
-      this.messageService.add({ severity: 'success', summary: "Analysis sufccesfully" });
+      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly" , detail:data});
     });
   }
 
@@ -119,7 +119,6 @@ export class AppComponent {
         })
       })
     this.as.analysedgroups.forEach((group)=>{
-        console.log("group :", group.name);
         let g = this.gs.getGraph().getGroup(group.name);
         group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
           smell.getCause().forEach(name=>{

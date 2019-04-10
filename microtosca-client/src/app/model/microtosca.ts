@@ -16,9 +16,8 @@ declare module 'jointjs' {
                 resetSmells(): void
                 addIgnoreOnceSmell(smell: Smell): void;
                 addIgnoreAlwaysSmell(smell: Smell): void;
-                showDeleteButton():void;
-                hideDeleteButton():void;
-
+                showIcons():void;
+                hideIcons():void;
             }
             class Service extends Node {
             }
@@ -35,8 +34,8 @@ declare module 'jointjs' {
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
                 resetSmells(): void
-                showDeleteButton():void;
-                hideDeleteButton():void;
+                showIcons:void;
+                hideIcons():void;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -162,10 +161,10 @@ joint.dia.Element.define('microtosca.Service', {
                 return name === smell.name;
             });
         },
-        showDeleteButton: function(){
+        showIcons: function(){
             this.attr('delete/visibility', 'visible')
         },
-        hideDeleteButton: function(){
+        hideIcons: function(){
             this.attr('delete/visibility', 'hidden')
         },
         resetSmells: function () {
@@ -280,10 +279,10 @@ joint.dia.Element.define('microtosca.Database', {
             if (smell.name == "SharedPersistencySmell")
                 this.attr('sp/visibility', 'visible');
         },
-        showDeleteButton: function(){
+        showIcons: function(){
             this.attr('delete/visibility', 'visible')
         },
-        hideDeleteButton: function(){
+        hideIcons: function(){
             this.attr('delete/visibility', 'hidden')
         }
 
@@ -370,10 +369,10 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         addSmell: function (smell: Smell) {
             console.log(smell);
         },
-        showDeleteButton: function(){
+        showIcons: function(){
             this.attr('delete/visibility', 'visible')
         },
-        hideDeleteButton: function(){
+        hideIcons: function(){
             this.attr('delete/visibility', 'hidden')
         },
     });
@@ -436,7 +435,13 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         resetSmells: function (): void {
             this.attributes.smells = [];
-        }
+        },
+        showIcons: function(){
+            // this.attr('delete/visibility', 'visible')
+        },
+        hideIcons: function(){
+            // this.attr('delete/visibility', 'hidden')
+        },
     });
 
 joint.dia.Element.define('microtosca.SquadGroup', {
@@ -495,10 +500,10 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         setName: function (text) {
             return this.attr('label/text', text || '');
         },
-        showDeleteButton: function(){
+        showIcons: function(){
             this.attr('minimize/visibility', 'visible')
         },
-        hideDeleteButton: function(){
+        hideIcons: function(){
             this.attr('minimize/visibility', 'hidden')
         },
     });
