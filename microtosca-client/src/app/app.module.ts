@@ -8,7 +8,6 @@ import { HttpClientModule }    from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
@@ -49,7 +48,6 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
   declarations: [
     AppComponent,
     MenuComponent,
-    MenuEditComponent,
     GraphEditorComponent,
     ModalRefactoringsComponent,
     DialogAnalysisComponent,
@@ -94,9 +92,6 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
   ],
   bootstrap: [AppComponent],
   entryComponents: [ // entry componets used in DymanimcModal of PimeNg
-    AddNodeComponent,
-    RemoveNodeComponent,
-    RemoveLinkComponent,
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
