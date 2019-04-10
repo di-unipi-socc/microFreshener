@@ -61,8 +61,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
-        this.addLinkMouseOver();
+        // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
@@ -147,12 +146,21 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         });
     }
 
-
     bindEvents() {
-        this.expandTeamAreaToCoverChildren();
 
-        this.bindTeamMinimizeEvent();
 
+        this.bindMouseOverLinks();
+        this.bindMouseOverNode();
+        this.bindClickOnSmells();
+        this.bindClickDeleteNode();
+
+        // this.bindTeamToCoverChildren();
+        this.bindTeamMinimize();
+        this.bindTeamEmbedNodes();
+    }
+
+    bindClickDeleteNode() {
+        // delete a node event
         this.paper.on("node:delete:pointerdown", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
@@ -164,61 +172,36 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                 accept: () => {
                     cell.remove();
                     this.messageService.clear();
-                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Node deleted succesfully' });
-                },  
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${cell.getName()} deleted succesfully` });
+                },
                 reject: () => {
+                    cell.hideDeleteButton();
                     this.messageService.clear();
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: 'Node is not deleted'});
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${cell.getName()} not deleted` });
                 }
             });
 
         })
-        // this.paper.on("blank:contextmenu", function (evt,x,y,){
-        //     console.log(evt);
-        //     console.log(x,y);
-        // })
-
-        // this.paper.on("cell:contextmenu", function (cellview, evt,x,y){
-        //     // console.log(cellview.model.addSmell(2));
-        //     console.log(x,y);
-
-        // })
-
-        // First, unembed the cell that has just been grabbed by the user.
-        this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
-
+    }
+    bindMouseOverNode(){
+        this.paper.on("cell:contextmenu", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
             var cell = cellView.model;
+            cell.showDeleteButton();
+            console.log("MOUSER OVER NODE");
+        })
 
-            if (!cell.get('embeds') || cell.get('embeds').length === 0) {
-                // Show the dragged element above all the other cells (except when the
-                // element is a parent).
-                cell.toFront();
-            }
-
-            if (cell.get('parent')) {
-                this.gs.getGraph().getCell(cell.get('parent')).unembed(cell);
-            }
-        });
-
-        // When the dragged cell is dropped over another cell, let it become a child of the
-        // element below.
-        this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
+        this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
             var cell = cellView.model;
-            if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
-                var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
+            cell.hideDeleteButton()
+            console.log("MOUSER OUT NODE");
+        })
+        
 
-                if (cellViewsBelow.length) {
-                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
-                    var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
+    }
 
-                    // Prevent recursive embedding.
-                    if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                        cellViewBelow.model.embed(cell);
-                    }
-                }
-            }
-        });
-
+    bindClickOnSmells() {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("EBSI EVENT FIRED");
@@ -259,7 +242,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
             });
         })
 
-
         this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("SHARED PERSISTENCY EVENT FIRED");
@@ -289,26 +271,59 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                 width: '90%'
             });
         })
+    }
 
-        this.paper.on('cell:pointerdblclick', (elementView) => {
-            var currentElement = elementView.model;
-            currentElement.attr('body/stroke', 'orange');
-            this.gs.getGraph().ticker.emit(2);
-            console.log(elementView.model);
+    bindTeamEmbedNodes() {
+        // First, unembed the cell that has just been grabbed by the user.
+        this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+
+            var cell = cellView.model;
+
+            if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+                // Show the dragged element above all the other cells (except when the
+                // element is a parent).
+                cell.toFront();
+            }
+
+            if (cell.get('parent')) {
+                this.gs.getGraph().getCell(cell.get('parent')).unembed(cell);
+            }
         });
 
+        // When the dragged cell is dropped over another cell, let it become a child of the
+        // element below.
+        this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
+            var cell = cellView.model;
+            if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
+                var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
+
+                if (cellViewsBelow.length) {
+                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
+                    var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
+
+                    // Prevent recursive embedding.
+                    if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
+                        cellViewBelow.model.embed(cell);
+                    }
+                }
+            }
+        });
+
+
     }
-    bindTeamMinimizeEvent() {
+    
+    bindTeamMinimize() {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
-            console.log("MIMIMZE");
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             var cell = cellview.model;
+            console.log(cell.size());
             var embeddedCells = cell.getEmbeddedCells();
-            console.log(embeddedCells)
+
             _.each(embeddedCells, function (child) {
-                // child.set('hidden');
                 child.set('hidden', !child.get('hidden'))
             })
+            // cell.scale(10000, 10000, 100);
+
         })
 
         this.gs.getGraph().on('change:hidden', function (cell, changed, opt) {
@@ -316,7 +331,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         })
     }
 
-    expandTeamAreaToCoverChildren() {
+    bindTeamToCoverChildren() {
 
         this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
             console.log("Change size", cell);
@@ -442,8 +457,7 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
         });
     }
 
-    addLinkMouseOver() {
-        console.log("adding arrow interaction");
+    bindMouseOverLinks() {
         this.paper.on('link:mouseenter', function (linkView) {
             var tools = [
                 // new joint.linkTools.SourceArrowhead(),
@@ -476,19 +490,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                             'stroke-width': 2,
                             'pointer-events': 'none'
                         }
-
-                        // {
-                        //     tagName: 'text',
-                        //     textContent: 'invert',
-                        //     selector: 'icon',
-                        //     attributes: {
-                        //         'fill': '#fe854f',
-                        //         'font-size': 10,
-                        //         'text-anchor': 'middle',
-                        //         'font-weight': 'bold',
-                        //         'pointer-events': 'none',
-                        //         'y': '0.3em'
-                        //     }
                     }],
                     distance: -30,
                     action: function () {
@@ -499,41 +500,6 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
                         link.target(source);
                     }
                 }),
-                // new joint.linkTools.Button({
-                // markup: [{
-                //     tagName: 'circle',
-                //     selector: 'button',
-                //     attributes: {
-                //         'r': 7,
-                //         'stroke': '#fe854f',
-                //         'stroke-width': 3,
-                //         'fill': 'white',
-                //         'cursor': 'pointer'
-                //     }
-                // }, {
-                //     tagName: 'text',
-                //     textContent: 'A',
-                //     selector: 'icon',
-                //     attributes: {
-                //         'fill': '#fe854f',
-                //         'font-size': 10,
-                //         'text-anchor': 'middle',
-                //         'font-weight': 'bold',
-                //         'pointer-events': 'none',
-                //         'y': '0.3em'
-                //     }
-                // }],
-                // distance: -50,
-                // action: function() {
-                //     var link = this.model;
-                //     link.attr({
-                //         line: {
-                //             strokeDasharray: '5,1',
-                //             strokeDashoffset: (link.attr('line/strokeDashoffset') | 0) + 20
-                //         }
-                //     });
-                // }
-                // })
             ];
 
             linkView.addTools(new joint.dia.ToolsView({

@@ -1,48 +1,16 @@
 {
-    "name": "sockshop",
+    "name": "hello-world",
     "nodes": [
         {
-            "name": "front-end",
-            "type": "service"
-        },
-        {
-            "name": "orders",
-            "type": "service"
-        },
-        {
-            "name": "ordersdb",
-            "type": "database"
-        },
-        {
-            "name": "payment",
-            "type": "service"
-        },
-        {
-            "name": "user",
-            "type": "service"
-        },
-        {
-            "name": "carts",
-            "type": "service"
-        },
-        {
-            "name": "carts-db",
-            "type": "database"
-        },
-        {
-            "name": "catalogue-db",
-            "type": "database"
-        },
-        {
-            "name": "catalogue",
-            "type": "service"
-        },
-        {
-            "name": "user-db",
-            "type": "database"
-        },
-        {
             "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "database"
+        },
+        {
+            "name": "order",
             "type": "service"
         },
         {
@@ -51,74 +19,15 @@
             "ctype": "MessageBroker"
         },
         {
-            "name": "queue-master",
-            "type": "service"
-        },
-        {
-            "name": "edge-router",
+            "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
         }
     ],
     "links": [
         {
-            "source": "front-end",
-            "target": "orders",
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "payment",
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "user",
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "carts",
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "catalogue",
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "ordersdb",
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "user",
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "shipping",
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "carts",
-            "type": "runtime"
-        },
-        {
-            "source": "user",
-            "target": "user-db",
-            "type": "runtime"
-        },
-        {
-            "source": "carts",
-            "target": "carts-db",
-            "type": "runtime"
-        },
-        {
-            "source": "catalogue",
-            "target": "catalogue-db",
+            "source": "shipping",
+            "target": "order_db",
             "type": "runtime"
         },
         {
@@ -127,15 +36,49 @@
             "type": "runtime"
         },
         {
-            "source": "queue-master",
+            "source": "shipping",
+            "target": "order_db",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "type": "runtime"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "type": "runtime"
+        },
+        {
+            "source": "order",
             "target": "rabbitmq",
             "type": "runtime"
         },
         {
-            "source": "edge-router",
-            "target": "front-end",
+            "source": "order",
+            "target": "shipping",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "type": "deploymenttime"
+        },
+        {
+            "source": "gateway",
+            "target": "shipping",
             "type": "runtime"
         }
     ],
-    "groups": []
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "gateway"
+            ]
+        }
+    ]
 }

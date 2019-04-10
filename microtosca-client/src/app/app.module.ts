@@ -10,11 +10,7 @@ import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
 import { MenuEditComponent } from './menu-edit/menu-edit.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
-import { AddLinkComponent } from './add-link/add-link.component';
-import { AddNodeComponent } from './add-node/add-node.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
-import { RemoveNodeComponent } from './remove-node/remove-node.component';
-import { RemoveLinkComponent } from './remove-link/remove-link.component';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './dialog-smell/dialog-smell.component';
 import { DialogAddNodeComponent } from './dialog-add-node/dialog-add-node.component';
@@ -55,11 +51,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
     MenuComponent,
     MenuEditComponent,
     GraphEditorComponent,
-    AddLinkComponent,
-    AddNodeComponent,
     ModalRefactoringsComponent,
-    RemoveNodeComponent,
-    RemoveLinkComponent,
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
@@ -102,7 +94,6 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
   ],
   bootstrap: [AppComponent],
   entryComponents: [ // entry componets used in DymanimcModal of PimeNg
-    AddLinkComponent,
     AddNodeComponent,
     RemoveNodeComponent,
     RemoveLinkComponent,

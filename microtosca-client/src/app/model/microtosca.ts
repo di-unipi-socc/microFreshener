@@ -16,6 +16,9 @@ declare module 'jointjs' {
                 resetSmells(): void
                 addIgnoreOnceSmell(smell: Smell): void;
                 addIgnoreAlwaysSmell(smell: Smell): void;
+                showDeleteButton():void;
+                hideDeleteButton():void;
+
             }
             class Service extends Node {
             }
@@ -32,6 +35,8 @@ declare module 'jointjs' {
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
                 resetSmells(): void
+                showDeleteButton():void;
+                hideDeleteButton():void;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -73,6 +78,7 @@ joint.dia.Element.define('microtosca.Service', {
         delete: {
             d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
             event: 'node:delete:pointerdown',
+            visibility: "hidden",
             ref: 'body',
             refX: '-30%',
             refY: '-30%',
@@ -156,6 +162,12 @@ joint.dia.Element.define('microtosca.Service', {
                 return name === smell.name;
             });
         },
+        showDeleteButton: function(){
+            this.attr('delete/visibility', 'visible')
+        },
+        hideDeleteButton: function(){
+            this.attr('delete/visibility', 'hidden')
+        },
         resetSmells: function () {
             this.attributes.smells = [];
             this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
@@ -206,6 +218,18 @@ joint.dia.Element.define('microtosca.Database', {
             // TODO: setName()  generate an error, so the text is setted here.
             text: name || '',
         },
+        delete: {
+            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            event: 'node:delete:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '-50%',
+            refY: '-50%',
+            refWidth: '5%',
+            refHeight: '5%',
+            fill: '#F78686',
+            magnet: false 
+        },
         sp: { // SharedPersitency
             fill: '#FC2B01',
             event: 'smell:SharedPersistency:pointerdown',
@@ -215,6 +239,7 @@ joint.dia.Element.define('microtosca.Database', {
             refWidth: '25%',
             refHeight: '25%',
         },
+        
     },
     smells: [] // list of smells that affects a single node
 }, {
@@ -227,6 +252,9 @@ joint.dia.Element.define('microtosca.Database', {
         }, {
             tagName: 'rect',
             selector: 'sp'
+        },{
+            tagName: "path",
+            selector: "delete"
         }],
         getName: function () {
             return this.attr('label/text');
@@ -251,7 +279,14 @@ joint.dia.Element.define('microtosca.Database', {
             this.attributes.smells.push(smell);
             if (smell.name == "SharedPersistencySmell")
                 this.attr('sp/visibility', 'visible');
+        },
+        showDeleteButton: function(){
+            this.attr('delete/visibility', 'visible')
+        },
+        hideDeleteButton: function(){
+            this.attr('delete/visibility', 'hidden')
         }
+
     });
 
 joint.dia.Element.define('microtosca.CommunicationPattern', {
@@ -273,6 +308,18 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             fill: '#333333',
             // TODO: setName()  generate an error, so the text is setted here.
             text: ''
+        },
+        delete: {
+            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            event: 'node:delete:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '-0%',
+            refY: '-30%',
+            refWidth: '5%',
+            refHeight: '5%',
+            fill: '#F78686',
+            magnet: false 
         },
         type: {
             textVerticalAnchor: 'middle',
@@ -296,6 +343,9 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         }, {
             tagName: 'text',
             selector: 'type'
+        },{
+            tagName: "path",
+            selector: "delete"
         }],
         getName: function () {
             return this.attr('label/text');
@@ -319,18 +369,13 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         },
         addSmell: function (smell: Smell) {
             console.log(smell);
-            //     if (smell.name == "SharedPersistencySmell")
-            // //    if(smell instanceof  EndpointBasedServiceInteractionSmell){
-            //         this.attr({EndpointBasedServiceInteraction: {
-            //             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
-            //             ref: 'body',
-            //             refY: '100%',
-            //             refWidth: '25%',
-            //             refHeight: '25%',
-            //         }});
-
-            //     }
-        }
+        },
+        showDeleteButton: function(){
+            this.attr('delete/visibility', 'visible')
+        },
+        hideDeleteButton: function(){
+            this.attr('delete/visibility', 'hidden')
+        },
     });
 joint.dia.Element.define('microtosca.EdgeGroup', {
     size: {
@@ -419,14 +464,14 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             fontSize: 15,
             text: name || '',
         },
-        icon: {
+        minimize: {
             refX: '100%',
             refY: '0%',
-            fill: '#FC2B01',
+            fill: '#6a6a62',
             event: 'team:minimize:pointerdown',
-            visibility: "visible",
+            visibility: "hidden",
             ref: 'body',
-            refWidth: '5%',
+            refWidth: '10%',
             refHeight: '5%',
             xAlignment: 'center',
 
@@ -442,13 +487,19 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             selector: 'label'
         }, {
             tagName: 'rect',
-            selector: 'icon'
+            selector: 'minimize'
         }],
         getName: function () {
             return this.attr('label/text');
         },
         setName: function (text) {
             return this.attr('label/text', text || '');
+        },
+        showDeleteButton: function(){
+            this.attr('minimize/visibility', 'visible')
+        },
+        hideDeleteButton: function(){
+            this.attr('minimize/visibility', 'hidden')
         },
     });
 joint.dia.Link.define('microtosca.RunTimeLink', {
