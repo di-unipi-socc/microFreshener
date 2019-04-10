@@ -30,6 +30,8 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
     paper: joint.dia.Paper;
     analyser: Analyser;
 
+    name: string; // name of the app
+
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
 
     }
@@ -102,6 +104,12 @@ export class GraphEditorComponent implements OnInit, AfterViewInit {
 
         // add EdgeGroup 
         this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+    }
+
+    saveName() {
+        this.gs.getGraph().setName(this.name);
+        this.messageService.clear();
+        this.messageService.add({ severity: 'success', summary: 'App renamed correctly', detail: "New name " + this.name });
     }
 
     addTeam() {

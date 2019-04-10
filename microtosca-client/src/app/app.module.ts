@@ -7,7 +7,6 @@ import { HttpClientModule }    from '@angular/common/http';
 //import my component
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
 import { GraphEditorComponent } from './graph-editor/graph-editor.component';
 import { ModalRefactoringsComponent } from './modal-refactorings/modal-refactorings.component';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
@@ -47,7 +46,6 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 @NgModule({
   declarations: [
     AppComponent,
-    MenuComponent,
     GraphEditorComponent,
     ModalRefactoringsComponent,
     DialogAnalysisComponent,
