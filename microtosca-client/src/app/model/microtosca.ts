@@ -5,9 +5,15 @@ import * as $ from 'jquery';
 
 // extend joint.shapes namespace
 declare module 'jointjs' {
-    namespace shapes {
-        namespace microtosca {
-            class Node extends joint.dia.Element {
+    export namespace shapes {
+        export namespace microtosca {
+            export class Node extends joint.dia.Element {
+
+                constructor(name: string) {
+                    super()
+                    this.setName(name);
+                }                
+                
                 setName(name): void;
                 getName(): String;
                 addSmell(smell: Smell): void;
@@ -33,8 +39,8 @@ declare module 'jointjs' {
                 addSmell(smell: Smell): void;
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
-                resetSmells(): void
-                showIcons:void;
+                resetSmells(): void;
+                showIcons():void;
                 hideIcons():void;
             }
             class EdgeGroup extends Group {
@@ -51,6 +57,160 @@ declare module 'jointjs' {
         }
     }
 }
+
+
+joint.dia.Element.define('microtosca.Node', {
+    size: { width: 80, height: 80 },
+    attrs: {
+        body: {
+            refCx: '50%',
+            refCy: '50%',
+            refR: '50%',
+            strokeWidth: 8,
+            stroke: '#74F2CE',
+            fill: '#FFFFFF',
+            magnet: true
+        },
+        label: {
+            textVerticalAnchor: 'middle',
+            textAnchor: 'middle',
+            refX: '50%',
+            refY: '50%',
+            fontSize: 15,
+            fill: '#333333',
+            text: 'caio',
+            // magnet: true 
+        },
+        delete: {
+            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            event: 'node:delete:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '-30%',
+            refY: '-30%',
+            refWidth: '5%',
+            refHeight: '5%',
+            fill: '#F78686',
+            magnet: false 
+        },
+        EndpointBasedServiceInteraction: { // endpointBasesdServiceInteraction
+            fill: '#00ff00',
+            event: 'smell:EndpointBasedServiceInteraction:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refY: '100%',
+            refWidth: '25%',
+            refHeight: '25%'
+        },
+        wsi: { // WobblyServiceInteractionSmell
+            fill: '#0800ee',
+            event: 'smell:WobblyServiceInteractionSmell:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '50%',
+            refY: '100%',
+            refWidth: '25%',
+            refHeight: '25%',
+        },
+        NoApiGateway: { // WobblyServiceInteractionSmell
+            fill: '#EFF142',
+            event: 'smell:NoApiGateway:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '100%',
+            refY: '100%',
+            refWidth: '25%',
+            refHeight: '25%',
+        }
+    },
+    smells: [],            // list of smells that affects a single node
+    ignoreOnceSmells: [],   // list of smell ignored (once)
+    ignoreAlwaysSmells: []  // list of smell ignored (always)
+}, {
+        markup: [{
+            tagName: 'circle',
+            selector: 'body',
+        }, {
+            tagName: 'text',
+            selector: 'label'
+        }, {
+            tagName: 'rect',
+            selector: 'EndpointBasedServiceInteraction'
+        }, {
+            tagName: 'rect',
+            selector: 'wsi'
+        }, {
+            tagName: 'rect',
+            selector: 'NoApiGateway'
+        },{
+            tagName: "path",
+            selector: "delete"
+        }],
+        addIgnoreOnceSmell(smell: Smell) {
+            this._hideSmell(smell);
+            this.attributes.ignoreOnceSmells.push(smell);
+        },
+        addIgnoreAlwaysSmell(smell: Smell) {
+            this._hideSmell(smell);
+            this.attributes.ignoreAlwaysSmells.push(smell);
+        },
+        getName: function () {
+            return this.attr('label/text');
+        },
+        setName: function (text) {
+            return this.attr('label/text', text || '');
+        },
+        getSmells: function () {
+            return this.attributes.smells;
+        },
+        getSmell: function (name: string) {
+            return this.attributes.smells.find(smell => {
+                return name === smell.name;
+            });
+        },
+        showIcons: function(){
+            this.attr('delete/visibility', 'visible')
+        },
+        hideIcons: function(){
+            this.attr('delete/visibility', 'hidden')
+        },
+        resetSmells: function () {
+            this.attributes.smells = [];
+            this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
+            this.attr('wsi/visibility', 'hidden');
+            this.attr('NoApiGateway/visibility', 'hidden');
+            console.log("Resetted smelles");
+        },
+        _hideSmell(smell: Smell) {
+            this.attr(`${smell.name}/visibility`, 'hidden');
+        },
+        addSmell: function (smell: Smell) {
+            this.attributes.smells.push(smell);
+            if (smell.name == "EndpointBasedServiceInteractionSmell") {
+                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
+            }
+            else if (smell.name == "WobblyServiceInteractionSmell") {
+                this.attr('wsi/visibility', 'visible');
+            }
+            else if (smell.name == "NoApiGateway") {
+                this.attr('NoApiGateway/visibility', 'visible');
+            }
+            // console.log(this);
+        }
+    });
+
+
+
+export class ServiceProva extends Node{
+    name:string;
+
+    constructor(name: string) {
+        super();
+        super.setName(name);
+    }
+
+}
+
 
 joint.dia.Element.define('microtosca.Service', {
     size: { width: 80, height: 80 },
@@ -191,6 +351,8 @@ joint.dia.Element.define('microtosca.Service', {
             // console.log(this);
         }
     });
+
+
 
 joint.dia.Element.define('microtosca.Database', {
     size: {
