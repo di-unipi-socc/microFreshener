@@ -26,30 +26,6 @@ export class AppComponent {
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
     this.items = [
       {
-        label: 'File',
-        icon: 'pi pi-fw pi-pencil',
-        items: [
-          {
-            label: 'Save', icon: "pi pi-save", command: (event) => {
-              this.upload();
-            }
-          },
-          { label: 'Export', icon: 'pi pi-download', url: "http://127.0.0.1:8000/v2/graph/export/" },
-          {
-            label: 'Import', icon: 'pi pi-upload', command: (event) => {
-              // <p-fileUpload mode="basic" 
-              //                     name="graph" 
-              //                     url="http://127.0.0.1:8000/v2/graph/import/" 
-              //                     accept=".json"
-              //                     (onUpload)="onUpload($event)"
-              //                     chooseLabel="Import">
-              //     </p-fileUpload>
-            }
-          }
-
-        ]
-      },
-      {
         label: 'Account',
         icon: 'pi pi-fw pi-user',
         items: [

@@ -9,65 +9,45 @@
 
 
             <div class="ui-toolbar-group-right">
-                <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
-                <p-splitButton [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" label="Layout" icon="pi pi-sitemap" [model]="layouts"></p-splitButton>
+            <div class="content-section implementation">
+                <p-splitButton label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
+                
+                <p-splitButton  icon="pi pi-sitemap" [model]="layouts"></p-splitButton>
 
                 <button pButton type="button" (click)="analyse()" icon="pi pi-search"></button>
                 
-                <button cslass="ui-button-primary" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>
+                <button cslass="ui-button-primary" pButton type="button" (click)="upload()" icon="pi pi-save"></button>
                 
-                <a pButton href="http://127.0.0.1:8000/v2/graph/export/" style="width: 100px" icon="pi pi-download" class="ui-button-warning"></a>
+                <a pButton href="http://127.0.0.1:8000/v2/graph/export/" icon="pi pi-download" class="ui-button-info"></a>
+                
                 <p-fileUpload mode="basic" 
-                            name="graph" 
-                            icon="pi-upload"
+                            name="graph"
+                            icon="pi-upload" 
                             url="http://127.0.0.1:8000/v2/graph/import/" 
+                            accept=".yml"
                             (onUpload)="onUpload($event)"
                             chooseLabel="Import">
-                    </p-fileUpload>
+                </p-fileUpload>
+                 <!-- pop up menu -->
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
 
-                <button type="button" pButton icon="pi pi-user" (click)="menu.toggle($event)">
+                <button type="button"  class="ui-button-raised ui-button-secondary" pButton icon="pi pi-user" (click)="menu.toggle($event)">
                 </button>
+            </div>
+
             </div>
         </p-toolbar>
       
     </div>
 
-    <!-- menu sidebar -->
     <div class="p-col-12">
-        <!-- <app-menu> </app-menu> -->
         <p-messages [showTransitionOptions]="'800ms'" [hideTransitionOptions]="'800ms'"></p-messages>
     </div>
 
-    <div class="p-col-12 p-md-8 p-col-nogutter">
+    <div class="p-col-12">
         <app-graph-editor ></app-graph-editor> 
     </div>
-
-    <!-- sidebar -->
-    <p-sidebar [(visible)]="display" position="right">
-            <div class="p-grid p-align-center">
-                <div class="p-col">
-                  <button cslass="ui-button-success" pButton type="button" (click)="upload()" label="Save" icon="pi pi-save"></button>
-                </div>
-            </div>
-
-            <div class="p-grid p-align-end">
-                <div class="p-col">
-                    <p-fileUpload mode="basic" 
-                                name="graph" 
-                                url="http://127.0.0.1:8000/v2/graph/import/" 
-                                accept=".json"
-                                (onUpload)="onUpload($event)"
-                                chooseLabel="Import">
-                    </p-fileUpload>
-                </div> 
-
-                <div class="p-col">
-                   <a pButton href="http://127.0.0.1:8000/v2/graph/export/" style="width: 100px"  label="Export" icon="pi pi-download" class="ui-button-warning"></a>
-                </div>
-            </div>
-    </p-sidebar>
-        
+s        
     <!-- footer (for logo) -->
     <div class="p-col-12">
         <!-- <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button> -->

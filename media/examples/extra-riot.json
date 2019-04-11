@@ -230,5 +230,16 @@
             "target": "SftDB",
             "type": "runtime"
         }
+    ],
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "Brk",
+                "Kpr",
+                "CldAdm"
+            ]
+        }
     ]
 }

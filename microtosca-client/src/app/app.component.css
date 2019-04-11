@@ -4,3 +4,20 @@ h1 {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 250%;
   }
+
+:host ::ng-deep button {
+    margin-right: .5em;
+}
+
+
+:host ::ng-deep a {
+  margin-right: .5em;
+}
+
+:host ::ng-deep div {
+  margin-right: .5em;
+}
+
+:host ::ng-deep .ui-fileupload-choose .fa-plus::before {
+  content: "\F0A6";
+}

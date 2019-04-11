@@ -87,23 +87,26 @@ joint.dia.Element.define('microtosca.Service', {
             magnet: false 
         },
         EndpointBasedServiceInteraction: { // endpointBasesdServiceInteraction
-            fill: '#00ff00',
+            fill: '#4c5257',
             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
             visibility: "hidden",
+            d : "M 10 40 L 50 40 L 50 20 L 80 50 L 50 70 L 50 60 L 10 60 L 10 40",
             ref: 'body',
-            refY: '100%',
-            refWidth: '25%',
-            refHeight: '25%'
+            refY: '50%',
+            refWidth: '1%',
+            refHeight: '1%'
         },
         wsi: { // WobblyServiceInteractionSmell
-            fill: '#0800ee',
             event: 'smell:WobblyServiceInteractionSmell:pointerdown',
             visibility: "hidden",
-            ref: 'body',
+            d: "M 20 50 Q 30 30 50 50 Q 60 70 80 50",
+            ref: 'label',
             refX: '50%',
             refY: '100%',
-            refWidth: '25%',
-            refHeight: '25%',
+            refWidth: '20%',
+            refHeight: '20%',
+            fill:"#4c5257",
+            strokeWidth:"8"
         },
         NoApiGateway: { // WobblyServiceInteractionSmell
             fill: '#FF0000',
@@ -127,10 +130,10 @@ joint.dia.Element.define('microtosca.Service', {
             tagName: 'text',
             selector: 'label'
         }, {
-            tagName: 'rect',
+            tagName: 'path',
             selector: 'EndpointBasedServiceInteraction'
         }, {
-            tagName: 'rect',
+            tagName: 'path',
             selector: 'wsi'
         }, {
             tagName: 'rect',

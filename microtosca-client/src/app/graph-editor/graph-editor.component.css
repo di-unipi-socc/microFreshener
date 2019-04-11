@@ -1,11 +1,7 @@
-service {
-    fill:#065143;
-}
 
-.database {
-    fill:#4E7F64;
-}
 
-.communicationpattern {
-    fill:#97CAA1;
+:host ::ng-deep button {
+    margin-right: .5em;
+    margin-left: .5em;
+    margin-bottom: .5em;
 }

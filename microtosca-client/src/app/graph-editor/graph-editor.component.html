@@ -1,16 +1,25 @@
-
-
-<button pButton icon="pi pi-plus" type="button"  style="font-size: 1em" label="Node" class="ui-button-success" (click)="addNode()"></button>
-<button pButton icon="pi pi-plus" type="button"  style="font-size: 1em" label="Team" class="ui-button-success" (click)="addTeam()"></button>
-
-<span>Name:</span>
-<span class="ui-float-label">
-    <div class="ui-inputgroup">
-        <input type="text" pInputText placeholder="Name"  [(ngModel)]="name">   
-        <button pButton type="button" icon="pi pi-check"  (click)="saveName()" class="ui-button-warn"></button>      
+<div class="p-grid p-justify-center">
+    <div class="p-col-10">
+        <div class="content-section implementation">
+            <span>Name:</span>
+            <input type="text" pInputText placeholder="Name" [(ngModel)]="name">
+            <button pButton type="button" icon="pi pi-check"
+                (click)="saveName()"
+                class="ui-button-success">
+            </button>
+            <button pButton icon="pi pi-plus" type="button" style="font-size:
+                1em"
+                label="Node" class="ui-button-success" (click)="addNode()"></button>
+            <button pButton icon="pi pi-plus" type="button" style="font-size:
+                1em"
+                label="sTeam" class="ui-button-success" (click)="addTeam()"></button>
+        </div>
     </div>
-</span>
+</div>
 
+
+<!-- jointjs div where the graph is rendered -->
 <div id="jointjsgraph"> </div>
 
+<!-- cconfirm dialog when removing a node -->
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
