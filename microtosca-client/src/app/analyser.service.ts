@@ -9,7 +9,9 @@ import { AGroup } from "./analyser/group";
 
 import { GraphService } from './graph.service';
 import { Principle } from './model/principles';
-import { Smell } from './model/smell';
+import { Smell } from './analyser/smell';
+import { Causa } from './analyser/causa';
+import {AddMessageRouterRefactoring} from "./refactor/refactoring";
 import { CommunicationPattern } from "./model/communicationpattern";
 
 const httpOptions = {
@@ -64,7 +66,7 @@ export class AnalyserService {
   getSmellById(id: number) {
     return this.http.get<any>('assets/data/smells.json')
       .toPromise()
-      .then(res => (<Smell[]>res.data).find(smell => smell.id === id))
+      .then(res => (<Smell[]>res.data).find(smell => 5 == 5 ))//smell.id === id))
   }
 
 
@@ -79,8 +81,11 @@ export class AnalyserService {
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to hav ethe history of the analysis.
           this.clearSmells(); // removed the smell in the graph view
+          
           response['nodes'].forEach((node) => {
-            this.analysednodes.push(ANode.fromJSON(node));
+            var anode = this.buildAnalysedNodeFromJson(node);
+            this.analysednodes.push(anode);
+            // this.analysednodes.push(ANode.fromJSON(node));
           });
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
@@ -93,6 +98,33 @@ export class AnalyserService {
         ),
         catchError((e: Response) => throwError(e))
       );
+  }
+
+  buildAnalysedNodeFromJson(data: Object) {
+    var anode: ANode = new ANode(data['name']);
+
+    data['smells'].forEach((smell) => {
+      var s: Smell = new Smell(smell.name);
+
+      smell['cause'].forEach((causa) => {
+        var source = this.gs.getGraph().findNodeByName(causa['source']);
+        var target = this.gs.getGraph().findNodeByName(causa['target']);
+        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+
+        var c: Causa = new Causa(link);
+        s.addCause(c);
+        let r = new AddMessageRouterRefactoring(this.gs.getGraph(), link);
+        s.addRefactoring(r);
+      });
+      // if (smell['refactorings']) {
+      //   smell['refactorings'].forEach((ref) => {
+      //     let r = new AddMessageRouterRefactoring(this.gs.getGraph(), )
+      //     s.addRefactoring(ref);
+      //   });
+      // }
+      anode.addSmell(s);
+    });
+    return anode;
   }
 
   getAnalysedNodeByName(name: string) {

@@ -1,4 +1,6 @@
 import { Smell } from './smell';
+import { Causa } from './causa';
+import { GraphService } from '../graph.service';
 
 /**
  * Analysed node. Contains the violated principles of the nodes

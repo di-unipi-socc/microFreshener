@@ -76,7 +76,6 @@ export class AppComponent {
   }
 
   analyse() {
-
     const ref = this.dialogService.open(DialogAnalysisComponent, {
       header: 'Check the principles to analyse',
       width: '70%'
@@ -94,19 +93,19 @@ export class AppComponent {
           n.addSmell(smell);
         })
       })
-    this.as.analysedgroups.forEach((group)=>{
-        let g = this.gs.getGraph().getGroup(group.name);
-        group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
-          smell.getCause().forEach(name=>{
-            // visualizza lo smell in ogni nodo del gruppo che non ha davanti un Gateways
-            console.log(name);
-            let node = this.gs.getGraph().getNode(<string>name);
-            node.addSmell(smell);
-          })
-          g.addSmell(smell);
-        })
-        console.log(g);
-      })    
+
+    // this.as.analysedgroups.forEach((group)=>{
+    //     let g = this.gs.getGraph().getGroup(group.name);
+    //     group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
+    //       smell.getCause().forEach(name=>{
+    //         console.log(name);
+    //         let node = this.gs.getGraph().getNode(<string>name);
+    //         node.addSmell(smell);
+    //       })
+    //       g.addSmell(smell);
+    //     })
+    //     console.log(g);
+    //   })    
     
   }
 

@@ -3,6 +3,7 @@ import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { Smell } from '../analyser/smell';
+import { AddMessageRouterRefactoring } from '../refactor/refactoring';
 
 @Component({
   selector: 'app-dialog-smell',
@@ -28,14 +29,13 @@ export class DialogSmellComponent implements OnInit {
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = <Smell>this.config.data.selectedsmell;
-      this.smell.getRefactorings().forEach(ref => {
-        this.actions.push({ "label": ref['name'], "value": { "description": ref['description'] } });
+      this.smell.getRefactorings().forEach(Refactoring => {
+        this.actions.push({ "label": Refactoring['name'], "value": { "description": Refactoring['description'] } });
       })
     }
   }
 
   save() {
-    console.log(this.selectedAction);
     if (this.selectedAction == 0) {
       this.jointNodeModel.addIgnoreOnceSmell(this.smell);
       this.messageService.add({ severity: 'success', summary: 'Ingnore once selected' });
@@ -43,7 +43,9 @@ export class DialogSmellComponent implements OnInit {
       this.jointNodeModel.addIgnoreAlwaysSmell(this.smell);
       this.messageService.add({ severity: 'success', summary: 'Ingnore always selected' });
     }
-    this.ref.close();
+    console.log(this.selectedAction);
+    console.log(this.smell.getRefactorings()[0]);
+    this.ref.close(this.smell.getRefactorings()[0]);
   }
 
 }

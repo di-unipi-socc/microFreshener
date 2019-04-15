@@ -2,11 +2,9 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
-import { Message } from 'primeng/components/common/api';
 
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
-import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
@@ -15,6 +13,8 @@ import * as joint from 'jointjs';
 import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
+import {RefactoringsInvoker} from "../refactor/invoker";
+import {AddMessageRouterRefactoring} from "../refactor/refactoring";
 
 @Component({
     selector: 'app-graph-editor',
@@ -27,12 +27,20 @@ export class GraphEditorComponent implements OnInit {
     _options = { width: 2000, height: 1500 };
 
     paper: joint.dia.Paper;
-    analyser: Analyser;
+    refactoringsInvoker:RefactoringsInvoker;
 
     name: string; // name of the app
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+        this.refactoringsInvoker = new RefactoringsInvoker();
+    }
 
+    undoRefactoring(){
+        this.refactoringsInvoker.undo();
+    }
+
+    redoRefactoring(){
+        this.refactoringsInvoker.redo();
     }
 
     ngOnInit() {
@@ -144,8 +152,6 @@ export class GraphEditorComponent implements OnInit {
     }
 
     bindEvents() {
-
-
         this.bindMouseOverLinks();
         this.bindMouseOverNode();
         this.bindClickOnSmells();
@@ -180,6 +186,7 @@ export class GraphEditorComponent implements OnInit {
 
         })
     }
+
     bindMouseOverNode() {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
@@ -188,7 +195,6 @@ export class GraphEditorComponent implements OnInit {
                 cell.showIcons();
                 console.log("MOUSER OVER NODE");
             }
-
         })
 
         // this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
@@ -200,14 +206,14 @@ export class GraphEditorComponent implements OnInit {
         //     }
         // })
 
-
     }
 
     bindClickOnSmells() {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            evt.stopPropagation(); 
             var model = cellview.model;
             var smell: Smell = model.getSmell("EndpointBasedServiceInteractionSmell");
+            
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
                     model: model,
@@ -217,9 +223,8 @@ export class GraphEditorComponent implements OnInit {
                 width: '50%'
             });
 
-            ref.onClose.subscribe((any) => {
-                // TODO: apply the actions selected from the popup.
-                // this.messageService.add({severity:'info', summary: 'Smell clodes'});
+            ref.onClose.subscribe((refactoringCommand) => {
+                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
             });
         })
 

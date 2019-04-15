@@ -1,7 +1,5 @@
 import * as joint from 'jointjs';
 import { Smell } from '../analyser/smell';
-import * as _ from 'lodash';
-import * as $ from 'jquery';
 
 // extend joint.shapes namespace
 declare module 'jointjs' {
@@ -9,33 +7,33 @@ declare module 'jointjs' {
         namespace microtosca {
             class Node extends joint.dia.Element {
                 setName(name): void;
-                getName(): String;
+                getName(): string;
                 addSmell(smell: Smell): void;
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
                 resetSmells(): void
                 addIgnoreOnceSmell(smell: Smell): void;
                 addIgnoreAlwaysSmell(smell: Smell): void;
-                showIcons():void;
-                hideIcons():void;
+                showIcons(): void;
+                hideIcons(): void;
             }
             class Service extends Node {
             }
             class Database extends Node {
             }
             class CommunicationPattern extends Node {
-                setConcreteType(ctype: String): void;
+                setConcreteType(ctype: string): void;
                 getConcreteType(): string;
             }
             class Group extends joint.dia.Element {
                 setName(name): void;
-                getName(): String;
+                getName(): string;
                 addSmell(smell: Smell): void;
                 getSmell(name: string): Smell;
                 getSmells(): Smell[];
                 resetSmells(): void
-                showIcons:void;
-                hideIcons():void;
+                showIcons: void;
+                hideIcons(): void;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -45,7 +43,6 @@ declare module 'jointjs' {
             }
             class RunTimeLink extends joint.dia.Link {
             }
-
             class DeploymentTimeLink extends joint.dia.Link {
             }
         }
@@ -75,7 +72,7 @@ joint.dia.Element.define('microtosca.Service', {
             // magnet: true 
         },
         delete: {
-            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            d: "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
             event: 'node:delete:pointerdown',
             visibility: "hidden",
             ref: 'body',
@@ -84,7 +81,7 @@ joint.dia.Element.define('microtosca.Service', {
             refWidth: '5%',
             refHeight: '5%',
             fill: '#F78686',
-            magnet: false 
+            magnet: false
         },
         EndpointBasedServiceInteraction: { // endpointBasesdServiceInteraction
             fill: '#00ff00',
@@ -135,7 +132,7 @@ joint.dia.Element.define('microtosca.Service', {
         }, {
             tagName: 'rect',
             selector: 'NoApiGateway'
-        },{
+        }, {
             tagName: "path",
             selector: "delete"
         }],
@@ -161,10 +158,10 @@ joint.dia.Element.define('microtosca.Service', {
                 return name === smell.name;
             });
         },
-        showIcons: function(){
+        showIcons: function () {
             this.attr('delete/visibility', 'visible')
         },
-        hideIcons: function(){
+        hideIcons: function () {
             this.attr('delete/visibility', 'hidden')
         },
         resetSmells: function () {
@@ -218,7 +215,7 @@ joint.dia.Element.define('microtosca.Database', {
             text: name || '',
         },
         delete: {
-            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            d: "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
             event: 'node:delete:pointerdown',
             visibility: "hidden",
             ref: 'body',
@@ -227,7 +224,7 @@ joint.dia.Element.define('microtosca.Database', {
             refWidth: '5%',
             refHeight: '5%',
             fill: '#F78686',
-            magnet: false 
+            magnet: false
         },
         sp: { // SharedPersitency
             fill: '#FC2B01',
@@ -238,7 +235,7 @@ joint.dia.Element.define('microtosca.Database', {
             refWidth: '25%',
             refHeight: '25%',
         },
-        
+
     },
     smells: [] // list of smells that affects a single node
 }, {
@@ -251,7 +248,7 @@ joint.dia.Element.define('microtosca.Database', {
         }, {
             tagName: 'rect',
             selector: 'sp'
-        },{
+        }, {
             tagName: "path",
             selector: "delete"
         }],
@@ -279,10 +276,10 @@ joint.dia.Element.define('microtosca.Database', {
             if (smell.name == "SharedPersistencySmell")
                 this.attr('sp/visibility', 'visible');
         },
-        showIcons: function(){
+        showIcons: function () {
             this.attr('delete/visibility', 'visible')
         },
-        hideIcons: function(){
+        hideIcons: function () {
             this.attr('delete/visibility', 'hidden')
         }
 
@@ -309,7 +306,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             text: ''
         },
         delete: {
-            d : "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+            d: "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
             event: 'node:delete:pointerdown',
             visibility: "hidden",
             ref: 'body',
@@ -318,7 +315,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refWidth: '5%',
             refHeight: '5%',
             fill: '#F78686',
-            magnet: false 
+            magnet: false
         },
         type: {
             textVerticalAnchor: 'middle',
@@ -342,7 +339,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         }, {
             tagName: 'text',
             selector: 'type'
-        },{
+        }, {
             tagName: "path",
             selector: "delete"
         }],
@@ -369,10 +366,10 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         addSmell: function (smell: Smell) {
             console.log(smell);
         },
-        showIcons: function(){
+        showIcons: function () {
             this.attr('delete/visibility', 'visible')
         },
-        hideIcons: function(){
+        hideIcons: function () {
             this.attr('delete/visibility', 'hidden')
         },
     });
@@ -435,10 +432,10 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         resetSmells: function (): void {
             this.attributes.smells = [];
         },
-        showIcons: function(){
+        showIcons: function () {
             // this.attr('delete/visibility', 'visible')
         },
-        hideIcons: function(){
+        hideIcons: function () {
             // this.attr('delete/visibility', 'hidden')
         },
     });
@@ -499,10 +496,10 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         setName: function (text) {
             return this.attr('label/text', text || '');
         },
-        showIcons: function(){
+        showIcons: function () {
             this.attr('minimize/visibility', 'visible')
         },
-        hideIcons: function(){
+        hideIcons: function () {
             this.attr('minimize/visibility', 'hidden')
         },
     });
