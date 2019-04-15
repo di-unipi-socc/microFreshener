@@ -40,9 +40,10 @@
       
     </div>
 
-    <div class="p-col-12">
-        <p-messages [showTransitionOptions]="'800ms'" [hideTransitionOptions]="'800ms'"></p-messages>
-    </div>
+    <!-- show the messages in a toast: MessageService.add(Message) -->
+    <p-toast [style]="{marginTop: '100px'}"  position="top-right"></p-toast>
+
+
 
     <div class="p-col-12">
         <app-graph-editor ></app-graph-editor> 

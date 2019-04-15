@@ -41,6 +41,10 @@ import {PanelModule} from 'primeng/panel';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ToastModule} from 'primeng/toast';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {PickListModule} from 'primeng/picklist';
+
 
 
 @NgModule({
@@ -83,7 +87,10 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
     PanelModule,
     InputTextareaModule,
     RadioButtonModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    ToastModule,
+    SelectButtonModule,
+    PickListModule
   ],
   providers: [
     MessageService

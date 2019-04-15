@@ -10,7 +10,6 @@ import { Analyser } from '../analyser/analyser';
 import { Smell } from '../analyser/smell';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import { ConcreteTypes } from "../model/type";
 
 import * as joint from 'jointjs';
 import '../model/microtosca';
@@ -63,20 +62,13 @@ export class GraphEditorComponent implements OnInit {
         this.applyDirectedGraphLayout();
     }
     createSampleGraph() {
-        // this.gs.downloadExample("helloworld")
-        //     .subscribe((data) => {
-        //       console.log(data);
-        //       this.gs.getGraph().builtFromJSON(data);
-        //       this.gs.getGraph().applyLayout("LR");
-        //       this.messageService.add({severity:'success', summary:'Graph dowloaded correclty', detail:''});
-        //     });
 
-        // nodes
+        // // nodes
         var s = this.gs.getGraph().addService("shipping");
         var odb = this.gs.getGraph().addDatabase("order_db");
         var o = this.gs.getGraph().addService("order");
-        var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", ConcreteTypes.MESSAGE_BROKER);
-        var gw = this.gs.getGraph().addCommunicationPattern("gateway", ConcreteTypes.API_GATEWAY);
+        var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", "MessageBroker");
+        var gw = this.gs.getGraph().addCommunicationPattern("gateway", "ApiGateway");
 
         // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);
@@ -98,6 +90,9 @@ export class GraphEditorComponent implements OnInit {
 
         // add EdgeGroup 
         this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+
+        // this.gs.getGraph().addEdgeGroup("edgenodes", []);
+
     }
 
     saveName() {

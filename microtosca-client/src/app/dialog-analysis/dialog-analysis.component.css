@@ -1,0 +1,4 @@
+
+:host ::ng-deep body .ui-tree {
+    width: 1000px;
+}

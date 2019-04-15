@@ -1,5 +1,3 @@
-import { Principle } from "./principles"
-import * as joint from "jointjs";
 import { Smell } from './smell';
 
 

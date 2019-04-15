@@ -1,0 +1,46 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "principle": "Independent Deployability",
+            "name": "Multiple Service In the same container",
+            "description": "Two or more services are puttedn in the same coanteinr"
+        },
+        {
+            "id": 2,
+            "principle": "Horizzontal Scalability",
+            "name": "No Api Gateway",
+            "description": ""
+        },
+        {
+            "id": 3,
+            "principle": "Horizzontal Scalability",
+            "name": "Endpoint-based Service Interactions",
+            "description": ""
+        },
+        {
+            "id": 4,
+            "principle": "Isolation of Failures",
+            "name": "Wobbly service interactions",
+            "description": ""
+        },
+        {
+            "id": 5,
+            "principle": "Decentralization",
+            "name": "ESB misuse",
+            "description": ""
+        },
+        {
+            "id": 6,
+            "principle": "Decentralization",
+            "name": "Shared Persistency",
+            "description": ""
+        },
+        {
+            "id": 7,
+            "principle": "Decentralization",
+            "name": "Single Layer Team",
+            "description": ""
+        }
+    ]
+}

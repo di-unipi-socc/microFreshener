@@ -1,12 +1,12 @@
 <div class="p-grid p-justify-center p-align-center vertical-container">
-        <div class="p-col-2">
-            <h3>Node:</h3>
-        </div>
-        <div class="p-col-4">
-            <p>{{jointNodeModel.getName()}}</p>
-        </div>
+    <div class="p-col-2">
+        <h3>Node:</h3>
     </div>
-    
+    <div class="p-col-4">
+        <p>{{jointNodeModel.getName()}}</p>
+    </div>
+</div>
+
 
 
 <div class="p-grid p-justify-center p-align-center vertical-container">
@@ -34,7 +34,8 @@
         <h3>Action:</h3>
     </div>
     <div class="p-col-4">
-        <p-dropdown [options]="actions" placeholder="Select an action"  [(ngModel)]="selectedAction"></p-dropdown>
+        <p-dropdown [options]="actions" placeholder="Select an action"
+            [(ngModel)]="selectedAction"></p-dropdown>
     </div>
 </div>
 <div class="p-grid p-justify-center p-align-center vertical-container">

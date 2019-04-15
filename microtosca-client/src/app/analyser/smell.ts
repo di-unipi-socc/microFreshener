@@ -1,4 +1,3 @@
-import { Refactoring } from "./refactoring";
 
 export class Smell {
 

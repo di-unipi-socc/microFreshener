@@ -1,8 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
-import { ConcreteTypes } from "../model/type";
-
 
 export class Graph extends joint.dia.Graph {
     name: string;
