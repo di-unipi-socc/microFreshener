@@ -1,6 +1,4 @@
 import { Smell } from './smell';
-import { Causa } from './causa';
-import { GraphService } from '../graph.service';
 
 /**
  * Analysed node. Contains the violated principles of the nodes
@@ -32,7 +30,7 @@ export class ANode {
         data['smells'].forEach((smell)=>{
             var s:Smell = new Smell(smell.name);
             smell['cause'].forEach((causa) =>{
-                s.addCause(causa);
+                s.addLinkBasedCause(causa);
             });
             if(smell['refactorings']){
                 smell['refactorings'].forEach((ref) =>{

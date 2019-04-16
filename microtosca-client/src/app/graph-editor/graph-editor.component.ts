@@ -81,14 +81,14 @@ export class GraphEditorComponent implements OnInit {
         // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);
         this.gs.getGraph().addRunTimeInteraction(s, cp);
-        this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
+        // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
 
         // order interactions
         this.gs.getGraph().addRunTimeInteraction(o, s);
         this.gs.getGraph().addRunTimeInteraction(o, odb);
         this.gs.getGraph().addRunTimeInteraction(o, cp);
-        this.gs.getGraph().addDeploymentTimeInteraction(o, s);
-        this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
+        // this.gs.getGraph().addDeploymentTimeInteraction(o, s);
+        // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
         var g = this.gs.getGraph().addTeamGroup("team1", [s, o]);
@@ -242,9 +242,8 @@ export class GraphEditorComponent implements OnInit {
                 width: '50%'
             });
 
-            ref.onClose.subscribe((any) => {
-                // TODO: apply the actions selected from the popup.
-                // this.messageService.add({severity:'info', summary: 'Smell clodes'});
+            ref.onClose.subscribe((refactoringCommand) => {
+                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
             });
         })
 
@@ -261,6 +260,10 @@ export class GraphEditorComponent implements OnInit {
                 header: `Smell details`,
                 width: '50%'
             });
+
+            ref.onClose.subscribe((refactoringCommand) => {
+                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
+            });
         })
 
         this.paper.on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
@@ -275,6 +278,9 @@ export class GraphEditorComponent implements OnInit {
                 },
                 header: `Smell details`,
                 width: '50%'
+            });
+            ref.onClose.subscribe((refactoringCommand) => {
+                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
             });
         })
     }

@@ -60,16 +60,15 @@ export class Graph extends joint.dia.Graph {
     }
 
     getLinks(): joint.shapes.microtosca.RunTimeLink[] {
-        return super.getLinks().filter(link => !this.isGroup(link.getSourceElement()));
+        return <joint.shapes.microtosca.RunTimeLink[]>super.getLinks().filter(link => !this.isGroup(link.getSourceElement()));
     }
 
-    getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node):joint.shapes.microtosca.RunTimeLink{
+    getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
         return this.getLinks().find(link => {
-            var s:string = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
-            var t:string = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
+            var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
+            var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
             return s == source.getName() && t == target.getName();
-         }
-        )
+        });
     }
 
     getServices(): joint.dia.Cell[] {
@@ -90,6 +89,10 @@ export class Graph extends joint.dia.Graph {
 
     getOutboundNeighbors(client: joint.dia.Element): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
+    }
+
+    getInboundNeighbors(client: joint.shapes.microtosca.Node): joint.shapes.microtosca.Node[] {
+        return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { inbound: true });
     }
 
     addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
@@ -144,13 +147,26 @@ export class Graph extends joint.dia.Graph {
         return this.addCommunicationPattern(name, "MessageBroker");
     }
 
-    addRunTimeInteraction(source: joint.dia.Cell, target: joint.dia.Cell): joint.shapes.standard.Link {
-        var link = new joint.shapes.microtosca.RunTimeLink({
-            source: { id: source.id },
-            target: { id: target.id },
-        });
-        this.addCell(link);
-        return link;
+    addServiceDiscovery(name: string): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "ServiceDiscovery");
+    }
+
+    addCircuitBreaker(name: string): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "CircuitBreaker");
+    }
+
+    addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
+        let alredyExistingLink = this.getLinkFromSourceToTarget(source, target);
+        if (alredyExistingLink)
+            return alredyExistingLink;
+        else {
+            var link = new joint.shapes.microtosca.RunTimeLink({
+                source: { id: source.id },
+                target: { id: target.id },
+            });
+            this.addCell(link);
+            return link;
+        }
     }
 
     addDeploymentTimeInteraction(source: joint.dia.Cell, target: joint.dia.Cell): joint.shapes.standard.Link {
@@ -257,10 +273,10 @@ export class Graph extends joint.dia.Graph {
                 'target': this.getNameOfNode(link.getTargetElement())
             }
             // if (link.get('type') === 'microtosca.RunTimeLink')
-            if (link instanceof joint.shapes.microtosca.RunTimeLink){
+            if (link instanceof joint.shapes.microtosca.RunTimeLink) {
                 dlink['type'] = "runtime";
             }
-            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink){
+            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink) {
                 dlink['type'] = "deploymenttime";
             }
             else

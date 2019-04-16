@@ -10,8 +10,7 @@ import { AGroup } from "./analyser/group";
 import { GraphService } from './graph.service';
 import { Principle } from './model/principles';
 import { Smell } from './analyser/smell';
-import { Causa } from './analyser/causa';
-import {AddMessageRouterRefactoring} from "./refactor/refactoring";
+import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
 import { CommunicationPattern } from "./model/communicationpattern";
 
 const httpOptions = {
@@ -66,7 +65,7 @@ export class AnalyserService {
   getSmellById(id: number) {
     return this.http.get<any>('assets/data/smells.json')
       .toPromise()
-      .then(res => (<Smell[]>res.data).find(smell => 5 == 5 ))//smell.id === id))
+      .then(res => (<Smell[]>res.data).find(smell => 5 == 5))//smell.id === id))
   }
 
 
@@ -81,7 +80,7 @@ export class AnalyserService {
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to hav ethe history of the analysis.
           this.clearSmells(); // removed the smell in the graph view
-          
+
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
@@ -103,27 +102,51 @@ export class AnalyserService {
   buildAnalysedNodeFromJson(data: Object) {
     var anode: ANode = new ANode(data['name']);
 
-    data['smells'].forEach((smell) => {
-      var s: Smell = new Smell(smell.name);
+    data['smells'].forEach((smellJson) => {
+      let smell: Smell = new Smell(smellJson.name);
 
-      smell['cause'].forEach((causa) => {
-        var source = this.gs.getGraph().findNodeByName(causa['source']);
-        var target = this.gs.getGraph().findNodeByName(causa['target']);
+      smellJson['cause'].forEach((cause) => {
+        var source = this.gs.getGraph().findNodeByName(cause['source']);
+        var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-
-        var c: Causa = new Causa(link);
-        s.addCause(c);
-        let r = new AddMessageRouterRefactoring(this.gs.getGraph(), link);
-        s.addRefactoring(r);
+        smell.addLinkBasedCause(link);
       });
-      // if (smell['refactorings']) {
-      //   smell['refactorings'].forEach((ref) => {
-      //     let r = new AddMessageRouterRefactoring(this.gs.getGraph(), )
-      //     s.addRefactoring(ref);
-      //   });
-      // }
-      anode.addSmell(s);
-    });
+
+      
+
+        // if (smell['refactorings']) {
+      smellJson['refactorings'].forEach((refactoring) => {
+            let refactoringName = refactoring['name'];
+            let refactoringAction;
+            switch (refactoringName) {
+              case "Add Message Router":
+                refactoringAction = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
+                break;
+              case "Add Message Broker":
+                refactoringAction = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
+                break;
+              case "Add Service Discovery":
+                refactoringAction = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
+                break;
+              case "Add Circuit Breaker":
+                refactoringAction = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
+                break;
+              case "Use Timeouts":
+                refactoringAction = null;// new UseTimeoutRefactoring(this.gs.getGraph(), smell);
+                break;
+              case "Merge services":
+                refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell)
+                break;
+                  // refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell.getLinkBasedCauses());
+              default:
+                break;
+            }
+            if (refactoringAction)
+              smell.addRefactoring(refactoringAction);
+          });
+  
+        anode.addSmell(smell);
+      });
     return anode;
   }
 

@@ -2,16 +2,8 @@
     "name": "hello-world",
     "nodes": [
         {
-            "name": "shipping",
-            "type": "service"
-        },
-        {
             "name": "order_db",
             "type": "database"
-        },
-        {
-            "name": "order",
-            "type": "service"
         },
         {
             "name": "rabbitmq",
@@ -22,52 +14,31 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
+        },
+        {
+            "name": "Data manager",
+            "type": "service"
         }
     ],
     "links": [
         {
-            "source": "shipping",
+            "source": "Data manager",
             "target": "order_db",
             "type": "runtime"
-        },
-        {
-            "source": "shipping",
-            "target": "rabbitmq",
-            "type": "runtime"
-        },
-        {
-            "source": "shipping",
-            "target": "order_db",
-            "type": "deploymenttime"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "rabbitmq",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "type": "deploymenttime"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "type": "deploymenttime"
         },
         {
             "source": "gateway",
-            "target": "shipping",
+            "target": "Data manager",
+            "type": "runtime"
+        },
+        {
+            "source": "Data manager",
+            "target": "rabbitmq",
+            "type": "runtime"
+        },
+        {
+            "source": "Data manager",
+            "target": "Data manager",
             "type": "runtime"
         }
     ],
@@ -76,8 +47,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "order",
-                "gateway"
+                "gateway",
+                "Data manager"
             ]
         }
     ]

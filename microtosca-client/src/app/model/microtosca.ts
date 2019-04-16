@@ -42,6 +42,7 @@ declare module 'jointjs' {
             class SquadGroup extends Group {
             }
             class RunTimeLink extends joint.dia.Link {
+                getSource();
             }
             class DeploymentTimeLink extends joint.dia.Link {
             }
@@ -169,7 +170,6 @@ joint.dia.Element.define('microtosca.Service', {
             this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
             this.attr('wsi/visibility', 'hidden');
             this.attr('NoApiGateway/visibility', 'hidden');
-            console.log("Resetted smelles");
         },
         _hideSmell(smell: Smell) {
             this.attr(`${smell.name}/visibility`, 'hidden');
@@ -350,7 +350,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             return this.attributes.smells;
         },
         setName: function (text) {
-            console.log(this.attr());
             return this.attr('label/text', text || '');
         },
         setConcreteType: function (text) {
@@ -364,7 +363,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             // this.attr('sp/visibility', 'hidden');
         },
         addSmell: function (smell: Smell) {
-            console.log(smell);
         },
         showIcons: function () {
             this.attr('delete/visibility', 'visible')
@@ -503,6 +501,8 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             this.attr('minimize/visibility', 'hidden')
         },
     });
+
+
 joint.dia.Link.define('microtosca.RunTimeLink', {
     attrs: {
         line: {
@@ -537,7 +537,8 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 'fill': 'none',
                 'pointer-events': 'none'
             }
-        }]
+        }],
+       
     });
 
 // MicroTosca DeployemntTime Link
@@ -591,11 +592,10 @@ namespace CustomViews {
         }
 
         render() {
-            console.log("CALLED RENDER FUNCTION");
             super.render();
-            this.model.prop('smells').forEach(smell => {
-                console.log(smell);
-            });
+            // this.model.prop('smells').forEach(smell => {
+            //     console.log(smell);
+            // });
 
             // var model = this.model;
             // var sections = model.prop('sections');

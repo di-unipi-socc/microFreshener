@@ -1,38 +1,38 @@
 
-import {Causa} from "./causa";
-import {IRefactoring} from "../refactor/irefactoring";
+import {Refactoring} from "../refactor/refactoring";
+import * as joint from 'jointjs';
 
 export class Smell {
 
     name: string;
-    refactorings: IRefactoring[];
-    cause:Causa[];
+    refactorings: Refactoring[];
+    linksCause:joint.shapes.microtosca.RunTimeLink[];
 
     constructor(name:string) {
         this.name = name;
-        this.cause = [];
+        this.linksCause = [];
         this.refactorings = [];
     }
 
-    addCause(causa:Causa){
-        this.cause.push(causa);
+    addLinkBasedCause(link){
+        this.linksCause.push(link);
     }
 
-    getCause(){
-        return this.cause;
+    getLinkBasedCauses(){
+        return this.linksCause;
     }
 
-    addRefactoring(refactoring:IRefactoring){
+    addRefactoring(refactoring:Refactoring){
         this.refactorings.push(refactoring);
     }
     
-    getRefactorings(){
+    getRefactorings():Refactoring[]{
         return this.refactorings;
     }
 
     getDescription():string{
         var descr = "";
-        this.cause.forEach(causa=>{
+        this.getLinkBasedCauses().forEach(causa=>{
             descr +=  `${causa['type']} interaction from  ${causa['source']} to ${causa['target']} \n`;
         })
         return descr;

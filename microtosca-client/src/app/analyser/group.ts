@@ -31,7 +31,7 @@ export class AGroup {
         data['smells'].forEach((smell) => {
             var s: Smell = new Smell(smell.name);
             smell['cause'].forEach((causa) => {
-                s.addCause(causa);
+                s.addLinkBasedCause(causa);
             });
             if (smell['refactorings']) {
                 smell['refactorings'].forEach((ref) => {
