@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
-import { Smell } from '../analyser/smell';
+import { SmellObject } from '../analyser/smell';
 import { AddMessageRouterRefactoring } from '../refactor/refactoring';
 import { IRefactoring } from '../refactor/irefactoring';
 
@@ -17,7 +17,7 @@ export class DialogSmellComponent implements OnInit {
   selectedAction: Object = {};
 
   jointNodeModel;
-  smell: Smell;
+  smell: SmellObject;
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService, ) {
     this.actions = [
@@ -30,7 +30,7 @@ export class DialogSmellComponent implements OnInit {
 
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
-      this.smell = <Smell>this.config.data.selectedsmell;
+      this.smell = <SmellObject>this.config.data.selectedsmell;
       
       this.smell.getRefactorings().forEach(refactoring => {
         this.actions.push({"label": refactoring.getName(), "value": refactoring});

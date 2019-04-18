@@ -41,15 +41,15 @@ def graph_analysis(request):
     Analyse all the nodes
     """
     if request.method == 'GET':
-        # get the principle to check graph/analysis?principles=p1,p1,p2
-        principles = request.GET.get('principles').split(',')
-        print(principles)
+        # get the principle to check graph/analysis?smells=id1,id2, idn2
+        smells = request.GET.get('smells').split(',')
+        print(smells)
         mmodel = None
         if(os.path.isfile(model_file_path)):
             mmodel = loader.load(model_file_path)
             builder = AnalyserBuilder(mmodel)
-            for principle in principles:
-                builder.add_smells_related_to_principle(principle)
+            for smell in smells:
+                builder.add_smell(int(smell))
             analyser = builder.build()
             res = analyser.run()
             #print(res)
@@ -85,7 +85,9 @@ def graph(request):
             elif (ex == "sockshop"):
                 model_path = os.path.join(examples_path, "sockshop.json")
             elif (ex == "helloworld"):
-                model_path = os.path.join(examples_path, "helloworld.json")
+                # model_path = os.path.join(examples_path, "helloworld.json")
+                model_path = os.path.join(examples_path, "helloworld.yml")
+                loader = YMLLoader()
 
         # return the json file
         mmodel = None

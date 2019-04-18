@@ -20,7 +20,7 @@ export class Graph extends joint.dia.Graph {
         return this.name;
     }
 
-    getNode(name: string): joint.shapes.microtosca.Node {
+    getNode(name: string| joint.dia.Element): joint.shapes.microtosca.Node {
         for (let node of this.getElements()) {
             if ((<joint.shapes.microtosca.Node>node).getName() == name)
                 return <joint.shapes.microtosca.Node>node;
@@ -117,6 +117,8 @@ export class Graph extends joint.dia.Graph {
         return g;
     }
 
+    
+
     addService(name: string): joint.shapes.microtosca.Service {
         let service = new joint.shapes.microtosca.Service();
         service.setName(name);
@@ -156,6 +158,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
+      
         let alredyExistingLink = this.getLinkFromSourceToTarget(source, target);
         if (alredyExistingLink)
             return alredyExistingLink;
@@ -164,6 +167,8 @@ export class Graph extends joint.dia.Graph {
                 source: { id: source.id },
                 target: { id: target.id },
             });
+         //TODO: set teimeout if the relationship is timeotud
+            // link.setTimedout(value:boolean){
             this.addCell(link);
             return link;
         }
@@ -226,10 +231,13 @@ export class Graph extends joint.dia.Graph {
                 this.addCommunicationPattern(node.name, concrete_type);
             }
             else
-                // TODO: thorow an exception
-                console.log("ERROR: node type not recognized");
+                throw new Error(`Node type of ${node.name} not recognized`);
         });
         json['links'].forEach((link) => {
+            if(link.timeout)
+                console.log("TMIMEOTUR");
+            else
+                console.log("ALKDJA");
             if (link.type == "deploymenttime")
                 this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
             else if (link.type = "runtime")
@@ -262,7 +270,6 @@ export class Graph extends joint.dia.Graph {
                 dnode['ctype'] = (<joint.shapes.microtosca.CommunicationPattern>node).getConcreteType();
             }
             else
-                // TODO: throw an exception
                 throw new Error(`Node type of ${dnode} not recognized`);
             data['nodes'].push(dnode);
         })

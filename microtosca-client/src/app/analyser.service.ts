@@ -9,7 +9,9 @@ import { AGroup } from "./analyser/group";
 
 import { GraphService } from './graph.service';
 import { Principle } from './model/principles';
-import { Smell } from './analyser/smell';
+import { Smell } from './model/smell';
+import { SmellObject } from './analyser/smell';
+
 import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
 import { CommunicationPattern } from "./model/communicationpattern";
 
@@ -47,7 +49,7 @@ export class AnalyserService {
   getPrinciplesToAnalyse() {
     return this.http.get<any>('assets/data/principles.json')
       .toPromise()
-      .then(res => (<Principle[]>res.data).filter(principle => principle.id == 2 || principle.id == 3 || principle.id == 4))
+      .then(res => (<Principle[]>res.data).filter(principle => principle.id != 1))
   }
 
   getPrinciplesAndSmells() {
@@ -65,20 +67,22 @@ export class AnalyserService {
   getSmellById(id: number) {
     return this.http.get<any>('assets/data/smells.json')
       .toPromise()
-      .then(res => (<Smell[]>res.data).find(smell => 5 == 5))//smell.id === id))
+      .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
 
-  runRemoteAnalysis(principles: string[]): Observable<Boolean> {
-    const params = new HttpParams().set('principles', principles.join()); // principles to be analysed: principles separated by commma
+  runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
+    let smells_ids:number[] = smells.map(smell => smell.id);
+    console.log(smells_ids);
+    const params = new HttpParams().set('smells', smells_ids.join());
 
-    // TODO: the analysi should send allso the ingore once, ingore always smell for the nodes.
-    // Myabe instead of a get is s POST operation.
+    // TODO: the analysis should send all the ingore once, ingore always smell for the nodes.
+    // Maybe instead of a get is s POST operation.
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
           this.analysednodes = [];
-          // TODO: saved the analysed node ?? in order to hav ethe history of the analysis.
+          // TODO: saved the analysed node ?? in order to have the history of the analysis.
           this.clearSmells(); // removed the smell in the graph view
 
           response['nodes'].forEach((node) => {
@@ -103,7 +107,7 @@ export class AnalyserService {
     var anode: ANode = new ANode(data['name']);
 
     data['smells'].forEach((smellJson) => {
-      let smell: Smell = new Smell(smellJson.name);
+      let smell: SmellObject = new SmellObject(smellJson.name);
 
       smellJson['cause'].forEach((cause) => {
         var source = this.gs.getGraph().findNodeByName(cause['source']);
@@ -112,41 +116,39 @@ export class AnalyserService {
         smell.addLinkBasedCause(link);
       });
 
-      
-
-        // if (smell['refactorings']) {
+      // if (smell['refactorings']) {
       smellJson['refactorings'].forEach((refactoring) => {
-            let refactoringName = refactoring['name'];
-            let refactoringAction;
-            switch (refactoringName) {
-              case "Add Message Router":
-                refactoringAction = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
-                break;
-              case "Add Message Broker":
-                refactoringAction = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
-                break;
-              case "Add Service Discovery":
-                refactoringAction = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
-                break;
-              case "Add Circuit Breaker":
-                refactoringAction = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
-                break;
-              case "Use Timeouts":
-                refactoringAction = null;// new UseTimeoutRefactoring(this.gs.getGraph(), smell);
-                break;
-              case "Merge services":
-                refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell)
-                break;
-                  // refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell.getLinkBasedCauses());
-              default:
-                break;
-            }
-            if (refactoringAction)
-              smell.addRefactoring(refactoringAction);
-          });
-  
-        anode.addSmell(smell);
+        let refactoringName = refactoring['name'];
+        let refactoringAction;
+        switch (refactoringName) {
+          case "Add Message Router":
+            refactoringAction = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
+            break;
+          case "Add Message Broker":
+            refactoringAction = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
+            break;
+          case "Add Service Discovery":
+            refactoringAction = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
+            break;
+          case "Add Circuit Breaker":
+            refactoringAction = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
+            break;
+          case "Use Timeouts":
+            refactoringAction = null;// new UseTimeoutRefactoring(this.gs.getGraph(), smell);
+            break;
+          case "Merge services":
+            refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell)
+            break;
+          // refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell.getLinkBasedCauses());
+          default:
+            break;
+        }
+        if (refactoringAction)
+          smell.addRefactoring(refactoringAction);
       });
+
+      anode.addSmell(smell);
+    });
     return anode;
   }
 

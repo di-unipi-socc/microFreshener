@@ -1,5 +1,4 @@
-import { Smell } from './smell';
-
+import { SmellObject } from './smell';
 
 /**
  * Analysed group. Contains the violated principles of a group-based smell
@@ -7,14 +6,14 @@ import { Smell } from './smell';
 export class AGroup {
 
     name: string; // name of the group
-    smells: Smell[];
+    smells: SmellObject[];
 
     constructor(name: string) {
         this.name = name;
         this.smells = [];
     }
 
-    addSmell(smell: Smell) {
+    addSmell(smell: SmellObject) {
         this.smells.push(smell);
     }
 
@@ -29,9 +28,9 @@ export class AGroup {
     static fromJSON(data: string) {
         var agroup: AGroup = new AGroup(data['name']);
         data['smells'].forEach((smell) => {
-            var s: Smell = new Smell(smell.name);
-            smell['cause'].forEach((causa) => {
-                s.addLinkBasedCause(causa);
+            var s: SmellObject = new SmellObject(smell.name);
+            smell['cause'].forEach((node_name) => {
+                s.addNodeBasedCuase(node_name);
             });
             if (smell['refactorings']) {
                 smell['refactorings'].forEach((ref) => {

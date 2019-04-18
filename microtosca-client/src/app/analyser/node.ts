@@ -1,4 +1,4 @@
-import { Smell } from './smell';
+import { SmellObject } from './smell';
 
 /**
  * Analysed node. Contains the violated principles of the nodes
@@ -6,34 +6,34 @@ import { Smell } from './smell';
 export class ANode {
 
     name: string;
-    smells: Smell[];
+    smells: SmellObject[];
 
-    constructor(name:string) {
+    constructor(name: string) {
         this.name = name;
         this.smells = [];
     }
-   
-    addSmell(smell:Smell){
+
+    addSmell(smell: SmellObject) {
         this.smells.push(smell);
     }
 
-    getSmells(){
+    getSmells() {
         return this.smells;
     }
 
-    hasSmells():boolean{
+    hasSmells(): boolean {
         return this.smells.length > 0;
     }
 
-    static fromJSON(data:string){
+    static fromJSON(data: string) {
         var anode: ANode = new ANode(data['name']);
-        data['smells'].forEach((smell)=>{
-            var s:Smell = new Smell(smell.name);
-            smell['cause'].forEach((causa) =>{
+        data['smells'].forEach((smell) => {
+            var s: SmellObject = new SmellObject(smell.name);
+            smell['cause'].forEach((causa) => {
                 s.addLinkBasedCause(causa);
             });
-            if(smell['refactorings']){
-                smell['refactorings'].forEach((ref) =>{
+            if (smell['refactorings']) {
+                smell['refactorings'].forEach((ref) => {
                     s.addRefactoring(ref);
                 });
             }

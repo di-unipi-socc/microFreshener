@@ -1,6 +1,5 @@
 export interface Smell {
-    id?:number;
-    principle?:string;
+    id?: number;
     name?: string;
     descrition?: string;
 }

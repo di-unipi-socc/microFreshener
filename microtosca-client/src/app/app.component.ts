@@ -94,18 +94,17 @@ export class AppComponent {
         })
       })
 
-    // this.as.analysedgroups.forEach((group)=>{
-    //     let g = this.gs.getGraph().getGroup(group.name);
-    //     group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
-    //       smell.getCause().forEach(name=>{
-    //         console.log(name);
-    //         let node = this.gs.getGraph().getNode(<string>name);
-    //         node.addSmell(smell);
-    //       })
-    //       g.addSmell(smell);
-    //     })
-    //     console.log(g);
-    //   })    
+    this.as.analysedgroups.forEach((group)=>{
+        let g = this.gs.getGraph().getGroup(group.name);
+        group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
+          smell.getNodeBasedCauses().forEach(node_name=>{
+            var node = this.gs.getGraph().getNode(node_name);
+            node.addSmell(smell);
+          })
+          g.addSmell(smell);
+        })
+        console.log(g);
+      })    
     
   }
 

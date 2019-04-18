@@ -1,30 +1,36 @@
+<div class="p-grid p-justify-center">
+  <div class="p-col-10">
+    <p-selectButton [options]="containerOrchestrators"
+      (onChange)="orchestratorSelect($event)"
+      [(ngModel)]="selectedOrchestrator" optionLabel="name">
+      <ng-template let-item>
+        <div style="padding: .5em 1em">
+          <img style="vertical-align: middle; margin-right: .5em"
+            src="assets/images/orchestrator/{{item.img}}" *ngIf="item.img"
+            height="40px" />
+          <span>{{item.name}}</span>
+        </div>
+      </ng-template>
+    </p-selectButton>
+  </div>
+</div>
 
-<p-selectButton [options]="containerOrchestrators"
-  (onChange)="orchestratorSelect($event)"
-  [(ngModel)]="selectedOrchestrator" optionLabel="name">
-  <ng-template let-item>
-    <div style="padding: .5em 1em">
-      <img style="vertical-align: middle; margin-right: .5em"
-        src="assets/images/orchestrator/{{item.img}}" *ngIf="item.img"
-        height="40px" />
-      <span>{{item.name}}</span>
-    </div>
-  </ng-template>
-</p-selectButton>
 
 
 <div>Selected Orchetrator: {{selectedOrchestrator.name}}</div>
 
 
-
-<!-- <p-tree [value]="principles" (onNodeSelect)="nodeSelect($event)"
-  selectionMode="checkbox" [(selection)]="selectedPrinciples"></p-tree> -->
-
-<div class="ui-g" style="width:250px;margin-bottom:10px">
-    <div class="ui-g-12"  *ngFor="let principle of principles" >
-      <p-checkbox name="group2" [value]="principle" label="{{principle.name}}" [(ngModel)]="selectedPrinciples" inputId="{{principle.name}}">
-      </p-checkbox>
-    </div>
+<div class="p-grid">
+  <div class="p-col-6" *ngFor="let principle of principles">
+    <p-card header="{{principle.name}}" [style]="{width: '500px'}"
+      styleClass="ui-card-shadow">
+      <div *ngFor="let smell of principle.smells">
+        <p-checkbox name="group2" [value]="smell" label="{{smell.name}}"
+          [(ngModel)]="selectedSmells" inputId="{{smell.name}}">
+        </p-checkbox>
+      </div>
+    </p-card>
+  </div>
 </div>
 
 <div class="p-grid p-justify-end">

@@ -4,7 +4,7 @@
             "id": 1,
             "principle": "Independent Deployability",
             "name": "Multiple Service In the same container",
-            "description": "Two or more services are puttedn in the same coanteinr"
+            "description": "Two or more services are packaged in the same container"
         },
         {
             "id": 2,

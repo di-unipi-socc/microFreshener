@@ -45,7 +45,6 @@ export class GraphService {
     return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);
   }
 
-
   // download the graph stored into the server
   downloadGraph(): Observable<string> {
     return this.http.get<string>(this.graphUrl).pipe(
@@ -58,7 +57,6 @@ export class GraphService {
     let params = new HttpParams().set("example", name);
     return this.http.get<string>(this.graphUrl, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
-      // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
 

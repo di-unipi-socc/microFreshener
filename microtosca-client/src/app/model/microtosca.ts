@@ -43,6 +43,8 @@ declare module 'jointjs' {
             }
             class RunTimeLink extends joint.dia.Link {
                 getSource();
+                setTimedout(boolean): void;
+                isTimedout():boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
             }
@@ -538,6 +540,12 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 'pointer-events': 'none'
             }
         }],
+        setTimedout:function(value:boolean){
+            console.log("setting TIMEOUT on interaction");
+        },
+        isTimedout: function(){
+            return false;
+        }
        
     });
 

@@ -5,7 +5,7 @@ import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
-import { Smell } from '../analyser/smell';
+import { SmellObject } from '../analyser/smell';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 
@@ -212,7 +212,7 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); 
             var model = cellview.model;
-            var smell: Smell = model.getSmell("EndpointBasedServiceInteractionSmell");
+            var smell: SmellObject = model.getSmell("EndpointBasedServiceInteractionSmell");
             
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
@@ -232,7 +232,7 @@ export class GraphEditorComponent implements OnInit {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("No ApGateway EVENT FIRED");
             var model = cellview.model;
-            var smell: Smell = model.getSmell("NoApiGateway");
+            var smell: SmellObject = model.getSmell("NoApiGateway");
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
                     model: model,
@@ -251,7 +251,7 @@ export class GraphEditorComponent implements OnInit {
             evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
             console.log("SHARED PERSISTENCY EVENT FIRED");
             var model = cellview.model;
-            var smell: Smell = model.getSmell("SharedPersistencySmell");
+            var smell: SmellObject = model.getSmell("SharedPersistencySmell");
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
                     model: model,
@@ -270,7 +270,7 @@ export class GraphEditorComponent implements OnInit {
             evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
             console.log("WOBBLY SERVICE INTERACTION EVENT FIRED");
             var model = cellview.model;
-            var smell: Smell = model.getSmell("WobblyServiceInteractionSmell");
+            var smell: SmellObject = model.getSmell("WobblyServiceInteractionSmell");
             const ref = this.dialogService.open(DialogSmellComponent, {
                 data: {
                     model: model,

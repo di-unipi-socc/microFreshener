@@ -5,8 +5,9 @@
             "name": "IndependentDeployability",
             "smells": [
                 {
+                    "id": 1,
                     "name": "Multiple Service In the same container",
-                    "description": "Two or more services are puttedn in the same coanteinr"
+                    "description": "Two or more services are packaged in the same container"
                 }
             ]
         },
@@ -15,10 +16,12 @@
             "name": "HorizontalScalability",
             "smells": [
                 {
+                    "id": 2,
                     "name": "No Api Gateway",
                     "description": ""
                 },
                 {
+                    "id": 3,
                     "name": "Endpoint-based Service Interactions",
                     "description": ""
                 }
@@ -29,6 +32,7 @@
             "name": "IsolateFailure",
             "smells": [
                 {
+                    "id": 4,
                     "name": "Wobbly service interactions",
                     "description": ""
                 }
@@ -39,14 +43,17 @@
             "name": "Decentralization",
             "smells": [
                 {
+                    "id": 5,
                     "name": "ESB misuse",
                     "description": ""
                 },
                 {
+                    "id": 6,
                     "name": "Shared Persistency",
                     "description": ""
                 },
                 {
+                    "id": 7,
                     "name": "Single Layer Team",
                     "description": ""
                 }

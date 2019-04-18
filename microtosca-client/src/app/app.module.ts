@@ -44,7 +44,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ToastModule} from 'primeng/toast';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {PickListModule} from 'primeng/picklist';
-
+import {CardModule} from 'primeng/card';
 
 
 @NgModule({
@@ -90,7 +90,8 @@ import {PickListModule} from 'primeng/picklist';
     ConfirmDialogModule,
     ToastModule,
     SelectButtonModule,
-    PickListModule
+    PickListModule,
+    CardModule
   ],
   providers: [
     MessageService
