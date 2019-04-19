@@ -1,267 +1,65 @@
-import { IRefactoring } from "./irefactoring";
-import { Graph } from "../model/graph";
-import * as joint from 'jointjs';
-import { SmellObject } from '../analyser/smell';
+import { Command } from '../invoker/icommand';
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand } from "./refactoringCommand"
 
 export class Refactoring {
-    name: string;
+    name: string
+    refactoringCommand: Command
 
-    constructor(name) {
+    constructor(name: string, command: Command) {
+        console.log("Creagin ",name);
         this.name = name;
+        this.refactoringCommand = command;
     }
 
-    getName() {
+    getName(){
         return this.name;
     }
 
-    setName(name: string) {
-        this.name = name;
+    getCommand(){
+        return this.refactoringCommand;
     }
-
-}
-export class AddMessageRouterRefactoring extends Refactoring implements IRefactoring {
-
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
-
-    addedSourceTargetRouters: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
-
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Add Message Router");
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetRouters = [];
-    }
-
-    execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let messageRouter = this.graph.addMessageRouter("prova");
-            this.graph.addRunTimeInteraction(sourceNode, messageRouter);
-            this.graph.addRunTimeInteraction(messageRouter, targetNode);
-            this.addedSourceTargetRouters.push([sourceNode, targetNode, messageRouter]);
-            link.remove();
-        }
-    }
-
-    unexecute() {
-        let len = this.addedSourceTargetRouters.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetRouters.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
-
-    }
-
-
 }
 
-export class AddMessageBrokerRefactoring extends Refactoring implements IRefactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
+export class AddMessageRouterRefactoring extends Refactoring {
 
-    addedSourceTargetbrokers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
-
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Add Message broker");
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetbrokers = [];
+    constructor(command: AddMessageRouterCommand) {
+        super("Add Message Router", command)
     }
+}
 
-    execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let messageRouter = this.graph.addMessageBroker("prova");
-            this.graph.addRunTimeInteraction(sourceNode, messageRouter);
-            this.graph.addRunTimeInteraction(targetNode, messageRouter);
-            this.addedSourceTargetbrokers.push([sourceNode, targetNode, messageRouter]);
-            link.remove();
-        }
-    }
+export class AddMessageBrokerRefactoring extends Refactoring {
 
-    unexecute() {
-        let len = this.addedSourceTargetbrokers.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetbrokers.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
+    constructor(command: AddMessageBrokerCommand) {
+        super("Add Message Broker", command)
     }
 
 }
 
-export class AddServiceDiscoveryRefactoring extends Refactoring implements IRefactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
+export class AddServiceDiscoveryRefactoring extends Refactoring {
 
-    addedSourceTargetServiceDiscoveries: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
-
-
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Add Service Discovery");
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetServiceDiscoveries = [];
+    constructor(command: AddServiceDiscoveryCommand) {
+        super("Add Service Discovery", command)
     }
-
-    execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let serviceDiscovery = this.graph.addServiceDiscovery("prova");
-            this.graph.addRunTimeInteraction(sourceNode, serviceDiscovery);
-            this.graph.addRunTimeInteraction(targetNode, serviceDiscovery);
-            this.addedSourceTargetServiceDiscoveries.push([sourceNode, targetNode, serviceDiscovery]);
-            link.remove();
-        }
-
-    }
-
-    unexecute() {
-        let len = this.addedSourceTargetServiceDiscoveries.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetServiceDiscoveries.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
-    }
-
 }
 
-export class AddCircuitBreakerRefactoring extends Refactoring implements IRefactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
+export class AddCircuitBreakerRefactoring extends Refactoring {
 
-    addedSourceTargetCircutBeakers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
+    constructor(command: AddCircuitBreakerCommand) {
 
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Add Circuit Breaker");
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetCircutBeakers = [];
+        super("Add Circui Breaker", command)
     }
-
-    execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let circuitBeaker = this.graph.addCircuitBreaker("prova");
-            this.graph.addRunTimeInteraction(sourceNode, circuitBeaker);
-            this.graph.addRunTimeInteraction(circuitBeaker, targetNode);
-            this.addedSourceTargetCircutBeakers.push([sourceNode, targetNode, circuitBeaker]);
-            link.remove();
-        }
-    }
-
-    unexecute() {
-        let len = this.addedSourceTargetCircutBeakers.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetCircutBeakers.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
-    }
-
 }
 
-export class UseTimeoutRefactoring extends Refactoring implements IRefactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
+export class UseTimeoutRefactoring extends Refactoring {
 
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Use Timeout");
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
+    constructor(command: UseTimeoutCommand) {
+        super("Use timeout", command)
     }
-
-    execute() {
-        this.links.forEach(link => {
-            link.setTimedout(true);
-        });
-    }
-
-    unexecute() {
-        this.links.forEach(link => {
-            link.setTimedout(false);
-        });
-    }
-
 }
 
-export class MergeServicesRefactoring extends Refactoring implements IRefactoring {
+export class MergeServicesRefactoring extends Refactoring {
 
-    incomingLinks: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
-    sharedDatabase: joint.shapes.microtosca.Node;
-
-    addedSourceTargetCircutBeakers = [];
-
-    constructor(graph: Graph, smell: SmellObject) {
-        super("Merge Services");
-        this.incomingLinks = smell.getLinkBasedCauses();
-        this.sharedDatabase = this.getDatabase();
-        this.graph = graph;
+    constructor(command: MergeServicesCommand) {
+        super("Merge Services", command)
     }
-
-    execute() {
-        let dbmanager = this.graph.addService("Data manager");
-        this.graph.addRunTimeInteraction(dbmanager, this.sharedDatabase);
-        
-        let nodes = this.getNodesAccessingDatabase();
-        nodes.forEach(nodeAccessDB=>{
-            let inbound = this.graph.getInboundNeighbors(nodeAccessDB);
-            let outbound = this.graph.getOutboundNeighbors(nodeAccessDB);
-            inbound.forEach(inboundNode =>{
-                this.graph.addRunTimeInteraction(inboundNode, dbmanager);
-            })
-            outbound.forEach(outboundNode =>{
-                this.graph.addRunTimeInteraction(dbmanager, outboundNode);
-            })
-            nodeAccessDB.remove();
-        })
-
-    }
-
-    unexecute() {
-        // tranform a link in a runtim link
-    }
-
-
-    getDatabase() {
-        if (this.incomingLinks.length > 0)
-            return <joint.shapes.microtosca.Node>this.incomingLinks[0].getTargetElement();
-        else
-            return null;
-    }
-
-    getNodesAccessingDatabase() {
-        let nodes = [];
-        this.incomingLinks.forEach(link => {
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            if (nodes.find(node => node.getName() === sourceNode.getName()) === undefined){
-                nodes.push(sourceNode);
-            }
-        })
-        return nodes;
-    }
-
-
-
-
 }

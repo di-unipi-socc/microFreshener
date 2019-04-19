@@ -3,8 +3,6 @@ import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { SmellObject } from '../analyser/smell';
-import { AddMessageRouterRefactoring } from '../refactor/refactoring';
-import { IRefactoring } from '../refactor/irefactoring';
 
 
 @Component({
@@ -33,7 +31,8 @@ export class DialogSmellComponent implements OnInit {
       this.smell = <SmellObject>this.config.data.selectedsmell;
       
       this.smell.getRefactorings().forEach(refactoring => {
-        this.actions.push({"label": refactoring.getName(), "value": refactoring});
+        console.log(refactoring.getName());
+        this.actions.push({"label": refactoring.getName(), "value": refactoring.getCommand()});
       })
     }
   }

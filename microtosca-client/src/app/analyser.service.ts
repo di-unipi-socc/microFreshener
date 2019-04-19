@@ -12,7 +12,9 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject } from './analyser/smell';
 
-import { MergeServicesRefactoring, UseTimeoutRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
+import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand } from "./refactor/refactoringCommand";
+
 import { CommunicationPattern } from "./model/communicationpattern";
 
 const httpOptions = {
@@ -122,22 +124,22 @@ export class AnalyserService {
         let refactoringAction;
         switch (refactoringName) {
           case "Add Message Router":
-            refactoringAction = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
             break;
           case "Add Message Broker":
-            refactoringAction = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new AddMessageBrokerRefactoring( new AddMessageBrokerCommand(this.gs.getGraph(), smell));
             break;
           case "Add Service Discovery":
-            refactoringAction = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new AddServiceDiscoveryRefactoring( new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
             break;
           case "Add Circuit Breaker":
-            refactoringAction = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new AddCircuitBreakerRefactoring( new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
             break;
           case "Use Timeouts":
-            refactoringAction = new UseTimeoutRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
             break;
           case "Merge services":
-            refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell)
+            refactoringAction = new MergeServicesRefactoring( new MergeServicesCommand(this.gs.getGraph(), smell));
             break;
           // refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell.getLinkBasedCauses());
           default:

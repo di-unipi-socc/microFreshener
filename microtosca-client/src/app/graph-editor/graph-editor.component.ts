@@ -13,8 +13,7 @@ import * as joint from 'jointjs';
 import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
-import {RefactoringsInvoker} from "../refactor/invoker";
-import {AddMessageRouterRefactoring} from "../refactor/refactoring";
+import {GraphInvoker} from "../invoker/invoker";
 
 @Component({
     selector: 'app-graph-editor',
@@ -27,12 +26,12 @@ export class GraphEditorComponent implements OnInit {
     _options = { width: 2000, height: 1500 };
 
     paper: joint.dia.Paper;
-    refactoringsInvoker:RefactoringsInvoker;
+    refactoringsInvoker:GraphInvoker;
 
     name: string; // name of the app
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-        this.refactoringsInvoker = new RefactoringsInvoker();
+        this.refactoringsInvoker = new GraphInvoker();
     }
 
     undoRefactoring(){
@@ -224,7 +223,7 @@ export class GraphEditorComponent implements OnInit {
             });
 
             ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
+                this.refactoringsInvoker.executeCommand(refactoringCommand);
             });
         })
 
@@ -243,7 +242,7 @@ export class GraphEditorComponent implements OnInit {
             });
 
             ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
+                this.refactoringsInvoker.executeCommand(refactoringCommand);
             });
         })
 
@@ -262,7 +261,7 @@ export class GraphEditorComponent implements OnInit {
             });
 
             ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
+                this.refactoringsInvoker.executeCommand(refactoringCommand);
             });
         })
 
@@ -279,8 +278,9 @@ export class GraphEditorComponent implements OnInit {
                 header: `Smell details`,
                 width: '50%'
             });
+            
             ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeRefactoring(refactoringCommand);
+                this.refactoringsInvoker.executeCommand(refactoringCommand);
             });
         })
     }

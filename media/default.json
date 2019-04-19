@@ -22,14 +22,6 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-        },
-        {
-            "name": "catalogue",
-            "type": "service"
-        },
-        {
-            "name": "catalogue_db",
-            "type": "database"
         }
     ],
     "links": [
@@ -43,12 +35,6 @@
             "source": "shipping",
             "target": "rabbitmq",
             "timeout": false,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
             "type": "runtime"
         },
         {
@@ -70,14 +56,9 @@
             "type": "runtime"
         },
         {
-            "source": "catalogue",
-            "target": "catalogue_db",
-            "type": "runtime"
-        },
-        {
             "source": "order",
-            "target": "catalogue",
-            "timeout": true,
+            "target": "shipping",
+            "timeout": false,
             "type": "runtime"
         }
     ],
