@@ -95,6 +95,14 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { inbound: true });
     }
 
+    getOutgoingLinks(node:joint.shapes.microtosca.Node){
+        return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { outbound: true });
+    }
+
+    getIngoingLinks(node:joint.shapes.microtosca.Node){
+        return  <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
+    }
+
     addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);

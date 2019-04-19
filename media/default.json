@@ -39,6 +39,12 @@
         },
         {
             "source": "order",
+            "target": "shipping",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "order",
             "target": "order_db",
             "timeout": false,
             "type": "runtime"
@@ -51,12 +57,6 @@
         },
         {
             "source": "gateway",
-            "target": "shipping",
-            "timeout": false,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
             "target": "shipping",
             "timeout": false,
             "type": "runtime"

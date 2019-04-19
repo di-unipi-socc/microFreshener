@@ -12,8 +12,8 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject } from './analyser/smell';
 
-import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand } from "./refactor/refactoringCommand";
+import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand } from "./refactor/refactoringCommand";
 
 import { CommunicationPattern } from "./model/communicationpattern";
 
@@ -75,7 +75,6 @@ export class AnalyserService {
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids:number[] = smells.map(smell => smell.id);
-    console.log(smells_ids);
     const params = new HttpParams().set('smells', smells_ids.join());
 
     // TODO: the analysis should send all the ingore once, ingore always smell for the nodes.
@@ -96,7 +95,7 @@ export class AnalyserService {
           response['groups'].forEach((group) => {
             this.analysedgroups.push(AGroup.fromJSON(group));
           });
-          console.log(this.analysedgroups);
+          // console.log(this.analysedgroups);
           return true;
         }),
         tap(_ => this.log(`Send analysis`),
@@ -109,16 +108,18 @@ export class AnalyserService {
     var anode: ANode = new ANode(data['name']);
 
     data['smells'].forEach((smellJson) => {
+      // console.log(smellJson);
       let smell: SmellObject = new SmellObject(smellJson.name);
 
       smellJson['cause'].forEach((cause) => {
+      
         var source = this.gs.getGraph().findNodeByName(cause['source']);
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
+        smell.addNodeBasedCuase(this.gs.getGraph().findNodeByName(anode.name))
       });
 
-      // if (smell['refactorings']) {
       smellJson['refactorings'].forEach((refactoring) => {
         let refactoringName = refactoring['name'];
         let refactoringAction;
@@ -141,7 +142,11 @@ export class AnalyserService {
           case "Merge services":
             refactoringAction = new MergeServicesRefactoring( new MergeServicesCommand(this.gs.getGraph(), smell));
             break;
-          // refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell.getLinkBasedCauses());
+          case "Split Database":
+            refactoringAction = new SplitDatabaseRefactoring(new SplitDatabaseCommand(this.gs.getGraph(), smell));
+            break;
+          case "Add Data Manager":
+            refactoringAction = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
           default:
             break;
         }

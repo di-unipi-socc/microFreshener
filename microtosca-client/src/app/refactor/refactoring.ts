@@ -1,12 +1,11 @@
 import { Command } from '../invoker/icommand';
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand } from "./refactoringCommand"
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand } from "./refactoringCommand"
 
 export class Refactoring {
     name: string
     refactoringCommand: Command
 
     constructor(name: string, command: Command) {
-        console.log("Creagin ",name);
         this.name = name;
         this.refactoringCommand = command;
     }
@@ -63,3 +62,18 @@ export class MergeServicesRefactoring extends Refactoring {
         super("Merge Services", command)
     }
 }
+
+export class SplitDatabaseRefactoring extends Refactoring {
+
+    constructor(command: SplitDatabaseCommand) {
+        super("Split Database", command)
+    }
+}
+
+export class AddDataManagerRefactoring extends Refactoring {
+
+    constructor(command: AddDataManagerCommand) {
+        super("Add Database Manager", command)
+    }
+}
+

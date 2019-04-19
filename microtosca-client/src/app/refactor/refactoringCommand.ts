@@ -2,6 +2,7 @@ import { Graph } from "../model/graph";
 import { SmellObject } from '../analyser/smell';
 import { Command } from "../invoker/icommand";
 import * as joint from 'jointjs';
+import { Smell } from '../model/smell';
 
 
 export class AddMessageRouterCommand implements Command {
@@ -186,58 +187,137 @@ export class UseTimeoutCommand implements Command {
 
 export class MergeServicesCommand implements Command {
 
-    incomingLinks: joint.shapes.microtosca.RunTimeLink[];
+    smell: SmellObject;
     graph: Graph;
-    sharedDatabase: joint.shapes.microtosca.Node;
+    sharedDatabase: joint.shapes.microtosca.Database;
+    mergedService: joint.shapes.microtosca.Service
 
-    addedSourceTargetCircutBeakers = [];
+    deleteServices: joint.shapes.microtosca.Service[];
+
+    serviceIngoingOutgoing: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node[], joint.shapes.microtosca.Node[]][];
 
     constructor(graph: Graph, smell: SmellObject) {
-        this.incomingLinks = smell.getLinkBasedCauses();
-        this.sharedDatabase = this.getDatabase();
+        this.smell = smell;
         this.graph = graph;
+        this.sharedDatabase = smell.getNodeBasedCauses()[0];
+        this.deleteServices = []
+        this.serviceIngoingOutgoing  =[];
     }
 
     execute() {
-        let dbmanager = this.graph.addService("Data manager");
-        this.graph.addRunTimeInteraction(dbmanager, this.sharedDatabase);
+        this.mergedService = this.graph.addService("Merged Service");
+        this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
 
-        let nodes = this.getNodesAccessingDatabase();
-        nodes.forEach(nodeAccessDB => {
-            let inbound = this.graph.getInboundNeighbors(nodeAccessDB);
-            let outbound = this.graph.getOutboundNeighbors(nodeAccessDB);
-            inbound.forEach(inboundNode => {
-                this.graph.addRunTimeInteraction(inboundNode, dbmanager);
+        this.smell.getLinkBasedCauses().forEach(link => {
+            let nodeAccessDB = <joint.shapes.microtosca.Node>link.getSourceElement();
+            let outgoing:joint.shapes.microtosca.Node[] = this.graph.getOutboundNeighbors(nodeAccessDB);
+            let ingoing:joint.shapes.microtosca.Node[] = this.graph.getInboundNeighbors(nodeAccessDB);
+
+            this.serviceIngoingOutgoing.push([nodeAccessDB, ingoing, outgoing])
+           
+            outgoing.forEach(node=>{
+                this.graph.addRunTimeInteraction(this.mergedService, node)
             })
-            outbound.forEach(outboundNode => {
-                this.graph.addRunTimeInteraction(dbmanager, outboundNode);
+
+            ingoing.forEach(node=>{
+                this.graph.addRunTimeInteraction(node,this.mergedService)
             })
-            nodeAccessDB.remove();
+           
+            nodeAccessDB.remove();  
         })
-
     }
 
     unexecute() {
-        // tranform a link in a runtim link
-    }
-
-
-    getDatabase() {
-        if (this.incomingLinks.length > 0)
-            return <joint.shapes.microtosca.Node>this.incomingLinks[0].getTargetElement();
-        else
-            return null;
-    }
-
-    getNodesAccessingDatabase() {
-        let nodes = [];
-        this.incomingLinks.forEach(link => {
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            if (nodes.find(node => node.getName() === sourceNode.getName()) === undefined) {
-                nodes.push(sourceNode);
-            }
-        })
-        return nodes;
+       //TODO: executemethod donot work
+        this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing=>{
+            let service = this.graph.addService(nodeingoingOutgoing[0].getName());
+            nodeingoingOutgoing[1].forEach(node=>{
+                this.graph.addRunTimeInteraction(node, service);
+            })
+            nodeingoingOutgoing[2].forEach(node=>{
+                this.graph.addRunTimeInteraction(service, node);
+            })
+            this.graph.addRunTimeInteraction(service,this.sharedDatabase);
+        });
+        this.mergedService.remove()
+        
     }
 
 }
+
+export class SplitDatabaseCommand implements Command {
+
+    graph: Graph;
+    smell: SmellObject;
+
+    sharedDatabase: joint.shapes.microtosca.Database;
+    splittedDatabase: joint.shapes.microtosca.Database[];
+
+
+    constructor(graph: Graph, smell: SmellObject) {
+        this.smell = smell;
+        this.graph = graph;
+        this.sharedDatabase = smell.getNodeBasedCauses()[0];
+        this.splittedDatabase = [];
+    }
+
+
+    execute() {
+
+        this.smell.getLinkBasedCauses().forEach(link => {
+            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
+            let newDB = this.graph.addDatabase("DB " + sourceNode.getName());
+            this.splittedDatabase.push(newDB);
+            link.target(newDB);
+        })
+        this.sharedDatabase.remove();
+    }
+
+    unexecute() {
+        this.sharedDatabase = this.smell.getNodeBasedCauses()[0];
+        this.graph.addCell(this.sharedDatabase);
+        this.smell.getLinkBasedCauses().forEach(link => {
+            link.target(this.sharedDatabase);
+        })
+
+        this.splittedDatabase.forEach(db => db.remove())
+
+    }
+
+}
+
+
+export class AddDataManagerCommand implements Command {
+
+    graph: Graph;
+    smell: SmellObject;
+
+    sharedDB: joint.shapes.microtosca.Database;
+    databaseManager: joint.shapes.microtosca.Service;
+
+    constructor(graph: Graph, smell: SmellObject) {
+        this.smell = smell;
+        this.graph = graph;
+        this.sharedDB = this.smell.getNodeBasedCauses()[0];
+    }
+
+    execute() {
+        this.databaseManager = this.graph.addService("DB manager");
+
+        this.smell.getLinkBasedCauses().forEach(link => {
+            link.target(this.databaseManager);
+        });
+
+        this.graph.addRunTimeInteraction(this.databaseManager, this.sharedDB);
+    }
+
+    unexecute() {
+        this.smell.getLinkBasedCauses().forEach(link => {
+            link.target(this.sharedDB);
+        });
+        this.databaseManager.remove();
+    }
+
+}
+
+
