@@ -12,7 +12,7 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject } from './analyser/smell';
 
-import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
+import { MergeServicesRefactoring, UseTimeoutRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring } from "./refactor/refactoring";
 import { CommunicationPattern } from "./model/communicationpattern";
 
 const httpOptions = {
@@ -134,7 +134,7 @@ export class AnalyserService {
             refactoringAction = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
             break;
           case "Use Timeouts":
-            refactoringAction = null;// new UseTimeoutRefactoring(this.gs.getGraph(), smell);
+            refactoringAction = new UseTimeoutRefactoring(this.gs.getGraph(), smell);
             break;
           case "Merge services":
             refactoringAction = new MergeServicesRefactoring(this.gs.getGraph(), smell)

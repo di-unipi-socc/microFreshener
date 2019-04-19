@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { Smell } from '../analyser/smell';
+import { SmellObject } from '../analyser/smell';
 
 // extend joint.shapes namespace
 declare module 'jointjs' {
@@ -8,12 +8,12 @@ declare module 'jointjs' {
             class Node extends joint.dia.Element {
                 setName(name): void;
                 getName(): string;
-                addSmell(smell: Smell): void;
-                getSmell(name: string): Smell;
-                getSmells(): Smell[];
+                addSmell(smell: SmellObject): void;
+                getSmell(name: string): SmellObject;
+                getSmells(): SmellObject[];
                 resetSmells(): void
-                addIgnoreOnceSmell(smell: Smell): void;
-                addIgnoreAlwaysSmell(smell: Smell): void;
+                addIgnoreOnceSmell(smell: SmellObject): void;
+                addIgnoreAlwaysSmell(smell: SmellObject): void;
                 showIcons(): void;
                 hideIcons(): void;
             }
@@ -28,11 +28,11 @@ declare module 'jointjs' {
             class Group extends joint.dia.Element {
                 setName(name): void;
                 getName(): string;
-                addSmell(smell: Smell): void;
-                getSmell(name: string): Smell;
-                getSmells(): Smell[];
+                addSmell(smell: SmellObject): void;
+                getSmell(name: string): SmellObject;
+                getSmells(): SmellObject[];
                 resetSmells(): void
-                showIcons: void;
+                showIcons(): void;
                 hideIcons(): void;
             }
             class EdgeGroup extends Group {
@@ -44,9 +44,11 @@ declare module 'jointjs' {
             class RunTimeLink extends joint.dia.Link {
                 getSource();
                 setTimedout(boolean): void;
-                isTimedout():boolean;
+                hasTimeout(): boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
+                hasTimeout():boolean
+                setTimedout(boolean): void;
             }
         }
     }
@@ -139,11 +141,11 @@ joint.dia.Element.define('microtosca.Service', {
             tagName: "path",
             selector: "delete"
         }],
-        addIgnoreOnceSmell(smell: Smell) {
+        addIgnoreOnceSmell(smell: SmellObject) {
             this._hideSmell(smell);
             this.attributes.ignoreOnceSmells.push(smell);
         },
-        addIgnoreAlwaysSmell(smell: Smell) {
+        addIgnoreAlwaysSmell(smell: SmellObject) {
             this._hideSmell(smell);
             this.attributes.ignoreAlwaysSmells.push(smell);
         },
@@ -173,10 +175,10 @@ joint.dia.Element.define('microtosca.Service', {
             this.attr('wsi/visibility', 'hidden');
             this.attr('NoApiGateway/visibility', 'hidden');
         },
-        _hideSmell(smell: Smell) {
+        _hideSmell(smell: SmellObject) {
             this.attr(`${smell.name}/visibility`, 'hidden');
         },
-        addSmell: function (smell: Smell) {
+        addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
             if (smell.name == "EndpointBasedServiceInteractionSmell") {
                 this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
@@ -273,7 +275,7 @@ joint.dia.Element.define('microtosca.Database', {
             this.attributes.smells = [];
             this.attr('sp/visibility', 'hidden');
         },
-        addSmell: function (smell: Smell) {
+        addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
             if (smell.name == "SharedPersistencySmell")
                 this.attr('sp/visibility', 'visible');
@@ -364,7 +366,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             this.attributes.smells = [];
             // this.attr('sp/visibility', 'hidden');
         },
-        addSmell: function (smell: Smell) {
+        addSmell: function (smell: SmellObject) {
         },
         showIcons: function () {
             this.attr('delete/visibility', 'visible')
@@ -418,7 +420,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         getExternalUserName: function () {
             return this.attr('label/text');
         },
-        addSmell: function (smell: Smell) {
+        addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
         },
         getSmell: function (name: string) {
@@ -426,7 +428,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
                 return name === smell.name;
             });
         },
-        getSmells: function (): Smell[] {
+        getSmells: function (): SmellObject[] {
             return this.attributes.smells;
         },
         resetSmells: function (): void {
@@ -517,12 +519,21 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 d: 'M 10 -5 0 0 10 5 z'
             }
         },
+        clock: {
+            refCx: '50%',
+            refCy: '50%',
+            refR: '50%',
+            strokeWidth: 8,
+            stroke: '#74F2CE',
+            fill: '#FFFFFF'
+        },
         wrapper: {
             connection: true,
             strokeWidth: 10,
             strokeLinejoin: 'round'
         }
     },
+    timeout: false
 }, {
         markup: [{
             tagName: 'path',
@@ -533,6 +544,9 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 'stroke': 'transparent'
             }
         }, {
+            tagName: "circle",
+            selector: 'clock'
+        }, {
             tagName: 'path',
             selector: 'line',
             attributes: {
@@ -540,13 +554,57 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 'pointer-events': 'none'
             }
         }],
-        setTimedout:function(value:boolean){
-            console.log("setting TIMEOUT on interaction");
+        setTimedout: function (value: boolean) {
+            this.timeout = value;
+            
+            if (this.timeout) 
+                this._showTimeout();
+            else
+                this._removeTimeout()
+
         },
-        isTimedout: function(){
-            return false;
+        hasTimeout: function () {
+            return this.timeout;
+        },
+        _showTimeout: function () {
+            console.log("Showing TIMEOUT on interaction");
+            this.insertLabel(0, {
+                markup: [
+                    {
+                        tagName: 'circle',
+                        selector: 'body'
+                    }, {
+                        tagName: 'text',
+                        selector: 'label'
+                    },
+
+                ],
+                attrs: {
+                    label: {
+                        text: 'T',
+                        fill: '#000000',
+                        fontSize: 14,
+                        textAnchor: 'middle',
+                        yAlignment: 'middle',
+                        pointerEvents: 'none'
+                    },
+                    body: {
+                        ref: 'label',
+                        fill: '#ffffff',
+                        stroke: '#000000',
+                        strokeWidth: 1,
+                        refR: 1,
+                        refCx: -10,
+                        refCy: 0
+                    },
+                }
+            });
+        },
+        _removeTimeout:function(){
+            console.log("removing TIMEOUT on interaction");
+            this.removeLabel(0);
         }
-       
+
     });
 
 // MicroTosca DeployemntTime Link
@@ -568,7 +626,8 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', {
             strokeWidth: 10,
             strokeLinejoin: 'round'
         }
-    }
+    },
+    timeout:false
 }, {
         markup: [{
             tagName: 'path',
@@ -585,8 +644,16 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', {
                 'fill': 'none',
                 'pointer-events': 'none'
             }
-        }]
-    });
+        }],
+        
+        setTimedout: function (value: boolean) {
+            this.timeout = value;
+        },
+        hasTimeout: function () {
+            return this.timeout;
+        },
+    }
+);
 
 
 // demonstrate creating a custom dummy view for the app.CustomRect

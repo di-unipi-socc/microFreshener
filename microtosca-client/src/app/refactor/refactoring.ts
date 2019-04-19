@@ -1,7 +1,7 @@
 import { IRefactoring } from "./irefactoring";
 import { Graph } from "../model/graph";
 import * as joint from 'jointjs';
-import { Smell } from '../analyser/smell';
+import { SmellObject } from '../analyser/smell';
 
 export class Refactoring {
     name: string;
@@ -26,7 +26,7 @@ export class AddMessageRouterRefactoring extends Refactoring implements IRefacto
 
     addedSourceTargetRouters: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
-    constructor(graph: Graph, smell: Smell) {
+    constructor(graph: Graph, smell: SmellObject) {
         super("Add Message Router");
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
@@ -67,7 +67,7 @@ export class AddMessageBrokerRefactoring extends Refactoring implements IRefacto
 
     addedSourceTargetbrokers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
-    constructor(graph: Graph, smell: Smell) {
+    constructor(graph: Graph, smell: SmellObject) {
         super("Add Message broker");
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
@@ -107,7 +107,7 @@ export class AddServiceDiscoveryRefactoring extends Refactoring implements IRefa
     addedSourceTargetServiceDiscoveries: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
 
-    constructor(graph: Graph, smell: Smell) {
+    constructor(graph: Graph, smell: SmellObject) {
         super("Add Service Discovery");
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
@@ -147,7 +147,7 @@ export class AddCircuitBreakerRefactoring extends Refactoring implements IRefact
 
     addedSourceTargetCircutBeakers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
-    constructor(graph: Graph, smell: Smell) {
+    constructor(graph: Graph, smell: SmellObject) {
         super("Add Circuit Breaker");
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
@@ -184,18 +184,22 @@ export class UseTimeoutRefactoring extends Refactoring implements IRefactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
 
-    constructor(graph: Graph, links: joint.shapes.microtosca.RunTimeLink[]) {
-        super("Add Timeout");
-        this.links = links;
+    constructor(graph: Graph, smell: SmellObject) {
+        super("Use Timeout");
+        this.links = smell.getLinkBasedCauses();
         this.graph = graph;
     }
 
     execute() {
-        // this.link. tranform the link in a timout link
+        this.links.forEach(link => {
+            link.setTimedout(true);
+        });
     }
 
     unexecute() {
-        // tranform a link in a runtim link
+        this.links.forEach(link => {
+            link.setTimedout(false);
+        });
     }
 
 }
@@ -208,7 +212,7 @@ export class MergeServicesRefactoring extends Refactoring implements IRefactorin
 
     addedSourceTargetCircutBeakers = [];
 
-    constructor(graph: Graph, smell: Smell) {
+    constructor(graph: Graph, smell: SmellObject) {
         super("Merge Services");
         this.incomingLinks = smell.getLinkBasedCauses();
         this.sharedDatabase = this.getDatabase();

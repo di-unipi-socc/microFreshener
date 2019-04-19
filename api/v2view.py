@@ -85,9 +85,7 @@ def graph(request):
             elif (ex == "sockshop"):
                 model_path = os.path.join(examples_path, "sockshop.json")
             elif (ex == "helloworld"):
-                # model_path = os.path.join(examples_path, "helloworld.json")
-                model_path = os.path.join(examples_path, "helloworld.yml")
-                loader = YMLLoader()
+                model_path = os.path.join(examples_path, "helloworld.json")
 
         # return the json file
         mmodel = None
