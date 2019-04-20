@@ -32,12 +32,13 @@ export class Graph extends joint.dia.Graph {
         return this.getGroups().find(group => group.getName() == name);
     }
 
+    getRoots():joint.shapes.microtosca.Root[]{
+        return   <joint.shapes.microtosca.Root[]>this.getElements();
+    }
+
     /**Return all the nodes in the graph  */
     getNodes(): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getElements().filter(node => this.isNode(node));
-        // return <joint.shapes.microtosca.Node[]>this.getElements().filter((node) => {
-        //     return <joint.shapes.microtosca.Node>node instanceof joint.shapes.microtosca.Node;
-        // })
     }
 
     /**Return all the group in the graph  */
@@ -46,13 +47,15 @@ export class Graph extends joint.dia.Graph {
     }
 
     findNodeByName(name: string): joint.shapes.microtosca.Node {
-        return this.getNodes().find(node => {
-            return name === this.getNameOfNode(node);
-        });
+        return this.getNodes().find(node =>  name === node.getName());
     }
 
-    getNameOfNode(node: joint.dia.Cell) {
-        return node.attr("label/text");
+    findGroupByName(name:string):joint.shapes.microtosca.Group{
+        return this.getGroups().find(group => name === group.getName());
+    }
+
+    findRootByName(name:string):joint.shapes.microtosca.Root{
+        return this.getRoots().find(element => name === element.getName());
     }
 
     removeNode(name: string) {
@@ -64,10 +67,15 @@ export class Graph extends joint.dia.Graph {
     }
 
     getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
-        return this.getLinks().find(link => {
+        return (<joint.shapes.microtosca.RunTimeLink[]>super.getLinks()).find(link => {
+            console.log(link);
+
+            console.log(link.getSourceElement());
+            console.log(link.getTargetElement());
+
             var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
             var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
-            return s == source.getName() && t == target.getName();
+            return s === source.getName() && t === target.getName();
         });
     }
 
@@ -87,8 +95,8 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.EdgeGroup[]>this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
-    getOutboundNeighbors(client: joint.dia.Element): joint.shapes.microtosca.Node[] {
-        return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { outbound: true });
+    getOutboundNeighbors(node: joint.dia.Element): joint.shapes.microtosca.Node[] {
+        return <joint.shapes.microtosca.Node[]>this.getNeighbors(node, { outbound: true });
     }
 
     getInboundNeighbors(client: joint.shapes.microtosca.Node): joint.shapes.microtosca.Node[] {
@@ -282,8 +290,8 @@ export class Graph extends joint.dia.Graph {
         this.getLinks().forEach((link:joint.shapes.microtosca.RunTimeLink) => {
             console.log(link);
             var dlink = {
-                'source': this.getNameOfNode(link.getSourceElement()),
-                'target': this.getNameOfNode(link.getTargetElement()),
+                'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
+                'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),
                 'timeout': link.hasTimeout()
             }
             // if (link.get('type') === 'microtosca.RunTimeLink')

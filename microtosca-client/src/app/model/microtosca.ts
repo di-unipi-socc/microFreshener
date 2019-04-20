@@ -5,17 +5,20 @@ import { SmellObject } from '../analyser/smell';
 declare module 'jointjs' {
     namespace shapes {
         namespace microtosca {
-            class Node extends joint.dia.Element {
+            class Root extends joint.dia.Element{
                 setName(name): void;
                 getName(): string;
                 addSmell(smell: SmellObject): void;
                 getSmell(name: string): SmellObject;
                 getSmells(): SmellObject[];
                 resetSmells(): void
-                addIgnoreOnceSmell(smell: SmellObject): void;
-                addIgnoreAlwaysSmell(smell: SmellObject): void;
                 showIcons(): void;
                 hideIcons(): void;
+                addIgnoreOnceSmell(smell: SmellObject): void;
+                addIgnoreAlwaysSmell(smell: SmellObject): void;
+            }
+            class Node extends Root{
+               
             }
             class Service extends Node {
             }
@@ -25,15 +28,13 @@ declare module 'jointjs' {
                 setConcreteType(ctype: string): void;
                 getConcreteType(): string;
             }
-            class Group extends joint.dia.Element {
-                setName(name): void;
-                getName(): string;
-                addSmell(smell: SmellObject): void;
-                getSmell(name: string): SmellObject;
-                getSmells(): SmellObject[];
-                resetSmells(): void
-                showIcons(): void;
-                hideIcons(): void;
+            class Group extends Root{
+                // addSmell(smell: SmellObject): void;
+                // getSmell(name: string): SmellObject;
+                // getSmells(): SmellObject[];
+                // resetSmells(): void
+                // showIcons(): void;
+                // hideIcons(): void;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -601,7 +602,6 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             });
         },
         _removeTimeout:function(){
-            console.log("removing TIMEOUT on interaction");
             this.removeLabel(0);
         }
 

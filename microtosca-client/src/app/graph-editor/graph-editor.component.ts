@@ -90,13 +90,15 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        var g = this.gs.getGraph().addTeamGroup("team1", [s, o]);
+        // var g = this.gs.getGraph().addTeamGroup("team1", [s, o]);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
-        this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+        console.log("£ILEKJ");
+        console.log(this.gs.getGraph().getLinkFromSourceToTarget(edge, o));
 
         // this.gs.getGraph().addEdgeGroup("edgenodes", []);
 
