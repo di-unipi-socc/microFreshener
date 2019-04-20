@@ -204,7 +204,58 @@ export class MergeServicesCommand implements Command {
 
     execute() {
         this.mergedService = this.graph.addService("Merged Service");
-        
+        this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
+
+        this._saveIncomingOutcomingNodes();
+        this._addLinkToMergedServie();
+        this._removeServicesAccessingDB();
+    }
+
+    unexecute() {
+        this.mergedService.remove();
+        this._restoreServicesAccesingDB();
+        this._restoreLinks();
+    }
+
+    _restoreServicesAccesingDB(){
+        this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
+            let nameDeletedService = nodeingoingOutgoing[0].getName();
+            let service = this.graph.addService(nameDeletedService);
+            this.graph.addRunTimeInteraction(service, this.sharedDatabase);
+        });
+    }
+    
+    _restoreLinks(){
+        this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
+            let nameDeletedService = nodeingoingOutgoing[0].getName();
+            let service = this.graph.findRootByName(nameDeletedService);
+            nodeingoingOutgoing[1].forEach(node => {
+                this.graph.addRunTimeInteraction(this.graph.findRootByName(node.getName()), service);
+            })
+            nodeingoingOutgoing[2].forEach(node => {
+                this.graph.addRunTimeInteraction(service, this.graph.findRootByName(node.getName()));
+            })
+        });
+    }
+
+    _removeServicesAccessingDB(){
+        this.serviceIngoingOutgoing.forEach(sio => {
+            sio[0].remove();
+        })
+    }
+    
+    _addLinkToMergedServie() {
+        this.serviceIngoingOutgoing.forEach(sio => {
+            sio[2].forEach(node => {
+                this.graph.addRunTimeInteraction(this.mergedService, node)
+            })
+            sio[1].forEach(node => {
+                this.graph.addRunTimeInteraction(node, this.mergedService)
+            })
+        })
+    }
+
+    _saveIncomingOutcomingNodes() {
         this.smell.getLinkBasedCauses().forEach(link => {
             let nodeAccessDB = <joint.shapes.microtosca.Node>link.getSourceElement();
             let ingoing: joint.shapes.microtosca.Node[] = this.graph.getInboundNeighbors(nodeAccessDB);
@@ -212,61 +263,10 @@ export class MergeServicesCommand implements Command {
 
             this.serviceIngoingOutgoing.push([nodeAccessDB, ingoing, outgoing]);
         });
-
-        this.serviceIngoingOutgoing.forEach(sio =>{
-            let nodeAccessDB =  sio[0];
-            console.log("node execute:", nodeAccessDB.getName());
-            console.log("out going:");
-            sio[2].forEach(node => {
-                console.log(node.getName());
-                this.graph.addRunTimeInteraction(this.mergedService, node)
-            })
-            console.log("out going:");
-            sio[1].forEach(node => {
-                console.log(node.getName());
-
-                this.graph.addRunTimeInteraction(node, this.mergedService)
-            })
-
-        })
-        this.serviceIngoingOutgoing.forEach(sio=>{
-            sio[0].remove();
-        })
-
-        this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
     }
 
 
-    unexecute() {
-        //TODO: execute method donot work
-        this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
-            let nameDeletedService = nodeingoingOutgoing[0].getName();
-            let service = this.graph.addService(nameDeletedService);
-            this.graph.addRunTimeInteraction(service, this.sharedDatabase);
-        });
-
-        this.mergedService.remove()
-
-        this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
-            let nameDeletedService = nodeingoingOutgoing[0].getName();
-            let service = this.graph.findRootByName(nameDeletedService);
-            console.log("node:", nameDeletedService);
-            console.log("incoming:");
-            nodeingoingOutgoing[1].forEach(node=>{
-                console.log(node.getName());
-                this.graph.addRunTimeInteraction(this.graph.findRootByName(node.getName()), service);
-            })
-            console.log("Outcoming:");
-
-            nodeingoingOutgoing[2].forEach(node=>{
-                console.log(node.getName());
-                this.graph.addRunTimeInteraction(service, this.graph.findRootByName(node.getName()));
-            })
-
-        });
-       
-
-    }
+ 
 
 }
 

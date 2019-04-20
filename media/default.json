@@ -2,8 +2,16 @@
     "name": "hello-world",
     "nodes": [
         {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
             "name": "order_db",
             "type": "database"
+        },
+        {
+            "name": "order",
+            "type": "service"
         },
         {
             "name": "rabbitmq",
@@ -14,14 +22,6 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-        },
-        {
-            "name": "shipping",
-            "type": "service"
-        },
-        {
-            "name": "order",
-            "type": "service"
         }
     ],
     "links": [
@@ -32,24 +32,6 @@
             "type": "runtime"
         },
         {
-            "source": "order",
-            "target": "order_db",
-            "timeout": false,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "timeout": false,
-            "type": "runtime"
-        },
-        {
-            "source": "gateway",
-            "target": "shipping",
-            "timeout": false,
-            "type": "runtime"
-        },
-        {
             "source": "shipping",
             "target": "rabbitmq",
             "timeout": false,
@@ -57,7 +39,25 @@
         },
         {
             "source": "order",
+            "target": "shipping",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "order",
             "target": "rabbitmq",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "gateway",
+            "target": "shipping",
             "timeout": false,
             "type": "runtime"
         }
@@ -67,8 +67,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "gateway",
-                "order"
+                "order",
+                "gateway"
             ]
         }
     ]
