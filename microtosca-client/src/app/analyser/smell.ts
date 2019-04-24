@@ -8,7 +8,6 @@ export class SmellObject {
     linksCause: joint.shapes.microtosca.RunTimeLink[];
     nodesCause: joint.shapes.microtosca.Node[];
 
-
     constructor(name: string) {
         this.name = name;
         this.linksCause = [];
@@ -16,11 +15,15 @@ export class SmellObject {
         this.nodesCause = [];
     }
 
-    addNodeBasedCuase(node){
+    getName(){
+        return this.name;
+    }
+    
+    addNodeBasedCuase(node) {
         this.nodesCause.push(node);
     }
 
-    getNodeBasedCauses(){
+    getNodeBasedCauses() {
         return this.nodesCause;
     }
     addLinkBasedCause(link) {
@@ -41,9 +44,38 @@ export class SmellObject {
 
     getDescription(): string {
         var descr = "";
-        this.getLinkBasedCauses().forEach(causa => {
-            descr += `${causa['type']} interaction from  ${causa['source']} to ${causa['target']} \n`;
+        this.getLinkBasedCauses().forEach(link => {
+            let source = <joint.shapes.microtosca.Root> link.getSourceElement();
+            let target = <joint.shapes.microtosca.Root> link.getTargetElement();
+
+            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
         })
         return descr;
+    }
+}
+
+export class NoApiGatewaySmellObject extends SmellObject {
+
+    constructor() {
+        super("NoAPiGatewaySmell");
+    }
+}
+
+export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
+
+    constructor() {
+        super("EndpointBasedServiceInterationSmell");
+    }
+}
+
+export class SharedPersistencySmellObject extends SmellObject {
+    constructor() {
+        super("SharedPersistencySmell");
+    }
+}
+export class WobblyServiceInteractionSmellObject extends SmellObject {
+
+    constructor() {
+        super("WobblyServiceInteractonSmell");
     }
 }

@@ -1,5 +1,6 @@
 import * as joint from 'jointjs';
-import { SmellObject } from '../analyser/smell';
+import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject } from '../analyser/smell';
+
 
 // extend joint.shapes namespace
 declare module 'jointjs' {
@@ -11,11 +12,16 @@ declare module 'jointjs' {
                 addSmell(smell: SmellObject): void;
                 getSmell(name: string): SmellObject;
                 getSmells(): SmellObject[];
+                hideSmell(smell: SmellObject): void;
+                showSmell(smell:SmellObject): void;
                 resetSmells(): void
                 showIcons(): void;
                 hideIcons(): void;
-                addIgnoreOnceSmell(smell: SmellObject): void;
-                addIgnoreAlwaysSmell(smell: SmellObject): void;
+                ignoreOnce(smell: SmellObject): void;
+                ignoreAlways(smell: SmellObject): void;
+                undoIgnoreAlways(smell: SmellObject): void;
+                getIgnoredSmells():SmellObject[];
+               
             }
             class Node extends Root{
                
@@ -120,8 +126,7 @@ joint.dia.Element.define('microtosca.Service', {
         }
     },
     smells: [],            // list of smells that affects a single node
-    ignoreOnceSmells: [],   // list of smell ignored (once)
-    ignoreAlwaysSmells: []  // list of smell ignored (always)
+    ignoreSmells: []       // list of smell ignored (always)
 }, {
         markup: [{
             tagName: 'circle',
@@ -142,13 +147,21 @@ joint.dia.Element.define('microtosca.Service', {
             tagName: "path",
             selector: "delete"
         }],
-        addIgnoreOnceSmell(smell: SmellObject) {
-            this._hideSmell(smell);
-            this.attributes.ignoreOnceSmells.push(smell);
+        ignoreOnce(smell: SmellObject) {
+            this.hideSmell(smell);
         },
-        addIgnoreAlwaysSmell(smell: SmellObject) {
-            this._hideSmell(smell);
-            this.attributes.ignoreAlwaysSmells.push(smell);
+        ignoreAlways(smell: SmellObject) {
+            this.hideSmell(smell);
+            this.attributes.ignoreSmells.push(smell);
+        },
+        undoIgnoreAlways(smell: SmellObject){
+            this.showSmell(smell);
+            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function(sm){
+                return sm.getName() != smell.getName();
+            });
+        },
+        getIgnoredSmells(){
+            return this.attributes.ignoreSmells;
         },
         getName: function () {
             return this.attr('label/text');
@@ -176,18 +189,37 @@ joint.dia.Element.define('microtosca.Service', {
             this.attr('wsi/visibility', 'hidden');
             this.attr('NoApiGateway/visibility', 'hidden');
         },
-        _hideSmell(smell: SmellObject) {
-            this.attr(`${smell.name}/visibility`, 'hidden');
+        hideSmell(smell: SmellObject) {
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
+                this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
+            }
+            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
+                this.attr('wsi/visibility', 'hidden');
+            }
+            else if (smell instanceof NoApiGatewaySmellObject) {
+                this.attr('NoApiGateway/visibility', 'hidden');
+            }
+        },
+        showSmell(smell:SmellObject){
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
+                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
+            }
+            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
+                this.attr('wsi/visibility', 'visible');
+            }
+            else if (smell instanceof NoApiGatewaySmellObject) {
+                this.attr('NoApiGateway/visibility', 'visible');
+            }
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-            if (smell.name == "EndpointBasedServiceInteractionSmell") {
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
                 this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
             }
-            else if (smell.name == "WobblyServiceInteractionSmell") {
+            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
                 this.attr('wsi/visibility', 'visible');
             }
-            else if (smell.name == "NoApiGateway") {
+            else if (smell instanceof NoApiGatewaySmellObject) {
                 this.attr('NoApiGateway/visibility', 'visible');
             }
             // console.log(this);
@@ -242,7 +274,8 @@ joint.dia.Element.define('microtosca.Database', {
         },
 
     },
-    smells: [] // list of smells that affects a single node
+    smells: [], // list of smells that affects a single node
+    ignoreSmells : []
 }, {
         markup: [{
             tagName: 'rect',
@@ -267,10 +300,14 @@ joint.dia.Element.define('microtosca.Database', {
             return this.attributes.smells;
         },
         getSmell: function (name: string) {
+            console.log("esearching; ", name);
             return this.attributes.smells.find(smell => {
-                return name === smell.name;
+                console.log(smell.getName());
+                return name === smell.getName();
             });
-            return null;
+        },
+        ignoreOnce(smell: SmellObject) {
+            this.hideSmell(smell);
         },
         resetSmells: function () {
             this.attributes.smells = [];
@@ -278,8 +315,32 @@ joint.dia.Element.define('microtosca.Database', {
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-            if (smell.name == "SharedPersistencySmell")
+            if (smell instanceof SharedPersistencySmellObject){
                 this.attr('sp/visibility', 'visible');
+            }
+        },
+        showSmell(smell:SmellObject){
+            if (smell instanceof SharedPersistencySmellObject) {
+                this.attr('sp/visibility', 'visible');
+            }
+        },
+        hideSmell(smell:SmellObject){
+            if (smell instanceof SharedPersistencySmellObject) {
+                this.attr('sp/visibility', 'hidden');
+            }
+        },
+        ignoreAlways(smell: SmellObject) {
+            this.hideSmell(smell);
+            this.attributes.ignoreSmells.push(smell);
+        },
+        undoIgnoreAlways(smell: SmellObject){
+            this.showSmell(smell);
+            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function(sm){
+                return sm.getName() != smell.getName();
+            });
+        },
+        getIgnoredSmells(){
+            return this.attributes.ignoreSmells;
         },
         showIcons: function () {
             this.attr('delete/visibility', 'visible')
@@ -365,7 +426,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         },
         resetSmells: function () {
             this.attributes.smells = [];
-            // this.attr('sp/visibility', 'hidden');
         },
         addSmell: function (smell: SmellObject) {
         },
@@ -426,6 +486,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         getSmell: function (name: string) {
             return this.attributes.smells.find(smell => {
+                console.log(smell);
                 return name === smell.name;
             });
         },

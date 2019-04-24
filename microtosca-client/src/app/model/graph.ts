@@ -68,11 +68,6 @@ export class Graph extends joint.dia.Graph {
 
     getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
         return (<joint.shapes.microtosca.RunTimeLink[]>super.getLinks()).find(link => {
-            console.log(link);
-
-            console.log(link.getSourceElement());
-            console.log(link.getTargetElement());
-
             var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
             var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
             return s === source.getName() && t === target.getName();
@@ -171,7 +166,6 @@ export class Graph extends joint.dia.Graph {
         return this.addCommunicationPattern(name, "CircuitBreaker");
     }
 
-
     addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node, timedout: boolean = false): joint.shapes.microtosca.RunTimeLink {
 
         let alredyExistingLink = this.getLinkFromSourceToTarget(source, target);
@@ -251,7 +245,6 @@ export class Graph extends joint.dia.Graph {
             if (link.type == "deploymenttime")
                 this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
             else if (link.type = "runtime"){
-                console.log(link['timeout']);
                 this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout']);
             }
 
@@ -273,6 +266,7 @@ export class Graph extends joint.dia.Graph {
         var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
         // TODO: node can be of type joint.microtosca.Node insted fo Cell
         this.getNodes().forEach((node: joint.shapes.microtosca.Node) => {
+         
             var dnode = { 'name': node.getName() }; // 'id': node.get('id'),
             if (this.isService(node))
                 dnode['type'] = "service";
@@ -288,19 +282,15 @@ export class Graph extends joint.dia.Graph {
         })
         // Add links
         this.getLinks().forEach((link:joint.shapes.microtosca.RunTimeLink) => {
-            console.log(link);
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),
                 'timeout': link.hasTimeout()
             }
-            // if (link.get('type') === 'microtosca.RunTimeLink')
-            if (link instanceof joint.shapes.microtosca.RunTimeLink) {
+            if (link instanceof joint.shapes.microtosca.RunTimeLink) 
                 dlink['type'] = "runtime";
-            }
-            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink) {
+            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink) 
                 dlink['type'] = "deploymenttime";
-            }
             else
                 throw new Error(`Link type of ${link} not recognized`);
             data['links'].push(dlink);
@@ -315,8 +305,6 @@ export class Graph extends joint.dia.Graph {
             edgeGroup['members'] = members;
             data['groups'].push(edgeGroup)
         });
-        console.log(data['groups']);
-
         return data;
     }
 

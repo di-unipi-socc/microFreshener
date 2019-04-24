@@ -3,6 +3,7 @@ import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { SmellObject } from '../analyser/smell';
+import { Command } from '../invoker/icommand';
 
 
 @Component({
@@ -11,16 +12,14 @@ import { SmellObject } from '../analyser/smell';
   styleUrls: ['./dialog-smell.component.css']
 })
 export class DialogSmellComponent implements OnInit {
-  actions: Object[] = [];
-  selectedAction: Object = {};
+  actions: Object[];
+  selectedCommand: Command;
 
   jointNodeModel;
   smell: SmellObject;
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService, ) {
-    this.actions = [
-      { "label": "Ignore Once", "value": { "description": "ignore the smell" } },
-      { "label": "Ignore Always", "value": { "description": "Ignore the smell always" } }];
+    this.actions = [];
   }
 
 
@@ -29,16 +28,16 @@ export class DialogSmellComponent implements OnInit {
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = <SmellObject>this.config.data.selectedsmell;
-      
+
       this.smell.getRefactorings().forEach(refactoring => {
-        console.log(refactoring.getName());
-        this.actions.push({"label": refactoring.getName(), "value": refactoring.getCommand()});
+        this.actions.push({ "label": refactoring.getName(), "description":refactoring.getDescription(), "value": refactoring.getCommand() });
+
       })
     }
   }
 
   save() {
-    this.ref.close(this.selectedAction);
+    this.ref.close(this.selectedCommand);
   }
 
 }

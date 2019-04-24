@@ -1,8 +1,9 @@
 import { Command } from '../invoker/icommand';
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand } from "./refactoringCommand"
+import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand } from "./refactoring-command"
 
 export class Refactoring {
     name: string
+    description: String
     refactoringCommand: Command
 
     constructor(name: string, command: Command) {
@@ -10,12 +11,28 @@ export class Refactoring {
         this.refactoringCommand = command;
     }
 
-    getName(){
+    getDescription() {
+        return "ciao ciao a tutti";
+    }
+
+    getName() {
         return this.name;
     }
 
-    getCommand(){
+    getCommand() {
         return this.refactoringCommand;
+    }
+}
+
+export class IgnoreOnceRefactoring extends Refactoring {
+    constructor(command: IgnoreOnceCommand) {
+        super("Ignore Once", command)
+    }
+}
+
+export class IgnoreAlwaysRefactoring extends Refactoring {
+    constructor(command: IgnoreAlwaysCommand) {
+        super("Ignore Always", command)
     }
 }
 

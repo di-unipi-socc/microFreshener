@@ -2,7 +2,46 @@ import { Graph } from "../model/graph";
 import { SmellObject } from '../analyser/smell';
 import { Command } from "../invoker/icommand";
 import * as joint from 'jointjs';
-import { Smell } from '../model/smell';
+
+export class IgnoreOnceCommand implements Command {
+
+    smell: SmellObject;
+    node: joint.shapes.microtosca.Root;
+
+    constructor(node: joint.shapes.microtosca.Root, smell: SmellObject) {
+        this.smell = smell;
+        this.node = node;
+    }
+
+    execute() {
+        this.node.ignoreOnce(this.smell);
+    }
+
+    unexecute() {
+        this.node.showSmell(this.smell);
+
+    }
+}
+
+export class IgnoreAlwaysCommand implements Command {
+
+    smell: SmellObject;
+    node: joint.shapes.microtosca.Root;
+
+    constructor(node: joint.shapes.microtosca.Root, smell: SmellObject) {
+        this.smell = smell;
+        this.node = node;
+    }
+
+    execute() {
+        this.node.ignoreAlways(this.smell);
+    }
+
+    unexecute() {
+        this.node.showSmell(this.smell);
+
+    }
+}
 
 
 export class AddMessageRouterCommand implements Command {
@@ -40,10 +79,7 @@ export class AddMessageRouterCommand implements Command {
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };
-
     }
-
-
 }
 
 export class AddMessageBrokerCommand implements Command {
@@ -89,7 +125,6 @@ export class AddServiceDiscoveryCommand implements Command {
     graph: Graph;
 
     addedSourceTargetServiceDiscoveries: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
-
 
     constructor(graph: Graph, smell: SmellObject) {
         this.links = smell.getLinkBasedCauses();
@@ -205,7 +240,6 @@ export class MergeServicesCommand implements Command {
     execute() {
         this.mergedService = this.graph.addService("Merged Service");
         this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
-
         this._saveIncomingOutcomingNodes();
         this._addLinkToMergedServie();
         this._removeServicesAccessingDB();
@@ -217,15 +251,15 @@ export class MergeServicesCommand implements Command {
         this._restoreLinks();
     }
 
-    _restoreServicesAccesingDB(){
+    _restoreServicesAccesingDB() {
         this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
             let nameDeletedService = nodeingoingOutgoing[0].getName();
             let service = this.graph.addService(nameDeletedService);
             this.graph.addRunTimeInteraction(service, this.sharedDatabase);
         });
     }
-    
-    _restoreLinks(){
+
+    _restoreLinks() {
         this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
             let nameDeletedService = nodeingoingOutgoing[0].getName();
             let service = this.graph.findRootByName(nameDeletedService);
@@ -238,12 +272,12 @@ export class MergeServicesCommand implements Command {
         });
     }
 
-    _removeServicesAccessingDB(){
+    _removeServicesAccessingDB() {
         this.serviceIngoingOutgoing.forEach(sio => {
             sio[0].remove();
         })
     }
-    
+
     _addLinkToMergedServie() {
         this.serviceIngoingOutgoing.forEach(sio => {
             sio[2].forEach(node => {
@@ -264,10 +298,6 @@ export class MergeServicesCommand implements Command {
             this.serviceIngoingOutgoing.push([nodeAccessDB, ingoing, outgoing]);
         });
     }
-
-
- 
-
 }
 
 export class SplitDatabaseCommand implements Command {
@@ -310,8 +340,6 @@ export class SplitDatabaseCommand implements Command {
     }
 
 }
-
-
 export class AddDataManagerCommand implements Command {
 
     graph: Graph;
@@ -344,5 +372,3 @@ export class AddDataManagerCommand implements Command {
     }
 
 }
-
-

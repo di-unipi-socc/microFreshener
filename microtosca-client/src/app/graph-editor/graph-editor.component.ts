@@ -13,7 +13,9 @@ import * as joint from 'jointjs';
 import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
-import {GraphInvoker} from "../invoker/invoker";
+import { GraphInvoker } from "../invoker/invoker";
+import { RemoveServiceCommand } from './graph-command';
+
 
 @Component({
     selector: 'app-graph-editor',
@@ -26,20 +28,20 @@ export class GraphEditorComponent implements OnInit {
     _options = { width: 2000, height: 1500 };
 
     paper: joint.dia.Paper;
-    refactoringsInvoker:GraphInvoker;
+    graphInvoker: GraphInvoker;
 
     name: string; // name of the app
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-        this.refactoringsInvoker = new GraphInvoker();
+        this.graphInvoker = new GraphInvoker();
     }
 
-    undoRefactoring(){
-        this.refactoringsInvoker.undo();
+    undoRefactoring() {
+        this.graphInvoker.undo();
     }
 
-    redoRefactoring(){
-        this.refactoringsInvoker.redo();
+    redoRefactoring() {
+        this.graphInvoker.redo();
     }
 
     ngOnInit() {
@@ -68,7 +70,7 @@ export class GraphEditorComponent implements OnInit {
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
     }
-    
+
     createSampleGraph() {
         // // nodes
         var s = this.gs.getGraph().addService("shipping");
@@ -97,7 +99,6 @@ export class GraphEditorComponent implements OnInit {
 
         // add EdgeGroup 
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
-        console.log("£ILEKJ");
         console.log(this.gs.getGraph().getLinkFromSourceToTarget(edge, o));
 
         // this.gs.getGraph().addEdgeGroup("edgenodes", []);
@@ -129,26 +130,8 @@ export class GraphEditorComponent implements OnInit {
             width: '80%'
         });
         ref.onClose.subscribe((data) => {
-            // { name: this.name, type: this.selectedNodeType, ctype: this.selectedCommunicationPatternType }
-            let message = "";
-            switch (data.type) {
-                case "service":
-                    this.gs.getGraph().addService(data.name);
-                    message += `Service ${data.name} added correctly`;
-                    break;
-                case "database":
-                    this.gs.getGraph().addDatabase(data.name);
-                    message += `Database ${data.name} ${data.ctype} added correctly`;
-                    break;
-                case "communicationPattern":
-                    this.gs.getGraph().addCommunicationPattern(data.name, data.ctype);
-                    message += `Communication Pattern ${data.name} ${data.ctype} added correctly`;
-                    break;
-                default:
-                    this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
-                    break;
-            }
-            this.messageService.add({ severity: 'success', summary: message });
+            this.graphInvoker.executeCommand(data.command);
+            this.messageService.add({ severity: 'success', summary: data.msg});
         });
     }
 
@@ -167,21 +150,19 @@ export class GraphEditorComponent implements OnInit {
         // delete a node event
         this.paper.on("node:delete:pointerdown", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
-            var cell = cellView.model;
-            console.log("DELETE NODE EVENT");
+            var node = cellView.model;
+
             this.confirmationService.confirm({
                 message: 'Do you want to delete this node?',
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    cell.remove();
-                    this.messageService.clear();
-                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${cell.getName()} deleted succesfully` });
+                    this.graphInvoker.executeCommand(new RemoveServiceCommand(this.gs.getGraph(), node))
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
                 },
                 reject: () => {
-                    cell.hideIcons();
-                    this.messageService.clear();
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${cell.getName()} not deleted` });
+                    node.hideIcons();
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
                 }
             });
 
@@ -211,80 +192,50 @@ export class GraphEditorComponent implements OnInit {
 
     bindClickOnSmells() {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); 
+            evt.stopPropagation();
             var model = cellview.model;
-            var smell: SmellObject = model.getSmell("EndpointBasedServiceInteractionSmell");
-            
-            const ref = this.dialogService.open(DialogSmellComponent, {
-                data: {
-                    model: model,
-                    selectedsmell: smell
-                },
-                header: `Smell details`,
-                width: '50%'
-            });
-
-            ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeCommand(refactoringCommand);
-            });
+            var smell: SmellObject = model.getSmell("EndpointBasedServiceInterationSmell");
+            this._openDialogSmellComponent(model, smell);
         })
 
         this.paper.on("smell:NoApiGateway:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
-            console.log("No ApGateway EVENT FIRED");
+            evt.stopPropagation();
             var model = cellview.model;
-            var smell: SmellObject = model.getSmell("NoApiGateway");
-            const ref = this.dialogService.open(DialogSmellComponent, {
-                data: {
-                    model: model,
-                    selectedsmell: smell
-                },
-                header: `Smell details`,
-                width: '50%'
-            });
-
-            ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeCommand(refactoringCommand);
-            });
+            var smell: SmellObject = model.getSmell("NoAPiGatewaySmell");
+            this._openDialogSmellComponent(model, smell);
         })
 
         this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
-            console.log("SHARED PERSISTENCY EVENT FIRED");
+            evt.stopPropagation();
             var model = cellview.model;
             var smell: SmellObject = model.getSmell("SharedPersistencySmell");
-            const ref = this.dialogService.open(DialogSmellComponent, {
-                data: {
-                    model: model,
-                    selectedsmell: smell
-                },
-                header: `Smell details`,
-                width: '50%'
-            });
-
-            ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeCommand(refactoringCommand);
-            });
+            this._openDialogSmellComponent(model, smell);
         })
 
         this.paper.on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
-            console.log("WOBBLY SERVICE INTERACTION EVENT FIRED");
-            var model = cellview.model;
-            var smell: SmellObject = model.getSmell("WobblyServiceInteractionSmell");
-            const ref = this.dialogService.open(DialogSmellComponent, {
-                data: {
-                    model: model,
-                    selectedsmell: smell
-                },
-                header: `Smell details`,
-                width: '50%'
-            });
-            
-            ref.onClose.subscribe((refactoringCommand) => {
-                this.refactoringsInvoker.executeCommand(refactoringCommand);
-            });
+            var model: joint.shapes.microtosca.Node = cellview.model;
+            var smell: SmellObject = model.getSmell("WobblyServiceInteractonSmell");
+            this._openDialogSmellComponent(model, smell);
         })
+    }
+
+    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: SmellObject) {
+        const ref = this.dialogService.open(DialogSmellComponent, {
+            data: {
+                model: node,
+                selectedsmell: smell
+            },
+            header: `Smell details`,
+            width: '40%'
+        });
+
+        ref.onClose.subscribe((refactoringCommand) => {
+            if(refactoringCommand){
+                this.graphInvoker.executeCommand(refactoringCommand);
+                this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly"});
+            }            
+        });
     }
 
     bindTeamEmbedNodes() {
@@ -328,7 +279,7 @@ export class GraphEditorComponent implements OnInit {
 
     bindTeamMinimize() {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); // stop any further actions with the smell view (e.g. dragging)
+            evt.stopPropagation();
             var cell = cellview.model;
             console.log(cell.size());
             var embeddedCells = cell.getEmbeddedCells();

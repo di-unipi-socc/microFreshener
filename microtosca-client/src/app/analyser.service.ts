@@ -12,10 +12,12 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject } from './analyser/smell';
 
-import { MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand } from "./refactor/refactoringCommand";
-
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand } from "./refactor/refactoring-command";
+import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
+
+import * as joint from 'jointjs';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -74,10 +76,16 @@ export class AnalyserService {
 
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
-    let smells_ids:number[] = smells.map(smell => smell.id);
+    let smells_ids: number[] = smells.map(smell => smell.id);
+    
+    // this.gs.getGraph().getNodes().forEach((node: joint.shapes.microtosca.Node) => {
+    //   console.log(node.getIgnoredSmells());
+    // });
+    
     const params = new HttpParams().set('smells', smells_ids.join());
 
-    // TODO: the analysis should send all the ingore once, ingore always smell for the nodes.
+    // TODO: the analysis should send ignore always command to the analyser.
+
     // Maybe instead of a get is s POST operation.
     return this.http.get(this.analysisUrl, { params })
       .pipe(
@@ -108,11 +116,26 @@ export class AnalyserService {
     var anode: ANode = new ANode(data['name']);
 
     data['smells'].forEach((smellJson) => {
-      // console.log(smellJson);
-      let smell: SmellObject = new SmellObject(smellJson.name);
+      let smell: SmellObject; 
+
+      switch (smellJson.name) {
+        case "NoApiGateway":
+          smell = new NoApiGatewaySmellObject();
+          break;
+        case "EndpointBasedServiceInteractionSmell":
+          smell = new EndpointBasedServiceInteractionSmellObject();
+          break;
+        case "WobblyServiceInteractionSmell":
+          smell = new WobblyServiceInteractionSmellObject();
+          break;
+        case "SharedPersistencySmell":
+          smell = new SharedPersistencySmellObject();
+          break;
+        default:
+          break;
+      }
 
       smellJson['cause'].forEach((cause) => {
-      
         var source = this.gs.getGraph().findNodeByName(cause['source']);
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
@@ -120,40 +143,44 @@ export class AnalyserService {
         smell.addNodeBasedCuase(this.gs.getGraph().findNodeByName(anode.name))
       });
 
-      smellJson['refactorings'].forEach((refactoring) => {
-        let refactoringName = refactoring['name'];
-        let refactoringAction;
+      let node = this.gs.getGraph().findRootByName(anode.name);
+      smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
+      smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node,smell)));
+
+      smellJson['refactorings'].forEach((refactoringJson) => {
+        let refactoringName = refactoringJson['name'];
+        let refactoring: Refactoring;
+
         switch (refactoringName) {
           case "Add Message Router":
-            refactoringAction = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
+            refactoring = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
             break;
           case "Add Message Broker":
-            refactoringAction = new AddMessageBrokerRefactoring( new AddMessageBrokerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddMessageBrokerRefactoring(new AddMessageBrokerCommand(this.gs.getGraph(), smell));
             break;
           case "Add Service Discovery":
-            refactoringAction = new AddServiceDiscoveryRefactoring( new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
+            refactoring = new AddServiceDiscoveryRefactoring(new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
             break;
           case "Add Circuit Breaker":
-            refactoringAction = new AddCircuitBreakerRefactoring( new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddCircuitBreakerRefactoring(new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
             break;
           case "Use Timeouts":
-            refactoringAction = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
+            refactoring = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
             break;
           case "Merge services":
-            refactoringAction = new MergeServicesRefactoring( new MergeServicesCommand(this.gs.getGraph(), smell));
+            refactoring = new MergeServicesRefactoring(new MergeServicesCommand(this.gs.getGraph(), smell));
             break;
           case "Split Database":
-            refactoringAction = new SplitDatabaseRefactoring(new SplitDatabaseCommand(this.gs.getGraph(), smell));
+            refactoring = new SplitDatabaseRefactoring(new SplitDatabaseCommand(this.gs.getGraph(), smell));
             break;
           case "Add Data Manager":
-            refactoringAction = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
           default:
             break;
         }
-        if (refactoringAction)
-          smell.addRefactoring(refactoringAction);
+        if (refactoring)
+          smell.addRefactoring(refactoring);
       });
-
       anode.addSmell(smell);
     });
     return anode;

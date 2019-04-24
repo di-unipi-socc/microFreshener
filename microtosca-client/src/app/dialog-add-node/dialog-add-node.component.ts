@@ -4,6 +4,10 @@ import { DynamicDialogConfig } from 'primeng/api';
 import { CommunicationPattern } from "../model/communicationpattern";
 import { AnalyserService } from "../analyser.service";
 
+import { AddServiceCommand, AddDatabaseCommand, AddCommunicationPatternCommand } from '../graph-editor/graph-command';
+import { GraphService } from '../graph.service';
+import { Command } from '../invoker/icommand';
+
 @Component({
   selector: 'app-dialog-add-node',
   templateUrl: './dialog-add-node.component.html',
@@ -19,19 +23,13 @@ export class DialogAddNodeComponent implements OnInit {
   selectedCommunicationPatternType: CommunicationPattern;
   showCommunicationPatternType: boolean = false;
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public as: AnalyserService) { }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public as: AnalyserService, public gs: GraphService) { }
 
   ngOnInit() {
     this.name = null;
     this.selectedNodeType = null;
     this.showCommunicationPatternType = false;
     this.selectedCommunicationPatternType = null;
-    //TODO:  add an angular service that get the types form the server
-    // this.communicationPatternTypes = [
-    //   { 'label': 'Message broker', 'value': ConcreteTypes.MESSAGE_BROKER },
-    //   { 'label': 'Circuit breaker', 'value': ConcreteTypes.CIRCUIT_BREAKER },
-    //   { 'label': 'Api Gateway', 'value': ConcreteTypes.API_GATEWAY }];
-    // { 'label': 'Api Gateway', 'value': ConcreteTypes.SERVICE_DISCOVERY }];
 
     this.as.getCommunicationPatterns()
       .then(cps => this.communicationPatternTypes = cps);
@@ -47,9 +45,27 @@ export class DialogAddNodeComponent implements OnInit {
   }
 
   save() {
-    console.log(this.selectedCommunicationPatternType);
+    let command: Command;
+    let message: string;
+    switch (this.selectedNodeType) {
+      case "service":
+        command = new AddServiceCommand(this.gs.getGraph(), this.name);
+        message = `Service ${this.name} added correctly`;
+        break;
+      case "database":
+        command = new AddDatabaseCommand(this.gs.getGraph(), this.name);
+        message = `Database  ${this.name}  added correctly`;
+        break;
+      case "communicationPattern":
+        command = new AddCommunicationPatternCommand(this.gs.getGraph(), this.name, this.selectedCommunicationPatternType.type);
+        message += `Communication Pattern ${this.name} ${this.selectedCommunicationPatternType} added correctly`;
+        break;
+      default:
+        // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
+        break;
+    }
+    this.ref.close({"command":command, "msg":message});
 
-    this.ref.close({ name: this.name, type: this.selectedNodeType, ctype: this.selectedCommunicationPatternType });
   }
 
 }
