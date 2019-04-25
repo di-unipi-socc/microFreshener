@@ -35,12 +35,6 @@ declare module 'jointjs' {
                 getConcreteType(): string;
             }
             class Group extends Root{
-                // addSmell(smell: SmellObject): void;
-                // getSmell(name: string): SmellObject;
-                // getSmells(): SmellObject[];
-                // resetSmells(): void
-                // showIcons(): void;
-                // hideIcons(): void;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -459,7 +453,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
             text: name || '',
         },
     },
-    name: '', // name of the group. each nodes connected to this node are considered memeber of the EdgeGroup
+    groupName: '', // groupName of the group. each nodes connected to this node are considered memeber of the EdgeGroup
     smells: [] // list of smells that affects a single node
 }, {
         markup: [{
@@ -470,10 +464,10 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
             selector: 'label'
         }],
         getName: function () {
-            return this.name
+            return this.groupName
         },
         setName: function (text: string) {
-            this.name = text;
+            this.groupName = text;
         },
         setExternalUserName: function (name: string) {
             return this.attr('label/text', name || '');

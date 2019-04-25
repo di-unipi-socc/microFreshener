@@ -52,7 +52,7 @@ def graph_analysis(request):
                 builder.add_smell(int(smell))
             analyser = builder.build()
             res = analyser.run()
-            #print(res)
+            print(res)
             return Response(res)
         else:
             return Response({"msg": "No model uploaded"})

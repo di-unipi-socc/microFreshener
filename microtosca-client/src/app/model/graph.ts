@@ -150,6 +150,10 @@ export class Graph extends joint.dia.Graph {
         return cp;
     }
 
+    addApiGateway(name: string): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "ApiGateway");
+    }
+
     addMessageRouter(name: string): joint.shapes.microtosca.CommunicationPattern {
         return this.addCommunicationPattern(name, "MessageRouter");
     }

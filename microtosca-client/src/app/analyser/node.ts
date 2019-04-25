@@ -25,21 +25,4 @@ export class ANode {
         return this.smells.length > 0;
     }
 
-    static fromJSON(data: string) {
-        var anode: ANode = new ANode(data['name']);
-        data['smells'].forEach((smell) => {
-            var s: SmellObject = new SmellObject(smell.name);
-            smell['cause'].forEach((causa) => {
-                s.addLinkBasedCause(causa);
-            });
-            if (smell['refactorings']) {
-                smell['refactorings'].forEach((ref) => {
-                    s.addRefactoring(ref);
-                });
-            }
-            anode.addSmell(s);
-        });
-        return anode;
-    }
-
 }

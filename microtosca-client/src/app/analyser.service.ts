@@ -10,10 +10,10 @@ import { AGroup } from "./analyser/group";
 import { GraphService } from './graph.service';
 import { Principle } from './model/principles';
 import { Smell } from './model/smell';
-import { SmellObject } from './analyser/smell';
+import { SmellObject, GroupSmellObject } from './analyser/smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand } from "./refactor/refactoring-command";
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand } from "./refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 
@@ -77,11 +77,11 @@ export class AnalyserService {
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids: number[] = smells.map(smell => smell.id);
-    
+
     // this.gs.getGraph().getNodes().forEach((node: joint.shapes.microtosca.Node) => {
     //   console.log(node.getIgnoredSmells());
     // });
-    
+
     const params = new HttpParams().set('smells', smells_ids.join());
 
     // TODO: the analysis should send ignore always command to the analyser.
@@ -97,11 +97,11 @@ export class AnalyserService {
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
-            // this.analysednodes.push(ANode.fromJSON(node));
           });
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
-            this.analysedgroups.push(AGroup.fromJSON(group));
+            let agroup = this.buildAnalysedGroupFromJson(group);
+            this.analysedgroups.push(agroup);
           });
           // console.log(this.analysedgroups);
           return true;
@@ -112,11 +112,47 @@ export class AnalyserService {
       );
   }
 
+  buildAnalysedGroupFromJson(data: Object) {
+    var agroup: AGroup = new AGroup(data['name']);
+    let group = this.gs.getGraph().getGroup(data['name']);
+    data['smells'].forEach((smellJson) => {
+      let smell: GroupSmellObject;
+      switch (smellJson.name) {
+        case "NoApiGateway":
+          smell = new NoApiGatewaySmellObject(group);
+          break;
+        default:
+          break;
+      }
+      smellJson['cause'].forEach((node_name) => {
+        let node = this.gs.getGraph().findNodeByName(node_name);
+        smell.addNodeBasedCuase(node);
+        smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
+        smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
+      });
+      smellJson['refactorings'].forEach((refactoringJson) => {
+        let refactoringName = refactoringJson['name'];
+        let refactoring: Refactoring;
+        switch (refactoringName) {
+          case "Add Api Gateway":
+            refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
+            break;
+          default:
+            break;
+        }
+        if (refactoring)
+          smell.addRefactoring(refactoring);
+      });
+      agroup.addSmell(smell);
+    });
+    return agroup;
+  }
+
   buildAnalysedNodeFromJson(data: Object) {
     var anode: ANode = new ANode(data['name']);
 
     data['smells'].forEach((smellJson) => {
-      let smell: SmellObject; 
+      let smell: SmellObject;
 
       switch (smellJson.name) {
         case "NoApiGateway":
@@ -145,7 +181,7 @@ export class AnalyserService {
 
       let node = this.gs.getGraph().findRootByName(anode.name);
       smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node,smell)));
+      smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];

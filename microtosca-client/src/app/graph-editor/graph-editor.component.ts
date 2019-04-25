@@ -131,7 +131,7 @@ export class GraphEditorComponent implements OnInit {
         });
         ref.onClose.subscribe((data) => {
             this.graphInvoker.executeCommand(data.command);
-            this.messageService.add({ severity: 'success', summary: data.msg});
+            this.messageService.add({ severity: 'success', summary: data.msg });
         });
     }
 
@@ -231,10 +231,10 @@ export class GraphEditorComponent implements OnInit {
         });
 
         ref.onClose.subscribe((refactoringCommand) => {
-            if(refactoringCommand){
+            if (refactoringCommand) {
                 this.graphInvoker.executeCommand(refactoringCommand);
-                this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly"});
-            }            
+                this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
+            }
         });
     }
 
@@ -423,7 +423,7 @@ export class GraphEditorComponent implements OnInit {
     }
 
     bindMouseOverLinks() {
-        this.paper.on('link:mouseenter', function (linkView) {
+        this.paper.on('link:mouseenter', (linkView) => {
             var tools = [
                 // new joint.linkTools.SourceArrowhead(),
                 // new joint.linkTools.TargetArrowhead(),
@@ -434,6 +434,34 @@ export class GraphEditorComponent implements OnInit {
                 }),
                 new joint.linkTools.TargetAnchor(),
                 new joint.linkTools.Remove(),
+                // new joint.linkTools.Button({ // commented because Im not able to generate a custom evetn or call the this.graphInvoker()
+                //     markup: [{
+                //         tagName: 'circle',
+                //         selector: 'button',
+                //         attributes: {
+                //             'r': 7,
+                //             'fill': '#FF1D00',
+                //             'cursor': 'pointer',
+                //             // 'event': 'node:delete:pointerdown',
+                //         }
+                //     }, {
+                //         tagName: 'path',
+                //         selector: 'icon',
+                //         attributes: {
+                //             'd': 'M -3 -3 3 3 M -3 3 3 -3',
+                //             'fill': 'none',
+                //             'stroke': '#FFFFFF',
+                //             'stroke-width': 2,
+                //             'pointer-events': 'none'
+                //         }
+                //     }],
+                //     distance: -80,
+                //     action: function(){
+                //         var link = this.model;
+                        
+                //         // this.graphInvoker.executeCommand( new RemoveServiceCommand(this.gs.getGraph(), link));
+                //     },
+                // }),
                 new joint.linkTools.Button({
                     markup: [{
                         tagName: 'circle',

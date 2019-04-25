@@ -15,10 +15,10 @@ export class SmellObject {
         this.nodesCause = [];
     }
 
-    getName(){
+    getName() {
         return this.name;
     }
-    
+
     addNodeBasedCuase(node) {
         this.nodesCause.push(node);
     }
@@ -45,8 +45,8 @@ export class SmellObject {
     getDescription(): string {
         var descr = "";
         this.getLinkBasedCauses().forEach(link => {
-            let source = <joint.shapes.microtosca.Root> link.getSourceElement();
-            let target = <joint.shapes.microtosca.Root> link.getTargetElement();
+            let source = <joint.shapes.microtosca.Root>link.getSourceElement();
+            let target = <joint.shapes.microtosca.Root>link.getTargetElement();
 
             descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
         })
@@ -54,10 +54,72 @@ export class SmellObject {
     }
 }
 
-export class NoApiGatewaySmellObject extends SmellObject {
+export class GroupSmellObject {
 
-    constructor() {
-        super("NoAPiGatewaySmell");
+    name: string;
+
+    group: joint.shapes.microtosca.Group;
+
+    refactorings: Refactoring[];
+    linksCause: joint.shapes.microtosca.RunTimeLink[];
+    nodesCause: joint.shapes.microtosca.Node[];
+
+    constructor(name: string, group:joint.shapes.microtosca.Group) {
+        this.name = name;
+        this.group = group;
+        this.linksCause = [];
+        this.refactorings = [];
+        this.nodesCause = [];
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getGroup():joint.shapes.microtosca.Group{
+        return this.group;
+    }
+
+    addNodeBasedCuase(node) {
+        this.nodesCause.push(node);
+    }
+
+    getNodeBasedCauses() {
+        return this.nodesCause;
+    }
+    addLinkBasedCause(link) {
+        this.linksCause.push(link);
+    }
+
+    getLinkBasedCauses() {
+        return this.linksCause;
+    }
+
+    addRefactoring(refactoring: Refactoring) {
+        this.refactorings.push(refactoring);
+    }
+
+    getRefactorings(): Refactoring[] {
+        return this.refactorings;
+    }
+
+    getDescription(): string {
+        var descr = "";
+        this.getLinkBasedCauses().forEach(link => {
+            let source = <joint.shapes.microtosca.Root>link.getSourceElement();
+            let target = <joint.shapes.microtosca.Root>link.getTargetElement();
+
+            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
+        })
+        return descr;
+    }
+}
+
+
+export class NoApiGatewaySmellObject extends GroupSmellObject {
+
+    constructor(group:joint.shapes.microtosca.Group) {
+        super("NoAPiGatewaySmell", group);
     }
 }
 

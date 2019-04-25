@@ -1,5 +1,5 @@
 import { Command } from '../invoker/icommand';
-import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand } from "./refactoring-command"
+import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand } from "./refactoring-command"
 
 export class Refactoring {
     name: string
@@ -43,6 +43,13 @@ export class AddMessageRouterRefactoring extends Refactoring {
     }
 }
 
+export class AddApiGatewayRefactoring extends Refactoring {
+
+    constructor(command: AddApiGatewayCommand) {
+        super("Add Api Gateway", command)
+    }
+
+}
 export class AddMessageBrokerRefactoring extends Refactoring {
 
     constructor(command: AddMessageBrokerCommand) {

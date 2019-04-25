@@ -87,25 +87,28 @@ export class AppComponent {
   }
 
   _showSmells(){
-    this.as.analysednodes.forEach((node)=>{
-        let n = this.gs.getGraph().getNode(node.name);
-        node.getSmells().forEach((smell)=>{
+    this.as.analysednodes.forEach((anode)=>{
+        let n = this.gs.getGraph().getNode(anode.name);
+        anode.getSmells().forEach((smell)=>{
           n.addSmell(smell);
         })
       })
 
-    this.as.analysedgroups.forEach((group)=>{
-        let g = this.gs.getGraph().getGroup(group.name);
-        group.getSmells().forEach((smell)=>{ // the smell if the name of the node.
-          smell.getNodeBasedCauses().forEach(node_name=>{
-            var node = this.gs.getGraph().getNode(node_name);
+      console.log(this.as.analysedgroups);
+
+    this.as.analysedgroups.forEach((agroup)=>{
+        let g = this.gs.getGraph().getGroup(agroup.name);
+        agroup.getSmells().forEach((smell)=>{
+          console.log(smell)
+          smell.getNodeBasedCauses().forEach(node=>{
             node.addSmell(smell);
+            console.log("ADDED SMELL TO NODE OF GROUP");
+            console.log(smell);
+
           })
           g.addSmell(smell);
         })
-        console.log(g);
       })    
-    
   }
 
   upload() {

@@ -105,3 +105,29 @@ export class RemoveServiceCommand implements Command {
         })
     }
 }
+
+
+
+export class RemoveLinkCommand implements Command {
+
+    graph: Graph;
+    link: joint.shapes.microtosca.RunTimeLink;
+    source: joint.shapes.microtosca.Root;
+    target:  joint.shapes.microtosca.Root;
+
+    constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
+        this.graph = graph;
+        this.link = link;
+        this.source = <joint.shapes.microtosca.Root>link.getSourceElement();
+        this.target = <joint.shapes.microtosca.Root>link.getTargetElement();
+    }
+
+    execute() {
+        this.link.remove();
+    }
+
+    unexecute() {
+        this.graph.addRunTimeInteraction(this.source, this.target);
+    }
+}
+

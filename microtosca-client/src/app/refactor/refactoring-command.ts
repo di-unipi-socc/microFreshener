@@ -1,5 +1,5 @@
 import { Graph } from "../model/graph";
-import { SmellObject } from '../analyser/smell';
+import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject } from '../analyser/smell';
 import { Command } from "../invoker/icommand";
 import * as joint from 'jointjs';
 
@@ -43,13 +43,49 @@ export class IgnoreAlwaysCommand implements Command {
     }
 }
 
+export class AddApiGatewayCommand implements Command {
+
+    smell: GroupSmellObject;
+    graph: Graph;
+
+    apiGateways: joint.shapes.microtosca.CommunicationPattern[];
+
+    constructor(graph: Graph, smell: NoApiGatewaySmellObject) {
+        this.graph = graph;
+        this.smell = smell;
+        this.apiGateways = []
+    }
+
+    execute() {
+        let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
+        this.smell.getNodeBasedCauses().forEach(node=>{
+            let gw = this.graph.addApiGateway("Api Gw"+node.getName());
+            this.graph.addRunTimeInteraction(gw, node);
+            this.graph.addRunTimeInteraction(edgeGroup, gw);
+            this.apiGateways.push(gw);
+            this.graph.getLinkFromSourceToTarget(edgeGroup, node).remove();
+        });
+    }
+
+    unexecute() {
+        let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
+
+        this.smell.getNodeBasedCauses().forEach(node=>{
+            this.graph.addRunTimeInteraction(edgeGroup, node);
+        });
+
+        this.apiGateways.forEach(gw=>gw.remove());
+
+    }
+}
 
 export class AddMessageRouterCommand implements Command {
 
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
 
-    addedSourceTargetRouters: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
+    // name of incoming nodes, name of outcoming nodes, Communication pattern
+    addedSourceTargetRouters: [string, string, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
         this.links = smell.getLinkBasedCauses();
@@ -66,16 +102,21 @@ export class AddMessageRouterCommand implements Command {
             let messageRouter = this.graph.addMessageRouter("prova");
             this.graph.addRunTimeInteraction(sourceNode, messageRouter);
             this.graph.addRunTimeInteraction(messageRouter, targetNode);
-            this.addedSourceTargetRouters.push([sourceNode, targetNode, messageRouter]);
+            this.addedSourceTargetRouters.push([sourceNode.getName(), targetNode.getName(), messageRouter]);
             link.remove();
         }
     }
 
     unexecute() {
+        console.log("UNEXECUTE SJSJSJSJ:")
         let len = this.addedSourceTargetRouters.length;
         for (var _i = 0; _i < len; _i++) {
             let sourceTargetPattern = this.addedSourceTargetRouters.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
+            let sourceNmae = sourceTargetPattern[0];
+            let targetname = sourceTargetPattern[1];
+            console.log("target:")
+            console.log(targetname);
+            let link = this.graph.addRunTimeInteraction(this.graph.findNodeByName(sourceNmae), this.graph.findRootByName(targetname));
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };

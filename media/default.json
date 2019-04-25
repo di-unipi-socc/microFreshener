@@ -10,21 +10,11 @@
             "type": "database"
         },
         {
-            "name": "rabbitmq",
-            "type": "communicationpattern",
-            "ctype": "MessageBroker"
-        },
-        {
-            "name": "gateway",
-            "type": "communicationpattern",
-            "ctype": "ApiGateway"
-        },
-        {
             "name": "order",
             "type": "service"
         },
         {
-            "name": "prova",
+            "name": "rabbitmq",
             "type": "communicationpattern",
             "ctype": "MessageBroker"
         }
@@ -43,30 +33,20 @@
             "type": "runtime"
         },
         {
-            "source": "gateway",
+            "source": "order",
             "target": "shipping",
             "timeout": false,
             "type": "runtime"
         },
         {
             "source": "order",
-            "target": "rabbitmq",
-            "type": "runtime"
-        },
-        {
-            "source": "rabbitmq",
-            "target": "rabbitmq",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "prova",
+            "target": "order_db",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "shipping",
-            "target": "prova",
+            "source": "order",
+            "target": "rabbitmq",
             "timeout": false,
             "type": "runtime"
         }
@@ -76,7 +56,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "gateway"
+                "order",
+                "shipping"
             ]
         }
     ]
