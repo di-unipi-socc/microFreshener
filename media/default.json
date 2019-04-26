@@ -17,6 +17,19 @@
             "name": "rabbitmq",
             "type": "communicationpattern",
             "ctype": "MessageBroker"
+        },
+        {
+            "name": "gateway",
+            "type": "communicationpattern",
+            "ctype": "ApiGateway"
+        },
+        {
+            "name": "DS",
+            "type": "service"
+        },
+        {
+            "name": "ADAD",
+            "type": "service"
         }
     ],
     "links": [
@@ -49,6 +62,32 @@
             "target": "rabbitmq",
             "timeout": false,
             "type": "runtime"
+        },
+        {
+            "source": "gateway",
+            "target": "shipping",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "DS",
+            "target": "shipping",
+            "type": "runtime"
+        },
+        {
+            "source": "order",
+            "target": "DS",
+            "type": "runtime"
+        },
+        {
+            "source": "ADAD",
+            "target": "shipping",
+            "type": "runtime"
+        },
+        {
+            "source": "order",
+            "target": "ADAD",
+            "type": "runtime"
         }
     ],
     "groups": [
@@ -57,7 +96,7 @@
             "type": "edgegroup",
             "members": [
                 "order",
-                "shipping"
+                "gateway"
             ]
         }
     ]

@@ -94,8 +94,6 @@ export class AppComponent {
         })
       })
 
-      console.log(this.as.analysedgroups);
-
     this.as.analysedgroups.forEach((agroup)=>{
         let g = this.gs.getGraph().getGroup(agroup.name);
         agroup.getSmells().forEach((smell)=>{

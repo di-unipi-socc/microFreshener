@@ -6,25 +6,25 @@ import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObje
 declare module 'jointjs' {
     namespace shapes {
         namespace microtosca {
-            class Root extends joint.dia.Element{
+            class Root extends joint.dia.Element {
                 setName(name): void;
                 getName(): string;
                 addSmell(smell: SmellObject): void;
                 getSmell(name: string): SmellObject;
                 getSmells(): SmellObject[];
                 hideSmell(smell: SmellObject): void;
-                showSmell(smell:SmellObject): void;
+                showSmell(smell: SmellObject): void;
                 resetSmells(): void
                 showIcons(): void;
                 hideIcons(): void;
                 ignoreOnce(smell: SmellObject): void;
                 ignoreAlways(smell: SmellObject): void;
                 undoIgnoreAlways(smell: SmellObject): void;
-                getIgnoredSmells():SmellObject[];
-               
+                getIgnoredSmells(): SmellObject[];
+
             }
-            class Node extends Root{
-               
+            class Node extends Root {
+
             }
             class Service extends Node {
             }
@@ -34,7 +34,7 @@ declare module 'jointjs' {
                 setConcreteType(ctype: string): void;
                 getConcreteType(): string;
             }
-            class Group extends Root{
+            class Group extends Root {
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -48,7 +48,7 @@ declare module 'jointjs' {
                 hasTimeout(): boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
-                hasTimeout():boolean
+                hasTimeout(): boolean
                 setTimedout(boolean): void;
             }
         }
@@ -89,7 +89,7 @@ joint.dia.Element.define('microtosca.Service', {
             fill: '#F78686',
             magnet: false
         },
-        EndpointBasedServiceInteraction: { // endpointBasesdServiceInteraction
+        EndpointBasedServiceInteraction: { // EndpointBasesdServiceInteraction
             fill: '#00ff00',
             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
             visibility: "hidden",
@@ -148,13 +148,13 @@ joint.dia.Element.define('microtosca.Service', {
             this.hideSmell(smell);
             this.attributes.ignoreSmells.push(smell);
         },
-        undoIgnoreAlways(smell: SmellObject){
+        undoIgnoreAlways(smell: SmellObject) {
             this.showSmell(smell);
-            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function(sm){
+            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function (sm) {
                 return sm.getName() != smell.getName();
             });
         },
-        getIgnoredSmells(){
+        getIgnoredSmells() {
             return this.attributes.ignoreSmells;
         },
         getName: function () {
@@ -187,18 +187,18 @@ joint.dia.Element.define('microtosca.Service', {
             if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
                 this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
             }
-            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
+            else if (smell instanceof WobblyServiceInteractionSmellObject) {
                 this.attr('wsi/visibility', 'hidden');
             }
             else if (smell instanceof NoApiGatewaySmellObject) {
                 this.attr('NoApiGateway/visibility', 'hidden');
             }
         },
-        showSmell(smell:SmellObject){
+        showSmell(smell: SmellObject) {
             if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
                 this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
             }
-            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
+            else if (smell instanceof WobblyServiceInteractionSmellObject) {
                 this.attr('wsi/visibility', 'visible');
             }
             else if (smell instanceof NoApiGatewaySmellObject) {
@@ -207,16 +207,12 @@ joint.dia.Element.define('microtosca.Service', {
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject)
                 this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
-            }
-            else if (smell instanceof  WobblyServiceInteractionSmellObject) {
+            else if (smell instanceof WobblyServiceInteractionSmellObject)
                 this.attr('wsi/visibility', 'visible');
-            }
-            else if (smell instanceof NoApiGatewaySmellObject) {
+            else if (smell instanceof NoApiGatewaySmellObject)
                 this.attr('NoApiGateway/visibility', 'visible');
-            }
-            // console.log(this);
         }
     });
 
@@ -242,7 +238,6 @@ joint.dia.Element.define('microtosca.Database', {
             yAlignment: 'middle',
             xAlignment: 'middle',
             fontSize: 15,
-            // TODO: setName()  generate an error, so the text is setted here.
             text: name || '',
         },
         delete: {
@@ -269,7 +264,7 @@ joint.dia.Element.define('microtosca.Database', {
 
     },
     smells: [], // list of smells that affects a single node
-    ignoreSmells : []
+    ignoreSmells: []
 }, {
         markup: [{
             tagName: 'rect',
@@ -309,16 +304,16 @@ joint.dia.Element.define('microtosca.Database', {
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-            if (smell instanceof SharedPersistencySmellObject){
-                this.attr('sp/visibility', 'visible');
-            }
-        },
-        showSmell(smell:SmellObject){
             if (smell instanceof SharedPersistencySmellObject) {
                 this.attr('sp/visibility', 'visible');
             }
         },
-        hideSmell(smell:SmellObject){
+        showSmell(smell: SmellObject) {
+            if (smell instanceof SharedPersistencySmellObject) {
+                this.attr('sp/visibility', 'visible');
+            }
+        },
+        hideSmell(smell: SmellObject) {
             if (smell instanceof SharedPersistencySmellObject) {
                 this.attr('sp/visibility', 'hidden');
             }
@@ -327,13 +322,13 @@ joint.dia.Element.define('microtosca.Database', {
             this.hideSmell(smell);
             this.attributes.ignoreSmells.push(smell);
         },
-        undoIgnoreAlways(smell: SmellObject){
+        undoIgnoreAlways(smell: SmellObject) {
             this.showSmell(smell);
-            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function(sm){
+            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function (sm) {
                 return sm.getName() != smell.getName();
             });
         },
-        getIgnoredSmells(){
+        getIgnoredSmells() {
             return this.attributes.ignoreSmells;
         },
         showIcons: function () {
@@ -362,7 +357,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refY: '50%',
             fontSize: 14,
             fill: '#333333',
-            // TODO: setName()  generate an error, so the text is setted here.
             text: ''
         },
         delete: {
@@ -384,7 +378,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refY: '75%',
             fontSize: 13,
             fill: '#333333',
-            // TODO: setConcreteType()  generate an error, so the text is setted here.
             text: ''
         }
     },
@@ -430,6 +423,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             this.attr('delete/visibility', 'hidden')
         },
     });
+
 joint.dia.Element.define('microtosca.EdgeGroup', {
     size: {
         width: 75,
@@ -612,8 +606,8 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
         }],
         setTimedout: function (value: boolean) {
             this.timeout = value;
-            
-            if (this.timeout) 
+
+            if (this.timeout)
                 this._showTimeout();
             else
                 this._removeTimeout()
@@ -656,7 +650,7 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 }
             });
         },
-        _removeTimeout:function(){
+        _removeTimeout: function () {
             this.removeLabel(0);
         }
 
@@ -682,7 +676,7 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', {
             strokeLinejoin: 'round'
         }
     },
-    timeout:false
+    timeout: false
 }, {
         markup: [{
             tagName: 'path',
@@ -700,7 +694,7 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', {
                 'pointer-events': 'none'
             }
         }],
-        
+
         setTimedout: function (value: boolean) {
             this.timeout = value;
         },

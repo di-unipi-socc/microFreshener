@@ -19,7 +19,11 @@ export class IgnoreOnceCommand implements Command {
 
     unexecute() {
         this.node.showSmell(this.smell);
+    }
 
+
+    getDescription() {
+        return "Ignore the smell";
     }
 }
 
@@ -39,7 +43,11 @@ export class IgnoreAlwaysCommand implements Command {
 
     unexecute() {
         this.node.showSmell(this.smell);
+    }
 
+
+    getDescription() {
+        return "Ignore the smell forever.";
     }
 }
 
@@ -58,8 +66,8 @@ export class AddApiGatewayCommand implements Command {
 
     execute() {
         let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
-        this.smell.getNodeBasedCauses().forEach(node=>{
-            let gw = this.graph.addApiGateway("Api Gw"+node.getName());
+        this.smell.getNodeBasedCauses().forEach(node => {
+            let gw = this.graph.addApiGateway("Gateway " + node.getName());
             this.graph.addRunTimeInteraction(gw, node);
             this.graph.addRunTimeInteraction(edgeGroup, gw);
             this.apiGateways.push(gw);
@@ -70,12 +78,16 @@ export class AddApiGatewayCommand implements Command {
     unexecute() {
         let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
 
-        this.smell.getNodeBasedCauses().forEach(node=>{
+        this.smell.getNodeBasedCauses().forEach(node => {
             this.graph.addRunTimeInteraction(edgeGroup, node);
         });
 
-        this.apiGateways.forEach(gw=>gw.remove());
+        this.apiGateways.forEach(gw => gw.remove());
 
+    }
+
+    getDescription() {
+        return "Add an Api Gateway from the external user to the internal service";
     }
 }
 
@@ -99,7 +111,7 @@ export class AddMessageRouterCommand implements Command {
             var link = this.links.pop();
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let messageRouter = this.graph.addMessageRouter("prova");
+            let messageRouter = this.graph.addMessageRouter(`${sourceNode.getName()} ${targetNode.getName()}`);
             this.graph.addRunTimeInteraction(sourceNode, messageRouter);
             this.graph.addRunTimeInteraction(messageRouter, targetNode);
             this.addedSourceTargetRouters.push([sourceNode.getName(), targetNode.getName(), messageRouter]);
@@ -108,18 +120,19 @@ export class AddMessageRouterCommand implements Command {
     }
 
     unexecute() {
-        console.log("UNEXECUTE SJSJSJSJ:")
         let len = this.addedSourceTargetRouters.length;
         for (var _i = 0; _i < len; _i++) {
             let sourceTargetPattern = this.addedSourceTargetRouters.pop();
             let sourceNmae = sourceTargetPattern[0];
             let targetname = sourceTargetPattern[1];
-            console.log("target:")
-            console.log(targetname);
             let link = this.graph.addRunTimeInteraction(this.graph.findNodeByName(sourceNmae), this.graph.findRootByName(targetname));
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };
+    }
+
+    getDescription() {
+        return "Add message router between two services";
     }
 }
 
@@ -141,7 +154,7 @@ export class AddMessageBrokerCommand implements Command {
             var link = this.links.pop();
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let messageRouter = this.graph.addMessageBroker("prova");
+            let messageRouter = this.graph.addMessageBroker(`${sourceNode.getName()} ${targetNode.getName()}`);
             this.graph.addRunTimeInteraction(sourceNode, messageRouter);
             this.graph.addRunTimeInteraction(targetNode, messageRouter);
             this.addedSourceTargetbrokers.push([sourceNode, targetNode, messageRouter]);
@@ -157,6 +170,10 @@ export class AddMessageBrokerCommand implements Command {
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };
+    }
+
+    getDescription() {
+        return "Add message broker between two services";
     }
 
 }
@@ -179,7 +196,7 @@ export class AddServiceDiscoveryCommand implements Command {
             var link = this.links.pop();
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let serviceDiscovery = this.graph.addServiceDiscovery("prova");
+            let serviceDiscovery = this.graph.addServiceDiscovery(`${sourceNode.getName()} ${targetNode.getName()}`);
             this.graph.addRunTimeInteraction(sourceNode, serviceDiscovery);
             this.graph.addRunTimeInteraction(targetNode, serviceDiscovery);
             this.addedSourceTargetServiceDiscoveries.push([sourceNode, targetNode, serviceDiscovery]);
@@ -196,6 +213,10 @@ export class AddServiceDiscoveryCommand implements Command {
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };
+    }
+
+    getDescription() {
+        return "Add service discovery";
     }
 
 }
@@ -218,7 +239,7 @@ export class AddCircuitBreakerCommand implements Command {
             var link = this.links.pop();
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let circuitBeaker = this.graph.addCircuitBreaker("prova");
+            let circuitBeaker = this.graph.addCircuitBreaker(`${sourceNode.getName()} ${targetNode.getName()}`);
             this.graph.addRunTimeInteraction(sourceNode, circuitBeaker);
             this.graph.addRunTimeInteraction(circuitBeaker, targetNode);
             this.addedSourceTargetCircutBeakers.push([sourceNode, targetNode, circuitBeaker]);
@@ -234,6 +255,10 @@ export class AddCircuitBreakerCommand implements Command {
             this.links.push(link);
             sourceTargetPattern[2].remove();
         };
+    }
+
+    getDescription() {
+        return "Add circuit breaker between two services";
     }
 
 }
@@ -259,6 +284,9 @@ export class UseTimeoutCommand implements Command {
         });
     }
 
+    getDescription() {
+        return "Use timeout";
+    }
 }
 
 export class MergeServicesCommand implements Command {
@@ -276,20 +304,25 @@ export class MergeServicesCommand implements Command {
         this.graph = graph;
         this.sharedDatabase = smell.getNodeBasedCauses()[0];
         this.serviceIngoingOutgoing = [];
+        this._saveIncomingOutcomingNodes();
+
     }
 
     execute() {
         this.mergedService = this.graph.addService("Merged Service");
         this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
-        this._saveIncomingOutcomingNodes();
-        this._addLinkToMergedServie();
+        this._addLinkToMergedService();
         this._removeServicesAccessingDB();
     }
 
     unexecute() {
-        this.mergedService.remove();
         this._restoreServicesAccesingDB();
         this._restoreLinks();
+        this.mergedService.remove();
+    }
+
+    getDescription() {
+        return "Merge the services accessing the same database";
     }
 
     _restoreServicesAccesingDB() {
@@ -319,13 +352,15 @@ export class MergeServicesCommand implements Command {
         })
     }
 
-    _addLinkToMergedServie() {
+    _addLinkToMergedService() {
         this.serviceIngoingOutgoing.forEach(sio => {
-            sio[2].forEach(node => {
-                this.graph.addRunTimeInteraction(this.mergedService, node)
-            })
+            // ingoing node
             sio[1].forEach(node => {
                 this.graph.addRunTimeInteraction(node, this.mergedService)
+            })
+            // outgoing node
+            sio[2].forEach(node => {
+                this.graph.addRunTimeInteraction(this.mergedService, node)
             })
         })
     }
@@ -335,7 +370,6 @@ export class MergeServicesCommand implements Command {
             let nodeAccessDB = <joint.shapes.microtosca.Node>link.getSourceElement();
             let ingoing: joint.shapes.microtosca.Node[] = this.graph.getInboundNeighbors(nodeAccessDB);
             let outgoing: joint.shapes.microtosca.Node[] = this.graph.getOutboundNeighbors(nodeAccessDB);
-
             this.serviceIngoingOutgoing.push([nodeAccessDB, ingoing, outgoing]);
         });
     }
@@ -375,11 +409,12 @@ export class SplitDatabaseCommand implements Command {
         this.smell.getLinkBasedCauses().forEach(link => {
             link.target(this.sharedDatabase);
         })
-
         this.splittedDatabase.forEach(db => db.remove())
-
     }
 
+    getDescription() {
+        return "Split database";
+    }
 }
 export class AddDataManagerCommand implements Command {
 
@@ -410,6 +445,10 @@ export class AddDataManagerCommand implements Command {
             link.target(this.sharedDB);
         });
         this.databaseManager.remove();
+    }
+
+    getDescription() {
+        return "Add Data manger accessgin the shared  database";
     }
 
 }

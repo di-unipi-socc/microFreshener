@@ -40,10 +40,10 @@
 </div>
 <div class="p-grid p-justify-center p-align-center vertical-container">
     <div class="p-col-2">
-        <h3>Action:</h3>
+        <h3>Description:</h3>
     </div>
     <div class="p-col-4">
-        <!-- <textarea *ng-if="selectedCommand" pInputTextarea> {{selectedCommand.getDescription() || 'none'}}</textarea> -->
+        <textarea  *ngIf="selectedCommand" pInputTextarea> {{selectedCommand.getDescription() || 'none'}}</textarea>
     </div>
 </div>
 

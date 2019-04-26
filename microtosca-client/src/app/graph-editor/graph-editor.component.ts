@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import { GraphInvoker } from "../invoker/invoker";
 import { RemoveServiceCommand } from './graph-command';
+import { Node, Service, Database } from '../model/node';
 
 
 @Component({
@@ -44,6 +45,10 @@ export class GraphEditorComponent implements OnInit {
         this.graphInvoker.redo();
     }
 
+    clear(){
+        this.gs.getGraph().clear();
+    }
+
     ngOnInit() {
 
         this.paper = new joint.dia.Paper({
@@ -65,14 +70,14 @@ export class GraphEditorComponent implements OnInit {
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
+        // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
     }
 
     createSampleGraph() {
-        // // nodes
+        //  nodes
         var s = this.gs.getGraph().addService("shipping");
         var odb = this.gs.getGraph().addDatabase("order_db");
         var o = this.gs.getGraph().addService("order");
@@ -101,7 +106,7 @@ export class GraphEditorComponent implements OnInit {
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
         console.log(this.gs.getGraph().getLinkFromSourceToTarget(edge, o));
 
-        // this.gs.getGraph().addEdgeGroup("edgenodes", []);
+
 
     }
 
@@ -458,7 +463,7 @@ export class GraphEditorComponent implements OnInit {
                 //     distance: -80,
                 //     action: function(){
                 //         var link = this.model;
-                        
+
                 //         // this.graphInvoker.executeCommand( new RemoveServiceCommand(this.gs.getGraph(), link));
                 //     },
                 // }),

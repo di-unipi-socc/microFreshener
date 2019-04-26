@@ -78,10 +78,6 @@ export class AnalyserService {
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids: number[] = smells.map(smell => smell.id);
 
-    // this.gs.getGraph().getNodes().forEach((node: joint.shapes.microtosca.Node) => {
-    //   console.log(node.getIgnoredSmells());
-    // });
-
     const params = new HttpParams().set('smells', smells_ids.join());
 
     // TODO: the analysis should send ignore always command to the analyser.
@@ -155,9 +151,6 @@ export class AnalyserService {
       let smell: SmellObject;
 
       switch (smellJson.name) {
-        case "NoApiGateway":
-          smell = new NoApiGatewaySmellObject();
-          break;
         case "EndpointBasedServiceInteractionSmell":
           smell = new EndpointBasedServiceInteractionSmellObject();
           break;

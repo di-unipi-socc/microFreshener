@@ -32,8 +32,8 @@ export class Graph extends joint.dia.Graph {
         return this.getGroups().find(group => group.getName() == name);
     }
 
-    getRoots():joint.shapes.microtosca.Root[]{
-        return   <joint.shapes.microtosca.Root[]>this.getElements();
+    getRoots(): joint.shapes.microtosca.Root[] {
+        return <joint.shapes.microtosca.Root[]>this.getElements();
     }
 
     /**Return all the nodes in the graph  */
@@ -47,14 +47,14 @@ export class Graph extends joint.dia.Graph {
     }
 
     findNodeByName(name: string): joint.shapes.microtosca.Node {
-        return this.getNodes().find(node =>  name === node.getName());
+        return this.getNodes().find(node => name === node.getName());
     }
 
-    findGroupByName(name:string):joint.shapes.microtosca.Group{
+    findGroupByName(name: string): joint.shapes.microtosca.Group {
         return this.getGroups().find(group => name === group.getName());
     }
 
-    findRootByName(name:string):joint.shapes.microtosca.Root{
+    findRootByName(name: string): joint.shapes.microtosca.Root {
         return this.getRoots().find(element => name === element.getName());
     }
 
@@ -98,12 +98,12 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(client, { inbound: true });
     }
 
-    getOutgoingLinks(node:joint.shapes.microtosca.Node){
+    getOutgoingLinks(node: joint.shapes.microtosca.Node) {
         return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { outbound: true });
     }
 
-    getIngoingLinks(node:joint.shapes.microtosca.Node){
-        return  <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
+    getIngoingLinks(node: joint.shapes.microtosca.Node) {
+        return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
     }
 
     addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
@@ -248,7 +248,7 @@ export class Graph extends joint.dia.Graph {
         json['links'].forEach((link) => {
             if (link.type == "deploymenttime")
                 this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
-            else if (link.type = "runtime"){
+            else if (link.type = "runtime") {
                 this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout']);
             }
 
@@ -268,9 +268,8 @@ export class Graph extends joint.dia.Graph {
 
     toJSON() {
         var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
-        // TODO: node can be of type joint.microtosca.Node insted fo Cell
         this.getNodes().forEach((node: joint.shapes.microtosca.Node) => {
-         
+
             var dnode = { 'name': node.getName() }; // 'id': node.get('id'),
             if (this.isService(node))
                 dnode['type'] = "service";
@@ -285,15 +284,15 @@ export class Graph extends joint.dia.Graph {
             data['nodes'].push(dnode);
         })
         // Add links
-        this.getLinks().forEach((link:joint.shapes.microtosca.RunTimeLink) => {
+        this.getLinks().forEach((link: joint.shapes.microtosca.RunTimeLink) => {
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),
                 'timeout': link.hasTimeout()
             }
-            if (link instanceof joint.shapes.microtosca.RunTimeLink) 
+            if (link instanceof joint.shapes.microtosca.RunTimeLink)
                 dlink['type'] = "runtime";
-            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink) 
+            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink)
                 dlink['type'] = "deploymenttime";
             else
                 throw new Error(`Link type of ${link} not recognized`);
