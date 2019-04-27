@@ -1,5 +1,5 @@
 import { Command } from '../invoker/icommand';
-import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand } from "./refactoring-command"
+import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand } from "./refactoring-command"
 
 export class Refactoring {
     name: string
@@ -101,3 +101,9 @@ export class AddDataManagerRefactoring extends Refactoring {
     }
 }
 
+
+export class MoveDatabaseIntoTeamRefactoring extends Refactoring{
+    constructor(command: MoveDatabaseIntoTeamCommand) {
+        super("Move Database", command)
+    }
+}

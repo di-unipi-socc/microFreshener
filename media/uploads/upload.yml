@@ -4,27 +4,94 @@ imports:
 - micro: ../../data/micro-tosca-types.yml
 topology_template:
   node_templates:
-    shipping:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: OrderDB
-      - run_time: Rabbit
-    order:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: OrderDB
-      - run_time: Rabbit
-    Gw:
-      type: micro.nodes.ApiGateway
-      requirements:
-      - run_time: order
-    OrderDB:
-      type: micro.nodes.Database
-    Rabbit:
+    Brk:
       type: micro.nodes.MessageBroker
+    Jtl:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Brk
+    Tlg:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Brk
+      - run_time: InfDB
+    InfDB:
+      type: micro.nodes.Database
+    Chr:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: InfDB
+    Inf:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: InfDB
+      - run_time: Kpc
+    Kpc:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: InfDB
+      - run_time: InfUp
+    Dsh:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Chr
+    Cnf:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Inf
+      - run_time: FltDB
+    InfUp:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: CldAdm
+    FltDB:
+      type: micro.nodes.Database
+    GUI:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Dsh
+      - run_time: Cnf
+      - run_time: Kpr
+      - run_time: CldAdm
+    Kpr:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: KprDB
+      - run_time: NsqDB
+      - run_time: CldAdm
+      - run_time: SftMngDB
+    KprDB:
+      type: micro.nodes.Database
+    NsqDB:
+      type: micro.nodes.Database
+    CldAdm:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: CldAdmDB
+      - run_time: Ans
+      - run_time: SftDB
+    CldAdmDB:
+      type: micro.nodes.Database
+    SftDB:
+      type: micro.nodes.Database
+    Ans:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Tlg
+    SftMngDB:
+      type: micro.nodes.Database
+    Agent:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: Brk
+      - run_time: Kpr
+      - run_time: CldAdm
+      - run_time: SftDB
   groups:
     edgenodes:
       type: micro.groups.Edge
       members:
-      - shipping
-      - Gw
+      - Brk
+      - Kpr
+      - CldAdm
+      - GUI

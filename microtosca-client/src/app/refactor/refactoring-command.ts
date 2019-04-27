@@ -1,5 +1,5 @@
 import { Graph } from "../model/graph";
-import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject } from '../analyser/smell';
+import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
 import { Command } from "../invoker/icommand";
 import * as joint from 'jointjs';
 
@@ -451,4 +451,27 @@ export class AddDataManagerCommand implements Command {
         return "Add Data manger accessgin the shared  database";
     }
 
+}
+
+export class MoveDatabaseIntoTeamCommand implements Command {
+
+    smell: SingleLayerTeamSmellObject;
+    graph: Graph;
+
+    constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
+        this.smell = smell;
+        this.graph = graph;
+    }
+    
+    execute() {
+        // TODO
+    }
+
+    unexecute() {
+        // TODO
+    }
+
+    getDescription() {
+        return "Move the database into the team";
+    }
 }

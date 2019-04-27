@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject } from '../analyser/smell';
+import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
 
 
 // extend joint.shapes namespace
@@ -21,7 +21,6 @@ declare module 'jointjs' {
                 ignoreAlways(smell: SmellObject): void;
                 undoIgnoreAlways(smell: SmellObject): void;
                 getIgnoredSmells(): SmellObject[];
-
             }
             class Node extends Root {
 
@@ -471,6 +470,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
+           
         },
         getSmell: function (name: string) {
             return this.attributes.smells.find(smell => {
@@ -527,8 +527,16 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             refWidth: '10%',
             refHeight: '5%',
             xAlignment: 'center',
-
-        }
+        },
+        singleLayerTeam: {
+            fill: '#FC2B01',
+            event: 'smell:SingleLayerTeam:pointerdown',
+            visibility: "hidden",
+            ref: 'body',
+            refX: '10%',
+            refWidth: '10%',
+            refHeight: '10%',
+        },
     },
     smells: [] // list of smells that affects a single node
 }, {
@@ -541,6 +549,9 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'rect',
             selector: 'minimize'
+        },{
+            tagName: 'rect',
+            selector: 'singleLayerTeam'
         }],
         getName: function () {
             return this.attr('label/text');
@@ -553,6 +564,16 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         },
         hideIcons: function () {
             this.attr('minimize/visibility', 'hidden')
+        },
+        addSmell: function (smell: SmellObject) {
+            this.attributes.smells.push(smell);
+            if (smell instanceof SingleLayerTeamSmellObject)
+                this.attr('singleLayerTeam/visibility', 'visible');
+        },
+        getSmell: function (name: string) {
+            return this.attributes.smells.find(smell => {
+                return name === smell.name;
+            });
         },
     });
 

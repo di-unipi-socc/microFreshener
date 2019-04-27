@@ -141,3 +141,10 @@ export class WobblyServiceInteractionSmellObject extends SmellObject {
         super("WobblyServiceInteractonSmell");
     }
 }
+
+export class SingleLayerTeamSmellObject extends GroupSmellObject {
+
+    constructor(group:joint.shapes.microtosca.SquadGroup) {
+        super("SingleLayerTeamSmell", group);
+    }
+}

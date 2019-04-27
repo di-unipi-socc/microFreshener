@@ -1,6 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
+import { group } from '@angular/animations';
 
 export class Graph extends joint.dia.Graph {
     name: string;
@@ -90,6 +91,10 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.EdgeGroup[]>this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
+    getSquadGroups(): joint.shapes.microtosca.SquadGroup[] {
+        return <joint.shapes.microtosca.SquadGroup[]>this.getGroups().filter(group => this.isSquadGroup(group));
+    }
+
     getOutboundNeighbors(node: joint.dia.Element): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(node, { outbound: true });
     }
@@ -106,13 +111,12 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
     }
 
-    addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
+    addSquadGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
         nodes.forEach(node => {
             g.embed(node);
-
         });
         return g;
     }
@@ -255,13 +259,23 @@ export class Graph extends joint.dia.Graph {
         });
         json['groups'].forEach(group => {
             let group_name = group['name'];
-            if (group['type'] == "edgegroup") {
+            let group_type = group['type'];
+            if (group_type == "edgegroup") {
                 let nodes: joint.shapes.microtosca.Node[] = [];
                 group.members.forEach(member => {
                     nodes.push(this.getNode(member))
                 });
                 this.addEdgeGroup(group_name, nodes);
             }
+            else if (group_type == "squadgroup") {
+                let nodes: joint.shapes.microtosca.Node[] = [];
+                group.members.forEach(member => {
+                    nodes.push(this.getNode(member))
+                });
+                this.addSquadGroup(group_name, nodes);
+            }
+            else
+                throw new Error(`Group type ${group_type} not recognized`);
 
         })
     }
@@ -308,6 +322,16 @@ export class Graph extends joint.dia.Graph {
             edgeGroup['members'] = members;
             data['groups'].push(edgeGroup)
         });
+        // add SquadGroups
+        this.getSquadGroups().forEach(group =>{
+            var squadGroup = { 'name': group.getName(), 'type': 'squadgroup', "members": [] }
+            let members = [];
+            group.getEmbeddedCells().forEach(cell=>{
+                members.push((<joint.shapes.microtosca.Node>cell).getName());
+            });
+            squadGroup['members'] = members;
+            data['groups'].push(squadGroup);
+        })
         return data;
     }
 

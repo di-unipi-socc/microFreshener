@@ -97,14 +97,13 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        // var g = this.gs.getGraph().addTeamGroup("team1", [s, o]);
+        // var g = this.gs.getGraph().addSquadGroup("team1", [s, o]);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
-        console.log(this.gs.getGraph().getLinkFromSourceToTarget(edge, o));
 
 
 
@@ -123,7 +122,7 @@ export class GraphEditorComponent implements OnInit {
             // height: '50%'
         });
         ref.onClose.subscribe((data) => {
-            this.gs.getGraph().addTeamGroup(data.name, data.nodes);
+            this.gs.getGraph().addSquadGroup(data.name, data.nodes);
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
         });
 
@@ -180,7 +179,6 @@ export class GraphEditorComponent implements OnInit {
             var cell = cellView.model;
             if (cell.isElement()) {
                 cell.showIcons();
-                console.log("MOUSER OVER NODE");
             }
         })
 
@@ -221,6 +219,13 @@ export class GraphEditorComponent implements OnInit {
             evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
             var model: joint.shapes.microtosca.Node = cellview.model;
             var smell: SmellObject = model.getSmell("WobblyServiceInteractonSmell");
+            this._openDialogSmellComponent(model, smell);
+        })
+
+        this.paper.on("smell:SingleLayerTeam:pointerdown", (cellview, evt, x, y) => {
+            evt.stopPropagation();
+            var model = cellview.model;
+            var smell: SmellObject = model.getSmell("SingleLayerTeamSmell");
             this._openDialogSmellComponent(model, smell);
         })
     }
@@ -286,7 +291,6 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var cell = cellview.model;
-            console.log(cell.size());
             var embeddedCells = cell.getEmbeddedCells();
 
             _.each(embeddedCells, function (child) {
@@ -304,7 +308,6 @@ export class GraphEditorComponent implements OnInit {
     bindTeamToCoverChildren() {
 
         this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
-            console.log("Change size", cell);
 
             if (opt.skipParentHandler) return;
 
@@ -327,7 +330,6 @@ export class GraphEditorComponent implements OnInit {
                 // we can shrink the parent element back while manipulating
                 // its children.
                 cell.set('originalPosition', cell.get('position'));
-                console.log("Manipulating parent posistion", cell.get('position'));
             }
 
             // DIDO
@@ -340,7 +342,6 @@ export class GraphEditorComponent implements OnInit {
             var parent = cell.getParentCell();
 
             if (!parent) return;
-            console.log("found parent");
 
             var parentBbox = parent.getBBox();
             // var parentBbox = this.gs.getGraph().getBBox([parent]);
@@ -357,7 +358,6 @@ export class GraphEditorComponent implements OnInit {
             var newCornerY = originalPosition.y + originalSize.height;
 
             _.each(parent.getEmbeddedCells(), (child) => {
-                console.log("Embedde cell", cell);
                 var childBbox = (<joint.dia.Element>child).getBBox();
                 // var childBbox = this.gs.getGraph().getCell(child);
 
@@ -530,8 +530,6 @@ export class GraphEditorComponent implements OnInit {
                     return _.omit([link.source().id, link.target().id], cell.id)[0];
                 })
                 .each((group, key) => {
-                    // console.log(group);
-                    // console.log(key);
                     // if the member of the group  has both source and target model
                     // then adjust vertices
                     if (key !== 'undefined') this.adjustVertices(graph, _.first(group));

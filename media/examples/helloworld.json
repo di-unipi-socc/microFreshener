@@ -22,7 +22,6 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-
         }
     ],
     "links": [
@@ -37,15 +36,10 @@
             "type": "runtime"
         },
         {
-            "source": "shipping",
-            "target": "order_db",
-            "type": "deploymenttime"
-        },
-        {
             "source": "order",
             "target": "shipping",
             "type": "runtime",
-            "timeout": true
+            "timeout": false
         },
         {
             "source": "order",
@@ -56,16 +50,6 @@
             "source": "order",
             "target": "rabbitmq",
             "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "type": "deploymenttime"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "type": "deploymenttime"
         },
         {
             "source": "gateway",
@@ -81,6 +65,22 @@
                 "shipping",
                 "order",
                 "gateway"
+            ]
+        },
+        {
+            "name": "team1",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "rabbitmq"
+            ]
+        },
+        {
+            "name": "team2",
+            "type": "squadgroup",
+            "members": [
+                "order",
+                "order_db"
             ]
         }
     ]

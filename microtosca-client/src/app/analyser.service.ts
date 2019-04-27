@@ -10,10 +10,10 @@ import { AGroup } from "./analyser/group";
 import { GraphService } from './graph.service';
 import { Principle } from './model/principles';
 import { Smell } from './model/smell';
-import { SmellObject, GroupSmellObject } from './analyser/smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './analyser/smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand } from "./refactor/refactoring-command";
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatabaseIntoTeam, MoveDatabaseIntoTeamRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand } from "./refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 
@@ -89,7 +89,6 @@ export class AnalyserService {
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
           this.clearSmells(); // removed the smell in the graph view
-
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
@@ -99,7 +98,6 @@ export class AnalyserService {
             let agroup = this.buildAnalysedGroupFromJson(group);
             this.analysedgroups.push(agroup);
           });
-          // console.log(this.analysedgroups);
           return true;
         }),
         tap(_ => this.log(`Send analysis`),
@@ -117,14 +115,23 @@ export class AnalyserService {
         case "NoApiGateway":
           smell = new NoApiGatewaySmellObject(group);
           break;
+        case "SingleLayerTeam":
+          smell = new SingleLayerTeamSmellObject(group)
+          break;
         default:
           break;
       }
-      smellJson['cause'].forEach((node_name) => {
+      smellJson['nodes'].forEach((node_name) => {
         let node = this.gs.getGraph().findNodeByName(node_name);
         smell.addNodeBasedCuase(node);
         smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
         smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
+      });
+      smellJson['links'].forEach((causa_link) => {
+        var source = this.gs.getGraph().findNodeByName(causa_link['source']);
+        var target = this.gs.getGraph().findNodeByName(causa_link['target']);
+        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        smell.addLinkBasedCause(link);
       });
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
@@ -132,6 +139,9 @@ export class AnalyserService {
         switch (refactoringName) {
           case "Add Api Gateway":
             refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
+            break;
+          case "Move Database":
+            refactoring = new MoveDatabaseIntoTeamRefactoring (new MoveDatabaseIntoTeamCommand(this.gs.getGraph(), smell))
             break;
           default:
             break;
@@ -164,7 +174,7 @@ export class AnalyserService {
           break;
       }
 
-      smellJson['cause'].forEach((cause) => {
+      smellJson['links'].forEach((cause) => {
         var source = this.gs.getGraph().findNodeByName(cause['source']);
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
@@ -223,7 +233,6 @@ export class AnalyserService {
 
   /** Log a AnalyserService message with the MessageService */
   private log(message: string) {
-    console.log(`AnalyserService: ${message}`)
-    // this.messageService.add(`HeroService: ${message}`);
+    // this.add(`HeroService: ${message}`);
   }
 }

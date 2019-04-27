@@ -22,14 +22,6 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-        },
-        {
-            "name": "DS",
-            "type": "service"
-        },
-        {
-            "name": "ADAD",
-            "type": "service"
         }
     ],
     "links": [
@@ -68,26 +60,6 @@
             "target": "shipping",
             "timeout": false,
             "type": "runtime"
-        },
-        {
-            "source": "DS",
-            "target": "shipping",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "DS",
-            "type": "runtime"
-        },
-        {
-            "source": "ADAD",
-            "target": "shipping",
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "ADAD",
-            "type": "runtime"
         }
     ],
     "groups": [
@@ -95,8 +67,25 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
+                "shipping",
                 "order",
                 "gateway"
+            ]
+        },
+        {
+            "name": "team1",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "rabbitmq"
+            ]
+        },
+        {
+            "name": "team2",
+            "type": "squadgroup",
+            "members": [
+                "order",
+                "order_db"
             ]
         }
     ]

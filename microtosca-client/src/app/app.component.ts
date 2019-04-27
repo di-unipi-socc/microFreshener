@@ -97,12 +97,9 @@ export class AppComponent {
     this.as.analysedgroups.forEach((agroup)=>{
         let g = this.gs.getGraph().getGroup(agroup.name);
         agroup.getSmells().forEach((smell)=>{
-          console.log(smell)
+          // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
           smell.getNodeBasedCauses().forEach(node=>{
             node.addSmell(smell);
-            console.log("ADDED SMELL TO NODE OF GROUP");
-            console.log(smell);
-
           })
           g.addSmell(smell);
         })
@@ -118,9 +115,7 @@ export class AppComponent {
   }
 
   onUpload(event) {
-    console.log("upload handler");
     this.download();
-    console.log("updated graph locally");
   }
 
   download() {
