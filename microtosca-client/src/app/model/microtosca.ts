@@ -575,6 +575,10 @@ joint.dia.Element.define('microtosca.SquadGroup', {
                 return name === smell.name;
             });
         },
+        resetSmells: function(){
+            this.attributes.smells = [];
+            this.attr('singleLayerTeam/visibility', 'hidden');
+        }
     });
 
 

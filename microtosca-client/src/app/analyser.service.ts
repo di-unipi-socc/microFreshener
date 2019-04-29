@@ -12,12 +12,13 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './analyser/smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatabaseIntoTeam, MoveDatabaseIntoTeamRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand } from "./refactor/refactoring-command";
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatabaseIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 
 import * as joint from 'jointjs';
+import { group } from '@angular/animations';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -41,6 +42,9 @@ export class AnalyserService {
   clearSmells() {
     this.gs.getGraph().getNodes().forEach(node => {
       node.resetSmells();
+    });
+    this.gs.getGraph().getGroups().forEach(group => {
+      group.resetSmells();
     });
   }
 
@@ -142,6 +146,13 @@ export class AnalyserService {
             break;
           case "Move Database":
             refactoring = new MoveDatabaseIntoTeamRefactoring (new MoveDatabaseIntoTeamCommand(this.gs.getGraph(), smell))
+            break;
+          case "Move Service":
+            refactoring = new MoveserviceIntoTeamRefactoring( new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
+            break;
+          case "Add Data Manager Team":
+          console.log("ADD DAA AMGNER");
+            refactoring = new AddDataManagerIntoTeamRefactoring( new AddDataManagerIntoTeamCommand(this.gs.getGraph(), smell));
             break;
           default:
             break;

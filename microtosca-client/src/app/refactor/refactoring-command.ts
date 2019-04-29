@@ -457,21 +457,121 @@ export class MoveDatabaseIntoTeamCommand implements Command {
 
     smell: SingleLayerTeamSmellObject;
     graph: Graph;
+    team: joint.shapes.microtosca.SquadGroup
+
+    squadOfDatabase:  joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
-        this.smell = smell;
         this.graph = graph;
+        this.smell = smell;
+        this.team = smell.getGroup();
     }
     
     execute() {
-        // TODO
+        this.smell.getLinkBasedCauses().forEach(link=>{
+            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            this.squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            this.squadOfDatabase.unembed(database);
+            this.squadOfDatabase.fitEmbeds();
+            this.team.embed(database);
+            this.team.fitEmbeds();
+        })
     }
 
     unexecute() {
-        // TODO
+        this.smell.getLinkBasedCauses().forEach(link=>{
+            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            this.team.unembed(database);
+            this.team.fitEmbeds();
+            this.squadOfDatabase.embed(database);
+            this.squadOfDatabase.fitEmbeds();
+            
+        })
     }
 
     getDescription() {
         return "Move the database into the team";
     }
+}
+
+export class MoveServiceIntoTeamCommand implements Command {
+    smell: SingleLayerTeamSmellObject;
+    graph: Graph;
+    team: joint.shapes.microtosca.SquadGroup
+
+    constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
+        this.graph = graph;
+        this.smell = smell;
+        this.team = smell.getGroup();
+    }
+    
+    execute() {
+        this.smell.getLinkBasedCauses().forEach(link=>{
+            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            let service = <joint.shapes.microtosca.Service>link.getSourceElement();
+
+            let squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            this.team.unembed(service);
+            squadOfDatabase.embed(service);
+            squadOfDatabase.fitEmbeds();
+            this.team.fitEmbeds();
+        })
+    }
+
+    unexecute() {
+        this.smell.getLinkBasedCauses().forEach(link=>{
+            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            let service = <joint.shapes.microtosca.Service>link.getSourceElement();
+            let squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            this.team.embed(service);
+            squadOfDatabase.unembed(service);
+            squadOfDatabase.fitEmbeds();
+            this.team.fitEmbeds();
+        })
+    }
+
+    getDescription() {
+        return "Move the service into team";
+    }
+}
+
+export class AddDataManagerIntoTeamCommand implements Command {
+
+    graph: Graph;
+    smell: SmellObject;
+
+    squadOfDatabase:  joint.shapes.microtosca.SquadGroup;
+    databaseManager:  joint.shapes.microtosca.Service;
+    database: joint.shapes.microtosca.Database;
+
+
+    constructor(graph: Graph, smell: GroupSmellObject) {
+        this.smell = smell;
+        this.graph = graph;
+    }
+
+    execute() {
+        this.databaseManager = this.graph.addService("DB manager");
+
+        this.smell.getLinkBasedCauses().forEach(link=>{
+            this.database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            this.squadOfDatabase = <joint.shapes.microtosca.SquadGroup>this.database.getParentCell();
+            link.target(this.databaseManager);
+            this.squadOfDatabase.embed(this.databaseManager);
+            this.squadOfDatabase.fitEmbeds();
+            this.graph.getIngoingLinks(this.database).forEach(link=>link.target(this.databaseManager));
+            this.graph.addRunTimeInteraction(this.databaseManager, this.database);
+        });
+        // TODO change the target node to database manager to all incoming link to database.
+    }
+
+    unexecute() {
+      this.graph.getIngoingLinks(this.databaseManager).forEach(link=>link.target(this.database));
+      this.databaseManager.remove();
+    }
+
+    getDescription() {
+        return "Add Data manger accessgin the shared  database";
+    }
+
 }

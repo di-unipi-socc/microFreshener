@@ -22,12 +22,16 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
+        },
+        {
+            "name": "DB manager",
+            "type": "service"
         }
     ],
     "links": [
         {
             "source": "shipping",
-            "target": "order_db",
+            "target": "DB manager",
             "timeout": false,
             "type": "runtime"
         },
@@ -45,7 +49,7 @@
         },
         {
             "source": "order",
-            "target": "order_db",
+            "target": "DB manager",
             "timeout": false,
             "type": "runtime"
         },
@@ -58,6 +62,12 @@
         {
             "source": "gateway",
             "target": "shipping",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "DB manager",
+            "target": "order_db",
             "timeout": false,
             "type": "runtime"
         }
@@ -85,7 +95,8 @@
             "type": "squadgroup",
             "members": [
                 "order",
-                "order_db"
+                "order_db",
+                "DB manager"
             ]
         }
     ]
