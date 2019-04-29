@@ -81,8 +81,38 @@ export class AnalyserService {
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids: number[] = smells.map(smell => smell.id);
+    /*
+      {
+        smell: {
+            name: "WobblyServicINTeractions"
+            id: 1
+        }
+      }
+    */
 
     const params = new HttpParams().set('smells', smells_ids.join());
+
+    // &smells=1,2,3,4&ignore=order_db:1,2,3
+    /*
+      ignore :{
+        node: order,
+        smell: [
+           1,2,3
+        ]
+      },
+      {
+        name: shipping
+        smell: [2,3,4]
+      }
+    */
+    let nodeIgnoreAlwaysSmells:string[];
+    this.gs.getGraph().getNodes().forEach(node=>{
+      nodeIgnoreAlwaysSmells.push(`${node.getName()}::`)
+        node.getIgnoreAlwaysSmells().forEach(smell=>{
+
+        })
+    }
+    )
 
     // TODO: the analysis should send ignore always command to the analyser.
 

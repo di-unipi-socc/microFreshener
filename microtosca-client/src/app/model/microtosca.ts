@@ -18,9 +18,9 @@ declare module 'jointjs' {
                 showIcons(): void;
                 hideIcons(): void;
                 ignoreOnce(smell: SmellObject): void;
-                ignoreAlways(smell: SmellObject): void;
+                addIgnoreAlwaysSmell(smell: SmellObject): void;
+                getIgnoreAlwaysSmells(): SmellObject[];
                 undoIgnoreAlways(smell: SmellObject): void;
-                getIgnoredSmells(): SmellObject[];
             }
             class Node extends Root {
 
@@ -119,7 +119,7 @@ joint.dia.Element.define('microtosca.Service', {
         }
     },
     smells: [],            // list of smells that affects a single node
-    ignoreSmells: []       // list of smell ignored (always)
+    ignoreAlwaysSmells: []       // list of smell ignored (always)
 }, {
         markup: [{
             tagName: 'circle',
@@ -143,18 +143,18 @@ joint.dia.Element.define('microtosca.Service', {
         ignoreOnce(smell: SmellObject) {
             this.hideSmell(smell);
         },
-        ignoreAlways(smell: SmellObject) {
+        addIgnoreAlwaysSmell(smell: SmellObject) {
             this.hideSmell(smell);
-            this.attributes.ignoreSmells.push(smell);
+            this.attributes.ignoreAlwaysSmells.push(smell);
         },
         undoIgnoreAlways(smell: SmellObject) {
             this.showSmell(smell);
-            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function (sm) {
+            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
                 return sm.getName() != smell.getName();
             });
         },
-        getIgnoredSmells() {
-            return this.attributes.ignoreSmells;
+        getIgnoreAlwaysSmells() {
+            return this.attributes.ignoreAlwaysSmells;
         },
         getName: function () {
             return this.attr('label/text');
@@ -263,7 +263,7 @@ joint.dia.Element.define('microtosca.Database', {
 
     },
     smells: [], // list of smells that affects a single node
-    ignoreSmells: []
+    ignoreAlwaysSmells: []
 }, {
         markup: [{
             tagName: 'rect',
@@ -317,18 +317,18 @@ joint.dia.Element.define('microtosca.Database', {
                 this.attr('sp/visibility', 'hidden');
             }
         },
-        ignoreAlways(smell: SmellObject) {
+        addIgnoreAlwaysSmell(smell: SmellObject) {
             this.hideSmell(smell);
-            this.attributes.ignoreSmells.push(smell);
+            this.attributes.ignoreAlwaysSmells.push(smell);
         },
         undoIgnoreAlways(smell: SmellObject) {
             this.showSmell(smell);
-            this.attributes.ignoreSmells = this.attributes.ignoreSmells.filter(function (sm) {
+            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
                 return sm.getName() != smell.getName();
             });
         },
-        getIgnoredSmells() {
-            return this.attributes.ignoreSmells;
+        getIgnoreAlwaysSmells() {
+            return this.attributes.ignoreAlwaysSmells;
         },
         showIcons: function () {
             this.attr('delete/visibility', 'visible')
@@ -421,6 +421,9 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         hideIcons: function () {
             this.attr('delete/visibility', 'hidden')
         },
+        getIgnoreAlwaysSmells: function (){
+            return [];
+        }
     });
 
 joint.dia.Element.define('microtosca.EdgeGroup', {
@@ -470,7 +473,6 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-           
         },
         getSmell: function (name: string) {
             return this.attributes.smells.find(smell => {
@@ -490,6 +492,9 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         hideIcons: function () {
             // this.attr('delete/visibility', 'hidden')
         },
+        getIgnoreAlwaysSmells: function (){
+            return [];
+        }
     });
 
 joint.dia.Element.define('microtosca.SquadGroup', {
@@ -578,6 +583,9 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         resetSmells: function(){
             this.attributes.smells = [];
             this.attr('singleLayerTeam/visibility', 'hidden');
+        },
+        getIgnoreAlwaysSmells: function (){
+            return [];
         }
     });
 

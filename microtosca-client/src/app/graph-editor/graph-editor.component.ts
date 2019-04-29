@@ -33,6 +33,8 @@ export class GraphEditorComponent implements OnInit {
 
     name: string; // name of the app
 
+    graphScale; // to scale the div
+
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.graphInvoker = new GraphInvoker();
     }
@@ -74,6 +76,9 @@ export class GraphEditorComponent implements OnInit {
 
         // this.createSampleGraph();
         this.applyDirectedGraphLayout();
+
+
+        this.graphScale = 1;
     }
 
     createSampleGraph() {
@@ -138,6 +143,28 @@ export class GraphEditorComponent implements OnInit {
             this.messageService.add({ severity: 'success', summary: data.msg });
         });
     }
+
+
+    paperScale(sx, sy) {
+        this.paper.scale(sx, sy);
+    };
+
+    zoomOut() {
+        this.graphScale -= 0.1;
+        this.paperScale(this.graphScale, this.graphScale);
+    };
+
+    zoomIn() {
+        this.graphScale += 0.1;
+        this.paperScale(this.graphScale, this.graphScale);
+    };
+
+    resetZoom() {
+        this.graphScale = 1;
+        this.paperScale(this.graphScale, this.graphScale);
+    };
+
+      
 
     bindEvents() {
         this.bindMouseOverLinks();

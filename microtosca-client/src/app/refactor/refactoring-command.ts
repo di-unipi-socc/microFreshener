@@ -38,7 +38,7 @@ export class IgnoreAlwaysCommand implements Command {
     }
 
     execute() {
-        this.node.ignoreAlways(this.smell);
+        this.node.addIgnoreAlwaysSmell(this.smell);
     }
 
     unexecute() {
@@ -87,7 +87,11 @@ export class AddApiGatewayCommand implements Command {
     }
 
     getDescription() {
-        return "Add an Api Gateway from the external user to the internal service";
+        let msg = "Add an Api Gateway from the external user to "
+        this.smell.getNodeBasedCauses().forEach(node =>
+            msg += ` ${node.getName()}`
+        );
+        return msg;
     }
 }
 

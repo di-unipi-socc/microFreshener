@@ -22,16 +22,12 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-        },
-        {
-            "name": "DB manager",
-            "type": "service"
         }
     ],
     "links": [
         {
             "source": "shipping",
-            "target": "DB manager",
+            "target": "order_db",
             "timeout": false,
             "type": "runtime"
         },
@@ -49,7 +45,7 @@
         },
         {
             "source": "order",
-            "target": "DB manager",
+            "target": "order_db",
             "timeout": false,
             "type": "runtime"
         },
@@ -64,12 +60,6 @@
             "target": "shipping",
             "timeout": false,
             "type": "runtime"
-        },
-        {
-            "source": "DB manager",
-            "target": "order_db",
-            "timeout": false,
-            "type": "runtime"
         }
     ],
     "groups": [
@@ -77,26 +67,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "shipping",
                 "order",
                 "gateway"
-            ]
-        },
-        {
-            "name": "team1",
-            "type": "squadgroup",
-            "members": [
-                "shipping",
-                "rabbitmq"
-            ]
-        },
-        {
-            "name": "team2",
-            "type": "squadgroup",
-            "members": [
-                "order",
-                "order_db",
-                "DB manager"
             ]
         }
     ]

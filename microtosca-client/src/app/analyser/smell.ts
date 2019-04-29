@@ -121,12 +121,32 @@ export class NoApiGatewaySmellObject extends GroupSmellObject {
     constructor(group:joint.shapes.microtosca.Group) {
         super("NoAPiGatewaySmell", group);
     }
+
+    getDescription(){
+        let msg = "The service "
+        this.getNodeBasedCauses().forEach(node=>{
+            msg+= ` ${node.getName()}`
+        })
+        msg += " is accessed by external users without an Api Gateway."
+        return msg;
+    }
 }
 
 export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
 
     constructor() {
         super("EndpointBasedServiceInterationSmell");
+    }
+
+    getDescription(): string {
+        var descr = "";
+        this.getLinkBasedCauses().forEach(link => {
+            let source = <joint.shapes.microtosca.Root>link.getSourceElement();
+            let target = <joint.shapes.microtosca.Root>link.getTargetElement();
+
+            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
+        })
+        return descr;
     }
 }
 
