@@ -6,9 +6,19 @@
             <div class="ui-toolbar-group-left">
                 <h1>{{title}}</h1>
             </div>
+            <div class="p-grid p-align-center vertical-container">
+                <div class="p-col">
+                    <div class="box">4</div>
+                </div>
+                <div class="p-col">
+                    <div class="box">4</div>
+                </div>
+                <div class="p-col">
+                    <div class="box">4</div>
+                </div>
+            </div>
 
-
-            <div class="ui-toolbar-group-right">
+            <div class="ui-toolbar-group-right" >
             <div class="content-section implementation">
                 <p-splitButton label="Load examples"  (onClick)="save()" [model]="examples"></p-splitButton>
                 
@@ -44,11 +54,10 @@
     <p-toast [style]="{marginTop: '100px'}"  position="top-right"></p-toast>
 
 
-
     <div class="p-col-12">
         <app-graph-editor ></app-graph-editor> 
     </div>
-s        
+   
     <!-- footer (for logo) -->
     <div class="p-col-12">
         <!-- <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button> -->

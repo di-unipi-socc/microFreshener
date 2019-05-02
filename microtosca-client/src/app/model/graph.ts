@@ -141,6 +141,9 @@ export class Graph extends joint.dia.Graph {
 
     addDatabase(name: string): joint.shapes.microtosca.Database {
         let database = new joint.shapes.microtosca.Database();
+        database.resize(75, 100);
+        database.position(525, 75);
+        database.topRy('20%');
         database.setName(name);
         database.addTo(this);
         return database;
@@ -339,7 +342,7 @@ export class Graph extends joint.dia.Graph {
         var nodeSepator = 50;
         var edgeSepator = 50;
         var rankSeparator = 50;
-        var setVertices = true;
+        var setVertices = false;
         // rankdir: one of "TB" (top-to-bottom) / "BT" (bottom-to-top) / "LR" (left-to-right) / "RL" (right-to-left))
         switch (rankdir) {
             case "TB": {

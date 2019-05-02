@@ -20,7 +20,6 @@ from microanalyser.trasformer import JSONTransformer, YMLTransformer
 from microanalyser.model.template import MicroModel
 from microanalyser.model.nodes import Service, Database, CommunicationPattern
 
-
 loader = JSONLoader()
 ymlLoader = YMLLoader()
 jsonTransformer = JSONTransformer()
@@ -41,22 +40,24 @@ def graph_analysis(request):
     Analyse all the nodes
     """
     if request.method == 'GET':
-        # get the principle to check graph/analysis?smells=id1,id2, idn2
+        # get the principle to check graph/analysis?smells=id1,id2,idn2 &ignore=order
         smells = request.GET.get('smells').split(',')
-        print(smells)
         mmodel = None
         if(os.path.isfile(model_file_path)):
             mmodel = loader.load(model_file_path)
             builder = AnalyserBuilder(mmodel)
+
             for smell in smells:
                 builder.add_smell(int(smell))
+
             analyser = builder.build()
             res = analyser.run()
             print(res)
             return Response(res)
         else:
             return Response({"msg": "No model uploaded"})
-
+    if request.method == 'POST':
+        print(request.POST.value)
 
 @api_view(['GET', 'POST'])
 @csrf_exempt

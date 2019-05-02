@@ -13,10 +13,10 @@ import * as joint from 'jointjs';
 import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
+import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
 import { RemoveServiceCommand } from './graph-command';
-import { Node, Service, Database } from '../model/node';
-
+import * as svgPanZoom from 'svg-pan-zoom';
 
 @Component({
     selector: 'app-graph-editor',
@@ -26,14 +26,15 @@ import { Node, Service, Database } from '../model/node';
 })
 export class GraphEditorComponent implements OnInit {
 
-    _options = { width: 2000, height: 1500 };
+    _options = { width: 2000, height: 700 };
 
     paper: joint.dia.Paper;
     graphInvoker: GraphInvoker;
 
+
     name: string; // name of the app
 
-    graphScale; // to scale the div
+    svgZoom;
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.graphInvoker = new GraphInvoker();
@@ -47,38 +48,71 @@ export class GraphEditorComponent implements OnInit {
         this.graphInvoker.redo();
     }
 
-    clear(){
+    clear() {
         this.gs.getGraph().clear();
     }
 
     ngOnInit() {
-
+        let canvas = document.getElementById('jointjsgraph');
+        var c = $('#canvas');
+        console.log(c);
         this.paper = new joint.dia.Paper({
-            el: document.getElementById('jointjsgraph'),
+            el: canvas,
             model: this.gs.getGraph(),
-            width: this._options.width,
-            height: this._options.height,
+            width: c.outerWidth(),
+            height: c.outerHeight(),
+            background: { color: 'light' },
+            multiLinks: false,
+            restrictTranslate: true,
             gridSize: 1,
             defaultLink: new joint.shapes.microtosca.RunTimeLink(),
             linkPinning: false, // do not allow link without a target node
-            restrictTranslate: true,
+            validateMagnet: function (cellView, magnet) {
+                // console.log(cellView);
+                return magnet.getAttribute('magnet') !== 'false';
+            },
+            validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+                var sourceId = cellViewS.model.id;
+                var targetId = cellViewT.model.id;
+                if (sourceId && targetId && sourceId === targetId)
+                    return false;
+                else
+                    return true;
+                // return sourceId === targetId;
+                // return (end === 'target' ? cellViewT : cellViewS) instanceof joint.dia.ElementView;
+            },
         });
+        // this.paper.setOrigin(this._options.width/2, this._options.height /2);
+        this.name = this.gs.getGraph().getName();
+
 
         this.createSampleGraph();
 
-        this.name = this.gs.getGraph().getName();
+        this.svgZoom = svgPanZoom('#jointjsgraph svg', {
+            center: false,
+            zoomEnabled: true,
+            panEnabled: true,
+            controlIconsEnabled: true,
+            fit: false,
+            minZoom: 0.1,
+            maxZoom:10,
+            zoomScaleSensitivity: 0.5
+        });
 
-        //bind events
+        this.paper.on('cell:pointerdown', ()=>{
+          this.svgZoom.disablePan();
+          });
+          this.paper.on('cell:pointerup', ()=>{
+            this.svgZoom.enablePan();
+          });
+
+        // bind events
         this.bindEvents();
 
         // enable interactions
         // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
-        // this.createSampleGraph();
         this.applyDirectedGraphLayout();
-
-
-        this.graphScale = 1;
     }
 
     createSampleGraph() {
@@ -145,29 +179,8 @@ export class GraphEditorComponent implements OnInit {
     }
 
 
-    paperScale(sx, sy) {
-        this.paper.scale(sx, sy);
-    };
-
-    zoomOut() {
-        this.graphScale -= 0.1;
-        this.paperScale(this.graphScale, this.graphScale);
-    };
-
-    zoomIn() {
-        this.graphScale += 0.1;
-        this.paperScale(this.graphScale, this.graphScale);
-    };
-
-    resetZoom() {
-        this.graphScale = 1;
-        this.paperScale(this.graphScale, this.graphScale);
-    };
-
-      
-
     bindEvents() {
-        this.bindMouseOverLinks();
+        this.bindMouseEnterLink();
         this.bindMouseOverNode();
         this.bindClickOnSmells();
         this.bindClickDeleteNode();
@@ -176,6 +189,7 @@ export class GraphEditorComponent implements OnInit {
         this.bindTeamMinimize();
         this.bindTeamEmbedNodes();
     }
+
 
     bindClickDeleteNode() {
         // delete a node event
@@ -209,14 +223,14 @@ export class GraphEditorComponent implements OnInit {
             }
         })
 
-        // this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
-        //     evt.stopPropagation();
-        //     var cell = cellView.model;
-        //     if (cell.isElement()) {
-        //         cell.hideIcons()
-        //         console.log("MOUSER OUT NODE");
-        //     }
-        // })
+        this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
+            var cell = cellView.model;
+            if (cell.isElement()) {
+                cell.hideIcons()
+
+            }
+        })
 
     }
 
@@ -431,7 +445,7 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
-    createLink() {
+    bindCreateLink() {
         // Create a new link by dragging
         this.paper.on('blank:pointerdown', function (evt, x, y) {
             var link = new joint.shapes.standard.Link();
@@ -454,8 +468,11 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
-    bindMouseOverLinks() {
+    bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
+
+            linkView.highlight();
+
             var tools = [
                 // new joint.linkTools.SourceArrowhead(),
                 // new joint.linkTools.TargetArrowhead(),
@@ -466,34 +483,6 @@ export class GraphEditorComponent implements OnInit {
                 }),
                 new joint.linkTools.TargetAnchor(),
                 new joint.linkTools.Remove(),
-                // new joint.linkTools.Button({ // commented because Im not able to generate a custom evetn or call the this.graphInvoker()
-                //     markup: [{
-                //         tagName: 'circle',
-                //         selector: 'button',
-                //         attributes: {
-                //             'r': 7,
-                //             'fill': '#FF1D00',
-                //             'cursor': 'pointer',
-                //             // 'event': 'node:delete:pointerdown',
-                //         }
-                //     }, {
-                //         tagName: 'path',
-                //         selector: 'icon',
-                //         attributes: {
-                //             'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                //             'fill': 'none',
-                //             'stroke': '#FFFFFF',
-                //             'stroke-width': 2,
-                //             'pointer-events': 'none'
-                //         }
-                //     }],
-                //     distance: -80,
-                //     action: function(){
-                //         var link = this.model;
-
-                //         // this.graphInvoker.executeCommand( new RemoveServiceCommand(this.gs.getGraph(), link));
-                //     },
-                // }),
                 new joint.linkTools.Button({
                     markup: [{
                         tagName: 'circle',
@@ -536,6 +525,7 @@ export class GraphEditorComponent implements OnInit {
 
         this.paper.on('link:mouseleave', function (linkView) {
             if (!linkView.hasTools('onhover')) return;
+            linkView.unhighlight();
             linkView.removeTools();
         });
 

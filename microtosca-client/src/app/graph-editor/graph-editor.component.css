@@ -5,3 +5,10 @@
     margin-left: .5em;
     margin-bottom: .5em;
 }
+
+#jointjsgraph {
+border: 1px solid;
+  width: 100%;
+  height: 35vh;
+  min-height: 800px;
+}

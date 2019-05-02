@@ -92,28 +92,20 @@ export class AnalyserService {
 
     const params = new HttpParams().set('smells', smells_ids.join());
 
-    // &smells=1,2,3,4&ignore=order_db:1,2,3
-    /*
-      ignore :{
-        node: order,
-        smell: [
-           1,2,3
-        ]
-      },
-      {
-        name: shipping
-        smell: [2,3,4]
-      }
-    */
-    let nodeIgnoreAlwaysSmells:string[];
+    // let nodeIgnoreAlwaysSmells:string[];
     this.gs.getGraph().getNodes().forEach(node=>{
-      nodeIgnoreAlwaysSmells.push(`${node.getName()}::`)
-        node.getIgnoreAlwaysSmells().forEach(smell=>{
+      console.log(node.getName());
+      console.log( node.getIgnoreAlwaysSmells());
+      // nodeIgnoreAlwaysSmells.push(`${node.getName()}::`)
+      //   node.getIgnoreAlwaysSmells().forEach(smell=>{
 
-        })
-    }
-    )
+      //   })
+    })
 
+    // return this.http.post(this.analysisUrl, { params })
+    //   .subscribe((data) =>{
+    //     console.log(response);
+    //   });
     // TODO: the analysis should send ignore always command to the analyser.
 
     // Maybe instead of a get is s POST operation.
