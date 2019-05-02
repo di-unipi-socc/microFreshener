@@ -306,7 +306,7 @@ export class MergeServicesCommand implements Command {
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDatabase = smell.getNodeBasedCauses()[0];
+        this.sharedDatabase = <joint.shapes.microtosca.Database> smell.getNodeBasedCauses()[0];
         this.serviceIngoingOutgoing = [];
         this._saveIncomingOutcomingNodes();
 
@@ -391,7 +391,7 @@ export class SplitDatabaseCommand implements Command {
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDatabase = smell.getNodeBasedCauses()[0];
+        this.sharedDatabase = < joint.shapes.microtosca.Database>smell.getNodeBasedCauses()[0];
         this.splittedDatabase = [];
     }
 
@@ -408,7 +408,7 @@ export class SplitDatabaseCommand implements Command {
     }
 
     unexecute() {
-        this.sharedDatabase = this.smell.getNodeBasedCauses()[0];
+        this.sharedDatabase = < joint.shapes.microtosca.Database>this.smell.getNodeBasedCauses()[0];
         this.graph.addCell(this.sharedDatabase);
         this.smell.getLinkBasedCauses().forEach(link => {
             link.target(this.sharedDatabase);
@@ -431,7 +431,7 @@ export class AddDataManagerCommand implements Command {
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDB = this.smell.getNodeBasedCauses()[0];
+        this.sharedDB = < joint.shapes.microtosca.Database>this.smell.getNodeBasedCauses()[0];
     }
 
     execute() {

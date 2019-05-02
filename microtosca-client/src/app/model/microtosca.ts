@@ -242,8 +242,8 @@ joint.dia.Element.define('microtosca.Service', {
 
 joint.shapes.standard.Cylinder.define('microtosca.Database', {
     size: {
-        width: 40,
-        height: 40
+        width: 20,
+        height: 20
     },
     attrs: {
         body: {

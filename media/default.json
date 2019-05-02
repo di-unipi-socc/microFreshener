@@ -22,10 +22,6 @@
             "name": "gateway",
             "type": "communicationpattern",
             "ctype": "ApiGateway"
-        },
-        {
-            "name": "as",
-            "type": "service"
         }
     ],
     "links": [
@@ -44,7 +40,7 @@
         {
             "source": "order",
             "target": "shipping",
-            "timeout": false,
+            "timeout": true,
             "type": "runtime"
         },
         {
@@ -64,11 +60,6 @@
             "target": "shipping",
             "timeout": false,
             "type": "runtime"
-        },
-        {
-            "source": "as",
-            "target": "order",
-            "type": "runtime"
         }
     ],
     "groups": [
@@ -78,6 +69,22 @@
             "members": [
                 "order",
                 "gateway"
+            ]
+        },
+        {
+            "name": "team1",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "rabbitmq"
+            ]
+        },
+        {
+            "name": "team2",
+            "type": "squadgroup",
+            "members": [
+                "order_db",
+                "order"
             ]
         }
     ]

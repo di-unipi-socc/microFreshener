@@ -6,17 +6,6 @@
             <div class="ui-toolbar-group-left">
                 <h1>{{title}}</h1>
             </div>
-            <div class="p-grid p-align-center vertical-container">
-                <div class="p-col">
-                    <div class="box">4</div>
-                </div>
-                <div class="p-col">
-                    <div class="box">4</div>
-                </div>
-                <div class="p-col">
-                    <div class="box">4</div>
-                </div>
-            </div>
 
             <div class="ui-toolbar-group-right" >
             <div class="content-section implementation">
@@ -29,15 +18,15 @@
                 <button cslass="ui-button-primary" pButton type="button" (click)="upload()" icon="pi pi-save"></button>
                 
                 <a pButton href="http://127.0.0.1:8000/v2/graph/export/" icon="pi pi-download" class="ui-button-info"></a>
-                
+                <!-- <div style="height: 2px;">&nbsp;</div> -->
                 <p-fileUpload mode="basic" 
                             name="graph"
-                            icon="pi-upload" 
                             url="http://127.0.0.1:8000/v2/graph/import/" 
                             accept=".yml"
                             (onUpload)="onUpload($event)"
                             chooseLabel="Import">
                 </p-fileUpload>
+                
                  <!-- pop up menu -->
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
 

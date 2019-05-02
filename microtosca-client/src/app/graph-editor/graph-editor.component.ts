@@ -69,6 +69,7 @@ export class GraphEditorComponent implements OnInit {
             linkPinning: false, // do not allow link without a target node
             validateMagnet: function (cellView, magnet) {
                 // console.log(cellView);
+                //return false;
                 return magnet.getAttribute('magnet') !== 'false';
             },
             validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
@@ -100,11 +101,12 @@ export class GraphEditorComponent implements OnInit {
         });
 
         this.paper.on('cell:pointerdown', ()=>{
-          this.svgZoom.disablePan();
-          });
-          this.paper.on('cell:pointerup', ()=>{
-            this.svgZoom.enablePan();
-          });
+                this.svgZoom.disablePan();
+        });
+        this.paper.on('cell:pointerup', ()=>{
+          this.svgZoom.enablePan();
+        });
+        
 
         // bind events
         this.bindEvents();
