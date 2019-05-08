@@ -40,7 +40,7 @@
         {
             "source": "order",
             "target": "shipping",
-            "timeout": true,
+            "timeout": false,
             "type": "runtime"
         },
         {
@@ -83,8 +83,8 @@
             "name": "team2",
             "type": "squadgroup",
             "members": [
-                "order_db",
-                "order"
+                "order",
+                "order_db"
             ]
         }
     ]
