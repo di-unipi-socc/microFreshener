@@ -24,10 +24,8 @@ from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='MicroToscaAnalyser API')
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
+
 urlpatterns = [
-    url(r'^$', schema_view),
-    # path('v1/', include('api.urls')),
-    path('v2/', include('api.v2urls'))
+    url(r'^$', schema_view), # swagger documentation
+    path('api/', include('api.urls'))
 ]

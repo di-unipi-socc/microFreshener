@@ -25,7 +25,6 @@ ymlLoader = YMLLoader()
 jsonTransformer = JSONTransformer()
 ymlTransformer = YMLTransformer()
 
-
 file_name = "default.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
@@ -64,10 +63,10 @@ def graph_analysis(request):
 def graph(request):
     """
     get:
-    return the JSON representing the graph.
+    returns the model stored in the server as JSON file.
 
     post:
-    upload new JSON graph
+    upload a new microtosca model as JSON file.
     """
     if request.method == 'POST':
         data = request.data
@@ -77,19 +76,6 @@ def graph(request):
 
     if request.method == 'GET':
         model_path = model_file_path
-        if "example" in request.GET:
-            ex = request.GET['example']
-            if(ex == "extra"):
-                model_path = os.path.join(examples_path, "extra-riot.json")
-            elif (ex == "extra-agent"):
-                model_path = os.path.join(examples_path, "extra-riot-agent.json")
-            elif (ex == "sockshop"):
-                model_path = os.path.join(examples_path, "sockshop.json")
-            elif (ex == "helloworld"):
-                model_path = os.path.join(examples_path, "helloworld.json")
-
-        # return the json file
-        mmodel = None
         if(os.path.isfile(model_path)):
             mmodel = loader.load(model_path)
             dmodel = jsonTransformer.transform(mmodel)
@@ -100,6 +86,10 @@ def graph(request):
 
 @api_view(['GET'])
 def graph_export(request):
+    """
+    get:
+    export the internal model stored in the server as JSON file.
+    """
     # export the graph as json file
     mmodel = None
     if(os.path.isfile(model_file_path)):
@@ -133,3 +123,28 @@ def graph_import(request):
         with open(model_file_path, 'w') as destination:
             json.dump(d_model, destination)
         return Response({"msg": "stored correctly"})
+
+
+@api_view(['GET'])
+def graph_examples(request):
+    if request.method == 'GET':
+        model_path = model_file_path
+        if "name" in request.GET:
+            ex = request.GET['name']
+            if(ex == "extra"):
+                model_path = os.path.join(examples_path, "extra-riot.json")
+            elif (ex == "extra-agent"):
+                model_path = os.path.join(examples_path, "extra-riot-agent.json")
+            elif (ex == "sockshop"):
+                model_path = os.path.join(examples_path, "sockshop.json")
+            elif (ex == "helloworld"):
+                model_path = os.path.join(examples_path, "helloworld.json")
+ 
+        # return the json file of the model
+        mmodel = None
+        if(os.path.isfile(model_path)):
+            mmodel = loader.load(model_path)
+            dmodel = jsonTransformer.transform(mmodel)
+            return Response(dmodel)
+        else:
+            return Response({"msg": "Example not found ion the server"})

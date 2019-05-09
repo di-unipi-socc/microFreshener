@@ -9,79 +9,60 @@ topology_template:
     Jtl:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - Brk
+      - run_time: Brk
     Tlg:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - Brk
-      - run_time:
-        - InfDB
+      - run_time: Brk
+      - run_time: InfDB
     InfDB:
       type: micro.nodes.Database
     Chr:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - InfDB
+      - run_time: InfDB
     Inf:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - InfDB
-      - run_time:
-        - Kpc
+      - run_time: InfDB
+      - run_time: Kpc
     Kpc:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - InfDB
-      - run_time:
-        - InfUp
+      - run_time: InfDB
+      - run_time: InfUp
     Dsh:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - Chr
-      - run_time:
-        - Cnf
+      - run_time: Chr
+      - run_time: Cnf
     Cnf:
       type: micro.nodes.Service
       requirements:
       - run_time:
-        - Inf
-      - run_time:
-        - FltDB
+          node: Inf
+          relationship: timedout
+      - run_time: FltDB
     InfUp:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - CldAdm
+      - run_time: CldAdm
     FltDB:
       type: micro.nodes.Database
     GUI:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - Dsh
-      - run_time:
-        - Cnf
-      - run_time:
-        - Kpr
-      - run_time:
-        - CldAdm
+      - run_time: Dsh
+      - run_time: Cnf
+      - run_time: Kpr
+      - run_time: CldAdm
     Kpr:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - KprDB
-      - run_time:
-        - NsqDB
-      - run_time:
-        - CldAdm
-      - run_time:
-        - SftMngDB
+      - run_time: KprDB
+      - run_time: NsqDB
+      - run_time: CldAdm
+      - run_time: SftMngDB
     KprDB:
       type: micro.nodes.Database
     NsqDB:
@@ -89,12 +70,9 @@ topology_template:
     CldAdm:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - CldAdmDB
-      - run_time:
-        - Ans
-      - run_time:
-        - SftDB
+      - run_time: CldAdmDB
+      - run_time: Ans
+      - run_time: SftDB
     CldAdmDB:
       type: micro.nodes.Database
     SftDB:
@@ -102,8 +80,7 @@ topology_template:
     Ans:
       type: micro.nodes.Service
       requirements:
-      - run_time:
-        - Tlg
+      - run_time: Tlg
     SftMngDB:
       type: micro.nodes.Database
   groups:
@@ -113,3 +90,8 @@ topology_template:
       - Brk
       - Kpr
       - CldAdm
+  relationship_templates:
+    timedout:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true

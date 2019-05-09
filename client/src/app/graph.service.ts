@@ -17,9 +17,9 @@ export class GraphService {
 
   graph: Graph;
 
-  private graphUrl = environment.serverUrl + '/v2/graph/?format=json';  // URL to web api
-  private graphUrlPost = environment.serverUrl + '/v2/graph/';         // URL to web api
-  private analysisUrl = environment.serverUrl + '/v2/graph/analyse/';  // URL to web api
+  private graphUrl = environment.serverUrl + '/api/model?format=json';
+  private graphUrlPost = environment.serverUrl + '/api/model';
+  private graphUrlExamples= environment.serverUrl + '/api/example';
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('hello-world');
@@ -54,8 +54,8 @@ export class GraphService {
   }
 
   downloadExample(name: string): Observable<string> {
-    let params = new HttpParams().set("example", name);
-    return this.http.get<string>(this.graphUrl, { params: params }).pipe(
+    let params = new HttpParams().set("name", name);
+    return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
     );
   }

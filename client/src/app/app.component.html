@@ -17,11 +17,11 @@
                 
                 <button cslass="ui-button-primary" pButton type="button" (click)="upload()" icon="pi pi-save"></button>
                 
-                <a pButton href="http://127.0.0.1:8000/v2/graph/export/" icon="pi pi-download" class="ui-button-info"></a>
-                <!-- <div style="height: 2px;">&nbsp;</div> -->
+                <a pButton href="http://127.0.0.1:8000/api/export" icon="pi pi-download" class="ui-button-info"></a>
+
                 <p-fileUpload mode="basic" 
                             name="graph"
-                            url="http://127.0.0.1:8000/v2/graph/import/" 
+                            url="http://127.0.0.1:8000/api/import" 
                             accept=".yml"
                             (onUpload)="onUpload($event)"
                             chooseLabel="Import">

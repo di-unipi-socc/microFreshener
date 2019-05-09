@@ -17,8 +17,6 @@ import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerComm
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 
-import * as joint from 'jointjs';
-import { group } from '@angular/animations';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -31,14 +29,14 @@ const httpOptions = {
 export class AnalyserService {
 
 
-  private analysisUrl = environment.serverUrl + '/v2/graph/analyse/';
+  private analysisUrl = environment.serverUrl + '/api/analyse';
 
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 
-  // Remove the graphics "smells" showed in the graph.
+  // Remove the "smells" icons in the nodes and groups
   clearSmells() {
     this.gs.getGraph().getNodes().forEach(node => {
       node.resetSmells();
