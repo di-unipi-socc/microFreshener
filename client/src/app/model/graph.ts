@@ -177,7 +177,7 @@ export class Graph extends joint.dia.Graph {
         return this.addCommunicationPattern(name, "CircuitBreaker");
     }
 
-    addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node, timedout: boolean = false): joint.shapes.microtosca.RunTimeLink {
+    addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node, timedout: boolean = false, with_circuit_breaker:boolean=false, with_dynamic_discovery:boolean=false): joint.shapes.microtosca.RunTimeLink {
 
         let alredyExistingLink = this.getLinkFromSourceToTarget(source, target);
         if (alredyExistingLink)
@@ -188,6 +188,8 @@ export class Graph extends joint.dia.Graph {
                 target: { id: target.id },
             });
             link.setTimedout(timedout);
+            link.setCircuitBreaker(with_circuit_breaker);
+            link.setDynamicDiscovery(with_dynamic_discovery);
             this.addCell(link);
             return link;
         }

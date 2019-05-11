@@ -131,7 +131,7 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
 
         // order interactions
-        this.gs.getGraph().addRunTimeInteraction(o, s);
+        this.gs.getGraph().addRunTimeInteraction(o, s, true, true, true);
         this.gs.getGraph().addRunTimeInteraction(o, odb);
         this.gs.getGraph().addRunTimeInteraction(o, cp);
         // this.gs.getGraph().addDeploymentTimeInteraction(o, s);

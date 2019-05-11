@@ -110,6 +110,10 @@ def graph_export(request):
 @api_view(['POST'])
 @csrf_exempt
 def graph_import(request):
+    """
+    POST:
+    import a JSON file representing the architecture
+    """
     if request.method == 'POST':
         # import yml file tinto the upload diectory
         graph_in_memory = request.FILES['graph']
@@ -127,6 +131,10 @@ def graph_import(request):
 
 @api_view(['GET'])
 def graph_examples(request):
+    """
+    get:
+    returns the JSOn of some examples
+    """
     if request.method == 'GET':
         model_path = model_file_path
         if "name" in request.GET:
