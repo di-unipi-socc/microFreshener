@@ -123,7 +123,7 @@ export class NoApiGatewaySmellObject extends GroupSmellObject {
     }
 
     getDescription(){
-        let msg = "The service "
+        let msg = "The node "
         this.getNodeBasedCauses().forEach(node=>{
             msg+= ` ${node.getName()}`
         })

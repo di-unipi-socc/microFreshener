@@ -59,8 +59,7 @@
         {
             "id": "rabbitmq",
             "name": "rabbitmq",
-            "type": "communicationpattern",
-            "ctype": "MessageBroker"
+            "type": "messagebroker"
 
         },
         {
@@ -71,8 +70,7 @@
         {
             "id": "edge-router",
             "name": "edge-router",
-            "type": "communicationpattern",
-            "ctype": "ApiGateway"
+            "type": "messagerouter"
 
         }
     ],

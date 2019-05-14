@@ -1,30 +1,15 @@
 {
     "data": [
         {
-            "id": 1,
-            "name": "Api Gateway",
-            "type":"ApiGateway"
-        },
-        {
             "id": 2,
             "name": "Message broker",
-            "type": "MessageBroker"
+            "type": "messagebroker"
             
         },
         {
             "id": 3,
             "name": "Message Router",
-            "type": "MessageRouter"
-        },
-        {
-            "id": 4,
-            "name": "Circuit Breaker",
-            "type": "CircuitBreaker"
-        },
-        {
-            "id": 4,
-            "name": "Service Discovery",
-            "type": "ServiceDiscovery"
+            "type": "messagerouter"
         }
     ]
 }

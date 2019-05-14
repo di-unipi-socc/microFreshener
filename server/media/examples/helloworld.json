@@ -15,13 +15,11 @@
         },
         {
             "name": "rabbitmq",
-            "type": "communicationpattern",
-            "ctype": "MessageBroker"
+            "type": "messagebroker"
         },
         {
             "name": "gateway",
-            "type": "communicationpattern",
-            "ctype": "ApiGateway"
+            "type": "messagerouter"
         }
     ],
     "links": [

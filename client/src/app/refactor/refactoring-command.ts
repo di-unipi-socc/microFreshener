@@ -67,7 +67,7 @@ export class AddApiGatewayCommand implements Command {
     execute() {
         let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
         this.smell.getNodeBasedCauses().forEach(node => {
-            let gw = this.graph.addApiGateway("Gateway " + node.getName());
+            let gw = this.graph.addMessageRouter("API Gateway " + node.getName());
             this.graph.addRunTimeInteraction(gw, node);
             this.graph.addRunTimeInteraction(edgeGroup, gw);
             this.apiGateways.push(gw);

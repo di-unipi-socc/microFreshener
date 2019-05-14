@@ -131,7 +131,6 @@ export class Node extends joint.dia.Element {
     }
 }
 
-
 export class Service extends Node {
     constructor(name: string, attributes?: any, options?: any) {
         super(name, attributes, options);
@@ -151,7 +150,6 @@ export class Service extends Node {
         return joint.util.deepSupplement({}, super.defaults())
     }
 }
-
 
 export class Database extends Node {
     constructor(name: string, attributes?: any, options?: any) {

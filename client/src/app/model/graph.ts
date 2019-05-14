@@ -1,7 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
-import { group } from '@angular/animations';
 
 export class Graph extends joint.dia.Graph {
     name: string;
@@ -152,21 +151,23 @@ export class Graph extends joint.dia.Graph {
     addCommunicationPattern(name: string, type: string): joint.shapes.microtosca.CommunicationPattern {
         let cp = new joint.shapes.microtosca.CommunicationPattern();
         cp.setName(name);
-        cp.setConcreteType(type);
+        cp.setType(type);
         cp.addTo(this);
         return cp;
     }
 
-    addApiGateway(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "ApiGateway");
-    }
+    
 
     addMessageRouter(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MessageRouter");
+        return this.addCommunicationPattern(name, "MR");
     }
 
     addMessageBroker(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MessageBroker");
+        return this.addCommunicationPattern(name, "MB");
+    }
+
+    addApiGateway(name: string): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "ApiGateway");
     }
 
     addServiceDiscovery(name: string): joint.shapes.microtosca.CommunicationPattern {
@@ -237,6 +238,18 @@ export class Graph extends joint.dia.Graph {
         // return node instanceof joint.shapes.microtosca.CommunicationPattern;
     }
 
+    isMessageBroker(node:joint.shapes.microtosca.Node){
+        //return node instanceof joint.shapes.microtosca.Co;
+        return (<joint.shapes.microtosca.CommunicationPattern>node).getType()  == "MB";
+
+        // return node.attributes['type'] == "MB"; //microtosca.CommunicationPattern";
+    }
+
+    isMessageRouter(node:joint.dia.Cell){
+        return (<joint.shapes.microtosca.CommunicationPattern>node).getType()  == "MR";
+        // return node.attributes['type'] == "MR"; //microtosca.CommunicationPattern";
+    }
+
     builtFromJSON(json: string) {
 
         this.removeCells(this.getCells());
@@ -247,10 +260,10 @@ export class Graph extends joint.dia.Graph {
                 this.addService(node.name)
             else if (node.type == "database")
                 this.addDatabase(node.name);
-            else if (node.type == "communicationpattern") {
-                var concrete_type = node["ctype"];
-                this.addCommunicationPattern(node.name, concrete_type);
-            }
+            else if (node.type == "messagebroker") 
+                this.addMessageBroker(node.name);
+            else if (node.type == "messagerouter") 
+                this.addMessageRouter(node.name);
             else
                 throw new Error(`Node type of ${node.name} not recognized`);
         });
@@ -288,18 +301,17 @@ export class Graph extends joint.dia.Graph {
     toJSON() {
         var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
         this.getNodes().forEach((node: joint.shapes.microtosca.Node) => {
-
-            var dnode = { 'name': node.getName() }; // 'id': node.get('id'),
+            var dnode = { 'name': node.getName() }; 
             if (this.isService(node))
                 dnode['type'] = "service";
             else if (this.isDatabase(node))
                 dnode['type'] = "database";
-            else if (this.isCommunicationPattern(node)) {
-                dnode['type'] = "communicationpattern"
-                dnode['ctype'] = (<joint.shapes.microtosca.CommunicationPattern>node).getConcreteType();
-            }
+            else if (this.isMessageBroker(node)) 
+                dnode['type'] = "messagebroker"
+            else if (this.isMessageRouter(node)) 
+                dnode['type'] = "messagerouter"
             else
-                throw new Error(`Node type of ${dnode} not recognized`);
+                throw new Error(`Node type of ${node.getName()} not recognized`);
             data['nodes'].push(dnode);
         })
         // Add links

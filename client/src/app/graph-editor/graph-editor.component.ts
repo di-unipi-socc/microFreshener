@@ -122,8 +122,8 @@ export class GraphEditorComponent implements OnInit {
         var s = this.gs.getGraph().addService("shipping");
         var odb = this.gs.getGraph().addDatabase("order_db");
         var o = this.gs.getGraph().addService("order");
-        var cp = this.gs.getGraph().addCommunicationPattern("rabbitmq", "MessageBroker");
-        var gw = this.gs.getGraph().addCommunicationPattern("gateway", "ApiGateway");
+        var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
+        var gw = this.gs.getGraph().addMessageRouter("Api gateway");
 
         // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);

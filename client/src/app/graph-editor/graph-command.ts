@@ -43,22 +43,39 @@ export class AddDatabaseCommand implements Command {
         this.node.remove();
     }
 }
-
-export class AddCommunicationPatternCommand implements Command {
+export class AddMessageBrokerCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
     name: string;
-    concrete_type: string;
 
-    constructor(graph: Graph, name: string, concretetype: string) {
+    constructor(graph: Graph, name: string) {
         this.graph = graph;
-        this.concrete_type = concretetype;
         this.name = name;
     }
 
     execute() {
-        this.node = this.graph.addCommunicationPattern(this.name, this.concrete_type);
+        this.node = this.graph.addMessageBroker(this.name);
+    }
+
+    unexecute() {
+        this.node.remove();
+    }
+}
+
+export class AddMessageRouterCommand implements Command {
+
+    graph: Graph;
+    node: joint.shapes.microtosca.Root;
+    name: string;
+
+    constructor(graph: Graph, name: string) {
+        this.graph = graph;
+        this.name = name;
+    }
+
+    execute() {
+        this.node = this.graph.addMessageRouter(this.name);
     }
 
     unexecute() {
@@ -95,7 +112,7 @@ export class RemoveServiceCommand implements Command {
         else if (this.node instanceof joint.shapes.microtosca.Database)
             this.node = this.graph.addDatabase(this.cloneNode.getName());
         else if (this.node instanceof joint.shapes.microtosca.CommunicationPattern)
-            this.node = this.graph.addCommunicationPattern(this.cloneNode.getName(), (<joint.shapes.microtosca.CommunicationPattern>this.cloneNode).getConcreteType());
+            this.node = this.graph.addCommunicationPattern(this.cloneNode.getName(), (<joint.shapes.microtosca.CommunicationPattern>this.cloneNode).getType());
 
         this.incomingNodes.forEach(inNode => {
             this.graph.addRunTimeInteraction(inNode, this.node);

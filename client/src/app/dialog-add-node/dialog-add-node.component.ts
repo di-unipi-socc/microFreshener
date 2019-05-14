@@ -4,7 +4,7 @@ import { DynamicDialogConfig } from 'primeng/api';
 import { CommunicationPattern } from "../model/communicationpattern";
 import { AnalyserService } from "../analyser.service";
 
-import { AddServiceCommand, AddDatabaseCommand, AddCommunicationPatternCommand } from '../graph-editor/graph-command';
+import { AddServiceCommand, AddDatabaseCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../graph-editor/graph-command';
 import { GraphService } from '../graph.service';
 import { Command } from '../invoker/icommand';
 
@@ -57,10 +57,20 @@ export class DialogAddNodeComponent implements OnInit {
         message = `Database  ${this.name}  added correctly`;
         break;
       case "communicationPattern":
-        command = new AddCommunicationPatternCommand(this.gs.getGraph(), this.name, this.selectedCommunicationPatternType.type);
-        message += `Communication Pattern ${this.name} ${this.selectedCommunicationPatternType} added correctly`;
+      console.log(this.selectedCommunicationPatternType.type);
+        if(this.selectedCommunicationPatternType.type === "messagebroker" ){
+          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name);
+          message += `Message Broker ${this.name} added correctly`;
+        }
+        else if(this.selectedCommunicationPatternType.type === "messagerouter" ){
+          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name);
+          message += `Message Router ${this.name} added correctly`;
+        }
+        else
+         throw new Error(`Node type ${this.selectedNodeType} not recognized`);
         break;
       default:
+        throw new Error(`Command null ${this.selectedNodeType}`);
         // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
         break;
     }

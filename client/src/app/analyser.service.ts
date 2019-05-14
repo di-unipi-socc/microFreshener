@@ -91,14 +91,14 @@ export class AnalyserService {
     const params = new HttpParams().set('smells', smells_ids.join());
 
     // let nodeIgnoreAlwaysSmells:string[];
-    this.gs.getGraph().getNodes().forEach(node=>{
-      console.log(node.getName());
-      console.log( node.getIgnoreAlwaysSmells());
-      // nodeIgnoreAlwaysSmells.push(`${node.getName()}::`)
-      //   node.getIgnoreAlwaysSmells().forEach(smell=>{
+    // this.gs.getGraph().getNodes().forEach(node=>{
+    //   // console.log(node.getName());
+    //   // console.log(node.getIgnoreAlwaysSmells());
+    //   // nodeIgnoreAlwaysSmells.push(`${node.getName()}::`)
+    //   //   node.getIgnoreAlwaysSmells().forEach(smell=>{
 
-      //   })
-    })
+    //   //   })
+    // })
 
     // return this.http.post(this.analysisUrl, { params })
     //   .subscribe((data) =>{
@@ -120,6 +120,7 @@ export class AnalyserService {
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
+            console.log(agroup);
             this.analysedgroups.push(agroup);
           });
           return true;

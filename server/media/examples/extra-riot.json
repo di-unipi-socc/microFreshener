@@ -2,11 +2,14 @@
     "name": "extra-riot",
     "nodes": [
         {
-            "id": "Brk",
-            "name": "Brk",
-            "type": "communicationpattern",
-            "ctype": "MessageBroker"
-
+            "id": "Brk1",
+            "name": "Brk1",
+            "type": "messagebroker"
+        },
+        {
+            "id": "Brk2",
+            "name": "Brk2",
+            "type": "messagebroker"
         },
         {
             "id": "Jtl",
@@ -106,13 +109,18 @@
     ],
     "links": [
         {
+            "source": "Brk2",
+            "target": "Jtl",
+            "type": "runtime"
+        },
+        {
             "source": "Jtl",
-            "target": "Brk",
+            "target": "Brk1",
             "type": "runtime"
         },
         {
             "source": "Tlg",
-            "target": "Brk",
+            "target": "Brk1",
             "type": "runtime"
         },
         {
@@ -236,7 +244,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "Brk",
+                "Brk2",
+                "Brk1",
                 "Kpr",
                 "CldAdm"
             ]

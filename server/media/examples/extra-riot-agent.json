@@ -4,8 +4,7 @@
         {
             "id": "Brk",
             "name": "Brk",
-            "type": "communicationpattern",
-            "ctype": "MessageBroker"
+            "type": "messagebroker"
         },
         {
             "id": "Jtl",

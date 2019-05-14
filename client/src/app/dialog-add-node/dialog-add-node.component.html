@@ -10,17 +10,18 @@
 
 <div class="p-grid p-justify-center">
     <div class="p-col-2">
-        <div class="box">Node</div>
+        <div class="box">Select node type:</div>
     </div>
     <div class="p-col-8">
         <p-radioButton name="group1" value="service"
             label="Service" [(ngModel)]="selectedNodeType" inputId="opt1"></p-radioButton>
         <p-radioButton name="group1" value="database"
             label="Database" [(ngModel)]="selectedNodeType" inputId="opt2"></p-radioButton>
-        <p-radioButton name="group1"
-            value="communicationPattern" label="communicationPattern"
+        <p-radioButton name="group1" value="communicationPattern" 
+             label="communicationPattern"
             (onClick)="checkedCommPattern()"
-            [(ngModel)]="selectedNodeType" inputId="opt3"></p-radioButton>
+            [(ngModel)]="selectedNodeType" inputId="opt3">
+        </p-radioButton>
     </div>
 </div>
 
