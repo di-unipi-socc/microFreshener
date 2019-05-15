@@ -13,24 +13,23 @@ from rest_framework.response import Response
 import os
 import json
 
-from microanalyser.analyser import MicroAnalyser
-from microanalyser.analyser.builder import AnalyserBuilder
-from microanalyser.loader import JSONLoader, YMLLoader
-from microanalyser.trasformer import JSONTransformer, YMLTransformer
-from microanalyser.model.template import MicroModel
-from microanalyser.model.nodes import Service, Database, CommunicationPattern
+from microanalyser.analyser import MicroToscaAnalyser
+from microanalyser.analyser import MicroToscaAnalyserBuilder
+from microanalyser.importer import JSONImporter, YMLImporter
+from microanalyser.exporter import JSONExporter, YMLExporter
+from microanalyser.model import MicroToscaModel
+from microanalyser.model import Service, Database, CommunicationPattern
 
-loader = JSONLoader()
-ymlLoader = YMLLoader()
-jsonTransformer = JSONTransformer()
-ymlTransformer = YMLTransformer()
+json_importer = JSONImporter()
+yml_importer = YMLImporter()
+json_exporter = JSONExporter()
+yml_exporter = YMLExporter()
 
 file_name = "default.json"
 model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
 examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
 uploads_path = os.path.join(settings.MEDIA_ROOT, "uploads")
 file_uploads_path = os.path.join(uploads_path, "upload.yml")
-
 
 @api_view(['GET'])
 def graph_analysis(request):
@@ -43,15 +42,12 @@ def graph_analysis(request):
         smells = request.GET.get('smells').split(',')
         mmodel = None
         if(os.path.isfile(model_file_path)):
-            mmodel = loader.load(model_file_path)
-            builder = AnalyserBuilder(mmodel)
-
+            mmodel = json_importer.Import(model_file_path)
+            builder = MicroToscaAnalyserBuilder(mmodel)
             for smell in smells:
                 builder.add_smell(int(smell))
-
             analyser = builder.build()
             res = analyser.run()
-            print(res)
             return Response(res)
         else:
             return Response({"msg": "No model uploaded"})
@@ -77,8 +73,8 @@ def graph(request):
     if request.method == 'GET':
         model_path = model_file_path
         if(os.path.isfile(model_path)):
-            mmodel = loader.load(model_path)
-            dmodel = jsonTransformer.transform(mmodel)
+            mmodel = json_importer.Import(model_path)
+            dmodel = json_exporter.Export(mmodel)
             return Response(dmodel)
         else:
             return Response({"msg": "no model uploaded"})
@@ -93,13 +89,13 @@ def graph_export(request):
     # export the graph as json file
     mmodel = None
     if(os.path.isfile(model_file_path)):
-        # mmodel = loader.load(model_file_path)
-        # dmodel = jsonTransformer.transform(mmodel)
+        # mmodel = json_importer.Import(model_file_path)
+        # dmodel = json_exporter.Export(mmodel)
         # response = HttpResponse(ContentFile(
         #     json.dumps(dmodel)), content_type='application/json')
         # response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
-        mmodel = loader.load(model_file_path)
-        yml_string = ymlTransformer.transform(mmodel)
+        mmodel = json_importer.Import(model_file_path)
+        yml_string = yml_exporter.Export(mmodel)
         response = HttpResponse(ContentFile(yml_string), content_type='application/yml')
         response['Content-Disposition'] = 'attachment; filename="micro-tosca.yml'
         return response
@@ -121,8 +117,8 @@ def graph_import(request):
             for chunk in graph_in_memory.chunks():
                 destination.write(chunk)
         # From yml to json
-        model = ymlLoader.load(path_to_yml=file_uploads_path)
-        d_model = jsonTransformer.transform(model)
+        model = yml_importer.Import(path_to_yml=file_uploads_path)
+        d_model = json_exporter.Export(model)
 
         with open(model_file_path, 'w') as destination:
             json.dump(d_model, destination)
@@ -151,8 +147,8 @@ def graph_examples(request):
         # return the json file of the model
         mmodel = None
         if(os.path.isfile(model_path)):
-            mmodel = loader.load(model_path)
-            dmodel = jsonTransformer.transform(mmodel)
+            mmodel = json_importer.Import(model_path)
+            dmodel = json_exporter.Export(mmodel)
             return Response(dmodel)
         else:
             return Response({"msg": "Example not found ion the server"})

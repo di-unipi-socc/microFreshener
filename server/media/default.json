@@ -1,71 +1,245 @@
 {
-    "name": "hello-world",
+    "name": "extra-riot",
     "nodes": [
         {
-            "name": "shipping",
-            "type": "service"
-        },
-        {
-            "name": "order_db",
-            "type": "database"
-        },
-        {
-            "name": "order",
-            "type": "service"
-        },
-        {
-            "name": "rabbitmq",
+            "name": "Brk1",
             "type": "messagebroker"
         },
         {
-            "name": "Api gateway",
-            "type": "messagerouter"
+            "name": "Brk2",
+            "type": "messagebroker"
         },
         {
-            "name": "Gateway order",
-            "type": "messagerouter"
+            "name": "Jtl",
+            "type": "service"
+        },
+        {
+            "name": "Tlg",
+            "type": "service"
+        },
+        {
+            "name": "InfDB",
+            "type": "database"
+        },
+        {
+            "name": "Chr",
+            "type": "service"
+        },
+        {
+            "name": "Inf",
+            "type": "service"
+        },
+        {
+            "name": "Kpc",
+            "type": "service"
+        },
+        {
+            "name": "Dsh",
+            "type": "service"
+        },
+        {
+            "name": "Cnf",
+            "type": "service"
+        },
+        {
+            "name": "InfUp",
+            "type": "service"
+        },
+        {
+            "name": "FltDB",
+            "type": "database"
+        },
+        {
+            "name": "GUI",
+            "type": "service"
+        },
+        {
+            "name": "Kpr",
+            "type": "service"
+        },
+        {
+            "name": "KprDB",
+            "type": "database"
+        },
+        {
+            "name": "NsqDB",
+            "type": "database"
+        },
+        {
+            "name": "CldAdm",
+            "type": "service"
+        },
+        {
+            "name": "CldAdmDB",
+            "type": "database"
+        },
+        {
+            "name": "SftDB",
+            "type": "database"
+        },
+        {
+            "name": "Ans",
+            "type": "service"
+        },
+        {
+            "name": "SftMngDB",
+            "type": "database"
         }
     ],
     "links": [
         {
-            "source": "shipping",
-            "target": "order_db",
+            "source": "Brk2",
+            "target": "Jtl",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "shipping",
-            "target": "rabbitmq",
+            "source": "Jtl",
+            "target": "Brk1",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
+            "source": "Tlg",
+            "target": "Brk1",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "order",
-            "target": "rabbitmq",
+            "source": "Tlg",
+            "target": "InfDB",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "Api gateway",
-            "target": "shipping",
+            "source": "Chr",
+            "target": "InfDB",
             "timeout": false,
             "type": "runtime"
         },
         {
-            "source": "Gateway order",
-            "target": "order",
+            "source": "Inf",
+            "target": "InfDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Inf",
+            "target": "Kpc",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpc",
+            "target": "InfDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpc",
+            "target": "InfUp",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Dsh",
+            "target": "Chr",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Dsh",
+            "target": "Cnf",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Cnf",
+            "target": "Inf",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Cnf",
+            "target": "FltDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "InfUp",
+            "target": "CldAdm",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Dsh",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Cnf",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "Kpr",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "GUI",
+            "target": "CldAdm",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "KprDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "NsqDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "CldAdm",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Kpr",
+            "target": "SftMngDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "CldAdmDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "Ans",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "CldAdm",
+            "target": "SftDB",
+            "timeout": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Ans",
+            "target": "Tlg",
             "timeout": false,
             "type": "runtime"
         }
@@ -75,8 +249,10 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "Api gateway",
-                "Gateway order"
+                "Brk2",
+                "Brk1",
+                "Kpr",
+                "CldAdm"
             ]
         }
     ]

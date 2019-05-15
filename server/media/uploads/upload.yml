@@ -4,94 +4,73 @@ imports:
 - micro: ../../data/micro-tosca-types.yml
 topology_template:
   node_templates:
-    Brk:
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: order_db
+      - run_time: rabbitmq
+    order_db:
+      type: micro.nodes.Database
+    order:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: shipping
+      - run_time: order_db
+      - run_time: rabbitmq
+    rabbitmq:
       type: micro.nodes.MessageBroker
-    Jtl:
-      type: micro.nodes.Service
+    gateway:
+      type: micro.nodes.MessageRouter
       requirements:
-      - run_time: Brk
-    Tlg:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: Brk
-      - run_time: InfDB
-    InfDB:
-      type: micro.nodes.Database
-    Chr:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: InfDB
-    Inf:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: InfDB
-      - run_time: Kpc
-    Kpc:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: InfDB
-      - run_time: InfUp
-    Dsh:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: Chr
-      - run_time: Cnf
-    Cnf:
-      type: micro.nodes.Service
-      requirements:
-      - run_time:
-          node: Inf
-          relationship: timedout
-      - run_time: FltDB
-    InfUp:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: CldAdm
-    FltDB:
-      type: micro.nodes.Database
-    GUI:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: Dsh
-      - run_time: Cnf
-      - run_time: Kpr
-      - run_time: CldAdm
-    Kpr:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: KprDB
-      - run_time: NsqDB
-      - run_time: CldAdm
-      - run_time: SftMngDB
-    KprDB:
-      type: micro.nodes.Database
-    NsqDB:
-      type: micro.nodes.Database
-    CldAdm:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: CldAdmDB
-      - run_time: Ans
-      - run_time: SftDB
-    CldAdmDB:
-      type: micro.nodes.Database
-    SftDB:
-      type: micro.nodes.Database
-    Ans:
-      type: micro.nodes.Service
-      requirements:
-      - run_time: Tlg
-    SftMngDB:
-      type: micro.nodes.Database
+      - run_time: shipping
   groups:
     edgenodes:
       type: micro.groups.Edge
       members:
-      - Brk
-      - Kpr
-      - CldAdm
+      - shipping
+      - order
+      - gateway
+    team1:
+      type: micro.groups.Team
+      members:
+      - shipping
+      - rabbitmq
+    team2:
+      type: micro.groups.Team
+      members:
+      - order
+      - order_db
   relationship_templates:
-    timedout:
+    t:
       type: micro.relationships.InteractsWith
       properties:
         timeout: true
+    c:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+    d:
+      type: micro.relationships.InteractsWith
+      properties:
+        dynamic_discovery: true
+    tc:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+    td:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        dynamic_discovery: true
+    cd:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+        dynamic_discovery: true
+    tcd:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+        dynamic_discovery: true
