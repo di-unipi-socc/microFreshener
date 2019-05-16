@@ -16,7 +16,8 @@ import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefact
 import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
-
+import { SMELL_NAMES } from "./analyser/costants";
+import { REFACTORING_NAMES } from "./analyser/costants";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -137,10 +138,10 @@ export class AnalyserService {
     data['smells'].forEach((smellJson) => {
       let smell: GroupSmellObject;
       switch (smellJson.name) {
-        case "NoApiGateway":
+        case SMELL_NAMES.SMELL_NO_API_GATEWAY:
           smell = new NoApiGatewaySmellObject(group);
           break;
-        case "SingleLayerTeam":
+        case SMELL_NAMES.SMELL_CROSS_TEAM_DATA_MANAGEMENT:
           smell = new SingleLayerTeamSmellObject(group)
           break;
         default:
@@ -162,18 +163,17 @@ export class AnalyserService {
         let refactoringName = refactoringJson['name'];
         let refactoring: Refactoring;
         switch (refactoringName) {
-          case "Add Api Gateway":
+          case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
             refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
             break;
-          case "Move Database":
-            refactoring = new MoveDatabaseIntoTeamRefactoring (new MoveDatabaseIntoTeamCommand(this.gs.getGraph(), smell))
+          case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
+            refactoring = new MoveDatabaseIntoTeamRefactoring(new MoveDatabaseIntoTeamCommand(this.gs.getGraph(), smell))
             break;
-          case "Move Service":
-            refactoring = new MoveserviceIntoTeamRefactoring( new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
+          case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
+            refactoring = new MoveserviceIntoTeamRefactoring(new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
             break;
-          case "Add Data Manager Team":
-          console.log("ADD DAA AMGNER");
-            refactoring = new AddDataManagerIntoTeamRefactoring( new AddDataManagerIntoTeamCommand(this.gs.getGraph(), smell));
+          case REFACTORING_NAMES.REFACTORING_ADD_TEAM_DATA_MANAGER:
+            refactoring = new AddDataManagerIntoTeamRefactoring(new AddDataManagerIntoTeamCommand(this.gs.getGraph(), smell));
             break;
           default:
             break;
@@ -193,13 +193,13 @@ export class AnalyserService {
       let smell: SmellObject;
 
       switch (smellJson.name) {
-        case "EndpointBasedServiceInteractionSmell":
+        case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
           smell = new EndpointBasedServiceInteractionSmellObject();
           break;
-        case "WobblyServiceInteractionSmell":
+        case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
           smell = new WobblyServiceInteractionSmellObject();
           break;
-        case "SharedPersistencySmell":
+        case SMELL_NAMES.SMELL_SHARED_PERSITENCY:
           smell = new SharedPersistencySmellObject();
           break;
         default:
@@ -223,28 +223,28 @@ export class AnalyserService {
         let refactoring: Refactoring;
 
         switch (refactoringName) {
-          case "Add Message Router":
+          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
             refactoring = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
             break;
-          case "Add Message Broker":
+          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
             refactoring = new AddMessageBrokerRefactoring(new AddMessageBrokerCommand(this.gs.getGraph(), smell));
             break;
-          case "Add Service Discovery":
+          case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
             refactoring = new AddServiceDiscoveryRefactoring(new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
             break;
-          case "Add Circuit Breaker":
+          case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
             refactoring = new AddCircuitBreakerRefactoring(new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
             break;
-          case "Use Timeouts":
+          case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
             refactoring = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
             break;
-          case "Merge services":
+          case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
             refactoring = new MergeServicesRefactoring(new MergeServicesCommand(this.gs.getGraph(), smell));
             break;
-          case "Split Database":
+          case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
             refactoring = new SplitDatabaseRefactoring(new SplitDatabaseCommand(this.gs.getGraph(), smell));
             break;
-          case "Add Data Manager":
+          case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
             refactoring = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
           default:
             break;
