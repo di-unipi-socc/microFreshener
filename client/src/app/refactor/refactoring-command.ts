@@ -184,39 +184,22 @@ export class AddMessageBrokerCommand implements Command {
 
 export class AddServiceDiscoveryCommand implements Command {
     links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
-
-    addedSourceTargetServiceDiscoveries: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
         this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetServiceDiscoveries = [];
     }
 
     execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let serviceDiscovery = this.graph.addServiceDiscovery(`${sourceNode.getName()} ${targetNode.getName()}`);
-            this.graph.addRunTimeInteraction(sourceNode, serviceDiscovery);
-            this.graph.addRunTimeInteraction(targetNode, serviceDiscovery);
-            this.addedSourceTargetServiceDiscoveries.push([sourceNode, targetNode, serviceDiscovery]);
-            link.remove();
-        }
-
+        this.links.forEach(link=>{
+            link.setDynamicDiscovery(true);
+        })
     }
 
     unexecute() {
-        let len = this.addedSourceTargetServiceDiscoveries.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetServiceDiscoveries.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
+        this.links.forEach(link=>{
+            console.log("service discovery to false")
+            link.setDynamicDiscovery(false);
+        })
     }
 
     getDescription() {
@@ -238,27 +221,15 @@ export class AddCircuitBreakerCommand implements Command {
     }
 
     execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let circuitBeaker = this.graph.addCircuitBreaker(`${sourceNode.getName()} ${targetNode.getName()}`);
-            this.graph.addRunTimeInteraction(sourceNode, circuitBeaker);
-            this.graph.addRunTimeInteraction(circuitBeaker, targetNode);
-            this.addedSourceTargetCircutBeakers.push([sourceNode, targetNode, circuitBeaker]);
-            link.remove();
-        }
+        this.links.forEach(link=>{
+            link.setCircuitBreaker(true);
+        })
     }
 
     unexecute() {
-        let len = this.addedSourceTargetCircutBeakers.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetCircutBeakers.pop();
-            let link = this.graph.addRunTimeInteraction(sourceTargetPattern[0], sourceTargetPattern[1]);
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
+        this.links.forEach(link=>{
+            link.setCircuitBreaker(false);
+        })
     }
 
     getDescription() {

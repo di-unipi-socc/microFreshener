@@ -137,8 +137,8 @@ def graph_examples(request):
             ex = request.GET['name']
             if(ex == "extra"):
                 model_path = os.path.join(examples_path, "extra-riot.json")
-            elif (ex == "extra-agent"):
-                model_path = os.path.join(examples_path, "extra-riot-agent.json")
+            # elif (ex == "extra-agent"):
+            #     model_path = os.path.join(examples_path, "extra-riot-agent.json")
             elif (ex == "sockshop"):
                 model_path = os.path.join(examples_path, "sockshop.json")
             elif (ex == "helloworld"):

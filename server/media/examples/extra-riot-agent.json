@@ -111,12 +111,14 @@
         {
             "source": "Jtl",
             "target": "Brk",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true
         },
         {
             "source": "Tlg",
             "target": "Brk",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true
         },
         {
             "source": "Tlg",

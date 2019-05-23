@@ -271,7 +271,7 @@ export class Graph extends joint.dia.Graph {
             if (link.type == "deploymenttime")
                 this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
             else if (link.type = "runtime") {
-                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout']);
+                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'],  link['circuit_breaker'], link['dynamic_discovery'], );
             }
 
         });
@@ -319,7 +319,10 @@ export class Graph extends joint.dia.Graph {
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),
-                'timeout': link.hasTimeout()
+                'timeout': link.hasTimeout(),
+                "dynamic_discovery": link.hasDynamicDiscovery(),
+                "circuit_breaker": link.hasCircuitBreaker()
+
             }
             if (link instanceof joint.shapes.microtosca.RunTimeLink)
                 dlink['type'] = "runtime";

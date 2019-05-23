@@ -111,132 +111,184 @@
         {
             "source": "Brk2",
             "target": "Jtl",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Jtl",
             "target": "Brk1",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Tlg",
             "target": "Brk1",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Tlg",
             "target": "InfDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Chr",
             "target": "InfDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Inf",
             "target": "InfDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Inf",
             "target": "Kpc",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpc",
             "target": "InfDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpc",
             "target": "InfUp",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Dsh",
             "target": "Chr",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Dsh",
             "target": "Cnf",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Cnf",
             "target": "Inf",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Cnf",
             "target": "FltDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "InfUp",
             "target": "CldAdm",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "GUI",
             "target": "Dsh",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "GUI",
             "target": "Cnf",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "GUI",
             "target": "Kpr",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "GUI",
             "target": "CldAdm",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpr",
             "target": "KprDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpr",
             "target": "NsqDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpr",
             "target": "CldAdm",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "CldAdm",
             "target": "CldAdmDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "CldAdm",
             "target": "Ans",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Ans",
             "target": "Tlg",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "Kpr",
             "target": "SftMngDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         },
         {
             "source": "CldAdm",
             "target": "SftDB",
-            "type": "runtime"
+            "type": "runtime",
+            "timeout": true,
+            "dynamic_discovery": true
         }
     ],
     "groups": [

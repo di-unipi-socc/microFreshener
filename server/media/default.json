@@ -90,157 +90,209 @@
         {
             "source": "Brk2",
             "target": "Jtl",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Jtl",
             "target": "Brk1",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Tlg",
             "target": "Brk1",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Tlg",
             "target": "InfDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Chr",
             "target": "InfDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Inf",
             "target": "InfDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Inf",
             "target": "Kpc",
             "timeout": false,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpc",
             "target": "InfDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpc",
             "target": "InfUp",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Dsh",
             "target": "Chr",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Dsh",
             "target": "Cnf",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Cnf",
             "target": "Inf",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Cnf",
             "target": "FltDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "InfUp",
             "target": "CldAdm",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "GUI",
             "target": "Dsh",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "GUI",
             "target": "Cnf",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "GUI",
             "target": "Kpr",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "GUI",
             "target": "CldAdm",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpr",
             "target": "KprDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpr",
             "target": "NsqDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpr",
             "target": "CldAdm",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Kpr",
             "target": "SftMngDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "CldAdm",
             "target": "CldAdmDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "CldAdm",
             "target": "Ans",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "CldAdm",
             "target": "SftDB",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         },
         {
             "source": "Ans",
             "target": "Tlg",
-            "timeout": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": false,
             "type": "runtime"
         }
     ],

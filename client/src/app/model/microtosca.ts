@@ -55,6 +55,8 @@ declare module 'jointjs' {
                 setCircuitBreaker(boolean):void;
                 setDynamicDiscovery(boolean):void;
                 hasTimeout(): boolean;
+                hasDynamicDiscovery(): boolean;
+                hasCircuitBreaker(): boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
                 hasTimeout(): boolean
@@ -724,20 +726,32 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             if (this.timeout)
                 this._showTimeout();
             else
-                this._removeTimeout()
+                this._hideTimeout()
         },
         setCircuitBreaker: function(value:boolean){
             this.circuit_breaker = value;
             if(this.circuit_breaker)
-                this._showCircuiBreaker()
+                this._showCircuitBreaker()
+            else
+                this._hideCircuitBreaker()
         },
         setDynamicDiscovery: function(value:boolean){
             this.dynamic_discovery = value;
             if(this.dynamic_discovery)
-                this._showDynamicDiscovery()
+                this._showDynamicDiscovery();
+            else{
+                console.log("HIDING SEVICE DISCVOERY");
+                this._hideDynamicDiscovery();
+            }
         },
         hasTimeout: function () {
             return this.timeout;
+        },
+        hasDynamicDiscovery: function () {
+            return this.dynamic_discovery;
+        },
+        hasCircuitBreaker: function () {
+            return this.circuit_breaker;
         },
         _showTimeout: function () {
             console.log("Showing TIMEOUT on interaction");
@@ -760,7 +774,7 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 }
             });
         },
-        _showCircuiBreaker: function(){
+        _showCircuitBreaker: function(){
             console.log("Showing circuibreaker");
             this.insertLabel(1, {
                 markup: [
@@ -780,6 +794,9 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                     },
                 }
             });
+        },
+        _hideCircuitBreaker: function(){
+            this.removeLabel(1);
         },
         _showDynamicDiscovery: function(){
             this.insertLabel(2, {
@@ -801,7 +818,11 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             });
 
         },
-        _removeTimeout: function () {
+        _hideDynamicDiscovery: function(){
+            console.log(this.label(2));
+            this.removeLabel(2);
+        },
+        _hideTimeout: function () {
             this.removeLabel(0);
         }
 
