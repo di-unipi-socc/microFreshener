@@ -24,17 +24,6 @@ topology_template:
     d7:
       type: micro.nodes.Database
 
-    g1:
-      type: micro.nodes.MessageRouter
-      requirements:
-        - run_time: m1
-        - run_time: m2
-    g2:
-      type: micro.nodes.MessageRouter
-      requirements:
-        - run_time: s1
-        - run_time: s2
-
     m1:
       type: micro.nodes.MessageBroker
     m2:
@@ -77,34 +66,26 @@ topology_template:
     s6:
       type: micro.nodes.Service
       requirements:
-        - run_time:
-            node: s13
-            relationship: td
+        - run_time: d6
         - run_time: m1
     s7:
       type: micro.nodes.Service
       requirements:
-        - run_time:
-            node: s13
-            relationship: td
+        - run_time: d6
         - run_time:
             node: s5
             relationship: td
     s8:
       type: micro.nodes.Service
       requirements:
-        - run_time:
-            node: s13
-            relationship: td
+        - run_time: d6
         - run_time:
             node: s7
             relationship: td
     s9:
       type: micro.nodes.Service
       requirements:
-        - run_time:
-            node: s13
-            relationship: td
+        - run_time: d6
     s10:
       type: micro.nodes.Service
       requirements:
@@ -137,15 +118,10 @@ topology_template:
             node: s11
             relationship: td
 
-    s13:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: d6
-
   groups:
     edge:
       type: micro.groups.Edge
-      members: [g1,g2]
+      members: [m1,m2,s1,s2]
 
   relationship_templates:
     td:

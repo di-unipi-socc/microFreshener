@@ -280,7 +280,7 @@ export class GraphEditorComponent implements OnInit {
                 selectedsmell: smell
             },
             header: `Smell details`,
-            width: '40%'
+            width: '80%'
         });
 
         ref.onClose.subscribe((refactoringCommand) => {
