@@ -35,10 +35,10 @@ file_uploads_path = os.path.join(uploads_path, "upload.yml")
 def graph_analysis(request):
     """
     get:
-    Analyse all the nodes
+    Run the analysis and return the smells (with heir refactorings)
     """
     if request.method == 'GET':
-        # get the principle to check graph/analysis?smells=id1,id2,idn2 &ignore=order
+        # get the principle to check graph/analysis?smells=id1,id2,idn2
         smells = request.GET.get('smells').split(',')
         mmodel = None
         if(os.path.isfile(model_file_path)):
@@ -59,7 +59,7 @@ def graph_analysis(request):
 def graph(request):
     """
     get:
-    returns the model stored in the server as JSON file.
+    returns the JSON file.
 
     post:
     upload a new microtosca model as JSON file.

@@ -1,14 +1,6 @@
 {
-    "name": "micro.tosca",
+    "name": "hello-world",
     "nodes": [
-        {
-            "name": "order",
-            "type": "service"
-        },
-        {
-            "name": "rabbitmq",
-            "type": "messagebroker"
-        },
         {
             "name": "shipping",
             "type": "service"
@@ -18,13 +10,21 @@
             "type": "database"
         },
         {
-            "name": "gateway",
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "messagebroker"
+        },
+        {
+            "name": "Api gateway",
             "type": "messagerouter"
         }
     ],
     "links": [
         {
-            "source": "order",
+            "source": "shipping",
             "target": "order_db",
             "timeout": false,
             "dynamic_discovery": false,
@@ -32,7 +32,7 @@
             "type": "runtime"
         },
         {
-            "source": "order",
+            "source": "shipping",
             "target": "rabbitmq",
             "timeout": false,
             "dynamic_discovery": false,
@@ -42,21 +42,13 @@
         {
             "source": "order",
             "target": "shipping",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": true,
             "type": "runtime"
         },
         {
-            "source": "shipping",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "shipping",
+            "source": "order",
             "target": "order_db",
             "timeout": false,
             "dynamic_discovery": false,
@@ -64,7 +56,15 @@
             "type": "runtime"
         },
         {
-            "source": "gateway",
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "Api gateway",
             "target": "shipping",
             "timeout": false,
             "dynamic_discovery": false,
@@ -78,8 +78,7 @@
             "type": "edgegroup",
             "members": [
                 "order",
-                "shipping",
-                "gateway"
+                "Api gateway"
             ]
         }
     ]

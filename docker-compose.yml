@@ -1,0 +1,17 @@
+version: "3"
+
+services:     
+  server:
+    container_name: microfreshener-server
+    build: server
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./server:/code
+    ports:
+      - "8000:8000"
+
+  client:
+    container_name: microfreshener-client
+    build: client
+    ports:
+      - "80:80"
