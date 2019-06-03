@@ -27,8 +27,8 @@ The paper has been submitted to:
 - apply refactorings.
 
 Examples of the web-based interface are shown below where:
- - (a) is an example of an architecture drawn with the GUI, where the icons on the nodes  are the architectural smells affectring such ndoes.
- - (b) is the pop-up for applying a refactoring.
+ - (a) is an example of an architecture drawn with the GUI, where the icons on the nodes  are the architectural smells affecting such ndoes.
+ - (b) is the view for choosing a refactoring.
 
   (a)       |  (b)
 :-------------------------:|:-------------------------:
