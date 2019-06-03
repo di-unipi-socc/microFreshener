@@ -14,4 +14,4 @@ services:
     container_name: microfreshener-client
     build: client
     ports:
-      - "80:80"
+      - "8081:80"
