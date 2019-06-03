@@ -1,297 +1,73 @@
 {
-    "name": "extra-riot",
+    "name": "hello-world",
     "nodes": [
         {
-            "name": "Brk1",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "database"
+        },
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
             "type": "messagebroker"
         },
         {
-            "name": "Brk2",
-            "type": "messagebroker"
-        },
-        {
-            "name": "Jtl",
-            "type": "service"
-        },
-        {
-            "name": "Tlg",
-            "type": "service"
-        },
-        {
-            "name": "InfDB",
-            "type": "database"
-        },
-        {
-            "name": "Chr",
-            "type": "service"
-        },
-        {
-            "name": "Inf",
-            "type": "service"
-        },
-        {
-            "name": "Kpc",
-            "type": "service"
-        },
-        {
-            "name": "Dsh",
-            "type": "service"
-        },
-        {
-            "name": "Cnf",
-            "type": "service"
-        },
-        {
-            "name": "InfUp",
-            "type": "service"
-        },
-        {
-            "name": "FltDB",
-            "type": "database"
-        },
-        {
-            "name": "GUI",
-            "type": "service"
-        },
-        {
-            "name": "Kpr",
-            "type": "service"
-        },
-        {
-            "name": "KprDB",
-            "type": "database"
-        },
-        {
-            "name": "NsqDB",
-            "type": "database"
-        },
-        {
-            "name": "CldAdm",
-            "type": "service"
-        },
-        {
-            "name": "CldAdmDB",
-            "type": "database"
-        },
-        {
-            "name": "SftDB",
-            "type": "database"
-        },
-        {
-            "name": "Ans",
-            "type": "service"
-        },
-        {
-            "name": "SftMngDB",
-            "type": "database"
+            "name": "Api gateway",
+            "type": "messagerouter"
         }
     ],
     "links": [
         {
-            "source": "Brk2",
-            "target": "Jtl",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Jtl",
-            "target": "Brk1",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Tlg",
-            "target": "Brk1",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Tlg",
-            "target": "InfDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Chr",
-            "target": "InfDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Inf",
-            "target": "InfDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Inf",
-            "target": "Kpc",
+            "source": "shipping",
+            "target": "order_db",
             "timeout": false,
-            "dynamic_discovery": true,
+            "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         },
         {
-            "source": "Kpc",
-            "target": "InfDB",
-            "timeout": true,
-            "dynamic_discovery": true,
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         },
         {
-            "source": "Kpc",
-            "target": "InfUp",
+            "source": "order",
+            "target": "shipping",
             "timeout": true,
             "dynamic_discovery": true,
+            "circuit_breaker": true,
+            "type": "runtime"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         },
         {
-            "source": "Dsh",
-            "target": "Chr",
-            "timeout": true,
-            "dynamic_discovery": true,
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         },
         {
-            "source": "Dsh",
-            "target": "Cnf",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Cnf",
-            "target": "Inf",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Cnf",
-            "target": "FltDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "InfUp",
-            "target": "CldAdm",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Dsh",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Cnf",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "Kpr",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "GUI",
-            "target": "CldAdm",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "KprDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "NsqDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "CldAdm",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Kpr",
-            "target": "SftMngDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "CldAdmDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "Ans",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "CldAdm",
-            "target": "SftDB",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "Ans",
-            "target": "Tlg",
-            "timeout": true,
-            "dynamic_discovery": true,
+            "source": "Api gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         }
@@ -301,10 +77,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "Brk2",
-                "Brk1",
-                "Kpr",
-                "CldAdm"
+                "order",
+                "Api gateway"
             ]
         }
     ]

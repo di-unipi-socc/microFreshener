@@ -1,0 +1,87 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Hello world of usign micro-tosca model
+
+imports:
+# - tosker: https://di-unipi-socc.github.io/tosker-types/tosker.yaml
+  - micro: ../../data/micro-tosca-types.yml
+
+topology_template:
+  node_templates:
+    order:
+      type: micro.nodes.Service
+      requirements:
+        - run_time: order_db
+        - run_time: rabbitmq
+        - run_time: shipping
+
+    rabbitmq:
+      type: micro.nodes.MessageBroker
+
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+        - run_time: rabbitmq
+        - run_time: order_db
+
+    order_db:
+      type: micro.nodes.Database
+    
+    gateway:
+      type: micro.nodes.MessageRouter
+      requirements:
+        - run_time: shipping
+  
+  groups:
+    edgenodes:
+      type: micro.groups.Edge
+      members: [ order, shipping, gateway]
+    
+    # team1:
+    #   type: micro.groups.Team
+    #   members: [shipping, rabbitmq]
+    
+    # team2:
+    #   type: micro.groups.Team
+    #   members: [order, order_db]
+
+  relationship_templates:
+    t:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+
+    c:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+    d:
+      type: micro.relationships.InteractsWith
+      properties:
+        dynamic_discovery: true
+    
+    tc:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+    td:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        dynamic_discovery: true
+        
+    cd:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+        dynamic_discovery: true
+  
+    tcd:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+        dynamic_discovery: true
+
+

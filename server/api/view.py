@@ -13,12 +13,12 @@ from rest_framework.response import Response
 import os
 import json
 
-from microanalyser.analyser import MicroToscaAnalyser
-from microanalyser.analyser import MicroToscaAnalyserBuilder
-from microanalyser.importer import JSONImporter, YMLImporter
-from microanalyser.exporter import JSONExporter, YMLExporter
-from microanalyser.model import MicroToscaModel
-from microanalyser.model import Service, Database, CommunicationPattern
+from microfreshener.core.analyser import MicroToscaAnalyser
+from microfreshener.core.analyser import MicroToscaAnalyserBuilder
+from microfreshener.core.importer import JSONImporter, YMLImporter
+from microfreshener.core.exporter import JSONExporter, YMLExporter
+from microfreshener.core.model import MicroToscaModel
+from microfreshener.core.model import Service, Database, CommunicationPattern
 
 json_importer = JSONImporter()
 yml_importer = YMLImporter()
@@ -35,10 +35,10 @@ file_uploads_path = os.path.join(uploads_path, "upload.yml")
 def graph_analysis(request):
     """
     get:
-    Analyse all the nodes
+    Run the analysis and return the smells (with heir refactorings)
     """
     if request.method == 'GET':
-        # get the principle to check graph/analysis?smells=id1,id2,idn2 &ignore=order
+        # get the principle to check graph/analysis?smells=id1,id2,idn2
         smells = request.GET.get('smells').split(',')
         mmodel = None
         if(os.path.isfile(model_file_path)):
@@ -59,7 +59,7 @@ def graph_analysis(request):
 def graph(request):
     """
     get:
-    returns the model stored in the server as JSON file.
+    returns the JSON file.
 
     post:
     upload a new microtosca model as JSON file.
@@ -129,25 +129,32 @@ def graph_import(request):
 def graph_examples(request):
     """
     get:
-    returns the JSOn of some examples
+    returns the JSON of some examples
     """
     if request.method == 'GET':
         model_path = model_file_path
         if "name" in request.GET:
             ex = request.GET['name']
-            if(ex == "extra"):
-                model_path = os.path.join(examples_path, "extra-riot.json")
-            # elif (ex == "extra-agent"):
-            #     model_path = os.path.join(examples_path, "extra-riot-agent.json")
+            if(ex == "case-study-initial"):
+                model_path = os.path.join(examples_path, "case-study/initial.yml")
+            elif (ex == "case-study-refactored"):
+                model_path = os.path.join(examples_path, "case-study/refactored.yml")
             elif (ex == "sockshop"):
                 model_path = os.path.join(examples_path, "sockshop.json")
             elif (ex == "helloworld"):
-                model_path = os.path.join(examples_path, "helloworld.json")
+                model_path = os.path.join(examples_path, "hello-world/helloworld.yml")
  
         # return the json file of the model
-        mmodel = None
+        # mmodel = None
+        # if(os.path.isfile(model_path)):
+        #     mmodel = json_importer.Import(model_path)
+        #     dmodel = json_exporter.Export(mmodel)
+        #     return Response(dmodel)
+        # else:
+        #     return Response({"msg": "Example not found ion the server"})
+      
         if(os.path.isfile(model_path)):
-            mmodel = json_importer.Import(model_path)
+            mmodel = yml_importer.Import(model_path)
             dmodel = json_exporter.Export(mmodel)
             return Response(dmodel)
         else:

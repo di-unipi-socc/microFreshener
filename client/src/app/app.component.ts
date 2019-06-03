@@ -14,7 +14,7 @@ import { AnalyserService } from './analyser.service';
   providers: [DialogService]
 })
 export class AppComponent {
-  title = 'MicroTosca Analyser';
+  title = 'microFreshener';
 
   display: boolean = false;
 
@@ -63,12 +63,12 @@ export class AppComponent {
       {label: 'Hello world', command: () => {
         this.downloadExample("helloworld");
       }},
-      {label: 'Extra', command: () => {
-        this.downloadExample("extra");
+      {label: 'Case study', command: () => {
+        this.downloadExample("case-study-initial");
       }},
-      // {label: 'Extra (agent)', command: () => {
-      //   this.downloadExample("extra-agent");
-      // }},
+      {label: 'Case study (refactored)', command: () => {
+        this.downloadExample("case-study-refactored");
+      }},
       {label: 'Sockshop', command: () => {
         this.downloadExample("sockshop");
       }},

@@ -1,7 +1,8 @@
 import * as joint from 'jointjs';
 import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
 
-let NAME_FONT_SIZE = 14;
+let NODE_LABEL_FONT_SIZE = 20;
+let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SHARED_PERSISTENCY = "white";
 let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "white"; //"#00ff00";
 let ICON_COLOR_WOBBLY_SERVICE_INTERACTION = "white";//'#0800ee';
@@ -86,7 +87,7 @@ joint.dia.Element.define('microtosca.Service', {
             refX: '50%',
             refY: '100%',
             refY2: 15,
-            fontSize: NAME_FONT_SIZE,
+            fontSize: NODE_LABEL_FONT_SIZE,
             refWidth: '75%',
             refHeight: '75%',
             fill: 'black',
@@ -270,7 +271,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Database', {
             refX: '50%',
             refY: '100%',
             refY2: 15,
-            fontSize: NAME_FONT_SIZE,
+            fontSize: NODE_LABEL_FONT_SIZE,
             fill: '#333333'
         },
         delete: {
@@ -410,7 +411,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refX: '50%',
             refY: '100%',
             refY2: 14,
-            fontSize: NAME_FONT_SIZE,
+            fontSize: NODE_LABEL_FONT_SIZE,
             fill: 'black',
             text: ''
         },
@@ -433,7 +434,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refX: '50%',
             refY: '40%',
             // refY2: 18,
-            fontSize: NAME_FONT_SIZE + 4,
+            fontSize: COMMUNICATION_PATTERN_TYPE_FONT_SIZE,
             fill: '#333333',
             text: ''
         },
@@ -533,7 +534,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         label: {
             refX: '0%',
             refY: '90%',
-            fontSize: 18,
+            fontSize: NODE_LABEL_FONT_SIZE,
             text: name || '',
         },
     },
