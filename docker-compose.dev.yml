@@ -9,9 +9,15 @@ services:
       - ./server:/code
     ports:
       - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS=dev
 
   client:
     container_name: microfreshener-client
-    build: client
+    build: 
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        configuration: dev
     ports:
       - "8081:80"

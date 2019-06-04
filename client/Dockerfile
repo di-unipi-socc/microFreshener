@@ -11,11 +11,13 @@ RUN npm install
 
 COPY . /app
 
+# Default build configuration (production by default)
+ARG configuration=production
+
 # Build app
-RUN npm run build -- --output-path=./dist/out
+RUN npm run build -- --output-path=./dist/out --configuration $configuration
 
 ### Stage 2: delivery ###
-
 FROM nginx:1.15.7-alpine
 
 # Remove default nginx website
