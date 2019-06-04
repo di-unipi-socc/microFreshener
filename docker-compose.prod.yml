@@ -7,10 +7,15 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./server:/code
-    ports:
-      - "8000:8000"
     environment:
       - DJANGO_SETTINGS=prod
+    ports: 
+      - "8081:8000"
+    labels:
+      - "traefik.frontend.rule=Host:api.microfreshener.localhost"
+    networks: 
+      - web
+  
 
   client:
     container_name: microfreshener-client
@@ -19,5 +24,13 @@ services:
       dockerfile: Dockerfile
       args:
         configuration: production
-    ports:
-      - "8081:80"
+    labels:
+      - "traefik.frontend.rule=Host:microfreshener.localhost"
+    networks: 
+      - web
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
