@@ -17,8 +17,7 @@
                 
                 <button cslass="ui-button-primary" pButton type="button" (click)="upload()" icon="pi pi-save"></button>
                 
-                <a pButton href="http://127.0.0.1:8000/api/export" icon="pi pi-download" class="ui-button-info"></a>
-                <a pButton (click)="download()" icon="pi pi-download" class="ui-button-info"></a>
+                <a pButton [attr.href]="hrefDownload" icon="pi pi-download" class="ui-button-info"></a>
 
                 <p-fileUpload mode="basic" 
                             name="graph"
