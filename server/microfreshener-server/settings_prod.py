@@ -21,13 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-SECRET_KEY = 'po+a%^4%qnuf6zpiluf0&zfrdt978n0#lrg0-q_%#s8f&(epcy'
-
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', ")7*gu-b5^6&y81ywbz_&euk(+5alx4967qh2zuqmp^!h$+7r_^")
+#SECRET_KEY = ")7*gu-b5^6&y81ywbz_&euk(+5alx4967qh2zuqmp^!h$+7r_^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['131.114.2.77', 'neri.di.unipi.it']
+ALLOWED_HOSTS = ['131.114.2.77', 'neri.di.unipi.it','127.0.0.1', 'api.microfreshener.localhost']
 
 
 # Application definition

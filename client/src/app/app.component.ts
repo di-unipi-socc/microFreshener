@@ -5,6 +5,7 @@ import { DialogService } from 'primeng/api';
 import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.component';
 import { MenuItem } from 'primeng/api';
 import { AnalyserService } from './analyser.service';
+import { environment } from '../environments/environment';
 
 
 @Component({
@@ -21,6 +22,8 @@ export class AppComponent {
   items: MenuItem[];
   layouts:MenuItem[];
   examples:MenuItem[];
+  
+  hrefDownload = environment.serverUrl + '/export';
 
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
