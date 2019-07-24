@@ -2,12 +2,6 @@
 
 MiICROFRESHENER is a web-based prototype that permits to identify the _architectural smells_ that possibly violate principles of microservices, and to select suitable _refactorings_ to resolve them.
 
-The paper has been submitted to:
-> _Antonio Brogi,  Davide Neri, Jacopo Soldani <br>
-> **Freshening the air in microservices: Resolving architectural smells via refactoring.** <br>
-> The 17th International Conference on Service-Oriented Computing (ICSOC), 2019 [Under review]._
-
-
 
 ## Table of Contents
 - [MicroFreshener](#microfreshener-architecture)
