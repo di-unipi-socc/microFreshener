@@ -2,8 +2,8 @@
 
 ```
 MicroFreshener is a web-based prototype that permits to identify
-the *architectural smells* that possibly violate principles of microservices, 
-and to select suitable *refactorings* to resolve them.
+the **architectural smells** that possibly violate principles of microservices, 
+and to select suitable **refactorings** to resolve them.
 ```
 
 
