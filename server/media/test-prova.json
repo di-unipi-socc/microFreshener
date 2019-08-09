@@ -1,0 +1,23 @@
+{
+    "name": "test-prova",
+    "nodes": [
+        {
+            "name": "prova-service",
+            "type": "service"
+        },
+        {
+            "name": "prova-database",
+            "type": "database"
+        },
+        {
+            "name": "prova-mb",
+            "type": "messagebroker"
+        },
+        {
+            "name": "prova-mr",
+            "type": "messagerouter"
+        }
+    ],
+    "links": [],
+    "groups": []
+}

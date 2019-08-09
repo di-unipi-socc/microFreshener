@@ -11,9 +11,9 @@ topology_template:
     order:
       type: micro.nodes.Service
       requirements:
-        - run_time: order_db
-        - run_time: rabbitmq
-        - run_time: shipping
+        - interaction: order_db
+        - interaction: rabbitmq
+        - interaction: shipping
         - deployment_time: shipping
         - deployment_time: order_db
         
@@ -23,8 +23,8 @@ topology_template:
     shipping:
       type: micro.nodes.Service
       requirements:
-        - run_time: rabbitmq
-        - run_time: order_db
+        - interaction: rabbitmq
+        - interaction: order_db
         - deployment_time: order_db
 
     order_db:

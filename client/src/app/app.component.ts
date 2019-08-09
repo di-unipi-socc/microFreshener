@@ -23,7 +23,7 @@ export class AppComponent {
   layouts:MenuItem[];
   examples:MenuItem[];
   
-  hrefDownload = environment.serverUrl + '/export';
+  hrefDownload = environment.serverUrl + 'api/export';
 
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {

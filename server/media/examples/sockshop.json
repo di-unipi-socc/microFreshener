@@ -78,77 +78,77 @@
         {
             "source": "front-end",
             "target": "orders",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "orders",
             "target": "ordersdb",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "front-end",
             "target": "payment",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "front-end",
             "target": "user",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "orders",
             "target": "user",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "front-end",
             "target": "carts",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "carts",
             "target": "carts-db",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "catalogue",
             "target": "catalogue-db",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "front-end",
             "target": "catalogue",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "user",
             "target": "user-db",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "orders",
             "target": "shipping",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "shipping",
             "target": "rabbitmq",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "queue-master",
             "target": "rabbitmq",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "edge-router",
             "target": "front-end",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "orders",
             "target": "carts",
-            "type": "runtime"
+            "type": "interaction"
         }
     ]
 }

@@ -22,10 +22,11 @@ from rest_framework import routers, serializers, viewsets
 # swagger API documentation
 from rest_framework_swagger.views import get_swagger_view
 
-schema_view = get_swagger_view(title='MicroToscaAnalyser API')
+schema_view = get_swagger_view(title='MicroFreshener API')
 
 
 urlpatterns = [
     url(r'^$', schema_view), # swagger documentation
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    path('microtosca/', include('microtosca.urls'))
 ]

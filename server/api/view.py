@@ -140,7 +140,7 @@ def graph_examples(request):
             elif (ex == "case-study-refactored"):
                 model_path = os.path.join(examples_path, "case-study/refactored.yml")
             elif (ex == "sockshop"):
-                model_path = os.path.join(examples_path, "sockshop.json")
+                model_path = os.path.join(examples_path, "sockshop.yml")
             elif (ex == "helloworld"):
                 model_path = os.path.join(examples_path, "hello-world/helloworld.yml")
  

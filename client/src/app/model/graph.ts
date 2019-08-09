@@ -268,11 +268,18 @@ export class Graph extends joint.dia.Graph {
                 throw new Error(`Node type of ${node.name} not recognized`);
         });
         json['links'].forEach((link) => {
-            if (link.type == "deploymenttime")
-                this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
-            else if (link.type = "runtime") {
-                this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'],  link['circuit_breaker'], link['dynamic_discovery'], );
-            }
+            // if (link.type == "deploymenttime")
+            //     this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
+            // else if (link.type = "runtime") {
+            //     this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'],  link['circuit_breaker'], link['dynamic_discovery'], );
+            // }
+
+            
+            if (link.type == "interaction")
+             // TODO: Change to add InteractionLink
+              this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'],  link['circuit_breaker'], link['dynamic_discovery'], );
+            else 
+                throw new Error(`Link type of ${link.type} not recognized`);
 
         });
         json['groups'].forEach(group => {
@@ -324,10 +331,14 @@ export class Graph extends joint.dia.Graph {
                 "circuit_breaker": link.hasCircuitBreaker()
 
             }
+            // if (link instanceof joint.shapes.microtosca.RunTimeLink)
+            //     dlink['type'] = "runtime";
+            // else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink)
+            //     dlink['type'] = "deploymenttime";
+          
+            // TODO: Change to Interaction Link
             if (link instanceof joint.shapes.microtosca.RunTimeLink)
-                dlink['type'] = "runtime";
-            else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink)
-                dlink['type'] = "deploymenttime";
+                dlink['type'] = "interaction";
             else
                 throw new Error(`Link type of ${link} not recognized`);
             data['links'].push(dlink);

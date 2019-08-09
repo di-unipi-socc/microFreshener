@@ -27,13 +27,13 @@ topology_template:
     g1:
       type: micro.nodes.MessageRouter
       requirements:
-        - run_time: m1
-        - run_time: m2
+        - interaction: m1
+        - interaction: m2
     g2:
       type: micro.nodes.MessageRouter
       requirements:
-        - run_time: s1
-        - run_time: s2
+        - interaction: s1
+        - interaction: s2
 
     m1:
       type: micro.nodes.MessageBroker
@@ -43,104 +43,104 @@ topology_template:
     s1:
       type: micro.nodes.Service
       requirements:
-        - run_time: d1
-        - run_time: d2
-        - run_time: d3
-        - run_time:
+        - interaction: d1
+        - interaction: d2
+        - interaction: d3
+        - interaction:
             node: s2
             relationship: td
     s2:
       type: micro.nodes.Service
       requirements:
-        - run_time: d4
-        - run_time: d5
-        - run_time:
+        - interaction: d4
+        - interaction: d5
+        - interaction:
             node: s4
             relationship: td
     s3:
       type: micro.nodes.Service
       requirements:
-        - run_time: m1
-        - run_time: m2
+        - interaction: m1
+        - interaction: m2
     s4:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s6
             relationship: td
     s5:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s2
             relationship: td
     s6:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s13
             relationship: td
-        - run_time: m1
+        - interaction: m1
     s7:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s13
             relationship: td
-        - run_time:
+        - interaction:
             node: s5
             relationship: td
     s8:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s13
             relationship: td
-        - run_time:
+        - interaction:
             node: s7
             relationship: td
     s9:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s13
             relationship: td
     s10:
       type: micro.nodes.Service
       requirements:
-        - run_time: d7
-        - run_time:
+        - interaction: d7
+        - interaction:
             node: s8
             relationship: td
     s11:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s9
             relationship: td
-        - run_time:
+        - interaction:
             node: s10
             relationship: td
     s12:
       type: micro.nodes.Service
       requirements:
-        - run_time:
+        - interaction:
             node: s1
             relationship: td
-        - run_time:
+        - interaction:
             node: s2
             relationship: td
-        - run_time:
+        - interaction:
             node: s10
             relationship: td
-        - run_time:
+        - interaction:
             node: s11
             relationship: td
 
     s13:
       type: micro.nodes.Service
       requirements:
-        - run_time: d6
+        - interaction: d6
 
   groups:
     edge:

@@ -1,26 +1,36 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: micro.tosca
+description: sockshop
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
   node_templates:
+    front-end:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: orders
+      - interaction: payment
+      - interaction: user
+      - interaction: carts
+      - interaction: catalogue
+    orders:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: ordersdb
+      - interaction: user
+      - interaction: shipping
+      - interaction: carts
     ordersdb:
       type: micro.nodes.Database
     payment:
       type: micro.nodes.Service
-      requirements:
-      - interaction: catalogue
     user:
       type: micro.nodes.Service
       requirements:
       - interaction: user-db
-      - interaction: shipping
-      - interaction: ordersdb
     carts:
       type: micro.nodes.Service
       requirements:
       - interaction: carts-db
-      - interaction: payment
     carts-db:
       type: micro.nodes.Database
     catalogue-db:
@@ -35,14 +45,16 @@ topology_template:
       type: micro.nodes.Service
       requirements:
       - interaction: rabbitmq
-      - interaction: queue-master
     rabbitmq:
       type: micro.nodes.MessageBroker
     queue-master:
       type: micro.nodes.Service
       requirements:
       - interaction: rabbitmq
-      - interaction: carts
+    edge-router:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction: front-end
   groups: {}
   relationship_templates:
     t:
