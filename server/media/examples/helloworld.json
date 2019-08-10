@@ -7,7 +7,7 @@
         },
         {
             "name": "order_db",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "name": "order",

@@ -11,7 +11,7 @@ topology_template:
       - deployment_time: rabbitmq
       - interaction: order_db
     order_db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     order:
       type: micro.nodes.Service
       requirements:

@@ -78,8 +78,8 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isService(node));
     }
 
-    getDatabase(): joint.dia.Cell[] {
-        return this.getNodes().filter(node => this.isDatabase(node));
+    getDatastore(): joint.dia.Cell[] {
+        return this.getNodes().filter(node => this.isDatastore(node));
     }
 
     getCommunicationPattern(): joint.dia.Cell[] {
@@ -138,8 +138,8 @@ export class Graph extends joint.dia.Graph {
         return service;
     }
 
-    addDatabase(name: string): joint.shapes.microtosca.Database {
-        let database = new joint.shapes.microtosca.Database();
+    addDatastore(name: string): joint.shapes.microtosca.Datastore {
+        let database = new joint.shapes.microtosca.Datastore();
         database.resize(75, 100);
         database.position(525, 75);
         database.topRy('20%');
@@ -206,7 +206,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     isNode(node: joint.dia.Cell): boolean {
-        return this.isService(node) || this.isDatabase(node) || this.isCommunicationPattern(node);
+        return this.isService(node) || this.isDatastore(node) || this.isCommunicationPattern(node);
     }
 
     isGroup(group: joint.dia.Cell): boolean {
@@ -228,9 +228,9 @@ export class Graph extends joint.dia.Graph {
         // return node instanceof joint.shapes.microtosca.Service;
     }
 
-    isDatabase(node: joint.dia.Cell): boolean {
-        return node.attributes['type'] == "microtosca.Database";
-        // return node instanceof joint.shapes.microtosca.Database;
+    isDatastore(node: joint.dia.Cell): boolean {
+        return node.attributes['type'] == "microtosca.Datastore";
+        // return node instanceof joint.shapes.microtosca.Datastore;
     }
 
     isCommunicationPattern(node: joint.dia.Cell) {
@@ -258,8 +258,8 @@ export class Graph extends joint.dia.Graph {
         json['nodes'].forEach(node => {
             if (node.type == "service")
                 this.addService(node.name)
-            else if (node.type == "database")
-                this.addDatabase(node.name);
+            else if (node.type == "datastore")
+                this.addDatastore(node.name);
             else if (node.type == "messagebroker") 
                 this.addMessageBroker(node.name);
             else if (node.type == "messagerouter") 
@@ -311,8 +311,8 @@ export class Graph extends joint.dia.Graph {
             var dnode = { 'name': node.getName() }; 
             if (this.isService(node))
                 dnode['type'] = "service";
-            else if (this.isDatabase(node))
-                dnode['type'] = "database";
+            else if (this.isDatastore(node))
+                dnode['type'] = "datastore";
             else if (this.isMessageBroker(node)) 
                 dnode['type'] = "messagebroker"
             else if (this.isMessageRouter(node)) 

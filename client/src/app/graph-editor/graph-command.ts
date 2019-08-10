@@ -24,7 +24,7 @@ export class AddServiceCommand implements Command {
     }
 }
 
-export class AddDatabaseCommand implements Command {
+export class AddDatastoreCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
@@ -36,7 +36,7 @@ export class AddDatabaseCommand implements Command {
     }
 
     execute() {
-        this.node = this.graph.addDatabase(this.name);
+        this.node = this.graph.addDatastore(this.name);
     }
 
     unexecute() {
@@ -109,8 +109,8 @@ export class RemoveServiceCommand implements Command {
     unexecute() {
         if (this.node instanceof joint.shapes.microtosca.Service)
             this.node = this.graph.addService(this.cloneNode.getName());
-        else if (this.node instanceof joint.shapes.microtosca.Database)
-            this.node = this.graph.addDatabase(this.cloneNode.getName());
+        else if (this.node instanceof joint.shapes.microtosca.Datastore)
+            this.node = this.graph.addDatastore(this.cloneNode.getName());
         else if (this.node instanceof joint.shapes.microtosca.CommunicationPattern)
             this.node = this.graph.addCommunicationPattern(this.cloneNode.getName(), (<joint.shapes.microtosca.CommunicationPattern>this.cloneNode).getType());
 

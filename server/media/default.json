@@ -1,1 +1,58 @@
-{"name": "micro.tosca", "nodes": [{"name": "ordersdb", "type": "database"}, {"name": "payment", "type": "service"}, {"name": "user", "type": "service"}, {"name": "carts", "type": "service"}, {"name": "carts-db", "type": "database"}, {"name": "catalogue-db", "type": "database"}, {"name": "catalogue", "type": "service"}, {"name": "user-db", "type": "database"}, {"name": "shipping", "type": "service"}, {"name": "rabbitmq", "type": "messagebroker"}, {"name": "queue-master", "type": "service"}], "links": [{"target": "catalogue", "source": "payment", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "user-db", "source": "user", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "shipping", "source": "user", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "ordersdb", "source": "user", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "carts-db", "source": "carts", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "payment", "source": "carts", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "catalogue-db", "source": "catalogue", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "rabbitmq", "source": "shipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "queue-master", "source": "shipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "rabbitmq", "source": "queue-master", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"target": "carts", "source": "queue-master", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}], "groups": []}
+{
+    "name": "micro.tosca",
+    "nodes": [
+        {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "name": "database",
+            "type": "datastore"
+        },
+        {
+            "name": "mb",
+            "type": "messagebroker"
+        }
+    ],
+    "links": [
+        {
+            "source": "shipping",
+            "target": "database",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "database",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "mb",
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "mb",
+            "type": "interaction"
+        }
+    ],
+    "groups": [
+        {
+            "name": "xxx",
+            "type": "squadgroup",
+            "members": [
+                "orders"
+            ]
+        }
+    ]
+}

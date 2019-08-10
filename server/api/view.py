@@ -18,7 +18,7 @@ from microfreshener.core.analyser import MicroToscaAnalyserBuilder
 from microfreshener.core.importer import JSONImporter, YMLImporter
 from microfreshener.core.exporter import JSONExporter, YMLExporter
 from microfreshener.core.model import MicroToscaModel
-from microfreshener.core.model import Service, Database, CommunicationPattern
+from microfreshener.core.model import Service, Datastore, CommunicationPattern
 
 json_importer = JSONImporter()
 yml_importer = YMLImporter()

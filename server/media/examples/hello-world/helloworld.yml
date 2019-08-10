@@ -25,7 +25,7 @@ topology_template:
         - interaction: order_db
 
     order_db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     
     gateway:
       type: micro.nodes.MessageRouter

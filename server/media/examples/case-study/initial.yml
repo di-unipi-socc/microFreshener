@@ -10,19 +10,19 @@ imports:
 topology_template:
   node_templates:
     d1:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d2:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d3:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d4:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d5:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d6:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     d7:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
 
     m1:
       type: micro.nodes.MessageBroker

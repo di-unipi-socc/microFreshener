@@ -1,48 +1,23 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: micro.tosca
+description: hello-world
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
   node_templates:
-    ordersdb:
-      type: micro.nodes.Database
-    payment:
-      type: micro.nodes.Service
-      requirements:
-      - interaction: catalogue
-    user:
-      type: micro.nodes.Service
-      requirements:
-      - interaction: user-db
-      - interaction: shipping
-      - interaction: ordersdb
-    carts:
-      type: micro.nodes.Service
-      requirements:
-      - interaction: carts-db
-      - interaction: payment
-    carts-db:
-      type: micro.nodes.Database
-    catalogue-db:
-      type: micro.nodes.Database
-    catalogue:
-      type: micro.nodes.Service
-      requirements:
-      - interaction: catalogue-db
-    user-db:
-      type: micro.nodes.Database
     shipping:
       type: micro.nodes.Service
       requirements:
-      - interaction: rabbitmq
-      - interaction: queue-master
-    rabbitmq:
-      type: micro.nodes.MessageBroker
-    queue-master:
+      - interaction: database
+      - interaction: rb
+    orders:
       type: micro.nodes.Service
       requirements:
-      - interaction: rabbitmq
-      - interaction: carts
+      - interaction: database
+      - interaction: rb
+    database:
+      type: micro.nodes.Datastore
+    rb:
+      type: micro.nodes.MessageRouter
   groups: {}
   relationship_templates:
     t:

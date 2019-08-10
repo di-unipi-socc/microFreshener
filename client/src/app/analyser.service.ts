@@ -12,8 +12,8 @@ import { Principle } from './model/principles';
 import { Smell } from './model/smell';
 import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './analyser/smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatabaseRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatabaseIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "./refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 import { SMELL_NAMES } from "./analyser/costants";
@@ -167,7 +167,7 @@ export class AnalyserService {
             refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
             break;
           case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
-            refactoring = new MoveDatabaseIntoTeamRefactoring(new MoveDatabaseIntoTeamCommand(this.gs.getGraph(), smell))
+            refactoring = new MoveDatastoreIntoTeamRefactoring(new MoveDatastoreIntoTeamCommand(this.gs.getGraph(), smell))
             break;
           case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
             refactoring = new MoveserviceIntoTeamRefactoring(new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
@@ -242,7 +242,7 @@ export class AnalyserService {
             refactoring = new MergeServicesRefactoring(new MergeServicesCommand(this.gs.getGraph(), smell));
             break;
           case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
-            refactoring = new SplitDatabaseRefactoring(new SplitDatabaseCommand(this.gs.getGraph(), smell));
+            refactoring = new SplitDatastoreRefactoring(new SplitDatastoreCommand(this.gs.getGraph(), smell));
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
             refactoring = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));

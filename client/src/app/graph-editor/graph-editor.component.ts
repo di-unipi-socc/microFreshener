@@ -120,7 +120,7 @@ export class GraphEditorComponent implements OnInit {
     createSampleGraph() {
         //  nodes
         var s = this.gs.getGraph().addService("shipping");
-        var odb = this.gs.getGraph().addDatabase("order_db");
+        var odb = this.gs.getGraph().addDatastore("order_db");
         var o = this.gs.getGraph().addService("order");
         var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
         var gw = this.gs.getGraph().addMessageRouter("Api gateway");

@@ -1,5 +1,5 @@
 import { Command } from '../invoker/icommand';
-import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatabaseCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatabaseIntoTeamCommand, AddDataManagerIntoTeamCommand, MoveServiceIntoTeamCommand } from "./refactoring-command"
+import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, AddDataManagerIntoTeamCommand, MoveServiceIntoTeamCommand } from "./refactoring-command"
 
 export class Refactoring {
     name: string
@@ -87,24 +87,24 @@ export class MergeServicesRefactoring extends Refactoring {
     }
 }
 
-export class SplitDatabaseRefactoring extends Refactoring {
+export class SplitDatastoreRefactoring extends Refactoring {
 
-    constructor(command: SplitDatabaseCommand) {
-        super("Split Database", command)
+    constructor(command: SplitDatastoreCommand) {
+        super("Split Datastore", command)
     }
 }
 
 export class AddDataManagerRefactoring extends Refactoring {
 
     constructor(command: AddDataManagerCommand) {
-        super("Add Database Manager", command)
+        super("Add Datastore Manager", command)
     }
 }
 
 
-export class MoveDatabaseIntoTeamRefactoring extends Refactoring{
-    constructor(command: MoveDatabaseIntoTeamCommand) {
-        super("Move Database", command)
+export class MoveDatastoreIntoTeamRefactoring extends Refactoring{
+    constructor(command: MoveDatastoreIntoTeamCommand) {
+        super("Move Datastore", command)
     }
 }
 

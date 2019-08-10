@@ -151,7 +151,7 @@ export class Service extends Node {
     }
 }
 
-export class Database extends Node {
+export class Datastore extends Node {
     constructor(name: string, attributes?: any, options?: any) {
         super(name, attributes, options);
         this.attr({

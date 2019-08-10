@@ -7,7 +7,7 @@
         },
         {
             "name": "prova-database",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "name": "prova-mb",

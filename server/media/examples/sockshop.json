@@ -14,7 +14,7 @@
         {
             "id": "ordersdb",
             "name": "ordersdb",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "id": "payment",
@@ -34,12 +34,12 @@
         {
             "id": "carts-db",
             "name": "carts-db",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "id": "catalogue-db",
             "name": "catalogue-db",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "id": "catalogue",
@@ -49,7 +49,7 @@
         {
             "id": "user-db",
             "name": "user-db",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "id": "shipping",

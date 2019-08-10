@@ -28,7 +28,7 @@ topology_template:
         - deployment_time: order_db
 
     order_db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
 
   groups:
       group1:

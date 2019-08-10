@@ -35,7 +35,7 @@ declare module 'jointjs' {
             }
             class Service extends Node {
             }
-            class Database extends Node {
+            class Datastore extends Node {
                 topRy(t, opt?):void;
             }
             class CommunicationPattern extends Node {
@@ -244,7 +244,7 @@ joint.dia.Element.define('microtosca.Service', {
     });
 
 
-joint.shapes.standard.Cylinder.define('microtosca.Database', {
+joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
     size: {
         width: 20,
         height: 20
