@@ -38,7 +38,7 @@ def read_microtosca_from_file(name):
         mmodel = json_importer.Import(path_to_model)
         return mmodel
     else:
-        return Response({"msg": "{} not found".format(name)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"msg": "Microtosca model {} does not exist".format(name)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # raise MicroToscaModelNotFoundException("Microtosca model {} not found".format(name))
 
 
@@ -101,7 +101,7 @@ def node_get(request, model_name, node_name):
     data = request.data
     if request.method == 'GET':
         try:
-            nodo = json_importer.load_node_from_json(data)
+            (type_interaction, source, target) = json_importer.load_type_source_target_from_json(data)
             model.add_node(nodo)
             write_microtosca_to_file(model_name, model)
             jnodo = json_exporter.transform_node_to_json(nodo)
@@ -110,14 +110,21 @@ def node_get(request, model_name, node_name):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# @api_view(['POST',"GET"])
-# @csrf_exempt
-# def relationship(request, model_name):
-#     model = read_microtosca_from_file(model_name)
-#     data = request.data
-
-#         source = self.microtosca[self.service_name]
-#         target = self.microtosca[self.database_name]
-#         rel = InteractsWith(source, target)
-#         self.microtosca.add_relationship_interactWith(rel)
+@api_view(['POST'])
+@csrf_exempt
+def link(request, model_name):
+    """
+    post:
+    create a link from a source node to a target nodes
+    """
+    model = read_microtosca_from_file(model_name)
+    data = request.data
+    if request.method == 'POST':
+        try:
+            link = json_importer.import_link_from_json(data)
+            write_microtosca_to_file(model_name, model)
+            jlink = json_exporter.export_link_to_json(link)
+            return Response(jlink, status=status.HTTP_201_CREATED)
+        except ImporterError as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

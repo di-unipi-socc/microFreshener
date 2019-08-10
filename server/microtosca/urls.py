@@ -10,8 +10,7 @@ urlpatterns = [
     path('', view.create, name='create-microtosca'),
     path('<str:model_name>/node', view.node, name='microtosca-node'),
     path('<str:model_name>/node/<str:node_name>', view.node_get, name='microtosca-node-get'),
-    # path('<str:model_name>/relationship', view.relationship, name='microtosca-relationship'),
-
+    path('<str:model_name>/link', view.link, name='microtosca-link-create'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

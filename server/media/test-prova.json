@@ -18,6 +18,15 @@
             "type": "messagerouter"
         }
     ],
-    "links": [],
+    "links": [
+        {
+            "target": "prova-database",
+            "source": "prova-service",
+            "timeout": false,
+            "circuit_breaker": false,
+            "dynamic_discovery": false,
+            "type": "interaction"
+        }
+    ],
     "groups": []
 }
