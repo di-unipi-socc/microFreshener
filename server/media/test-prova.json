@@ -2,26 +2,19 @@
     "name": "test-prova",
     "nodes": [
         {
-            "name": "prova-service",
+            "name": "servicesource2",
             "type": "service"
         },
         {
-            "name": "prova-database",
-            "type": "datastore"
-        },
-        {
-            "name": "prova-mb",
-            "type": "messagebroker"
-        },
-        {
-            "name": "prova-mr",
+            "name": "mrtarget3",
             "type": "messagerouter"
         }
     ],
     "links": [
         {
-            "target": "prova-database",
-            "source": "prova-service",
+            "id": "e40a2d70-77b5-48ac-a310-0b9524573b04",
+            "target": "mrtarget3",
+            "source": "servicesource2",
             "timeout": false,
             "circuit_breaker": false,
             "dynamic_discovery": false,
