@@ -2,6 +2,38 @@
     "name": "test-prova",
     "nodes": [
         {
+            "name": "servicesource",
+            "type": "service"
+        },
+        {
+            "name": "mrtarget",
+            "type": "messagerouter"
+        },
+        {
+            "name": "source_timeout",
+            "type": "service"
+        },
+        {
+            "name": "target_timeout",
+            "type": "messagerouter"
+        },
+        {
+            "name": "prova-database",
+            "type": "datastore"
+        },
+        {
+            "name": "prova-mb",
+            "type": "messagebroker"
+        },
+        {
+            "name": "prova-mr",
+            "type": "messagerouter"
+        },
+        {
+            "name": "prova-service",
+            "type": "service"
+        },
+        {
             "name": "servicesource2",
             "type": "service"
         },
@@ -12,7 +44,25 @@
     ],
     "links": [
         {
-            "id": "e40a2d70-77b5-48ac-a310-0b9524573b04",
+            "id": "42baa412-6380-4d0f-916c-b5b2ff0c1386",
+            "target": "mrtarget",
+            "source": "servicesource",
+            "timeout": false,
+            "circuit_breaker": false,
+            "dynamic_discovery": false,
+            "type": "interaction"
+        },
+        {
+            "id": "aaae9141-1a49-4517-b9ee-e0224890049e",
+            "target": "target_timeout",
+            "source": "source_timeout",
+            "timeout": true,
+            "circuit_breaker": false,
+            "dynamic_discovery": false,
+            "type": "interaction"
+        },
+        {
+            "id": "813f7310-1822-451c-a805-fb97f87544b2",
             "target": "mrtarget3",
             "source": "servicesource2",
             "timeout": false,

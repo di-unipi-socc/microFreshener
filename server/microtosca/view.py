@@ -18,7 +18,7 @@ json_importer = JSONImporter()
 json_exporter = JSONExporter()
 
 # dictionary of the models created in the server
-models = dict()
+models = {}
 
 def get_model(model_name):
     if (model_name in models.keys()):
@@ -26,8 +26,12 @@ def get_model(model_name):
     else:
         raise Exception(f"Model {model_name} not found")
 
+def get_model_names():
+    return list(models.keys())
+
 def add_model(model):
-    models[model.name] = model
+    if model.name not in models.keys():
+        models[model.name] = model
 
 def get_path(name: str):
     if(".json" not in name):
@@ -51,21 +55,22 @@ def read_microtosca_from_file(name):
         return Response({"msg": "Microtosca model {} does not exist".format(name)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['POST'])
+@api_view(['POST', "GET"])
 @csrf_exempt
 def create(request):
     """
     post:
     create a new microtosca model.
     """
-    if request.method == 'POST':
-        data = request.data
-        model = MicroToscaModel(data['name'])
+    if request.method == "POST":
+        model = MicroToscaModel(request.data['name'])
         add_model(model)
         # json_model = write_microtosca_to_file(name, model)
         json_model = json_exporter.Export(model)
         return Response(json_model, status=status.HTTP_201_CREATED)
-
+    if request.method == 'GET':
+        l = get_model_names()
+        return Response({"models": l}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def model(request, model_name):
@@ -73,21 +78,10 @@ def model(request, model_name):
     get:
     return the JOSN model given the name.
     """
-    if request.method == 'GET':
-        model = get_model(model_name)
-        json_model = json_exporter.Export(model)
-        return Response(json_model, status=status.HTTP_200_OK)
-
-        # if (model_name in models.keys()):
-        #     model = models.get(model_name)
-        #     #model = read_microtosca_from_file(model_name)
-        #     json_model = json_exporter.Export(model)
-        #     return Response(json_model, status=status.HTTP_200_OK)
-        # else:
-        #     return Response({"msg":f"{model_name} not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    model = get_model(model_name)
+    json_model = json_exporter.Export(model)
+    return Response(json_model, status=status.HTTP_200_OK)
         
-
-
 @api_view(["POST"])
 @csrf_exempt
 def node(request, model_name):
@@ -97,16 +91,14 @@ def node(request, model_name):
     """
     # model = read_microtosca_from_file(model_name)
     model = get_model(model_name)
-    data = request.data
-    if request.method == 'POST':
-        try:
-            nodo = json_importer.load_node_from_json(data)
-            model.add_node(nodo)
-            #write_microtosca_to_file(model_name, model)
-            jnodo = json_exporter.transform_node_to_json(nodo)
-            return Response(jnodo, status=status.HTTP_201_CREATED)
-        except ImporterError as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        nodo = json_importer.load_node_from_json(request.data)
+        model.add_node(nodo)
+        #write_microtosca_to_file(model_name, model)
+        jnodo = json_exporter.transform_node_to_json(nodo)
+        return Response(jnodo, status=status.HTTP_201_CREATED)
+    except ImporterError as e:
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @csrf_exempt
@@ -117,15 +109,13 @@ def node_get(request, model_name, node_name):
     """
     # model = read_microtosca_from_file(model_name)
     model = get_model(model_name)
-    data = request.data
-    if request.method == 'GET':
-        try:
-            nodo = model[node_name]
-            #write_microtosca_to_file(model_name, model)
-            jnodo = json_exporter.transform_node_to_json(nodo)
-            return Response(jnodo, status=status.HTTP_200_OK)
-        except ImporterError as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        nodo = model[node_name]
+        #write_microtosca_to_file(model_name, model)
+        jnodo = json_exporter.transform_node_to_json(nodo)
+        return Response(jnodo, status=status.HTTP_200_OK)
+    except ImporterError as e:
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
@@ -138,39 +128,41 @@ def link(request, model_name):
     # model = read_microtosca_from_file(model_name)
     model = get_model(model_name)
     data = request.data
-    if request.method == 'POST':
-        try:
-            source_node = model[data['source']]
-            target_node = model[data['target']] 
-            (timeout, circuit_breaker, dynamic_discovery) = json_importer.get_properties_of_interaction_from_json(data)
-            link = model.add_interaction(source_node, target_node, timeout, circuit_breaker, dynamic_discovery)
-            #link = json_importer.import_link_from_json(data)
-            write_microtosca_to_file(model_name, model)
-            model.name = "sss"
-            jlink = json_exporter.export_link_to_json(link)
-            return Response(jlink, status=status.HTTP_201_CREATED)
-        except ImporterError as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        source_node = model[data['source']]
+        target_node = model[data['target']] 
+        (timeout, circuit_breaker, dynamic_discovery) = json_importer.get_properties_of_interaction_from_json(data)
+        link = model.add_interaction(source_node, target_node, timeout, circuit_breaker, dynamic_discovery)
+        #link = json_importer.import_link_from_json(data)
+        write_microtosca_to_file(model_name, model)
+        jlink = json_exporter.export_link_to_json(link)
+        return Response(jlink, status=status.HTTP_201_CREATED)
+    except ImporterError as e:
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 def link_get(request, model_name, link_id):
     # model = read_microtosca_from_file(model_name)
     model = get_model(model_name)
-    if request.method == 'GET':
-        try:
-            link = model.get_relationship(link_id)
-            jlink = json_exporter.export_link_to_json(link)
-            return Response(jlink, status=status.HTTP_200_OK)
-        except MicroFreshenerError as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        link = model.get_relationship(link_id)
+        jlink = json_exporter.export_link_to_json(link)
+        return Response(jlink, status=status.HTTP_200_OK)
+    except MicroFreshenerError as e:
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])  
 def export_yml(request, model_name):
     model = get_model(model_name)
-    if request.method == 'GET':
-        try:
-            yml_exporter = YMLExporter()
-            ymodel = yml_exporter.Export(model)
-            return Response(ymodel, status=status.HTTP_200_OK)
-        except MicroFreshenerError as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    try:
+        yml_exporter = YMLExporter()
+        ymodel = yml_exporter.Export(model)
+        return Response(ymodel, status=status.HTTP_200_OK)
+    except MicroFreshenerError as e:
+        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])  
+def save(request, model_name):
+    model = get_model(model_name)
+    write_microtosca_to_file(model_name, model)
+    return Response({"msg": "save coorectly"}, status=status.HTTP_200_OK)

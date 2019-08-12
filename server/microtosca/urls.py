@@ -13,6 +13,7 @@ urlpatterns = [
     path('<str:model_name>/link', view.link, name='microtosca-link-create'),
     path('<str:model_name>/link/<str:link_id>', view.link_get, name='microtosca-link-get'),
     path('<str:model_name>/export/yml/', view.export_yml, name='microtosca-export-yml'),
+    path('<str:model_name>/save', view.save, name='microtosca-save'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
