@@ -44,7 +44,7 @@
     ],
     "links": [
         {
-            "id": "42baa412-6380-4d0f-916c-b5b2ff0c1386",
+            "id": "89d50733-be79-409a-b37e-5a92288dc113",
             "target": "mrtarget",
             "source": "servicesource",
             "timeout": false,
@@ -53,7 +53,7 @@
             "type": "interaction"
         },
         {
-            "id": "aaae9141-1a49-4517-b9ee-e0224890049e",
+            "id": "a0e9112f-5e44-40c0-9988-ba8fcdec54b5",
             "target": "target_timeout",
             "source": "source_timeout",
             "timeout": true,
@@ -62,7 +62,7 @@
             "type": "interaction"
         },
         {
-            "id": "813f7310-1822-451c-a805-fb97f87544b2",
+            "id": "07adde61-c491-4a11-b689-84feace52f76",
             "target": "mrtarget3",
             "source": "servicesource2",
             "timeout": false,

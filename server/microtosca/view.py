@@ -3,22 +3,36 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
-import os
 from django.conf import settings
 import json
+import uuid
+import os
 
 from .exceptions import MicroToscaModelNotFoundException, NodeTypeDoesNotExistsException
 
 from microfreshener.core.errors import ImporterError, MicroFreshenerError
 from microfreshener.core.model import MicroToscaModel
 from microfreshener.core.exporter import JSONExporter, YMLExporter
-from microfreshener.core.importer import JSONImporter
+from microfreshener.core.importer import JSONImporter, YMLImporter
 
 json_importer = JSONImporter()
 json_exporter = JSONExporter()
+yml_importer = YMLImporter()
+
+# file_name = "default.json"
+# model_file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+# examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
+uploads_path = os.path.join(settings.MEDIA_ROOT, "uploads")
 
 # dictionary of the models created in the server
 models = {}
+
+def build_yml_file_into_upload_folder():
+    return os.path.join(uploads_path, f"{str(uuid.uuid4())}.yml")
+
+
+def build_json_file_into_upload_folder():
+    return os.path.join(uploads_path, f"{str(uuid.uuid4())}.json")
 
 def get_model(model_name):
     if (model_name in models.keys()):
@@ -54,6 +68,42 @@ def read_microtosca_from_file(name):
     else:
         return Response({"msg": "Microtosca model {} does not exist".format(name)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['POST'])
+@csrf_exempt
+def model_import_yml(request):
+    """
+    post:
+    import the YML file into the upload folder
+    """
+    graph_in_memory = request.FILES['graph']
+    file_name = build_yml_file_into_upload_folder()
+    with open(file_name, 'wb+') as destination:
+        for chunk in graph_in_memory.chunks():
+            destination.write(chunk)
+    # From yml to json
+    model = yml_importer.Import(path_to_yml=file_name)
+    add_model(model)
+    json_model = json_exporter.Export(model)
+    return Response(json_model, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@csrf_exempt
+def model_import_json(request):
+    """
+    post:
+    import the YML file into the upload folder
+    """
+    graph_in_memory = request.FILES['graph']
+    file_name = build_json_file_into_upload_folder()
+    with open(file_name, 'wb+') as destination:
+        for chunk in graph_in_memory.chunks():
+            destination.write(chunk)
+    # From yml to json
+    model = json_importer.Import(file_name)
+    add_model(model)
+    json_model = json_exporter.Export(model)
+    return Response(json_model, status=status.HTTP_200_OK)
 
 @api_view(['POST', "GET"])
 @csrf_exempt

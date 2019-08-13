@@ -10,7 +10,7 @@ urlpatterns = [
     path('analyse', view.graph_analysis),
     path('export', view.graph_export),
     path('import', view.graph_import),
-    path('example', view.graph_examples),
+    path('example', view.graph_examples)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

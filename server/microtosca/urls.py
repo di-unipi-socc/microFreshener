@@ -6,6 +6,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from microtosca import view
 
 urlpatterns = [
+    path('import/yml', view.model_import_yml, name='import-microtosca-yml'),
+    path('import/json', view.model_import_json, name='import-microtosca-json'),
     path('<str:model_name>/', view.model, name='get-microtosca'),
     path('', view.create, name='create-microtosca'),
     path('<str:model_name>/node', view.node, name='microtosca-node'),

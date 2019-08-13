@@ -69,14 +69,6 @@
         },
         {
             "source": "front-end",
-            "target": "payment",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "front-end",
             "target": "user",
             "timeout": false,
             "dynamic_discovery": false,
@@ -117,7 +109,7 @@
         },
         {
             "source": "orders",
-            "target": "shipping",
+            "target": "payment",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
@@ -126,6 +118,14 @@
         {
             "source": "orders",
             "target": "carts",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "shipping",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
@@ -177,11 +177,6 @@
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "user",
-            "target": "ordersdb",
             "type": "interaction"
         }
     ],
