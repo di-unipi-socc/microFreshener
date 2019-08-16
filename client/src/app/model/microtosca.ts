@@ -43,6 +43,7 @@ declare module 'jointjs' {
                 getType(): string;
             }
             class Group extends Root {
+                getMembers(): joint.shapes.microtosca.Root[]
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -327,9 +328,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
             return this.attributes.smells;
         },
         getSmell: function (name: string) {
-            console.log("esearching; ", name);
             return this.attributes.smells.find(smell => {
-                console.log(smell.getName());
                 return name === smell.getName();
             });
         },
@@ -515,6 +514,14 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         }
     });
 
+joint.dia.Element.define('microtosca.Group', {
+    },{  markup: [],
+        getMembers: function () {
+            return "meroro";
+        },
+    }
+);
+
 joint.dia.Element.define('microtosca.EdgeGroup', {
     size: {
         width: 75,
@@ -565,7 +572,6 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         getSmell: function (name: string) {
             return this.attributes.smells.find(smell => {
-                console.log(smell);
                 return name === smell.name;
             });
         },
@@ -679,8 +685,15 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         },
         getIgnoreAlwaysSmells: function () {
             return [];
-        }
-    });
+        },
+        getMembers: function () {
+            var members = [];
+            this.getEmbeddedCells().forEach(cell=>{
+                members.push(<joint.shapes.microtosca.Root>cell);
+            });
+            return members;
+        },
+});
 
 
 joint.dia.Link.define('microtosca.RunTimeLink', {
@@ -741,7 +754,6 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             if(this.dynamic_discovery)
                 this._showDynamicDiscovery();
             else{
-                console.log("HIDING SEVICE DISCVOERY");
                 this._hideDynamicDiscovery();
             }
         },
@@ -755,7 +767,6 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             return this.circuit_breaker;
         },
         _showTimeout: function () {
-            console.log("Showing TIMEOUT on interaction");
             this.insertLabel(0, {
                 markup: [
                     {
@@ -776,7 +787,6 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             });
         },
         _showCircuitBreaker: function(){
-            console.log("Showing circuibreaker");
             this.insertLabel(1, {
                 markup: [
                     {
@@ -820,7 +830,6 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
 
         },
         _hideDynamicDiscovery: function(){
-            console.log(this.label(2));
             this.removeLabel(2);
         },
         _hideTimeout: function () {
@@ -884,7 +893,6 @@ namespace CustomViews {
     export class MyLinkView extends joint.dia.LinkView {
 
         initialize() {
-            console.log("MYLINK VIEW INITIALIZE");
             super.initialize.apply(this, arguments);
         }
 

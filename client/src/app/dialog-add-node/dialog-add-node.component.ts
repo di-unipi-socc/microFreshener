@@ -57,7 +57,6 @@ export class DialogAddNodeComponent implements OnInit {
         message = `Datastore  ${this.name}  added correctly`;
         break;
       case "communicationPattern":
-      console.log(this.selectedCommunicationPatternType.type);
         if(this.selectedCommunicationPatternType.type === "messagebroker" ){
           command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name);
           message += `Message Broker ${this.name} added correctly`;

@@ -13,19 +13,19 @@
             <button pButton icon="pi pi-plus" type="button" style="font-size:
                 1em"
                 label="Team" class="ui-button-success" (click)="addTeam()"></button>
-
-            <button pButton type="button" label="undo" (click)="undoRefactoring()"></button>
-            <button pButton type="button" label="redo" (click)="redoRefactoring()"></button>
+            <button pButton type="button" label="undo"
+                (click)="undoRefactoring()"></button>
+            <button pButton type="button" label="redo"
+                (click)="redoRefactoring()"></button>
 
             <button pButton type="button" label="clear" (click)="clear()"></button>
-
         </div>
     </div>
 </div>
 
 
 <!-- jointjs div where the graph is rendered -->
-<div id="jointjsgraph" > </div>
+<div id="jointjsgraph"> </div>
 
 <!-- cconfirm dialog when removing a node -->
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>

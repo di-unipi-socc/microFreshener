@@ -1,0 +1,19 @@
+<h3 class="first">Select team to visualize</h3>
+<p-selectButton [options]="teams" [(ngModel)]="selectedTeam">
+  <ng-template let-item >
+    <div style="padding: .5em 1em">
+        <span>{{item.getName()}}</span>
+    </div>
+</ng-template>
+</p-selectButton>
+
+<button pButton type="button" label="Click" (click)="visualizeTeam()"></button>
+
+<!-- <h3>Advanced (Multiple, Checkbox and Filter)</h3>
+<p-listbox [options]="teams" [(ngModel)]="selectedTeams" multiple="multiple" checkbox="checkbox" filter="filter" optionLabel="name">
+  <p-header>
+    <i class="fa fa-car"></i>
+    Cars
+  </p-header>
+</p-listbox>
+<p>Selected Cities: <span *ngFor="let c of selectedTeams" style="margin-right: 10px">{{c.name}}</span></p> -->

@@ -45,6 +45,7 @@ import {ToastModule} from 'primeng/toast';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {PickListModule} from 'primeng/picklist';
 import {CardModule} from 'primeng/card';
+import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import {CardModule} from 'primeng/card';
     DialogAddNodeComponent,
     DialogAddNodeComponent,
     DialogAddTeamComponent,
+    DialogSelectTeamComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,7 +103,8 @@ import {CardModule} from 'primeng/card';
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
-    DialogAddTeamComponent
+    DialogAddTeamComponent,
+    DialogSelectTeamComponent
   ]
 })
 export class AppModule { }

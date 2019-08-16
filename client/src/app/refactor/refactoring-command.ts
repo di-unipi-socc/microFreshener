@@ -197,7 +197,6 @@ export class AddServiceDiscoveryCommand implements Command {
 
     unexecute() {
         this.links.forEach(link=>{
-            console.log("service discovery to false")
             link.setDynamicDiscovery(false);
         })
     }

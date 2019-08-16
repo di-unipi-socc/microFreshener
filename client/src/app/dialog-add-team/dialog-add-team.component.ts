@@ -25,7 +25,6 @@ export class DialogAddTeamComponent implements OnInit {
 
   }
 
-
   isDisableSave() {
     return this.teamName == null;
   }

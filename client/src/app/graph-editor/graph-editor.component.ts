@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
@@ -55,7 +55,6 @@ export class GraphEditorComponent implements OnInit {
     ngOnInit() {
         let canvas = document.getElementById('jointjsgraph');
         var c = $('#canvas');
-        console.log(c);
         this.paper = new joint.dia.Paper({
             el: canvas,
             model: this.gs.getGraph(),
@@ -68,7 +67,6 @@ export class GraphEditorComponent implements OnInit {
             defaultLink: new joint.shapes.microtosca.RunTimeLink(),
             linkPinning: false, // do not allow link without a target node
             validateMagnet: function (cellView, magnet) {
-                // console.log(cellView);
                 //return false;
                 return magnet.getAttribute('magnet') !== 'false';
             },
@@ -96,17 +94,17 @@ export class GraphEditorComponent implements OnInit {
             controlIconsEnabled: true,
             fit: false,
             minZoom: 0.1,
-            maxZoom:10,
+            maxZoom: 10,
             zoomScaleSensitivity: 0.5
         });
 
-        this.paper.on('cell:pointerdown', ()=>{
-                this.svgZoom.disablePan();
+        this.paper.on('cell:pointerdown', () => {
+            this.svgZoom.disablePan();
         });
-        this.paper.on('cell:pointerup', ()=>{
-          this.svgZoom.enablePan();
+        this.paper.on('cell:pointerup', () => {
+            this.svgZoom.enablePan();
         });
-        
+
 
         // bind events
         this.bindEvents();
@@ -138,15 +136,16 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        // var g = this.gs.getGraph().addSquadGroup("team1", [s, o]);
+        var s1 = this.gs.getGraph().addTeamGroup("team-primo", [s]);
+        this.gs.getGraph().addTeamGroup("team-secondo", [o]);
+
+        this.gs.getGraph().showOnlyTeam(s1);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
-
-
 
     }
 
@@ -163,7 +162,7 @@ export class GraphEditorComponent implements OnInit {
             // height: '50%'
         });
         ref.onClose.subscribe((data) => {
-            this.gs.getGraph().addSquadGroup(data.name, data.nodes);
+            this.gs.getGraph().addTeamGroup(data.name, data.nodes);
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
         });
 
@@ -347,6 +346,9 @@ export class GraphEditorComponent implements OnInit {
             cell.attr('./opacity', cell.get('hidden') ? 0 : 1);
         })
     }
+
+
+
 
     bindTeamToCoverChildren() {
 

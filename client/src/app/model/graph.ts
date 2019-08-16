@@ -90,8 +90,8 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.EdgeGroup[]>this.getGroups().filter(group => this.isEdgeGroup(group));
     }
 
-    getSquadGroups(): joint.shapes.microtosca.SquadGroup[] {
-        return <joint.shapes.microtosca.SquadGroup[]>this.getGroups().filter(group => this.isSquadGroup(group));
+    getTeamGroups(): joint.shapes.microtosca.SquadGroup[] {
+        return <joint.shapes.microtosca.SquadGroup[]>this.getGroups().filter(group => this.isTeamGroup(group));
     }
 
     getOutboundNeighbors(node: joint.dia.Element): joint.shapes.microtosca.Node[] {
@@ -110,7 +110,7 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
     }
 
-    addSquadGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
+    addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
@@ -210,10 +210,10 @@ export class Graph extends joint.dia.Graph {
     }
 
     isGroup(group: joint.dia.Cell): boolean {
-        return this.isSquadGroup(group) || this.isEdgeGroup(group);
+        return this.isTeamGroup(group) || this.isEdgeGroup(group);
     }
 
-    isSquadGroup(node: joint.dia.Cell) {
+    isTeamGroup(node: joint.dia.Cell) {
         return node.attributes['type'] == "microtosca.SquadGroup";
         // return node instanceof joint.shapes.microtosca.SquadGroup;
     }
@@ -248,6 +248,25 @@ export class Graph extends joint.dia.Graph {
     isMessageRouter(node:joint.dia.Cell){
         return (<joint.shapes.microtosca.CommunicationPattern>node).getType()  == "MR";
         // return node.attributes['type'] == "MR"; //microtosca.CommunicationPattern";
+    }
+
+    showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
+        this.getNodes().forEach(node => {      
+            if( !this.isNodeOwnedByTeam(node, team)){
+                console.log(node);
+                this.hideNode(node);
+            }
+        });
+    }
+
+    isNodeOwnedByTeam(node: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+        return node.isEmbeddedIn(team);
+    }
+
+    hideNode(node:joint.shapes.microtosca.Node){
+        console.log(node.get('hidden')); 
+        node.attr('./visibility', 'hidden');
+        // node.set('hidden', true); //!node.get('hidden'))
     }
 
     builtFromJSON(json: string) {
@@ -297,7 +316,7 @@ export class Graph extends joint.dia.Graph {
                 group.members.forEach(member => {
                     nodes.push(this.getNode(member))
                 });
-                this.addSquadGroup(group_name, nodes);
+                this.addTeamGroup(group_name, nodes);
             }
             else
                 throw new Error(`Group type ${group_type} not recognized`);
@@ -354,7 +373,7 @@ export class Graph extends joint.dia.Graph {
             data['groups'].push(edgeGroup)
         });
         // add SquadGroups
-        this.getSquadGroups().forEach(group =>{
+        this.getTeamGroups().forEach(group =>{
             var squadGroup = { 'name': group.getName(), 'type': 'squadgroup', "members": [] }
             let members = [];
             group.getEmbeddedCells().forEach(cell=>{
