@@ -2,18 +2,6 @@
     "name": "hello-world",
     "nodes": [
         {
-            "name": "shipping",
-            "type": "service"
-        },
-        {
-            "name": "order_db",
-            "type": "datastore"
-        },
-        {
-            "name": "order",
-            "type": "service"
-        },
-        {
             "name": "rabbitmq",
             "type": "messagebroker"
         },
@@ -28,102 +16,30 @@
     ],
     "links": [
         {
-            "source": "shipping",
-            "target": "order_db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "shipping",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": true,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "Api gateway",
-            "target": "shipping",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "Api gateway",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
             "source": "qwre",
             "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
             "type": "interaction"
         },
         {
             "source": "qwre",
             "target": "Api gateway",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
             "type": "interaction"
         }
     ],
     "groups": [
         {
-            "name": "edgenodes",
-            "type": "edgegroup",
-            "members": [
-                "order",
-                "Api gateway"
-            ]
-        },
-        {
             "name": "team-primo",
             "type": "squadgroup",
             "members": [
                 "rabbitmq",
-                "Api gateway",
-                "qwre"
-            ]
-        },
-        {
-            "name": "team-secondo",
-            "type": "squadgroup",
-            "members": []
-        },
-        {
-            "name": "qer",
-            "type": "squadgroup",
-            "members": [
-                "order_db",
-                "shipping",
-                "order"
+                "qwre",
+                "Api gateway"
             ]
         }
     ]
