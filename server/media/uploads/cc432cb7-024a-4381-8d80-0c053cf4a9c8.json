@@ -1,0 +1,154 @@
+{
+    "name": "sockshop",
+    "nodes": [
+        {
+            "id": "front-end",
+            "name": "front-end",
+            "type": "service"
+        },
+        {
+            "id": "orders",
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "id": "ordersdb",
+            "name": "ordersdb",
+            "type": "datastore"
+        },
+        {
+            "id": "payment",
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "id": "user",
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "id": "carts",
+            "name": "carts",
+            "type": "service"
+        },
+        {
+            "id": "carts-db",
+            "name": "carts-db",
+            "type": "datastore"
+        },
+        {
+            "id": "catalogue-db",
+            "name": "catalogue-db",
+            "type": "datastore"
+        },
+        {
+            "id": "catalogue",
+            "name": "catalogue",
+            "type": "service"
+        },
+        {
+            "id": "user-db",
+            "name": "user-db",
+            "type": "datastore"
+        },
+        {
+            "id": "shipping",
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "id": "rabbitmq",
+            "name": "rabbitmq",
+            "type": "messagebroker"
+
+        },
+        {
+            "id": "queue-master",
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "id": "edge-router",
+            "name": "edge-router",
+            "type": "messagerouter"
+
+        }
+    ],
+    "links": [
+        {
+            "source": "front-end",
+            "target": "orders",
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "ordersdb",
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "payment",
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "user",
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "user",
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "carts",
+            "type": "interaction"
+        },
+        {
+            "source": "carts",
+            "target": "carts-db",
+            "type": "interaction"
+        },
+        {
+            "source": "catalogue",
+            "target": "catalogue-db",
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "catalogue",
+            "type": "interaction"
+        },
+        {
+            "source": "user",
+            "target": "user-db",
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "payment",
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "type": "interaction"
+        },
+        {
+            "source": "queue-master",
+            "target": "rabbitmq",
+            "type": "interaction"
+        },
+        {
+            "source": "edge-router",
+            "target": "front-end",
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "carts",
+            "type": "interaction"
+        }
+    ]
+}

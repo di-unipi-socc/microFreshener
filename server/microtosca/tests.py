@@ -26,7 +26,7 @@ class MicroToscaApiTests(APITestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         expected = {
-            "name": "test-prova",
+            "name": self.name,
             "nodes": [],
             "links": [],
             "groups": []
@@ -180,3 +180,7 @@ class MicroToscaApiTests(APITestCase):
                       kwargs={'model_name': self.name})
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_team(self):
+        url = reverse('microtosca-team',
+                       kwargs={'model_name': self.name, "team_name":"prova-team"})

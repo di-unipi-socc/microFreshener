@@ -1,35 +1,62 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: hello-world
+description: sockshop
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
   node_templates:
+    front-end:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: orders
+      - interaction: user
+      - interaction: carts
+      - interaction: catalogue
+    orders:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: ordersdb
+      - interaction: user
+      - interaction: payment
+      - interaction: carts
+      - interaction: shipping
+
+    ordersdb:
+      type: micro.nodes.Datastore
+    payment:
+      type: micro.nodes.Service
+    user:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: user-db
+    carts:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: carts-db
+    carts-db:
+      type: micro.nodes.Datastore
+    catalogue-db:
+      type: micro.nodes.Datastore
+    catalogue:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: catalogue-db
+    user-db:
+      type: micro.nodes.Datastore
     shipping:
       type: micro.nodes.Service
-    order:
+      requirements:
+      - interaction: rabbitmq
+    rabbitmq:
+      type: micro.nodes.MessageBroker
+    queue-master:
       type: micro.nodes.Service
       requirements:
-      - interaction:
-          node: shipping
-          relationship: tcd
-    Api gateway:
+      - interaction: rabbitmq
+    edge-router:
       type: micro.nodes.MessageRouter
       requirements:
-      - interaction: shipping
-  groups:
-    edgenodes:
-      type: micro.groups.Edge
-      members:
-      - order
-      - Api gateway
-    team-primo:
-      type: micro.groups.Team
-      members:
-      - shipping
-    team-secondo:
-      type: micro.groups.Team
-      members:
-      - order
+      - interaction: front-end
+  groups: {}
   relationship_templates:
     t:
       type: micro.relationships.InteractsWith
