@@ -2,6 +2,18 @@
     "name": "hello-world",
     "nodes": [
         {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "datastore"
+        },
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
             "name": "rabbitmq",
             "type": "messagebroker"
         },
@@ -10,13 +22,25 @@
             "type": "messagerouter"
         },
         {
-            "name": "qwre",
+            "name": "sdf",
+            "type": "service"
+        },
+        {
+            "name": "awdsf",
             "type": "service"
         }
     ],
     "links": [
         {
-            "source": "qwre",
+            "source": "shipping",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
             "target": "rabbitmq",
             "timeout": false,
             "dynamic_discovery": false,
@@ -24,22 +48,74 @@
             "type": "interaction"
         },
         {
-            "source": "qwre",
-            "target": "Api gateway",
+            "source": "order",
+            "target": "shipping",
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": true,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Api gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Api gateway",
+            "target": "rabbitmq",
+            "type": "interaction"
+        },
+        {
+            "source": "awdsf",
+            "target": "sdf",
             "type": "interaction"
         }
     ],
     "groups": [
         {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "Api gateway"
+            ]
+        },
+        {
             "name": "team-primo",
             "type": "squadgroup",
             "members": [
+                "order_db",
+                "shipping",
+                "order"
+            ]
+        },
+        {
+            "name": "team-secondo",
+            "type": "squadgroup",
+            "members": [
                 "rabbitmq",
-                "qwre",
-                "Api gateway"
+                "Api gateway",
+                "sdf",
+                "awdsf"
             ]
         }
     ]
