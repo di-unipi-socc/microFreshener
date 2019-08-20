@@ -1,5 +1,5 @@
 {
-    "name": "hello-world",
+    "name": "szgf",
     "nodes": [
         {
             "name": "shipping",
@@ -20,14 +20,6 @@
         {
             "name": "Api gateway",
             "type": "messagerouter"
-        },
-        {
-            "name": "sdf",
-            "type": "service"
-        },
-        {
-            "name": "awdsf",
-            "type": "service"
         }
     ],
     "links": [
@@ -78,16 +70,6 @@
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
-        },
-        {
-            "source": "Api gateway",
-            "target": "rabbitmq",
-            "type": "interaction"
-        },
-        {
-            "source": "awdsf",
-            "target": "sdf",
-            "type": "interaction"
         }
     ],
     "groups": [
@@ -103,9 +85,9 @@
             "name": "team-primo",
             "type": "squadgroup",
             "members": [
-                "order_db",
                 "shipping",
-                "order"
+                "order",
+                "order_db"
             ]
         },
         {
@@ -113,9 +95,7 @@
             "type": "squadgroup",
             "members": [
                 "rabbitmq",
-                "Api gateway",
-                "sdf",
-                "awdsf"
+                "Api gateway"
             ]
         }
     ]
