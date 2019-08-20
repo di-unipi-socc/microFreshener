@@ -26,7 +26,7 @@ import * as svgPanZoom from 'svg-pan-zoom';
 })
 export class GraphEditorComponent implements OnInit {
 
-    _options = { width: 2000, height: 700 };
+    _options = { width: "95%", height: "80%" };
 
     paper: joint.dia.Paper;
     graphInvoker: GraphInvoker;
@@ -40,18 +40,7 @@ export class GraphEditorComponent implements OnInit {
         this.graphInvoker = new GraphInvoker();
     }
 
-    undoRefactoring() {
-        this.graphInvoker.undo();
-    }
-
-    redoRefactoring() {
-        this.graphInvoker.redo();
-    }
-
-    clear() {
-        this.gs.getGraph().clear();
-    }
-
+    
     ngOnInit() {
         let canvas = document.getElementById('jointjsgraph');
         var c = $('#canvas');
@@ -62,7 +51,7 @@ export class GraphEditorComponent implements OnInit {
             height: c.outerHeight(),
             background: { color: 'light' },
             multiLinks: false,
-            restrictTranslate: true,
+            // restrictTranslate: true,
             gridSize: 1,
             defaultLink: new joint.shapes.microtosca.RunTimeLink(),
             linkPinning: false, // do not allow link without a target node
@@ -73,7 +62,7 @@ export class GraphEditorComponent implements OnInit {
             validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
                 var sourceId = cellViewS.model.id;
                 var targetId = cellViewT.model.id;
-                if (sourceId && targetId && sourceId === targetId)
+                if (sourceId && targetId && sourceId === targetId) // avoid self loop
                     return false;
                 else
                     return true;
@@ -88,19 +77,26 @@ export class GraphEditorComponent implements OnInit {
         this.createSampleGraph();
 
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
-            center: false,
             zoomEnabled: true,
             panEnabled: true,
             controlIconsEnabled: true,
-            fit: false,
+            fit: true,
+            center: true,
             minZoom: 0.1,
             maxZoom: 10,
-            zoomScaleSensitivity: 0.5
+            zoomScaleSensitivity: 0.5,
         });
+
+        // $(window).resize(()=>{
+        //     this.svgZoom.resize();
+        //     this.svgZoom.fit();
+        //     this.svgZoom.center();
+        //   })
 
         this.paper.on('cell:pointerdown', () => {
             this.svgZoom.disablePan();
         });
+        
         this.paper.on('cell:pointerup', () => {
             this.svgZoom.enablePan();
         });
@@ -113,6 +109,23 @@ export class GraphEditorComponent implements OnInit {
         // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
         this.applyDirectedGraphLayout();
+    }
+
+    undoRefactoring() {
+        this.graphInvoker.undo();
+    }
+
+    redoRefactoring() {
+        this.graphInvoker.redo();
+    }
+
+    clear() {
+        this.gs.getGraph().clear();
+    }
+
+
+    fitContent(){
+        this.paper.scaleContentToFit( );// {padding:2}
     }
 
     createSampleGraph() {
@@ -136,10 +149,10 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        var s1 = this.gs.getGraph().addTeamGroup("team-primo", [s]);
-        this.gs.getGraph().addTeamGroup("team-secondo", [o]);
+        var s1 = this.gs.getGraph().addTeamGroup("team-primo", [s, o, odb]);
+        this.gs.getGraph().addTeamGroup("team-secondo", [cp, gw]);
 
-        this.gs.getGraph().showOnlyTeam(s1);
+        // this.gs.getGraph().showOnlyTeam(s1);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
@@ -188,6 +201,7 @@ export class GraphEditorComponent implements OnInit {
 
         // this.bindTeamToCoverChildren();
         this.bindTeamMinimize();
+        this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
     }
 
@@ -303,7 +317,9 @@ export class GraphEditorComponent implements OnInit {
             }
 
             if (cell.get('parent')) {
-                this.gs.getGraph().getCell(cell.get('parent')).unembed(cell);
+                var parent = this.gs.getGraph().getCell(cell.get('parent'))
+                parent.unembed(cell);
+                // (<joint.dia.Element>parent).fitEmbeds({padding:20});
             }
         });
 
@@ -319,26 +335,59 @@ export class GraphEditorComponent implements OnInit {
                     var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
 
                     // Prevent recursive embedding.
-                    if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                        cellViewBelow.model.embed(cell);
+                    if(cellViewBelow){
+                        // embed element only into Team Cell, otherwise it embeds node inside other nodes.
+                        if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)){
+                            if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
+                                cellViewBelow.model.embed(cell);
+                            }
+                            // DIDO: fits the cells in the view
+                            cellViewBelow.model.fitEmbeds({padding:20});
+                           
+                        }
+                        
                     }
                 }
             }
+            
         });
 
 
     }
 
+    bindTeamMaximize(){
+        this.paper.on("team:maximize:pointerdown", (cellview, evt, x, y) => {
+            console.log("maximize");
+            evt.stopPropagation();
+            var team = <joint.shapes.microtosca.SquadGroup> cellview.model;
+            var links = this.gs.getGraph().getInternalLinksOfTeam(team);
+            links.forEach(link => link.set("hidden", false))
+            team.getMembers().forEach(node =>{
+                node.set('hidden', false);
+                //node.scale(60,60, {x:x,y:y});
+                 node.resize(80,80);
+            })              
+            team.resize(100,100);  
+            this.gs.getGraph().applyLayout("TB");
+            team.fitEmbeds({padding:20})
+        })
+    }
+
     bindTeamMinimize() {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
-            var cell = cellview.model;
-            var embeddedCells = cell.getEmbeddedCells();
+            var team = <joint.shapes.microtosca.SquadGroup> cellview.model;
 
-            _.each(embeddedCells, function (child) {
-                child.set('hidden', !child.get('hidden'))
-            })
-            // cell.scale(10000, 10000, 100);
+            var links = this.gs.getGraph().getInternalLinksOfTeam(team);
+            links.forEach(link => link.set("hidden", true))
+
+            team.getMembers().forEach(node =>{
+                node.set('hidden', true);
+                node.scale(0,0, {x:x,y:y});
+                // node.resize(0,0);
+
+            })                
+            team.fitEmbeds({padding:20})
 
         })
 

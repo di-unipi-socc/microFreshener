@@ -8,7 +8,6 @@ import { AnalyserService } from './analyser.service';
 import { environment } from '../environments/environment';
 import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -25,7 +24,6 @@ export class AppComponent {
   examples: MenuItem[];
 
   hrefDownload = environment.serverUrl + '/api/export';
-
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
     this.items = [
@@ -92,6 +90,7 @@ export class AppComponent {
     ];
   }
 
+
   selectTeam() {
     const ref = this.dialogService.open(DialogSelectTeamComponent, {
       header: 'Select Team to visualize',
@@ -99,8 +98,22 @@ export class AppComponent {
       // height: '50%'
     });
     ref.onClose.subscribe((data) => {
-      //this.gs.getGraph().addTeamGroup(data.name, data.nodes);
-      this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
+      if (data.show == "team") {
+        var team = data.team;
+        // this.gs.getGraph().getFrontierOfATeam(team);
+        // team.getFrontier();
+        this.gs.getGraph().showOnlyTeam(team);
+        this.messageService.add({ severity: 'success', summary: ` ${team.getName()} visualized` });
+      }
+      else if (data.show == "all"){
+        this.gs.getGraph().showGraph();
+        this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
+
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: `No team selected` });
+
+      }
     });
 
   }
@@ -135,26 +148,27 @@ export class AppComponent {
     })
   }
 
-  upload() {
+  save() {
     this.gs.uploadGraph()
-      .subscribe(data => {
-        this.closeSidebar();
-        this.messageService.add({ severity: 'success', summary: 'Saved correctly', detail: '' });
+      .subscribe(json_model => {
+        this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correclty", detail: '' });
       });
   }
 
+
   onUpload(event) {
-    this.download();
+    console.log(event.files);
+     this.download();
   }
 
   download() {
-    this.gs.downloadGraph()
+    this.gs.dowloadGraph()
       .subscribe((data) => {
         this.closeSidebar();
         console.log(data);
         this.gs.getGraph().builtFromJSON(data);
         this.gs.getGraph().applyLayout("LR");
-        this.messageService.add({ severity: 'success', summary: 'Graph dowloaded correclty', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Graph downloaded correctly', detail: '' });
       });
   }
 

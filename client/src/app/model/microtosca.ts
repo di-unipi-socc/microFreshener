@@ -44,6 +44,8 @@ declare module 'jointjs' {
             }
             class Group extends Root {
                 getMembers(): joint.shapes.microtosca.Root[]
+                getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
+
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -77,7 +79,7 @@ joint.dia.Element.define('microtosca.Service', {
             refCx: '50%',
             refCy: '50%',
             refR: '50%',
-            strokeWidth: 8,
+            //strokeWidth: 8,
             stroke: '#1B6879',
             fill: '#1B6879',
             magnet: true
@@ -429,7 +431,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         type: {
             textVerticalAnchor: 'middle',
             textAnchor: 'middle',
-            visibility: "visible",
+            //visibility: "visible",
             refX: '50%',
             refY: '40%',
             // refY2: 18,
@@ -622,7 +624,18 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             refY: '0%',
             fill: '#6a6a62',
             event: 'team:minimize:pointerdown',
-            visibility: "hidden",
+            visibility: "visible",
+            ref: 'body',
+            refWidth: '7%',
+            refHeight: '5%',
+            xAlignment: 'center',
+        },
+        maximize: {
+            refX: '110%',
+            refY: '0%',
+            fill: '#F50C0C',
+            event: 'team:maximize:pointerdown',
+            visibility: "visible",
             ref: 'body',
             refWidth: '7%',
             refHeight: '5%',
@@ -653,6 +666,9 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'rect',
             selector: 'minimize'
+        },{
+            tagName: 'rect',
+            selector: 'maximize'
         }, {
             tagName: 'path',
             selector: 'singleLayerTeam'
@@ -667,7 +683,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             this.attr('minimize/visibility', 'visible')
         },
         hideIcons: function () {
-            this.attr('minimize/visibility', 'hidden')
+            // this.attr('minimize/visibility', 'hidden')
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
@@ -693,6 +709,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             });
             return members;
         },
+        
 });
 
 

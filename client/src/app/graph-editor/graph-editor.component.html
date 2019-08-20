@@ -19,6 +19,8 @@
                 (click)="redoRefactoring()"></button>
 
             <button pButton type="button" label="clear" (click)="clear()"></button>
+            <button pButton type="button" label="fit" (click)="fitContent()"></button>
+
         </div>
     </div>
 </div>
@@ -26,6 +28,7 @@
 
 <!-- jointjs div where the graph is rendered -->
 <div id="jointjsgraph"> </div>
+<!-- style="width: 95%; height: 80%;" -->
 
-<!-- cconfirm dialog when removing a node -->
+<!-- confirm dialog  -->
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
