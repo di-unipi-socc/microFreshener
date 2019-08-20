@@ -94,7 +94,6 @@ export class AddApiGatewayCommand implements Command {
         return msg;
     }
 }
-
 export class AddMessageRouterCommand implements Command {
 
     links: joint.shapes.microtosca.RunTimeLink[];

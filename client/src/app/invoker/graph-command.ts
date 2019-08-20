@@ -1,7 +1,6 @@
-import { Command } from '../invoker/icommand';
+import { Command } from './icommand';
 import * as joint from 'jointjs';
 import { Graph } from "../model/graph";
-import { JsonpInterceptor } from '@angular/common/http';
 
 
 export class AddServiceCommand implements Command {
@@ -43,6 +42,7 @@ export class AddDatastoreCommand implements Command {
         this.node.remove();
     }
 }
+
 export class AddMessageBrokerCommand implements Command {
 
     graph: Graph;
@@ -83,12 +83,10 @@ export class AddMessageRouterCommand implements Command {
     }
 }
 
-
-export class RemoveServiceCommand implements Command {
+export class RemoveNodeCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
-
 
     cloneNode: joint.shapes.microtosca.Root;
     incomingNodes: joint.shapes.microtosca.Root[];
@@ -123,8 +121,6 @@ export class RemoveServiceCommand implements Command {
     }
 }
 
-
-
 export class RemoveLinkCommand implements Command {
 
     graph: Graph;
@@ -146,5 +142,28 @@ export class RemoveLinkCommand implements Command {
     unexecute() {
         this.graph.addRunTimeInteraction(this.source, this.target);
     }
+}
+
+export class AddLinkCommand implements Command {
+
+    graph: Graph;
+    source: joint.shapes.microtosca.Root;
+    target:joint.shapes.microtosca.Root;
+    link: joint.shapes.microtosca.RunTimeLink;
+
+    constructor(graph: Graph, source: joint.shapes.microtosca.Root, target:joint.shapes.microtosca.Root) {
+        this.graph = graph;
+        this.source = source;
+        this.target = target;
+    }
+
+    execute() {
+        this.link = this.graph.addRunTimeInteraction(this.source, this.target);
+    }
+
+    unexecute() {
+        this.link.remove();
+    }
+
 }
 

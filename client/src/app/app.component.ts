@@ -151,7 +151,7 @@ export class AppComponent {
   save() {
     this.gs.uploadGraph()
       .subscribe(json_model => {
-        this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correclty", detail: '' });
+        this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correctly", detail: '' });
       });
   }
 

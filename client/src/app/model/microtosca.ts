@@ -36,7 +36,7 @@ declare module 'jointjs' {
             class Service extends Node {
             }
             class Datastore extends Node {
-                topRy(t, opt?):void;
+                topRy(t, opt?): void;
             }
             class CommunicationPattern extends Node {
                 setType(ctype: string): void;
@@ -56,8 +56,8 @@ declare module 'jointjs' {
             class RunTimeLink extends joint.dia.Link {
                 getSource();
                 setTimedout(boolean): void;
-                setCircuitBreaker(boolean):void;
-                setDynamicDiscovery(boolean):void;
+                setCircuitBreaker(boolean): void;
+                setDynamicDiscovery(boolean): void;
                 hasTimeout(): boolean;
                 hasDynamicDiscovery(): boolean;
                 hasCircuitBreaker(): boolean;
@@ -82,7 +82,7 @@ joint.dia.Element.define('microtosca.Service', {
             //strokeWidth: 8,
             stroke: '#1B6879',
             fill: '#1B6879',
-            magnet: true
+            magnet: false
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -96,26 +96,26 @@ joint.dia.Element.define('microtosca.Service', {
             fill: 'black',
             text: '',
         },
-        delete: {
-            d: "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
-            // d: "M12.71,7.291c-0.15-0.15-0.393-0.15-0.542,0L10,9.458L7.833,7.291c-0.15-0.15-0.392-0.15-0.542,0c-0.149,0.149-0.149,0.392,0,0.541L9.458,10l-2.168,2.167c-0.149,0.15-0.149,0.393,0,0.542c0.15,0.149,0.392,0.149,0.542,0L10,10.542l2.168,2.167c0.149,0.149,0.392,0.149,0.542,0c0.148-0.149,0.148-0.392,0-0.542L10.542,10l2.168-2.168C12.858,7.683,12.858,7.44,12.71,7.291z M10,1.188c-4.867,0-8.812,3.946-8.812,8.812c0,4.867,3.945,8.812,8.812,8.812s8.812-3.945,8.812-8.812C18.812,5.133,14.867,1.188,10,1.188z M10,18.046c-4.444,0-8.046-3.603-8.046-8.046c0-4.444,3.603-8.046,8.046-8.046c4.443,0,8.046,3.602,8.046,8.046C18.046,14.443,14.443,18.046,10,18.046z",
-            event: 'node:delete:pointerdown',
-            visibility: "hidden",
-            ref: 'body',
-            refX: '60%',
-            refY: '0%',
-            fill: '#F78686',
-            magnet: false
-        },
+        // delete: {
+        //     d: "M 40 30 L 35 25 L 30 30 L 25 25 L 30 20 L 25 15 L 30 10 L 35 15 L 40 10 L 45 15 L 40 20 L 45 25 L 40 30 Z",
+        //     // d: "M12.71,7.291c-0.15-0.15-0.393-0.15-0.542,0L10,9.458L7.833,7.291c-0.15-0.15-0.392-0.15-0.542,0c-0.149,0.149-0.149,0.392,0,0.541L9.458,10l-2.168,2.167c-0.149,0.15-0.149,0.393,0,0.542c0.15,0.149,0.392,0.149,0.542,0L10,10.542l2.168,2.167c0.149,0.149,0.392,0.149,0.542,0c0.148-0.149,0.148-0.392,0-0.542L10.542,10l2.168-2.168C12.858,7.683,12.858,7.44,12.71,7.291z M10,1.188c-4.867,0-8.812,3.946-8.812,8.812c0,4.867,3.945,8.812,8.812,8.812s8.812-3.945,8.812-8.812C18.812,5.133,14.867,1.188,10,1.188z M10,18.046c-4.444,0-8.046-3.603-8.046-8.046c0-4.444,3.603-8.046,8.046-8.046c4.443,0,8.046,3.602,8.046,8.046C18.046,14.443,14.443,18.046,10,18.046z",
+        //     event: 'node:delete:pointerdown',
+        //     visibility: "hidden",
+        //     ref: 'body',
+        //     refX: '60%',
+        //     refY: '0%',
+        //     fill: '#F78686',
+        //     magnet: false
+        // },
         EndpointBasedServiceInteraction: { // EndpointBasesdServiceInteraction
             fill: ICON_COLOR_ENDPOINT_SERVICE_INTERACTION,
             // stroke:"red",
-            strokeWidth:"1",
+            strokeWidth: "1",
             d: "M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691" +
-								" S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306"+
-								" c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458"+
-								" c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525"+
-								"c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z",
+                " S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306" +
+                " c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458" +
+                " c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525" +
+                "c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z",
             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
             visibility: "hidden",
             ref: 'body',
@@ -123,7 +123,7 @@ joint.dia.Element.define('microtosca.Service', {
             refY: '50%',
             refWidth: '25%',
             refHeight: '25%',
-            magnet:false
+            magnet: false
         },
         wsi: { // WobblyServiceInteractionSmell
             fill: ICON_COLOR_WOBBLY_SERVICE_INTERACTION,
@@ -134,8 +134,8 @@ joint.dia.Element.define('microtosca.Service', {
             refY: '50%',
             refWidth: '50%',
             refHeight: '50%',
-            d:"M18.737,9.691h-5.462c-0.279,0-0.527,0.174-0.619,0.437l-1.444,4.104L8.984,3.195c-0.059-0.29-0.307-0.506-0.603-0.523C8.09,2.657,7.814,2.838,7.721,3.12L5.568,9.668H1.244c-0.36,0-0.655,0.291-0.655,0.655c0,0.36,0.294,0.655,0.655,0.655h4.8c0.281,0,0.532-0.182,0.621-0.45l1.526-4.645l2.207,10.938c0.059,0.289,0.304,0.502,0.595,0.524c0.016,0,0.031,0,0.046,0c0.276,0,0.524-0.174,0.619-0.437L13.738,11h4.999c0.363,0,0.655-0.294,0.655-0.655C19.392,9.982,19.1,9.691,18.737,9.691z",
-            magnet:false
+            d: "M18.737,9.691h-5.462c-0.279,0-0.527,0.174-0.619,0.437l-1.444,4.104L8.984,3.195c-0.059-0.29-0.307-0.506-0.603-0.523C8.09,2.657,7.814,2.838,7.721,3.12L5.568,9.668H1.244c-0.36,0-0.655,0.291-0.655,0.655c0,0.36,0.294,0.655,0.655,0.655h4.8c0.281,0,0.532-0.182,0.621-0.45l1.526-4.645l2.207,10.938c0.059,0.289,0.304,0.502,0.595,0.524c0.016,0,0.031,0,0.046,0c0.276,0,0.524-0.174,0.619-0.437L13.738,11h4.999c0.363,0,0.655-0.294,0.655-0.655C19.392,9.982,19.1,9.691,18.737,9.691z",
+            magnet: false
         },
         NoApiGateway: { // WobblyServiceInteractionSmell
             fill: ICON_COLOR_NO_API_GATEWAY,
@@ -167,10 +167,12 @@ joint.dia.Element.define('microtosca.Service', {
         }, {
             tagName: 'path',
             selector: 'NoApiGateway'
-        }, {
+        },
+        {
             tagName: "path",
             selector: "delete"
-        }],
+        }
+        ],
         ignoreOnce(smell: SmellObject) {
             this.hideSmell(smell);
         },
@@ -254,6 +256,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
     },
     attrs: {
         body: {
+            magnet: false,
             lateralArea: "10%",
             fill: '#1BCBD6',
             stroke: '#333333',
@@ -290,7 +293,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
         },
         sp: { // SharedPersitency
             fill: ICON_COLOR_SHARED_PERSISTENCY,
-            strokeWidth:"10", 
+            strokeWidth: "10",
             d: "M14.68,12.621c-0.9,0-1.702,0.43-2.216,1.09l-4.549-2.637c0.284-0.691,0.284-1.457,0-2.146l4.549-2.638c0.514,0.661,1.315,1.09,2.216,1.09c1.549,0,2.809-1.26,2.809-2.808c0-1.548-1.26-2.809-2.809-2.809c-1.548,0-2.808,1.26-2.808,2.809c0,0.38,0.076,0.741,0.214,1.073l-4.55,2.638c-0.515-0.661-1.316-1.09-2.217-1.09c-1.548,0-2.808,1.26-2.808,2.809s1.26,2.808,2.808,2.808c0.9,0,1.702-0.43,2.217-1.09l4.55,2.637c-0.138,0.332-0.214,0.693-0.214,1.074c0,1.549,1.26,2.809,2.808,2.809c1.549,0,2.809-1.26,2.809-2.809S16.229,12.621,14.68,12.621M14.68,2.512c1.136,0,2.06,0.923,2.06,2.06S15.815,6.63,14.68,6.63s-2.059-0.923-2.059-2.059S13.544,2.512,14.68,2.512M5.319,12.061c-1.136,0-2.06-0.924-2.06-2.06s0.923-2.059,2.06-2.059c1.135,0,2.06,0.923,2.06,2.059S6.454,12.061,5.319,12.061M14.68,17.488c-1.136,0-2.059-0.922-2.059-2.059s0.923-2.061,2.059-2.061s2.06,0.924,2.06,2.061S15.815,17.488,14.68,17.488",
             event: 'smell:SharedPersistency:pointerdown',
             visibility: "hidden",
@@ -304,22 +307,22 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
         ignoreAlwaysSmells: []
     }
 }, {
-    markup: [{
-        tagName: 'path',
-        selector: 'body'
-    }, {
-        tagName: 'ellipse',
-        selector: 'top'
-    }, {
-        tagName: 'text',
-        selector: 'label'
-    },{
-        tagName: 'path',
-        selector: 'sp'
-    }, {
-        tagName: "path",
-        selector: "delete"
-    }],
+        markup: [{
+            tagName: 'path',
+            selector: 'body'
+        }, {
+            tagName: 'ellipse',
+            selector: 'top'
+        }, {
+            tagName: 'text',
+            selector: 'label'
+        }, {
+            tagName: 'path',
+            selector: 'sp'
+        }, {
+            tagName: "path",
+            selector: "delete"
+        }],
         getName: function () {
             return this.attr('label/text');
         },
@@ -404,7 +407,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             refWidth: '100%',
             refHeight: '100%',
             fill: '#74B7C6',
-            magnet: true
+            magnet: false,
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -439,7 +442,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             fill: '#333333',
             text: ''
         },
-        NoApiGateway: { 
+        NoApiGateway: {
             fill: ICON_COLOR_NO_API_GATEWAY,
             event: 'smell:NoApiGateway:pointerdown',
             d: "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z",
@@ -465,7 +468,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         }, {
             tagName: "path",
             selector: "delete"
-        },{
+        }, {
             tagName: 'path',
             selector: 'NoApiGateway'
         }],
@@ -500,7 +503,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             if (smell instanceof NoApiGatewaySmellObject)
                 this.attr('NoApiGateway/visibility', 'visible');
         },
-        hideSmell: function(smell: SmellObject){
+        hideSmell: function (smell: SmellObject) {
             if (smell instanceof NoApiGatewaySmellObject) {
                 this.attr('NoApiGateway/visibility', 'hidden');
             }
@@ -517,7 +520,8 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
     });
 
 joint.dia.Element.define('microtosca.Group', {
-    },{  markup: [],
+}, {
+    markup: [],
         getMembers: function () {
             return "meroro";
         },
@@ -612,8 +616,8 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             ry: 10,
         },
         label: {
-            refX: '70%',
-            refY: '-15%',
+            refX: '50%',
+            refY: '-5%',
             // yAlignment: 'hanging',
             xAlignment: 'center',
             fontSize: 18,
@@ -644,15 +648,15 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         singleLayerTeam: {
             fill: ICON_COLOR_SINGLE_LAYER_TEAM,
             event: 'smell:SingleLayerTeam:pointerdown',
-            d:"M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z",
+            d: "M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z",
             visibility: "hidden",
             ref: 'body',
             refX: '0%',
             refY: '100%',
             refWidth: '1%',
             refHeight: '1%',
-            height:"1000",
-            width:"1000",
+            height: "1000",
+            width: "1000",
         },
     },
     smells: [] // list of smells that affects a single node
@@ -666,7 +670,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'rect',
             selector: 'minimize'
-        },{
+        }, {
             tagName: 'rect',
             selector: 'maximize'
         }, {
@@ -704,13 +708,13 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         },
         getMembers: function () {
             var members = [];
-            this.getEmbeddedCells().forEach(cell=>{
+            this.getEmbeddedCells().forEach(cell => {
                 members.push(<joint.shapes.microtosca.Root>cell);
             });
             return members;
         },
-        
-});
+
+    });
 
 
 joint.dia.Link.define('microtosca.RunTimeLink', {
@@ -723,11 +727,12 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             strokeLinejoin: 'round',
             targetMarker: {
                 type: 'path',
-                d: 'M 10 -5 0 0 10 5 z'
+                // d: 'M 10 -5 0 0 10 5 z'
+                d: 'M 10 -5 0 0 10 5 Z'
             }
         },
         wrapper: {
-            connection: true,
+            // connection: true,
             strokeWidth: 10,
             strokeLinejoin: 'round'
         }
@@ -759,18 +764,18 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             else
                 this._hideTimeout()
         },
-        setCircuitBreaker: function(value:boolean){
+        setCircuitBreaker: function (value: boolean) {
             this.circuit_breaker = value;
-            if(this.circuit_breaker)
+            if (this.circuit_breaker)
                 this._showCircuitBreaker()
             else
                 this._hideCircuitBreaker()
         },
-        setDynamicDiscovery: function(value:boolean){
+        setDynamicDiscovery: function (value: boolean) {
             this.dynamic_discovery = value;
-            if(this.dynamic_discovery)
+            if (this.dynamic_discovery)
                 this._showDynamicDiscovery();
-            else{
+            else {
                 this._hideDynamicDiscovery();
             }
         },
@@ -789,12 +794,12 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                     {
                         tagName: 'path',
                         selector: 'clock'
-                    }, 
+                    },
                 ],
                 position: .5, // place it halfway on the link (0-1)
                 attrs: {
                     clock: {
-                        d:"M11.088,2.542c0.063-0.146,0.103-0.306,0.103-0.476c0-0.657-0.534-1.19-1.19-1.19c-0.657,0-1.19,0.533-1.19,1.19c0,0.17,0.038,0.33,0.102,0.476c-4.085,0.535-7.243,4.021-7.243,8.252c0,4.601,3.73,8.332,8.332,8.332c4.601,0,8.331-3.73,8.331-8.332C18.331,6.562,15.173,3.076,11.088,2.542z M10,1.669c0.219,0,0.396,0.177,0.396,0.396S10.219,2.462,10,2.462c-0.22,0-0.397-0.177-0.397-0.396S9.78,1.669,10,1.669z M10,18.332c-4.163,0-7.538-3.375-7.538-7.539c0-4.163,3.375-7.538,7.538-7.538c4.162,0,7.538,3.375,7.538,7.538C17.538,14.957,14.162,18.332,10,18.332z M10.386,9.26c0.002-0.018,0.011-0.034,0.011-0.053V5.24c0-0.219-0.177-0.396-0.396-0.396c-0.22,0-0.397,0.177-0.397,0.396v3.967c0,0.019,0.008,0.035,0.011,0.053c-0.689,0.173-1.201,0.792-1.201,1.534c0,0.324,0.098,0.625,0.264,0.875c-0.079,0.014-0.155,0.043-0.216,0.104l-2.244,2.244c-0.155,0.154-0.155,0.406,0,0.561s0.406,0.154,0.561,0l2.244-2.242c0.061-0.062,0.091-0.139,0.104-0.217c0.251,0.166,0.551,0.264,0.875,0.264c0.876,0,1.587-0.711,1.587-1.587C11.587,10.052,11.075,9.433,10.386,9.26z M10,11.586c-0.438,0-0.793-0.354-0.793-0.792c0-0.438,0.355-0.792,0.793-0.792c0.438,0,0.793,0.355,0.793,0.792C10.793,11.232,10.438,11.586,10,11.586z",
+                        d: "M11.088,2.542c0.063-0.146,0.103-0.306,0.103-0.476c0-0.657-0.534-1.19-1.19-1.19c-0.657,0-1.19,0.533-1.19,1.19c0,0.17,0.038,0.33,0.102,0.476c-4.085,0.535-7.243,4.021-7.243,8.252c0,4.601,3.73,8.332,8.332,8.332c4.601,0,8.331-3.73,8.331-8.332C18.331,6.562,15.173,3.076,11.088,2.542z M10,1.669c0.219,0,0.396,0.177,0.396,0.396S10.219,2.462,10,2.462c-0.22,0-0.397-0.177-0.397-0.396S9.78,1.669,10,1.669z M10,18.332c-4.163,0-7.538-3.375-7.538-7.539c0-4.163,3.375-7.538,7.538-7.538c4.162,0,7.538,3.375,7.538,7.538C17.538,14.957,14.162,18.332,10,18.332z M10.386,9.26c0.002-0.018,0.011-0.034,0.011-0.053V5.24c0-0.219-0.177-0.396-0.396-0.396c-0.22,0-0.397,0.177-0.397,0.396v3.967c0,0.019,0.008,0.035,0.011,0.053c-0.689,0.173-1.201,0.792-1.201,1.534c0,0.324,0.098,0.625,0.264,0.875c-0.079,0.014-0.155,0.043-0.216,0.104l-2.244,2.244c-0.155,0.154-0.155,0.406,0,0.561s0.406,0.154,0.561,0l2.244-2.242c0.061-0.062,0.091-0.139,0.104-0.217c0.251,0.166,0.551,0.264,0.875,0.264c0.876,0,1.587-0.711,1.587-1.587C11.587,10.052,11.075,9.433,10.386,9.26z M10,11.586c-0.438,0-0.793-0.354-0.793-0.792c0-0.438,0.355-0.792,0.793-0.792c0.438,0,0.793,0.355,0.793,0.792C10.793,11.232,10.438,11.586,10,11.586z",
                         fill: 'none',
                         stroke: '#0E343D',
                         strokeWidth: 0.5,
@@ -803,18 +808,18 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 }
             });
         },
-        _showCircuitBreaker: function(){
+        _showCircuitBreaker: function () {
             this.insertLabel(1, {
                 markup: [
                     {
                         tagName: 'path',
                         selector: 'clock'
-                    }, 
+                    },
                 ],
                 position: .35,
                 attrs: {
                     clock: {
-                        d:"M9.634,10.633c0.116,0.113,0.265,0.168,0.414,0.168c0.153,0,0.308-0.06,0.422-0.177l4.015-4.111c0.229-0.235,0.225-0.608-0.009-0.836c-0.232-0.229-0.606-0.222-0.836,0.009l-3.604,3.689L6.35,5.772C6.115,5.543,5.744,5.55,5.514,5.781C5.285,6.015,5.29,6.39,5.522,6.617L9.634,10.633z",
+                        d: "M9.634,10.633c0.116,0.113,0.265,0.168,0.414,0.168c0.153,0,0.308-0.06,0.422-0.177l4.015-4.111c0.229-0.235,0.225-0.608-0.009-0.836c-0.232-0.229-0.606-0.222-0.836,0.009l-3.604,3.689L6.35,5.772C6.115,5.543,5.744,5.55,5.514,5.781C5.285,6.015,5.29,6.39,5.522,6.617L9.634,10.633z",
                         fill: 'none',
                         stroke: '#0E343D',
                         strokeWidth: 0.5,
@@ -823,16 +828,16 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
                 }
             });
         },
-        _hideCircuitBreaker: function(){
+        _hideCircuitBreaker: function () {
             this.removeLabel(1);
         },
-        _showDynamicDiscovery: function(){
+        _showDynamicDiscovery: function () {
             this.insertLabel(2, {
                 markup: [
                     {
                         tagName: 'path',
                         selector: 'clock'
-                    }, 
+                    },
                 ],
                 position: .20,
                 attrs: {
@@ -846,7 +851,7 @@ joint.dia.Link.define('microtosca.RunTimeLink', {
             });
 
         },
-        _hideDynamicDiscovery: function(){
+        _hideDynamicDiscovery: function () {
             this.removeLabel(2);
         },
         _hideTimeout: function () {
