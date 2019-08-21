@@ -17,6 +17,7 @@ import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand} from '../invoker/graph-command';
 import * as svgPanZoom from 'svg-pan-zoom';
+import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -37,10 +38,12 @@ export class GraphEditorComponent implements OnInit {
     svgZoom;
 
     selectdElement: joint.shapes.microtosca.Node;
+    selectdLink: joint.shapes.microtosca.RunTimeLink;
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.graphInvoker = new GraphInvoker();
         this.selectdElement = null;
+        this.selectdLink = null;
     }
 
 
@@ -50,7 +53,7 @@ export class GraphEditorComponent implements OnInit {
         this.paper = new joint.dia.Paper({
             el: canvas,
             model: this.gs.getGraph(),
-            preventContextMenu: false,
+            preventContextMenu: true,
             width: c.outerWidth(),
             height: c.outerHeight(),
             background: { color: 'light' },
@@ -93,11 +96,7 @@ export class GraphEditorComponent implements OnInit {
             zoomScaleSensitivity: 0.5,
         });
 
-        // $(window).resize(()=>{
-        //     this.svgZoom.resize();
-        //     this.svgZoom.fit();
-        //     this.svgZoom.center();
-        //   })
+       
 
         this.paper.on('cell:pointerdown', () => {
             this.svgZoom.disablePan();
@@ -112,7 +111,7 @@ export class GraphEditorComponent implements OnInit {
         this.bindEvents();
 
         // enable interactions
-        // this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
+        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
 
         this.applyDirectedGraphLayout();
     }
@@ -130,6 +129,11 @@ export class GraphEditorComponent implements OnInit {
     }
 
     fitContent() {
+        //  $(window).resize(()=>{
+        //     this.svgZoom.resize();
+        //     this.svgZoom.fit();
+        //     this.svgZoom.center();
+        //   })
         this.paper.scaleContentToFit();// {padding:2}
     }
 
@@ -192,7 +196,6 @@ export class GraphEditorComponent implements OnInit {
         });
         ref.onClose.subscribe((data) => {
             this.graphInvoker.executeCommand(data.command);
-            this.messageService.add({ severity: 'success', summary: data.msg });
         });
     }
 
@@ -203,7 +206,7 @@ export class GraphEditorComponent implements OnInit {
 
         this.bindDoubleClickCell();
         this.bindSingleClickCell();
-        // this.bindContextMenuCell();
+        this.bindContextMenuCell();
 
         this.bindMouseEnterLink();
         this.bindMouseOverNode();
@@ -215,6 +218,30 @@ export class GraphEditorComponent implements OnInit {
         this.bindTeamMinimize();
         this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
+        
+
+        //graph eventts
+        this.bindGraphEvents();
+    }
+
+    bindGraphEvents(){
+        this.gs.getGraph().on('add', cell=> { 
+            if(cell.isElement())
+                this.messageService.add({ severity: 'success', summary: "Node  ["+ cell.getName() + "] added to the model."});
+            else if (cell.isLink()){
+                var source = (<joint.shapes.microtosca.Node>cell.getSourceElement());
+                var target = (<joint.shapes.microtosca.Node>cell.getTargetElement());
+                this.messageService.add({ severity: 'success', summary: "Link  from  ["+ source.getName() + "] to  ["+ target.getName() +"] added."});
+            }
+
+        })
+        this.gs.getGraph().on('remove', cell=> { 
+            if(cell.isElement())
+                this.messageService.add({ severity: 'warn', summary: "Node removed from the model."});
+            else if (cell.isLink()){
+                this.messageService.add({ severity: 'warn', summary: "Link  removed from the model."});
+            }
+        })
     }
 
     bindKeyboardEvents(){
@@ -233,11 +260,11 @@ export class GraphEditorComponent implements OnInit {
             if (e.keyCode == YPSILON_KEY && e.ctrlKey){
                 this.graphInvoker.redo();
             }
-            if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) {
-                e.preventDefault();
-                e.stopPropagation();
-                alert("Ctrl S");
-            }
+            // if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) {
+            //     e.preventDefault();
+            //     e.stopPropagation();
+            //     alert("Ctrl S");
+            // }
         });
     }
 
@@ -260,8 +287,13 @@ export class GraphEditorComponent implements OnInit {
     }
 
     bindSingleClickLink(){
-        this.paper.on("link:pointerdown", (cellView, evt, x, y, ) => {
+        this.paper.on("link:pointerclick", (cellView, evt, x, y, ) => {
             console.log("link clicked");
+            evt.preventDefault();
+            evt.stopPropagation();
+            this.selectdLink = cellView.model;
+            cellView.highlight();
+            this.paper.findViewByModel(this.selectdLink).highlight();
         });
     }
 
@@ -270,23 +302,42 @@ export class GraphEditorComponent implements OnInit {
             console.log("click on blank");
             if(this.selectdElement)
                 this.paper.findViewByModel(this.selectdElement).unhighlight();
+            if (this.selectdLink)
+                this.paper.findViewByModel(this.selectdLink).unhighlight();
+                
         });
     } 
     
 
     bindSingleClickCell(){
-        this.paper.on("cell:pointerclick", (cellView, evt, x, y, ) => {
+        this.paper.on("element:pointerclick", (cellView, evt, x, y, ) => {
+            console.log("click on cell");
             evt.preventDefault();
+            evt.stopPropagation()
             var node = cellView.model;
             console.log(node);
 
-            if(this.selectdElement !== null && node.id !== this.selectdElement){
-                console.log("adding link");
-                this.graphInvoker.executeCommand(new AddLinkCommand(this.gs.getGraph(), this.selectdElement, node));
-                // this.gs.getGraph().addRunTimeInteraction(this.selectdElement, node);
+            if(this.selectdElement !== null && node.id !== this.selectdElement.id){
                 
-                this.paper.findViewByModel(this.selectdElement).unhighlight();
-                this.selectdElement = null;
+                
+                const ref = this.dialogService.open(DialogAddLinkComponent, {
+                    data: {
+                        source: this.selectdElement,
+                        target: node
+                    },
+                    header: 'Add a link',
+                    width: '70%'
+                });
+                ref.onClose.subscribe((data) => {
+                    if(data){
+                        var command = new AddLinkCommand(this.gs.getGraph(), this.selectdElement, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                        this.graphInvoker.executeCommand(command);
+                        this.paper.findViewByModel(this.selectdElement).unhighlight();
+                        this.selectdElement = null;
+                    }
+                });
+                console.log("end adding link");
+                
             }else{
                 cellView.highlight();
                 this.selectdElement = node;
@@ -305,7 +356,8 @@ export class GraphEditorComponent implements OnInit {
     bindDoubleClickCell() {
         this.paper.on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
             evt.preventDefault();
-            console.log("Double clieck cell");
+            evt.stopPropagation();
+            console.log("Double click cell");
         });
     }
 

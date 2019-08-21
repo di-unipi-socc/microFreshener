@@ -33,7 +33,6 @@ export class DialogAddNodeComponent implements OnInit {
 
     this.as.getCommunicationPatterns()
       .then(cps => this.communicationPatternTypes = cps);
-
   }
 
   checkedCommPattern() {
@@ -74,7 +73,6 @@ export class DialogAddNodeComponent implements OnInit {
         break;
     }
     this.ref.close({"command":command, "msg":message});
-
   }
 
 }

@@ -126,7 +126,7 @@ export class RemoveLinkCommand implements Command {
     graph: Graph;
     link: joint.shapes.microtosca.RunTimeLink;
     source: joint.shapes.microtosca.Root;
-    target:  joint.shapes.microtosca.Root;
+    target: joint.shapes.microtosca.Root;
 
     constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
         this.graph = graph;
@@ -148,17 +148,24 @@ export class AddLinkCommand implements Command {
 
     graph: Graph;
     source: joint.shapes.microtosca.Root;
-    target:joint.shapes.microtosca.Root;
+    target: joint.shapes.microtosca.Root;
     link: joint.shapes.microtosca.RunTimeLink;
 
-    constructor(graph: Graph, source: joint.shapes.microtosca.Root, target:joint.shapes.microtosca.Root) {
+    t: boolean = false; // timeout
+    cb: boolean = false; // circuit breaker
+    dd: boolean = false;  // dyamic discovery
+
+    constructor(graph: Graph, source: joint.shapes.microtosca.Root, target: joint.shapes.microtosca.Root, timeout, circuit_breaker, dynamic_discovery) {
         this.graph = graph;
         this.source = source;
         this.target = target;
+        this.t = timeout;
+        this.cb = circuit_breaker;
+        this.dd = dynamic_discovery;
     }
 
     execute() {
-        this.link = this.graph.addRunTimeInteraction(this.source, this.target);
+        this.link = this.graph.addRunTimeInteraction(this.source, this.target, this.t, this.cb, this.dd);
     }
 
     unexecute() {

@@ -45,7 +45,9 @@ import {ToastModule} from 'primeng/toast';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import {PickListModule} from 'primeng/picklist';
 import {CardModule} from 'primeng/card';
+import {InputSwitchModule} from 'primeng/inputswitch';
 import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
+import { DialogAddLinkComponent } from './dialog-add-link/dialog-add-link.component';
 
 
 @NgModule({
@@ -59,6 +61,7 @@ import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-te
     DialogAddNodeComponent,
     DialogAddTeamComponent,
     DialogSelectTeamComponent,
+    DialogAddLinkComponent,
   ],
   imports: [
     BrowserModule,
@@ -93,7 +96,8 @@ import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-te
     ToastModule,
     SelectButtonModule,
     PickListModule,
-    CardModule
+    CardModule,
+    InputSwitchModule
   ],
   providers: [
     MessageService
@@ -104,7 +108,8 @@ import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-te
     DialogSmellComponent,
     DialogAddNodeComponent,
     DialogAddTeamComponent,
-    DialogSelectTeamComponent
+    DialogSelectTeamComponent,
+    DialogAddLinkComponent
   ]
 })
 export class AppModule { }
