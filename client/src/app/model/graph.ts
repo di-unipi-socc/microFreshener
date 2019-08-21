@@ -100,12 +100,12 @@ export class Graph extends joint.dia.Graph {
 
     }
 
-    getFrontierOfATeam(team:joint.shapes.microtosca.SquadGroup){
+    getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup) {
         var frontier = [];
         team.getMembers().forEach(node => {
-            this.getNeighbors(node).forEach(neigh =>{ 
-                if(!neigh.isEmbeddedIn(team)){
-                    if(! frontier.find(el => el.id === neigh.id )){
+            this.getNeighbors(node).forEach(neigh => {
+                if (!neigh.isEmbeddedIn(team)) {
+                    if (!frontier.find(el => el.id === neigh.id)) {
                         frontier.push(neigh);
                     }
                 }
@@ -134,9 +134,9 @@ export class Graph extends joint.dia.Graph {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
-        
+
         nodes.forEach(node => {
-             g.addMember(node);
+            g.addMember(node);
         });
         return g;
     }
@@ -286,33 +286,60 @@ export class Graph extends joint.dia.Graph {
         return this.getSubgraph(nodes, { deep: true });
     }
 
-    showOnlyTeam(team:joint.shapes.microtosca.SquadGroup){
+    showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
         this.hideGraph();
         var cells = this.getSubgraphFromNodes(team.getMembers());
-        cells.forEach(cell => cell.set("hidden",false));
-        team.set("hidden",false);
+        cells.forEach(cell => cell.set("hidden", false));
+        team.set("hidden", false);
     }
 
-    minimizeTeam(team:joint.shapes.microtosca.SquadGroup, x=0, y=0){
+    maximizeTeam(team: joint.shapes.microtosca.SquadGroup) {
         var links = this.getInternalLinksOfTeam(team);
-        links.forEach(link => link.set("hidden", true))
+        links.forEach(link =>   link.attr("./visibility", "visible"))
         team.getMembers().forEach(node => {
-            node.set('hidden', true);
-            node.scale(0, 0, { x: x, y: y });
+            node.attr("./visibility", "visible");
+            node.resize(50, 50);
+            node.position(node.get('posXRelTeam'), node.get("posYRelTeam"), { parentRelative: true });
         })
+        team.resize(100, 100);
         team.fitEmbeds({ padding: 20 })
     }
 
-    // compactAll(){
-    //     this.getTeamGroups().forEach(team_>{
+    minimizeTeam(team: joint.shapes.microtosca.SquadGroup) {
+        var links = this.getInternalLinksOfTeam(team);
+        links.forEach(link => {
+            link.attr("./visibility", "hidden");
+        })
+        var teamPos = team.position()
 
-    //     })
+        team.getMembers().forEach(node => {
+            // node.set('hidden', true);
+            node.attr("./visibility", "hidden");
+            var point = new joint.g.Point(team.get('position')).difference(node.get('position')) 
+            node.set('posXRelTeam', point.x);
+            node.set('posYRelTeam', point.y);
+            node.scale(0, 0, { x: teamPos.x, y: teamPos.y });
+        })
+        team.resize(10, 10);
+        team.position(teamPos.x, teamPos.y);
+        team.fitEmbeds({ padding: 20 })
+    }
 
-    // }
+    minimizeAllTeam() {
+        this.getTeamGroups().forEach(team => {
+            this.minimizeTeam(team);
+        })
+    }
 
-    showGraph(){
+    maximizeAllTeam() {
+        this.getTeamGroups().forEach(team => {
+            this.maximizeTeam(team);
+        })
+    }
+
+    showGraph() {
         // super.getCells().forEach(cell => cell.attr("./visibility","visible"));
-        super.getCells().forEach(cell => cell.set("hidden",false));
+        super.getCells().forEach(cell => cell.set("hidden", false));
     }
 
     hideGraph() {
@@ -320,28 +347,29 @@ export class Graph extends joint.dia.Graph {
         super.getCells().forEach(cell => cell.set("hidden", true));
     }
 
-    getInternalLinksOfTeam(team:joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[]{
-            var links = [];
-            team.getMembers().forEach(node =>{
-                this.getConnectedLinks(node, {outbound:true}).forEach(link =>{
-                    if (link.getTargetElement().isEmbeddedIn(team)){
-                        links.push(link);
-                    }
-                })
-                this.getConnectedLinks(node, {inbound:true}).forEach(link =>{
-                    if (link.getSourceElement().isEmbeddedIn(team)){
-                        links.push(link);
-                    }
-                })
+    getInternalLinksOfTeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
+        var links = [];
+        team.getMembers().forEach(node => {
+            this.getConnectedLinks(node, { outbound: true }).forEach(link => {
+                if (link.getTargetElement().isEmbeddedIn(team)) {
+                    links.push(link);
+                }
             })
-            return links;
+            this.getConnectedLinks(node, { inbound: true }).forEach(link => {
+                if (link.getSourceElement().isEmbeddedIn(team)) {
+                    links.push(link);
+                }
+            })
+        })
+        console.log(links);
+        return links;
     }
 
     isNodeOwnedByTeam(node: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
         return node.isEmbeddedIn(team);
     }
 
-    getTeamOfNode(node:joint.shapes.microtosca.Node):joint.shapes.microtosca.SquadGroup {
+    getTeamOfNode(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.SquadGroup {
         return <joint.shapes.microtosca.SquadGroup>node.getParentCell();
     }
 

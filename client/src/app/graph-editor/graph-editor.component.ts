@@ -38,12 +38,10 @@ export class GraphEditorComponent implements OnInit {
     svgZoom;
 
     selectdElement: joint.shapes.microtosca.Node;
-    selectdLink: joint.shapes.microtosca.RunTimeLink;
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.graphInvoker = new GraphInvoker();
         this.selectdElement = null;
-        this.selectdLink = null;
     }
 
 
@@ -202,7 +200,6 @@ export class GraphEditorComponent implements OnInit {
     bindEvents() {
         this.bindKeyboardEvents();
         this.bindSingleClickBlank();
-        this.bindSingleClickLink();
 
         this.bindDoubleClickCell();
         this.bindSingleClickCell();
@@ -302,25 +299,12 @@ export class GraphEditorComponent implements OnInit {
 
     }
 
-    bindSingleClickLink(){
-        this.paper.on("link:pointerclick", (cellView, evt, x, y, ) => {
-            console.log("link clicked");
-            evt.preventDefault();
-            evt.stopPropagation();
-            this.selectdLink = cellView.model;
-            cellView.highlight();
-            this.paper.findViewByModel(this.selectdLink).highlight();
-        });
-    }
 
     bindSingleClickBlank(){
         this.paper.on("blank:pointerclick", (cellView, evt, x, y, ) => {
             console.log("click on blank");
             if(this.selectdElement)
                 this.paper.findViewByModel(this.selectdElement).unhighlight();
-            if (this.selectdLink)
-                this.paper.findViewByModel(this.selectdLink).unhighlight();
-                
         });
     } 
     
@@ -407,6 +391,9 @@ export class GraphEditorComponent implements OnInit {
             if (cell.isElement()) {
                 cell.showIcons();
             }
+            else if (this.gs.getGraph().isTeamGroup(cell))
+                cell.showIcons();
+            
         })
 
         this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
@@ -513,7 +500,7 @@ export class GraphEditorComponent implements OnInit {
                                 cellViewBelow.model.embed(cell);
                             }
                             // DIDO: fits the cells in the view
-                            cellViewBelow.model.fitEmbeds({ padding: 40 });
+                            cellViewBelow.model.fitEmbeds({ padding:20});
 
                         }
 
@@ -522,8 +509,6 @@ export class GraphEditorComponent implements OnInit {
             }
 
         });
-
-
     }
 
     bindTeamMaximize() {
@@ -531,16 +516,7 @@ export class GraphEditorComponent implements OnInit {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            var links = this.gs.getGraph().getInternalLinksOfTeam(team);
-            links.forEach(link => link.set("hidden", false))
-            team.getMembers().forEach(node => {
-                node.set('hidden', false);
-                //node.scale(60,60, {x:x,y:y});
-                node.resize(50, 50);
-            })
-            team.resize(100, 100);
-            this.gs.getGraph().applyLayout("TB");
-            team.fitEmbeds({ padding: 20 })
+            this.gs.getGraph().maximizeTeam(team);
         })
     }
 
@@ -548,7 +524,7 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.gs.getGraph().minimizeTeam(team, x, y);
+            this.gs.getGraph().minimizeTeam(team);
         })
     }
 

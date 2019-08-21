@@ -693,7 +693,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             refY: '0%',
             fill: '#6a6a62',
             event: 'team:minimize:pointerdown',
-            visibility: "visible",
+            visibility: "hidden",
             ref: 'body',
             width: '15px',
             height: '15px',
@@ -704,7 +704,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             refY: '0%',
             fill: '#F50C0C',
             event: 'team:maximize:pointerdown',
-            visibility: "visible",
+            visibility: "hidden",
             ref: 'body',
             width: '15px',
             height: '15px',
@@ -750,10 +750,11 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         },
         showIcons: function () {
             this.attr('minimize/visibility', "visible");
-            this.attr('maximize/visibility', 'visible')
+            this.attr('maximize/visibility', 'visible');
         },
         hideIcons: function () {
-            // this.attr('minimize/visibility', 'hidden')
+            this.attr('minimize/visibility', "hidden");
+            this.attr('maximize/visibility', 'hidden')
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);

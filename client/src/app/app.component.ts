@@ -106,16 +106,13 @@ export class AppComponent {
         this.messageService.add({ severity: 'success', summary: ` ${team.getName()} visualized` });
       }
       else if (data.show == "all"){
-        this.gs.getGraph().showGraph();
+        this.gs.getGraph().maximizeAllTeam();
         this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
 
       }
       else if (data.show == "compactall"){
-        this.gs.getGraph().getTeamGroups().forEach(team =>{
-          
-        })
-        this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
-
+        this.gs.getGraph().minimizeAllTeam();
+        this.messageService.add({ severity: 'success', summary: ` All team minimized` });
       }
       else {
         this.messageService.add({ severity: 'error', summary: `No team selected` });
