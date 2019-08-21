@@ -29,4 +29,9 @@ export class DialogSelectTeamComponent implements OnInit {
     this.ref.close({ "show":"all"});
   }
 
+  onSelectCompactAll(){
+    this.ref.close({ "show":"compactall"});
+
+  }
+
 }

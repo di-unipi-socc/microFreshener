@@ -134,8 +134,9 @@ export class Graph extends joint.dia.Graph {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
+        
         nodes.forEach(node => {
-            g.embed(node);
+             g.addMember(node);
         });
         return g;
     }
@@ -273,7 +274,6 @@ export class Graph extends joint.dia.Graph {
     isMessageBroker(node: joint.shapes.microtosca.Node) {
         //return node instanceof joint.shapes.microtosca.Co;
         return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MB";
-
         // return node.attributes['type'] == "MB"; //microtosca.CommunicationPattern";
     }
 
@@ -292,6 +292,23 @@ export class Graph extends joint.dia.Graph {
         cells.forEach(cell => cell.set("hidden",false));
         team.set("hidden",false);
     }
+
+    minimizeTeam(team:joint.shapes.microtosca.SquadGroup, x=0, y=0){
+        var links = this.getInternalLinksOfTeam(team);
+        links.forEach(link => link.set("hidden", true))
+        team.getMembers().forEach(node => {
+            node.set('hidden', true);
+            node.scale(0, 0, { x: x, y: y });
+        })
+        team.fitEmbeds({ padding: 20 })
+    }
+
+    // compactAll(){
+    //     this.getTeamGroups().forEach(team_>{
+
+    //     })
+
+    // }
 
     showGraph(){
         // super.getCells().forEach(cell => cell.attr("./visibility","visible"));
@@ -324,6 +341,9 @@ export class Graph extends joint.dia.Graph {
         return node.isEmbeddedIn(team);
     }
 
+    getTeamOfNode(node:joint.shapes.microtosca.Node):joint.shapes.microtosca.SquadGroup {
+        return <joint.shapes.microtosca.SquadGroup>node.getParentCell();
+    }
 
     builtFromJSON(json: string) {
         this.removeCells(this.getCells());

@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand} from '../invoker/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand} from '../invoker/graph-command';
 import * as svgPanZoom from 'svg-pan-zoom';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
@@ -286,6 +286,22 @@ export class GraphEditorComponent implements OnInit {
         }
     }
 
+    removeLink(link:joint.shapes.microtosca.RunTimeLink){
+        this.confirmationService.confirm({
+            message: 'Do you want to delete the link?',
+            header: 'Link deletion',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.graphInvoker.executeCommand(new RemoveLinkCommand(this.gs.getGraph(), link));
+                //this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+            },
+            reject: () => {
+                 this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+            }
+        });
+
+    }
+
     bindSingleClickLink(){
         this.paper.on("link:pointerclick", (cellView, evt, x, y, ) => {
             console.log("link clicked");
@@ -532,22 +548,7 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-
-            var links = this.gs.getGraph().getInternalLinksOfTeam(team);
-            links.forEach(link => link.set("hidden", true))
-
-            team.getMembers().forEach(node => {
-                node.set('hidden', true);
-                node.scale(0, 0, { x: x, y: y });
-                // node.resize(0,0);
-
-            })
-            team.fitEmbeds({ padding: 20 })
-
-        })
-
-        this.gs.getGraph().on('change:hidden', function (cell, changed, opt) {
-            cell.attr('./opacity', cell.get('hidden') ? 0 : 1);
+            this.gs.getGraph().minimizeTeam(team, x, y);
         })
     }
 
@@ -651,32 +652,31 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
-    bindCreateLink() {
-        // Create a new link by dragging
-        this.paper.on('blank:pointerdown', function (evt, x, y) {
-            var link = new joint.shapes.standard.Link();
-            link.set('source', { x: x, y: y });
-            link.set('target', { x: x, y: y });
-            link.addTo(this.model);
-            evt.data = { link: link, x: x, y: y };
-        })
+    // bindCreateLink() {
+    //     // Create a new link by dragging
+    //     this.paper.on('blank:pointerdown', function (evt, x, y) {
+    //         var link = new joint.shapes.standard.Link();
+    //         link.set('source', { x: x, y: y });
+    //         link.set('target', { x: x, y: y });
+    //         link.addTo(this.model);
+    //         evt.data = { link: link, x: x, y: y };
+    //     })
 
-        this.paper.on('blank:pointermove', function (evt, x, y) {
-            evt.data.link.set('target', { x: x, y: y });
-        });
+    //     this.paper.on('blank:pointermove', function (evt, x, y) {
+    //         evt.data.link.set('target', { x: x, y: y });
+    //     });
 
-        this.paper.on('blank:pointerup', function (evt) {
-            var target = evt.data.link.get('target');
-            if (evt.data.x === target.x && evt.data.y === target.y) {
-                // remove zero-length links
-                evt.data.link.remove();
-            }
-        });
-    }
+    //     this.paper.on('blank:pointerup', function (evt) {
+    //         var target = evt.data.link.get('target');
+    //         if (evt.data.x === target.x && evt.data.y === target.y) {
+    //             // remove zero-length links
+    //             evt.data.link.remove();
+    //         }
+    //     });
+    // }
 
     bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            linkView.highlight();
             var tools = [
                 // new joint.linkTools.SourceArrowhead(),
                 // new joint.linkTools.TargetArrowhead(),
@@ -686,7 +686,7 @@ export class GraphEditorComponent implements OnInit {
                     vertexAdding: false
                 }),
                 new joint.linkTools.TargetAnchor(),
-                new joint.linkTools.Remove(),
+                // new joint.linkTools.Remove(),
                 new joint.linkTools.Button({
                     markup: [{
                         tagName: 'circle',
@@ -718,6 +718,33 @@ export class GraphEditorComponent implements OnInit {
                         link.target(source);
                     }
                 }),
+                // button remove a link
+                new joint.linkTools.Button({
+                    markup: [{
+                        tagName: 'circle',
+                        selector: 'button',
+                        attributes: {
+                            'r': 7,
+                            'fill': '#FF1D00',
+                            'cursor': 'pointer'
+                        }
+                    }, {
+                        tagName: 'path',
+                        selector: 'icon',
+                        attributes: {
+                            'd': 'M -3 -3 3 3 M -3 3 3 -3',
+                            'fill': 'none',
+                            'stroke': '#FFFFFF',
+                            'stroke-width': 2,
+                            'pointer-events': 'none'
+                        }
+                    }],
+                    distance: 60,
+                    offset: 0,
+                    action:  () =>{
+                        this.removeLink(linkView.model);
+                    }
+                })
             ];
 
             linkView.addTools(new joint.dia.ToolsView({
@@ -729,7 +756,6 @@ export class GraphEditorComponent implements OnInit {
 
         this.paper.on('link:mouseleave', function (linkView) {
             if (!linkView.hasTools('onhover')) return;
-            linkView.unhighlight();
             linkView.removeTools();
         });
     }

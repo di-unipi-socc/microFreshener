@@ -87,6 +87,7 @@ export class RemoveNodeCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
+    teamOfNode: joint.shapes.microtosca.SquadGroup;
 
     cloneNode: joint.shapes.microtosca.Root;
     incomingNodes: joint.shapes.microtosca.Root[];
@@ -95,6 +96,8 @@ export class RemoveNodeCommand implements Command {
     constructor(graph: Graph, node: joint.shapes.microtosca.Root) {
         this.graph = graph;
         this.node = node;
+    // TODO get the team of the node in order to restore in into the team when redo
+        this.teamOfNode = graph.getTeamOfNode(node);
         this.cloneNode = <joint.shapes.microtosca.Root>node.clone();
         this.incomingNodes = this.graph.getInboundNeighbors(this.node);
         this.outcomingNodes = this.graph.getOutboundNeighbors(this.node);
@@ -118,6 +121,7 @@ export class RemoveNodeCommand implements Command {
         this.outcomingNodes.forEach(outNode => {
             this.graph.addRunTimeInteraction(this.node, outNode);
         })
+        this.teamOfNode.addMember(this.node);
     }
 }
 
@@ -140,7 +144,7 @@ export class RemoveLinkCommand implements Command {
     }
 
     unexecute() {
-        this.graph.addRunTimeInteraction(this.source, this.target);
+        this.graph.addRunTimeInteraction(this.source, this.target, this.link.hasTimeout(), this.link.hasCircuitBreaker(), this.link.hasDynamicDiscovery());
     }
 }
 

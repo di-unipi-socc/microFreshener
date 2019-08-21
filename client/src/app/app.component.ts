@@ -110,6 +110,13 @@ export class AppComponent {
         this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
 
       }
+      else if (data.show == "compactall"){
+        this.gs.getGraph().getTeamGroups().forEach(team =>{
+          
+        })
+        this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
+
+      }
       else {
         this.messageService.add({ severity: 'error', summary: `No team selected` });
 

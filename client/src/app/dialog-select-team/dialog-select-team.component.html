@@ -17,6 +17,9 @@
     <li (click)="onSelectAll()">
       <span class="badge">All</span> 
     </li>
+    <li (click)="onSelectCompactAll()">
+            <span class="badge">compactAll</span> 
+          </li>
     <li *ngFor="let team of teams"
       (click)="onSelectTeam(team)">
       <span class="badge">{{team.getName()}} </span> 
