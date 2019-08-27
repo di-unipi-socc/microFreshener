@@ -26,24 +26,8 @@
             "type": "service"
         },
         {
-            "name": "carts-db",
-            "type": "database"
-        },
-        {
-            "name": "catalogue-db",
-            "type": "database"
-        },
-        {
-            "name": "catalogue",
-            "type": "service"
-        },
-        {
-            "name": "user-db",
-            "type": "database"
-        },
-        {
-            "name": "shipping",
-            "type": "service"
+            "name": "order_db",
+            "type": "datastore"
         },
         {
             "name": "rabbitmq",
@@ -56,6 +40,10 @@
         {
             "name": "edge-router",
             "type": "messagerouter"
+        },
+        {
+            "name": "order",
+            "type": "service"
         }
     ],
     "links": [
@@ -65,7 +53,7 @@
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "front-end",
@@ -73,112 +61,66 @@
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         },
         {
-            "source": "front-end",
-            "target": "user",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "carts",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "front-end",
-            "target": "catalogue",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "ordersdb",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
-            "target": "user",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "orders",
+            "source": "Api gateway",
             "target": "shipping",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         },
         {
-            "source": "orders",
-            "target": "carts",
+            "source": "order",
+            "target": "shipping",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         },
         {
-            "source": "user",
-            "target": "user-db",
+            "source": "order",
+            "target": "order_db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         },
         {
-            "source": "carts",
-            "target": "carts-db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "catalogue",
-            "target": "catalogue-db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "shipping",
+            "source": "order",
             "target": "rabbitmq",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "queue-master",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "edge-router",
-            "target": "front-end",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
+            "type": "interaction"
         }
     ],
-    "groups": []
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "Api gateway",
+                "order"
+            ]
+        },
+        {
+            "name": "team-primo",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "order_db",
+                "order"
+            ]
+        },
+        {
+            "name": "team-secondo",
+            "type": "squadgroup",
+            "members": [
+                "rabbitmq",
+                "Api gateway"
+            ]
+        }
+    ]
 }

@@ -7,7 +7,7 @@
         },
         {
             "name": "order_db",
-            "type": "database"
+            "type": "datastore"
         },
         {
             "name": "order",
@@ -26,33 +26,33 @@
         {
             "source": "shipping",
             "target": "order_db",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "shipping",
             "target": "rabbitmq",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "order",
             "target": "shipping",
-            "type": "runtime",
+            "type": "interaction",
             "timeout": true
         },
         {
             "source": "order",
             "target": "order_db",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "order",
             "target": "rabbitmq",
-            "type": "runtime"
+            "type": "interaction"
         },
         {
             "source": "gateway",
             "target": "shipping",
-            "type": "runtime"
+            "type": "interaction"
         }
     ],
     "groups": [

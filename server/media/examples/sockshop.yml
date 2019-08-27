@@ -7,54 +7,55 @@ topology_template:
     front-end:
       type: micro.nodes.Service
       requirements:
-      - run_time: orders
-      - run_time: payment
-      - run_time: user
-      - run_time: carts
-      - run_time: catalogue
+      - interaction: orders
+      - interaction: user
+      - interaction: carts
+      - interaction: catalogue
     orders:
       type: micro.nodes.Service
       requirements:
-      - run_time: ordersdb
-      - run_time: user
-      - run_time: shipping
-      - run_time: carts
+      - interaction: ordersdb
+      - interaction: user
+      - interaction: payment
+      - interaction: carts
+      - interaction: shipping
+
     ordersdb:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     payment:
       type: micro.nodes.Service
     user:
       type: micro.nodes.Service
       requirements:
-      - run_time: user-db
+      - interaction: user-db
     carts:
       type: micro.nodes.Service
       requirements:
-      - run_time: carts-db
+      - interaction: carts-db
     carts-db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     catalogue-db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     catalogue:
       type: micro.nodes.Service
       requirements:
-      - run_time: catalogue-db
+      - interaction: catalogue-db
     user-db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     shipping:
       type: micro.nodes.Service
       requirements:
-      - run_time: rabbitmq
+      - interaction: rabbitmq
     rabbitmq:
       type: micro.nodes.MessageBroker
     queue-master:
       type: micro.nodes.Service
       requirements:
-      - run_time: rabbitmq
+      - interaction: rabbitmq
     edge-router:
       type: micro.nodes.MessageRouter
       requirements:
-      - run_time: front-end
+      - interaction: front-end
   groups: {}
   relationship_templates:
     t:

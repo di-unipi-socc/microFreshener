@@ -130,11 +130,13 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
+      'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.AllowAny',
+      
     ]
 }
 

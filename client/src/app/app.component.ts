@@ -6,7 +6,7 @@ import { DialogAnalysisComponent } from './dialog-analysis/dialog-analysis.compo
 import { MenuItem } from 'primeng/api';
 import { AnalyserService } from './analyser.service';
 import { environment } from '../environments/environment';
-
+import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +27,7 @@ export class AppComponent {
   urlUpload = environment.serverUrl + '/api/import';
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
-	console.log(environment.serverUrl);    
+	console.log(environment.serverUrl);
 	this.items = [
       {
         label: 'Account',
@@ -62,23 +62,67 @@ export class AppComponent {
         }
       },
     ];
-  
+
     this.examples = [
-      {label: 'Hello world', command: () => {
-        this.downloadExample("helloworld");
-      }},
-      {label: 'Case study', command: () => {
-        this.downloadExample("case-study-initial");
-      }},
-      {label: 'Case study (refactored)', command: () => {
-        this.downloadExample("case-study-refactored");
-      }},
-      {label: 'Sockshop', command: () => {
-        this.downloadExample("sockshop");
-      }},
-  ];
+      {
+        label: 'Hello world', command: () => {
+          this.downloadExample("helloworld");
+        }
+      },
+      {
+        label: 'Case study', command: () => {
+          this.downloadExample("case-study-initial");
+        }
+      },
+      {
+        label: 'Case study (refactored)', command: () => {
+          this.downloadExample("case-study-refactored");
+        }
+      },
+      {
+        label: 'Sockshop', command: () => {
+          this.downloadExample("sockshop");
+        }
+      },
+      {
+        label: 'FTGO', command: () => {
+          this.downloadExample("ftgo");
+        }
+      },
+    ];
   }
 
+
+  selectTeam() {
+    const ref = this.dialogService.open(DialogSelectTeamComponent, {
+      header: 'Select Team to visualize',
+      width: '80%',
+      // height: '50%'
+    });
+    ref.onClose.subscribe((data) => {
+      if (data.show == "team") {
+        var team = data.team;
+        // this.gs.getGraph().getFrontierOfATeam(team);
+        // team.getFrontier();
+        this.gs.getGraph().showOnlyTeam(team);
+        this.messageService.add({ severity: 'success', summary: ` ${team.getName()} visualized` });
+      }
+      else if (data.show == "all"){
+        this.gs.getGraph().maximizeAllTeam();
+        this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
+
+      }
+      else if (data.show == "compactall"){
+        this.gs.getGraph().minimizeAllTeam();
+        this.messageService.add({ severity: 'success', summary: ` All team minimized` });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: `No team selected` });
+
+      }
+    });
+
+  }
   analyse() {
     const ref = this.dialogService.open(DialogAnalysisComponent, {
       header: 'Check the principles to analyse',
@@ -86,50 +130,51 @@ export class AppComponent {
     });
     ref.onClose.subscribe((data) => {
       this._showSmells()
-      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly" , detail:data});
+      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: data });
     });
   }
 
-  _showSmells(){
-    this.as.analysednodes.forEach((anode)=>{
-        let n = this.gs.getGraph().getNode(anode.name);
-        anode.getSmells().forEach((smell)=>{
-          n.addSmell(smell);
-        })
+  _showSmells() {
+    this.as.analysednodes.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.name);
+      anode.getSmells().forEach((smell) => {
+        n.addSmell(smell);
       })
+    })
 
-    this.as.analysedgroups.forEach((agroup)=>{
-        let g = this.gs.getGraph().getGroup(agroup.name);
-        agroup.getSmells().forEach((smell)=>{
-          // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
-          smell.getNodeBasedCauses().forEach(node=>{
-            node.addSmell(smell);
-          })
-          g.addSmell(smell);
+    this.as.analysedgroups.forEach((agroup) => {
+      let g = this.gs.getGraph().getGroup(agroup.name);
+      agroup.getSmells().forEach((smell) => {
+        // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
+        smell.getNodeBasedCauses().forEach(node => {
+          node.addSmell(smell);
         })
-      })    
+        g.addSmell(smell);
+      })
+    })
   }
 
-  upload() {
+  save() {
     this.gs.uploadGraph()
-      .subscribe(data => {
-        this.closeSidebar();
-        this.messageService.add({ severity: 'success', summary: 'Saved correctly', detail: '' });
+      .subscribe(json_model => {
+        this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correctly", detail: '' });
       });
   }
 
+
   onUpload(event) {
-    this.download();
+    console.log(event.files);
+     this.download();
   }
 
   download() {
-    this.gs.downloadGraph()
+    this.gs.dowloadGraph()
       .subscribe((data) => {
         this.closeSidebar();
         console.log(data);
         this.gs.getGraph().builtFromJSON(data);
         this.gs.getGraph().applyLayout("LR");
-        this.messageService.add({ severity: 'success', summary: 'Graph dowloaded correclty', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Graph downloaded correctly', detail: '' });
       });
   }
 
@@ -137,13 +182,13 @@ export class AppComponent {
     this.display = false;
   }
 
-  downloadExample(name:string){
+  downloadExample(name: string) {
     this.gs.downloadExample(name)
-    .subscribe((data) => {
-      this.gs.getGraph().builtFromJSON(data);
-      this.gs.getGraph().applyLayout("LR");
-      this.messageService.add({severity:'success', summary:`Graph ${name} loaded`});
-    });
+      .subscribe((data) => {
+        this.gs.getGraph().builtFromJSON(data);
+        this.gs.getGraph().applyLayout("LR");
+        this.messageService.add({ severity: 'success', summary: `Graph ${name} loaded` });
+      });
   }
 
 }

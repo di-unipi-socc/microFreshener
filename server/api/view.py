@@ -1,5 +1,6 @@
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import status
 from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.core.files.storage import default_storage
@@ -18,7 +19,8 @@ from microfreshener.core.analyser import MicroToscaAnalyserBuilder
 from microfreshener.core.importer import JSONImporter, YMLImporter
 from microfreshener.core.exporter import JSONExporter, YMLExporter
 from microfreshener.core.model import MicroToscaModel
-from microfreshener.core.model import Service, Database, CommunicationPattern
+from microfreshener.core.model import Service, Datastore, CommunicationPattern
+from microfreshener.core.errors import ImporterError, MicroFreshenerError
 
 json_importer = JSONImporter()
 yml_importer = YMLImporter()
@@ -31,11 +33,12 @@ examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
 uploads_path = os.path.join(settings.MEDIA_ROOT, "uploads")
 file_uploads_path = os.path.join(uploads_path, "upload.yml")
 
+
 @api_view(['GET'])
 def graph_analysis(request):
     """
     get:
-    Run the analysis and return the smells (with heir refactorings)
+    Run the analysis and return the smells (with their refactorings)
     """
     if request.method == 'GET':
         # get the principle to check graph/analysis?smells=id1,id2,idn2
@@ -53,6 +56,7 @@ def graph_analysis(request):
             return Response({"msg": "No model uploaded"})
     if request.method == 'POST':
         print(request.POST.value)
+
 
 @api_view(['GET', 'POST'])
 @csrf_exempt
@@ -96,7 +100,8 @@ def graph_export(request):
         # response['Content-Disposition'] = 'attachment; filename="micro-tosca.json'
         mmodel = json_importer.Import(model_file_path)
         yml_string = yml_exporter.Export(mmodel)
-        response = HttpResponse(ContentFile(yml_string), content_type='application/yml')
+        response = HttpResponse(ContentFile(yml_string),
+                                content_type='application/yml')
         response['Content-Disposition'] = 'attachment; filename="micro-tosca.yml'
         return response
     else:
@@ -136,14 +141,19 @@ def graph_examples(request):
         if "name" in request.GET:
             ex = request.GET['name']
             if(ex == "case-study-initial"):
-                model_path = os.path.join(examples_path, "case-study/initial.yml")
+                model_path = os.path.join(
+                    examples_path, "case-study/initial.yml")
             elif (ex == "case-study-refactored"):
-                model_path = os.path.join(examples_path, "case-study/refactored.yml")
+                model_path = os.path.join(
+                    examples_path, "case-study/refactored.yml")
             elif (ex == "sockshop"):
-                model_path = os.path.join(examples_path, "sockshop.json")
+                model_path = os.path.join(examples_path, "sockshop.yml")
             elif (ex == "helloworld"):
-                model_path = os.path.join(examples_path, "hello-world/helloworld.yml")
- 
+                model_path = os.path.join(
+                    examples_path, "hello-world/helloworld.yml")
+            elif (ex == "ftgo"):
+                model_path = os.path.join(examples_path, "FTGO.yml")
+
         # return the json file of the model
         # mmodel = None
         # if(os.path.isfile(model_path)):
@@ -152,10 +162,41 @@ def graph_examples(request):
         #     return Response(dmodel)
         # else:
         #     return Response({"msg": "Example not found ion the server"})
-      
+
         if(os.path.isfile(model_path)):
             mmodel = yml_importer.Import(model_path)
             dmodel = json_exporter.Export(mmodel)
             return Response(dmodel)
         else:
             return Response({"msg": "Example not found ion the server"})
+########################
+#  TEAM API
+###################
+
+
+# @api_view(['GET'])
+# def team(request):
+#     model = json_importer.Import(model_file_path)
+#     try:
+#         teams = [json_exporter.export_group_to_json(
+#             team) for team in model.teams]
+#         return Response({"teams": teams}, status=status.HTTP_200_OK)
+#     except MicroFreshenerError as e:
+#         return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#     else:
+#         return Response({"msg": "No model uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def team_detail(request, team_name):
+    if(os.path.isfile(model_file_path)):
+        model = json_importer.Import(model_file_path)
+        try:
+            team = model.get_group(team_name)
+            sub = model.get_subgraph(team.members)
+            jteam = json_exporter.Export(sub)
+            return Response(jteam, status=status.HTTP_200_OK)
+        except MicroFreshenerError as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return Response({"msg": "No model uploaded"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

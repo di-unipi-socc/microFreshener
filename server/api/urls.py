@@ -11,6 +11,9 @@ urlpatterns = [
     path('export', view.graph_export),
     path('import', view.graph_import),
     path('example', view.graph_examples),
+    # team api
+    # path('team/', view.team, name='microtosca-team'),
+    path('team/<str:team_name>', view.team_detail, name='microtosca-team-get'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

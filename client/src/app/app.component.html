@@ -12,11 +12,16 @@
                 <p-splitButton label="Load examples"   [model]="examples"></p-splitButton>
                 
                 <p-splitButton  icon="pi pi-sitemap" [model]="layouts"></p-splitButton>
+                
+                <button pButton icon="pi pi-plus" type="button" style="font-size:
+                1em"
+                label="Shows" class="ui-button-success" (click)="selectTeam()"></button>
 
                 <button pButton type="button" (click)="analyse()" icon="pi pi-search"></button>
                 
-                <button cslass="ui-button-primary" pButton type="button" (click)="upload()" icon="pi pi-save"></button>
-                
+                <button cslass="ui-button-primary" pButton type="button" (click)="save()" icon="pi pi-save"></button>
+
+                    
                 <a pButton [attr.href]="hrefDownload" icon="pi pi-download" class="ui-button-info"></a>
 
                 <p-fileUpload mode="basic" 

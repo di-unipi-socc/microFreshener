@@ -1,7 +1,6 @@
-import { Command } from '../invoker/icommand';
+import { Command } from './icommand';
 import * as joint from 'jointjs';
 import { Graph } from "../model/graph";
-import { JsonpInterceptor } from '@angular/common/http';
 
 
 export class AddServiceCommand implements Command {
@@ -24,7 +23,7 @@ export class AddServiceCommand implements Command {
     }
 }
 
-export class AddDatabaseCommand implements Command {
+export class AddDatastoreCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
@@ -36,13 +35,14 @@ export class AddDatabaseCommand implements Command {
     }
 
     execute() {
-        this.node = this.graph.addDatabase(this.name);
+        this.node = this.graph.addDatastore(this.name);
     }
 
     unexecute() {
         this.node.remove();
     }
 }
+
 export class AddMessageBrokerCommand implements Command {
 
     graph: Graph;
@@ -83,12 +83,11 @@ export class AddMessageRouterCommand implements Command {
     }
 }
 
-
-export class RemoveServiceCommand implements Command {
+export class RemoveNodeCommand implements Command {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
-
+    teamOfNode: joint.shapes.microtosca.SquadGroup;
 
     cloneNode: joint.shapes.microtosca.Root;
     incomingNodes: joint.shapes.microtosca.Root[];
@@ -97,6 +96,8 @@ export class RemoveServiceCommand implements Command {
     constructor(graph: Graph, node: joint.shapes.microtosca.Root) {
         this.graph = graph;
         this.node = node;
+    // TODO get the team of the node in order to restore in into the team when redo
+        this.teamOfNode = graph.getTeamOfNode(node);
         this.cloneNode = <joint.shapes.microtosca.Root>node.clone();
         this.incomingNodes = this.graph.getInboundNeighbors(this.node);
         this.outcomingNodes = this.graph.getOutboundNeighbors(this.node);
@@ -109,8 +110,8 @@ export class RemoveServiceCommand implements Command {
     unexecute() {
         if (this.node instanceof joint.shapes.microtosca.Service)
             this.node = this.graph.addService(this.cloneNode.getName());
-        else if (this.node instanceof joint.shapes.microtosca.Database)
-            this.node = this.graph.addDatabase(this.cloneNode.getName());
+        else if (this.node instanceof joint.shapes.microtosca.Datastore)
+            this.node = this.graph.addDatastore(this.cloneNode.getName());
         else if (this.node instanceof joint.shapes.microtosca.CommunicationPattern)
             this.node = this.graph.addCommunicationPattern(this.cloneNode.getName(), (<joint.shapes.microtosca.CommunicationPattern>this.cloneNode).getType());
 
@@ -120,17 +121,16 @@ export class RemoveServiceCommand implements Command {
         this.outcomingNodes.forEach(outNode => {
             this.graph.addRunTimeInteraction(this.node, outNode);
         })
+        this.teamOfNode.addMember(this.node);
     }
 }
-
-
 
 export class RemoveLinkCommand implements Command {
 
     graph: Graph;
     link: joint.shapes.microtosca.RunTimeLink;
     source: joint.shapes.microtosca.Root;
-    target:  joint.shapes.microtosca.Root;
+    target: joint.shapes.microtosca.Root;
 
     constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
         this.graph = graph;
@@ -144,7 +144,37 @@ export class RemoveLinkCommand implements Command {
     }
 
     unexecute() {
-        this.graph.addRunTimeInteraction(this.source, this.target);
+        this.graph.addRunTimeInteraction(this.source, this.target, this.link.hasTimeout(), this.link.hasCircuitBreaker(), this.link.hasDynamicDiscovery());
     }
+}
+
+export class AddLinkCommand implements Command {
+
+    graph: Graph;
+    source: joint.shapes.microtosca.Root;
+    target: joint.shapes.microtosca.Root;
+    link: joint.shapes.microtosca.RunTimeLink;
+
+    t: boolean = false; // timeout
+    cb: boolean = false; // circuit breaker
+    dd: boolean = false;  // dyamic discovery
+
+    constructor(graph: Graph, source: joint.shapes.microtosca.Root, target: joint.shapes.microtosca.Root, timeout, circuit_breaker, dynamic_discovery) {
+        this.graph = graph;
+        this.source = source;
+        this.target = target;
+        this.t = timeout;
+        this.cb = circuit_breaker;
+        this.dd = dynamic_discovery;
+    }
+
+    execute() {
+        this.link = this.graph.addRunTimeInteraction(this.source, this.target, this.t, this.cb, this.dd);
+    }
+
+    unexecute() {
+        this.link.remove();
+    }
+
 }
 

@@ -94,7 +94,6 @@ export class AddApiGatewayCommand implements Command {
         return msg;
     }
 }
-
 export class AddMessageRouterCommand implements Command {
 
     links: joint.shapes.microtosca.RunTimeLink[];
@@ -197,7 +196,6 @@ export class AddServiceDiscoveryCommand implements Command {
 
     unexecute() {
         this.links.forEach(link=>{
-            console.log("service discovery to false")
             link.setDynamicDiscovery(false);
         })
     }
@@ -268,7 +266,7 @@ export class MergeServicesCommand implements Command {
 
     smell: SmellObject;
     graph: Graph;
-    sharedDatabase: joint.shapes.microtosca.Database;
+    sharedDatastore: joint.shapes.microtosca.Datastore;
     mergedService: joint.shapes.microtosca.Service
 
     serviceIngoingOutgoing: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node[], joint.shapes.microtosca.Node[]][];
@@ -277,7 +275,7 @@ export class MergeServicesCommand implements Command {
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDatabase = <joint.shapes.microtosca.Database> smell.getNodeBasedCauses()[0];
+        this.sharedDatastore = <joint.shapes.microtosca.Datastore> smell.getNodeBasedCauses()[0];
         this.serviceIngoingOutgoing = [];
         this._saveIncomingOutcomingNodes();
 
@@ -285,7 +283,7 @@ export class MergeServicesCommand implements Command {
 
     execute() {
         this.mergedService = this.graph.addService("Merged Service");
-        this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatabase);
+        this.graph.addRunTimeInteraction(this.mergedService, this.sharedDatastore);
         this._addLinkToMergedService();
         this._removeServicesAccessingDB();
     }
@@ -304,7 +302,7 @@ export class MergeServicesCommand implements Command {
         this.serviceIngoingOutgoing.forEach(nodeingoingOutgoing => {
             let nameDeletedService = nodeingoingOutgoing[0].getName();
             let service = this.graph.addService(nameDeletedService);
-            this.graph.addRunTimeInteraction(service, this.sharedDatabase);
+            this.graph.addRunTimeInteraction(service, this.sharedDatastore);
         });
     }
 
@@ -350,20 +348,20 @@ export class MergeServicesCommand implements Command {
     }
 }
 
-export class SplitDatabaseCommand implements Command {
+export class SplitDatastoreCommand implements Command {
 
     graph: Graph;
     smell: SmellObject;
 
-    sharedDatabase: joint.shapes.microtosca.Database;
-    splittedDatabase: joint.shapes.microtosca.Database[];
+    sharedDatastore: joint.shapes.microtosca.Datastore;
+    splittedDatastore: joint.shapes.microtosca.Datastore[];
 
 
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDatabase = < joint.shapes.microtosca.Database>smell.getNodeBasedCauses()[0];
-        this.splittedDatabase = [];
+        this.sharedDatastore = < joint.shapes.microtosca.Datastore>smell.getNodeBasedCauses()[0];
+        this.splittedDatastore = [];
     }
 
 
@@ -371,20 +369,20 @@ export class SplitDatabaseCommand implements Command {
 
         this.smell.getLinkBasedCauses().forEach(link => {
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let newDB = this.graph.addDatabase("DB " + sourceNode.getName());
-            this.splittedDatabase.push(newDB);
+            let newDB = this.graph.addDatastore("DB " + sourceNode.getName());
+            this.splittedDatastore.push(newDB);
             link.target(newDB);
         })
-        this.sharedDatabase.remove();
+        this.sharedDatastore.remove();
     }
 
     unexecute() {
-        this.sharedDatabase = < joint.shapes.microtosca.Database>this.smell.getNodeBasedCauses()[0];
-        this.graph.addCell(this.sharedDatabase);
+        this.sharedDatastore = < joint.shapes.microtosca.Datastore>this.smell.getNodeBasedCauses()[0];
+        this.graph.addCell(this.sharedDatastore);
         this.smell.getLinkBasedCauses().forEach(link => {
-            link.target(this.sharedDatabase);
+            link.target(this.sharedDatastore);
         })
-        this.splittedDatabase.forEach(db => db.remove())
+        this.splittedDatastore.forEach(db => db.remove())
     }
 
     getDescription() {
@@ -396,13 +394,13 @@ export class AddDataManagerCommand implements Command {
     graph: Graph;
     smell: SmellObject;
 
-    sharedDB: joint.shapes.microtosca.Database;
+    sharedDB: joint.shapes.microtosca.Datastore;
     databaseManager: joint.shapes.microtosca.Service;
 
     constructor(graph: Graph, smell: SmellObject) {
         this.smell = smell;
         this.graph = graph;
-        this.sharedDB = < joint.shapes.microtosca.Database>this.smell.getNodeBasedCauses()[0];
+        this.sharedDB = < joint.shapes.microtosca.Datastore>this.smell.getNodeBasedCauses()[0];
     }
 
     execute() {
@@ -428,13 +426,13 @@ export class AddDataManagerCommand implements Command {
 
 }
 
-export class MoveDatabaseIntoTeamCommand implements Command {
+export class MoveDatastoreIntoTeamCommand implements Command {
 
     smell: SingleLayerTeamSmellObject;
     graph: Graph;
     team: joint.shapes.microtosca.SquadGroup
 
-    squadOfDatabase:  joint.shapes.microtosca.SquadGroup;
+    squadOfDatastore:  joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
         this.graph = graph;
@@ -444,10 +442,10 @@ export class MoveDatabaseIntoTeamCommand implements Command {
     
     execute() {
         this.smell.getLinkBasedCauses().forEach(link=>{
-            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
-            this.squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
-            this.squadOfDatabase.unembed(database);
-            this.squadOfDatabase.fitEmbeds();
+            let database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
+            this.squadOfDatastore = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            this.squadOfDatastore.unembed(database);
+            this.squadOfDatastore.fitEmbeds();
             this.team.embed(database);
             this.team.fitEmbeds();
         })
@@ -455,11 +453,11 @@ export class MoveDatabaseIntoTeamCommand implements Command {
 
     unexecute() {
         this.smell.getLinkBasedCauses().forEach(link=>{
-            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            let database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
             this.team.unembed(database);
             this.team.fitEmbeds();
-            this.squadOfDatabase.embed(database);
-            this.squadOfDatabase.fitEmbeds();
+            this.squadOfDatastore.embed(database);
+            this.squadOfDatastore.fitEmbeds();
             
         })
     }
@@ -482,25 +480,25 @@ export class MoveServiceIntoTeamCommand implements Command {
     
     execute() {
         this.smell.getLinkBasedCauses().forEach(link=>{
-            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            let database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
             let service = <joint.shapes.microtosca.Service>link.getSourceElement();
 
-            let squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            let squadOfDatastore = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
             this.team.unembed(service);
-            squadOfDatabase.embed(service);
-            squadOfDatabase.fitEmbeds();
+            squadOfDatastore.embed(service);
+            squadOfDatastore.fitEmbeds();
             this.team.fitEmbeds();
         })
     }
 
     unexecute() {
         this.smell.getLinkBasedCauses().forEach(link=>{
-            let database = <joint.shapes.microtosca.Database>link.getTargetElement();
+            let database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
             let service = <joint.shapes.microtosca.Service>link.getSourceElement();
-            let squadOfDatabase = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
+            let squadOfDatastore = <joint.shapes.microtosca.SquadGroup>database.getParentCell();
             this.team.embed(service);
-            squadOfDatabase.unembed(service);
-            squadOfDatabase.fitEmbeds();
+            squadOfDatastore.unembed(service);
+            squadOfDatastore.fitEmbeds();
             this.team.fitEmbeds();
         })
     }
@@ -515,9 +513,9 @@ export class AddDataManagerIntoTeamCommand implements Command {
     graph: Graph;
     smell: SmellObject;
 
-    squadOfDatabase:  joint.shapes.microtosca.SquadGroup;
+    squadOfDatastore:  joint.shapes.microtosca.SquadGroup;
     databaseManager:  joint.shapes.microtosca.Service;
-    database: joint.shapes.microtosca.Database;
+    database: joint.shapes.microtosca.Datastore;
 
 
     constructor(graph: Graph, smell: GroupSmellObject) {
@@ -529,11 +527,11 @@ export class AddDataManagerIntoTeamCommand implements Command {
         this.databaseManager = this.graph.addService("DB manager");
 
         this.smell.getLinkBasedCauses().forEach(link=>{
-            this.database = <joint.shapes.microtosca.Database>link.getTargetElement();
-            this.squadOfDatabase = <joint.shapes.microtosca.SquadGroup>this.database.getParentCell();
+            this.database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
+            this.squadOfDatastore = <joint.shapes.microtosca.SquadGroup>this.database.getParentCell();
             link.target(this.databaseManager);
-            this.squadOfDatabase.embed(this.databaseManager);
-            this.squadOfDatabase.fitEmbeds();
+            this.squadOfDatastore.embed(this.databaseManager);
+            this.squadOfDatastore.fitEmbeds();
             this.graph.getIngoingLinks(this.database).forEach(link=>link.target(this.databaseManager));
             this.graph.addRunTimeInteraction(this.databaseManager, this.database);
         });

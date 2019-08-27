@@ -18,8 +18,15 @@ export class GraphService {
   graph: Graph;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
+  // private graphUrl = environment.serverUrl + '/microtosca/'
+
   private graphUrlPost = environment.serverUrl + '/api/model';
-  private graphUrlExamples= environment.serverUrl + '/api/example';
+  // private graphUrlPost = environment.serverUrl + '/microtosca/';
+
+  private graphUrlExamples = environment.serverUrl + '/api/example';
+  
+  private teamUrl = environment.serverUrl + '/api/team/';
+
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('hello-world');
@@ -38,6 +45,7 @@ export class GraphService {
     return JSON.stringify(this.graph.toJSON());
   }
 
+
   /** POST: upload the local graph to the server */
   uploadGraph(): Observable<string> {
     var graphJson = this.exportToJSON();
@@ -46,17 +54,36 @@ export class GraphService {
   }
 
   // download the graph stored into the server
-  downloadGraph(): Observable<string> {
-    return this.http.get<string>(this.graphUrl).pipe(
-      tap(_ => this.log(`fetched graph`)),
+  dowloadGraph(): Observable<string> {
+    return this.http.get<string>(this.graphUrl )
+      .pipe(
+        tap(_ => this.log(`fetched graph`)),
       // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
+  
+  // exportGraphToJSON(): Observable<string> {
+  //   var url = this.graphUrl + this.getGraph().getName() + "/"
+  //   let params = new HttpParams().set("responseType", "blob");
+  //   return this.http.get<string>(this.graphUrl, { params: params })
+  //     .pipe(
+  //       tap(_ => this.log(`fetched graph`)),
+  //     // catchError(this.handleError<Hero>(`getHero id=${id}`))
+  //   );
+  // }
 
   downloadExample(name: string): Observable<string> {
     let params = new HttpParams().set("name", name);
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
+    );
+  }
+
+  getTeam(team_name: string): Observable<string> {
+    let url = `${this.teamUrl}${team_name}`;  
+    console.log(url)
+    return this.http.get<string>(url).pipe(
+      tap(_ => this.log(`fetched team ${team_name}`)),
     );
   }
 

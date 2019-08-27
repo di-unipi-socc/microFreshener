@@ -9,17 +9,17 @@ topology_template:
       requirements:
       - deployment_time: order_db
       - deployment_time: rabbitmq
-      - run_time: order_db
+      - interaction: order_db
     order_db:
-      type: micro.nodes.Database
+      type: micro.nodes.Datastore
     order:
       type: micro.nodes.Service
       requirements:
       - deployment_time: shipping
       - deployment_time: order_db
       - deployment_time: rabbitmq
-      - run_time: shipping
-      - run_time: order_db
+      - interaction: shipping
+      - interaction: order_db
     rabbitmq:
       type: micro.nodes.CommunicationPattern
     gateway:
