@@ -1,16 +1,48 @@
 {
-    "name": "hello-world",
+    "name": "sock",
     "nodes": [
         {
-            "name": "shipping",
+            "name": "front-end",
             "type": "service"
         },
         {
-            "name": "order_db",
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "name": "ordersdb",
             "type": "database"
         },
         {
-            "name": "order",
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "name": "carts",
+            "type": "service"
+        },
+        {
+            "name": "carts-db",
+            "type": "database"
+        },
+        {
+            "name": "catalogue-db",
+            "type": "database"
+        },
+        {
+            "name": "catalogue",
+            "type": "service"
+        },
+        {
+            "name": "user-db",
+            "type": "database"
+        },
+        {
+            "name": "shipping",
             "type": "service"
         },
         {
@@ -18,14 +50,106 @@
             "type": "messagebroker"
         },
         {
-            "name": "Api gateway",
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "name": "edge-router",
             "type": "messagerouter"
         }
     ],
     "links": [
         {
-            "source": "shipping",
-            "target": "order_db",
+            "source": "front-end",
+            "target": "orders",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "payment",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "user",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "carts",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "front-end",
+            "target": "catalogue",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "ordersdb",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "user",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "orders",
+            "target": "carts",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "user",
+            "target": "user-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "carts",
+            "target": "carts-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "runtime"
+        },
+        {
+            "source": "catalogue",
+            "target": "catalogue-db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
@@ -40,23 +164,7 @@
             "type": "runtime"
         },
         {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": true,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "runtime"
-        },
-        {
-            "source": "order",
+            "source": "queue-master",
             "target": "rabbitmq",
             "timeout": false,
             "dynamic_discovery": false,
@@ -64,22 +172,13 @@
             "type": "runtime"
         },
         {
-            "source": "Api gateway",
-            "target": "shipping",
+            "source": "edge-router",
+            "target": "front-end",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "runtime"
         }
     ],
-    "groups": [
-        {
-            "name": "edgenodes",
-            "type": "edgegroup",
-            "members": [
-                "order",
-                "Api gateway"
-            ]
-        }
-    ]
+    "groups": []
 }

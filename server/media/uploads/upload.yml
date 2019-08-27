@@ -1,155 +1,92 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-
-description: >
-  Anonymised version of the microservice-based architecture
-  of a platform for monitoring and managing a smart factory
-
+description: sockshop
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
-
 topology_template:
   node_templates:
-    d1:
+    front-end:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: orders
+      - run_time: payment
+      - run_time: user
+      - run_time: carts
+      - run_time: catalogue
+    orders:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: ordersdb
+      - run_time: user
+      - run_time: shipping
+      - run_time: carts
+    ordersdb:
       type: micro.nodes.Database
-    d2:
+    payment:
+      type: micro.nodes.Service
+    user:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: user-db
+    carts:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: carts-db
+    carts-db:
       type: micro.nodes.Database
-    d3:
+    catalogue-db:
       type: micro.nodes.Database
-    d4:
+    catalogue:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: catalogue-db
+    user-db:
       type: micro.nodes.Database
-    d5:
-      type: micro.nodes.Database
-    d6:
-      type: micro.nodes.Database
-    d7:
-      type: micro.nodes.Database
-
-    g1:
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: rabbitmq
+    rabbitmq:
+      type: micro.nodes.MessageBroker
+    queue-master:
+      type: micro.nodes.Service
+      requirements:
+      - run_time: rabbitmq
+    edge-router:
       type: micro.nodes.MessageRouter
       requirements:
-        - run_time: m1
-        - run_time: m2
-    g2:
-      type: micro.nodes.MessageRouter
-      requirements:
-        - run_time: s1
-        - run_time: s2
-
-    m1:
-      type: micro.nodes.MessageBroker
-    m2:
-      type: micro.nodes.MessageBroker
-
-    s1:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: d1
-        - run_time: d2
-        - run_time: d3
-        - run_time:
-            node: s2
-            relationship: td
-    s2:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: d4
-        - run_time: d5
-        - run_time:
-            node: s4
-            relationship: td
-    s3:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: m1
-        - run_time: m2
-    s4:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s6
-            relationship: td
-    s5:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s2
-            relationship: td
-    s6:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s13
-            relationship: td
-        - run_time: m1
-    s7:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s13
-            relationship: td
-        - run_time:
-            node: s5
-            relationship: td
-    s8:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s13
-            relationship: td
-        - run_time:
-            node: s7
-            relationship: td
-    s9:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s13
-            relationship: td
-    s10:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: d7
-        - run_time:
-            node: s8
-            relationship: td
-    s11:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s9
-            relationship: td
-        - run_time:
-            node: s10
-            relationship: td
-    s12:
-      type: micro.nodes.Service
-      requirements:
-        - run_time:
-            node: s1
-            relationship: td
-        - run_time:
-            node: s2
-            relationship: td
-        - run_time:
-            node: s10
-            relationship: td
-        - run_time:
-            node: s11
-            relationship: td
-
-    s13:
-      type: micro.nodes.Service
-      requirements:
-        - run_time: d6
-
-  groups:
-    edge:
-      type: micro.groups.Edge
-      members: [g1,g2]
-
+      - run_time: front-end
+  groups: {}
   relationship_templates:
+    t:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+    c:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+    d:
+      type: micro.relationships.InteractsWith
+      properties:
+        dynamic_discovery: true
+    tc:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
     td:
       type: micro.relationships.InteractsWith
       properties:
         timeout: true
+        dynamic_discovery: true
+    cd:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+        dynamic_discovery: true
+    tcd:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
         dynamic_discovery: true

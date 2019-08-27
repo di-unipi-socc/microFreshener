@@ -10,7 +10,7 @@ services:
     environment:
       - DJANGO_SETTINGS=prod
     ports: 
-      - "8081:8000"
+      - "8000:8000"
     labels:
       - "traefik.frontend.rule=Host:api.microfreshener.localhost"
     networks: 
@@ -24,6 +24,8 @@ services:
       dockerfile: Dockerfile
       args:
         configuration: production
+    ports:
+      - "8081:80"
     labels:
       - "traefik.frontend.rule=Host:microfreshener.localhost"
     networks: 
