@@ -22,7 +22,7 @@ export class AppComponent {
   items: MenuItem[];
   layouts:MenuItem[];
   examples:MenuItem[];
-  
+
   hrefDownload = environment.serverUrl + '/api/export';
   urlUpload = environment.serverUrl + '/api/import';
 
@@ -102,12 +102,11 @@ export class AppComponent {
     ref.onClose.subscribe((data) => {
       if (data.show == "team") {
         var team = data.team;
-        // this.gs.getGraph().getFrontierOfATeam(team);
-        // team.getFrontier();
         this.gs.getGraph().showOnlyTeam(team);
         this.messageService.add({ severity: 'success', summary: ` ${team.getName()} visualized` });
       }
       else if (data.show == "all"){
+        this.gs.getGraph().showGraph();
         this.gs.getGraph().maximizeAllTeam();
         this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
 
