@@ -289,8 +289,9 @@ export class Graph extends joint.dia.Graph {
     showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
         this.hideGraph();
         var cells = this.getSubgraphFromNodes(team.getMembers());
-        cells.forEach(cell => cell.set("hidden", false));
-        team.set("hidden", false);
+        cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
+        team.attr("./visibility","visible");
+        //team.set("hidden", false);
     }
 
     maximizeTeam(team: joint.shapes.microtosca.SquadGroup) {
@@ -315,7 +316,7 @@ export class Graph extends joint.dia.Graph {
         team.getMembers().forEach(node => {
             // node.set('hidden', true);
             node.attr("./visibility", "hidden");
-            var point = new joint.g.Point(team.get('position')).difference(node.get('position')) 
+            var point = new joint.g.Point(team.get('position')).difference(node.get('position'))
             node.set('posXRelTeam', point.x);
             node.set('posYRelTeam', point.y);
             node.scale(0, 0, { x: teamPos.x, y: teamPos.y });
@@ -338,13 +339,13 @@ export class Graph extends joint.dia.Graph {
     }
 
     showGraph() {
-        // super.getCells().forEach(cell => cell.attr("./visibility","visible"));
-        super.getCells().forEach(cell => cell.set("hidden", false));
+        super.getCells().forEach(cell => cell.attr("./visibility","visible"));
+      //  super.getCells().forEach(cell => cell.set("hidden", false));
     }
 
     hideGraph() {
-        // super.getCells().forEach(cell => cell.attr("./visibility", "hidden"));
-        super.getCells().forEach(cell => cell.set("hidden", true));
+        super.getCells().forEach(cell => cell.attr("./visibility", "hidden"));
+        //super.getCells().forEach(cell => cell.set("hidden", true));
     }
 
     getInternalLinksOfTeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {

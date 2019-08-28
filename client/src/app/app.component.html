@@ -26,7 +26,7 @@
 
                 <p-fileUpload mode="basic" 
                             name="graph"
-                            url="http://127.0.0.1:8000/api/import" 
+                            [url]="urlUpload" 
                             accept=".yml"
                             (onUpload)="onUpload($event)"
                             chooseLabel="Import">

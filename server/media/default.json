@@ -1,6 +1,27 @@
 {
-    "name": "hello-world",
+    "name": "sock",
     "nodes": [
+        {
+
+           "name": "front-end",
+        "type": "service"
+        },
+        {
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "name": "carts",
+            "type": "service"
+        },
         {
             "name": "order_db",
             "type": "datastore"
@@ -14,12 +35,49 @@
             "type": "messagebroker"
         },
         {
-            "name": "Api gateway",
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "name": "edge-router",
             "type": "messagerouter"
         }
     ],
     "links": [
         {
+            "source": "front-end",
+            "target": "orders",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "payment",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Api gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+
             "source": "order",
             "target": "order_db",
             "timeout": false,
