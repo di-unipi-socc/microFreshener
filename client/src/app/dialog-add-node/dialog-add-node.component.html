@@ -1,27 +1,35 @@
 
 <div class="p-grid p-justify-center">
-    <div class="p-col-2">
+    <div class="p-col-4">
         <div class="box">Name:</div>
     </div>
-    <div class="p-col-8">
+    <div class="p-col-6">
         <input  [(ngModel)]="name" type="text" pInputText />
     </div>
 </div>
 
 <div class="p-grid p-justify-center">
-    <div class="p-col-2">
+    <div class="p-col-4">
         <div class="box">Select node type:</div>
     </div>
-    <div class="p-col-8">
-        <p-radioButton name="group1" value="service"
-            label="Service" [(ngModel)]="selectedNodeType" inputId="opt1"></p-radioButton>
-        <p-radioButton name="group1" value="datastore"
-            label="Datastore" [(ngModel)]="selectedNodeType" inputId="opt2"></p-radioButton>
-        <p-radioButton name="group1" value="communicationPattern" 
-             label="communicationPattern"
-            (onClick)="checkedCommPattern()"
-            [(ngModel)]="selectedNodeType" inputId="opt3">
-        </p-radioButton>
+    <div class="p-col-6">
+            <div class="ui-g" style="width:250px;margin-bottom:10px">
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" value="service"
+                            label="Service" [(ngModel)]="selectedNodeType" inputId="opt1"></p-radioButton>
+                    </div>
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" value="datastore"
+                                label="Datastore" [(ngModel)]="selectedNodeType" inputId="opt2"></p-radioButton>
+                    </div>
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" value="communicationPattern" 
+                            label="Communication Pattern"
+                           (onClick)="checkedCommPattern()"
+                           [(ngModel)]="selectedNodeType" inputId="opt3">
+                       </p-radioButton>
+                    </div>
+                </div>
     </div>
 </div>
 

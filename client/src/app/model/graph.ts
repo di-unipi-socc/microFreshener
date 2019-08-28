@@ -272,13 +272,15 @@ export class Graph extends joint.dia.Graph {
 
     isMessageBroker(node: joint.shapes.microtosca.Node) {
         //return node instanceof joint.shapes.microtosca.Co;
-        return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MB";
-        // return node.attributes['type'] == "MB"; //microtosca.CommunicationPattern";
+        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MB";
+   
+         return node.attr('type/text')== "MB"; //microtosca.CommunicationPattern";
     }
 
     isMessageRouter(node: joint.dia.Cell) {
-        return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MR";
-        // return node.attributes['type'] == "MR"; //microtosca.CommunicationPattern";
+        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MR";
+        //  return node.attributes['type'] == "MR"; //microtosca.CommunicationPattern";
+        return node.attr('type/text')=="MR";
     }
 
     getSubgraphFromNodes(nodes: joint.dia.Cell[]) {

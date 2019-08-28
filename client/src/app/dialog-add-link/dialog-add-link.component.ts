@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
 import * as joint from 'jointjs';
+import { GraphService } from '../graph.service';
 
 
 @Component({
@@ -14,15 +15,19 @@ export class DialogAddLinkComponent implements OnInit {
   source:joint.shapes.microtosca.Node;
   target:joint.shapes.microtosca.Node;
 
+  show_properties: boolean = false;
+
   circuit_breaker: boolean = false;
   dynamic_discovery: boolean = false;
   tiemout: boolean = false;
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
+  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
-    this.source =  this.config.data.source;
+    this.source = this.config.data.source;
     this.target = this.config.data.target;
+    if(this.gs.getGraph().isService(this.target) && this.gs.getGraph().isService(this.source))
+      this.show_properties = true;
   }
 
   save(){

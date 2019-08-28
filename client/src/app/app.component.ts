@@ -91,6 +91,9 @@ export class AppComponent {
       },
     ];
   }
+
+
+
   chooseRandomLayout(){
     var item = this.layouts[Math.floor(Math.random()*this.layouts.length)];
     console.log(item);

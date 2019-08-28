@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand} from '../invoker/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand } from '../invoker/graph-command';
 import * as svgPanZoom from 'svg-pan-zoom';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
@@ -37,11 +37,11 @@ export class GraphEditorComponent implements OnInit {
 
     svgZoom;
 
-    selectdElement: joint.shapes.microtosca.Node;
+    selectdNode: joint.shapes.microtosca.Node;
 
     constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.graphInvoker = new GraphInvoker();
-        this.selectdElement = null;
+        this.selectdNode = null;
     }
 
 
@@ -56,7 +56,7 @@ export class GraphEditorComponent implements OnInit {
             height: c.outerHeight(),
             background: { color: 'light' },
             multiLinks: true,
-            clickThreshold: 1 ,
+            clickThreshold: 1,
             // restrictTranslate: true,
             gridSize: 1,
             defaultLink: new joint.shapes.microtosca.RunTimeLink(),
@@ -94,7 +94,7 @@ export class GraphEditorComponent implements OnInit {
             zoomScaleSensitivity: 0.5,
         });
 
-       
+
 
         this.paper.on('cell:pointerdown', () => {
             this.svgZoom.disablePan();
@@ -190,7 +190,7 @@ export class GraphEditorComponent implements OnInit {
     addNode() {
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
-            width: '80%'
+            width: '50%'
         });
         ref.onClose.subscribe((data) => {
             this.graphInvoker.executeCommand(data.command);
@@ -215,46 +215,53 @@ export class GraphEditorComponent implements OnInit {
         this.bindTeamMinimize();
         this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
-        
+
 
         //graph eventts
         this.bindGraphEvents();
     }
 
-    bindGraphEvents(){
-        this.gs.getGraph().on('add', cell=> { 
-            if(cell.isElement())
-                this.messageService.add({ severity: 'success', summary: "Node  ["+ cell.getName() + "] added to the model."});
-            else if (cell.isLink()){
+    bindGraphEvents() {
+        this.gs.getGraph().on('add', cell => {
+            if (cell.isElement())
+                this.messageService.add({ severity: 'success', summary: "Node added succesfully", detail: "Node  [" + cell.getName() + "] added." });
+            else if (cell.isLink()) {
                 var source = (<joint.shapes.microtosca.Node>cell.getSourceElement());
                 var target = (<joint.shapes.microtosca.Node>cell.getTargetElement());
-                this.messageService.add({ severity: 'success', summary: "Link  from  ["+ source.getName() + "] to  ["+ target.getName() +"] added."});
+                this.messageService.add({ severity: 'success', summary: "Link added succesfully", detail: "Link  from  [" + source.getName() + "] to  [" + target.getName() + "] added." });
             }
 
         })
-        this.gs.getGraph().on('remove', cell=> { 
-            if(cell.isElement())
-                this.messageService.add({ severity: 'warn', summary: "Node removed from the graoìph."});
-            else if (cell.isLink()){
-                this.messageService.add({ severity: 'warn', summary: "Link  removed from the graph."});
+        this.gs.getGraph().on('remove', cell => {
+            if (cell.isElement())
+                this.messageService.add({ severity: 'success', summary: "Node removed  succesfully.", detail: "Node  [" + cell.getName() + "] removed from the model." });
+            else if (cell.isLink()) {
+                // console.log(cell.getSourceElement());
+
+                // var source = <joint.shapes.microtosca.Node>cell.getSourceElement();
+                // console.log(source);
+                // var target = <joint.shapes.microtosca.Node>cell.getTargetElement();
+                // console.log(target);
+
+                this.messageService.add({ severity: 'success', summary: "Link removed  succesfully." }); //detail: "Link  from  ["+ source.getName() + "] to  ["+ target.getName() +"] removed."});
             }
         })
     }
 
-    bindKeyboardEvents(){
-        $(document).keydown((e)=>{
+    bindKeyboardEvents() {
+        $(document).keydown((e) => {
             var DELETE_KEY = 46;
             var ZETA_KEY = 90;
             var YPSILON_KEY = 89;
 
 
-            if(e.which == DELETE_KEY) {
+            if (e.which == DELETE_KEY) {
                 this.deleteSelected();
             }
-            if (e.keyCode == ZETA_KEY && e.ctrlKey){
+            if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
             }
-            if (e.keyCode == YPSILON_KEY && e.ctrlKey){
+            if (e.keyCode == YPSILON_KEY && e.ctrlKey) {
                 this.graphInvoker.redo();
             }
             // if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) {
@@ -265,9 +272,9 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
-    deleteSelected(){
-        if(this.selectdElement){
-            var node = this.selectdElement;
+    deleteSelected() {
+        if (this.selectdNode) {
+            var node = this.selectdNode;
             this.confirmationService.confirm({
                 message: 'Do you want to delete this node?',
                 header: 'Node Deletion Confirmation',
@@ -283,7 +290,7 @@ export class GraphEditorComponent implements OnInit {
         }
     }
 
-    removeLink(link:joint.shapes.microtosca.RunTimeLink){
+    removeLink(link: joint.shapes.microtosca.RunTimeLink) {
         this.confirmationService.confirm({
             message: 'Do you want to delete the link?',
             header: 'Link deletion',
@@ -293,51 +300,85 @@ export class GraphEditorComponent implements OnInit {
                 //this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
             },
             reject: () => {
-                 this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
             }
         });
 
     }
 
 
-    bindSingleClickBlank(){
+    bindSingleClickBlank() {
         this.paper.on("blank:pointerclick", (cellView, evt, x, y, ) => {
             console.log("click on blank");
-            if(this.selectdElement)
-                this.paper.findViewByModel(this.selectdElement).unhighlight();
+            if (this.selectdNode) {
+                this.paper.findViewByModel(this.selectdNode).unhighlight();
+                this.selectdNode = null;
+            }
         });
-    } 
-    
+    }
 
-    bindSingleClickCell(){
+
+    bindSingleClickCell() {
         this.paper.on("element:pointerclick", (cellView, evt, x, y, ) => {
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;
-            if(!this.gs.getGraph().isTeamGroup(node)){
-                if(this.selectdElement !== null && node.id !== this.selectdElement.id){
-                    const ref = this.dialogService.open(DialogAddLinkComponent, {
-                        data: {
-                            source: this.selectdElement,
-                            target: node
-                        },
-                        header: 'Add a link',
-                        width: '70%'
-                    });
-                    ref.onClose.subscribe((data) => {
-                        if(data){
-                            var command = new AddLinkCommand(this.gs.getGraph(), this.selectdElement, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                            this.graphInvoker.executeCommand(command);
-                            this.paper.findViewByModel(this.selectdElement).unhighlight();
-                            this.selectdElement = null;
-                        }
-                    });
-                    console.log("end adding link");
-                    
-                }else{
-                    cellView.highlight();
-                    this.selectdElement = node;
+            // team group cannot be clicked (both as source and target)
+            if (!this.gs.getGraph().isTeamGroup(node)) {
+                // selecting target node
+                if (this.selectdNode !== null && node.id !== this.selectdNode.id) {
+                    var add_link = true;
+                    // edge group cannot be a target node
+                    if (this.gs.getGraph().isEdgeGroup(node)) {
+                        add_link = false;
+                    }
+                    // link from commuincation pattern to Datastore cannotobe created
+                    if (this.gs.getGraph().isCommunicationPattern(this.selectdNode) && this.gs.getGraph().isDatastore(node))
+                        add_link = false;
+                    if (add_link) {
+                        const ref = this.dialogService.open(DialogAddLinkComponent, {
+                            data: {
+                                source: this.selectdNode,
+                                target: node
+                            },
+                            header: 'Add a link',
+                            width: '50%'
+                        });
+                        ref.onClose.subscribe((data) => {
+                            if (data) {
+                                var command = new AddLinkCommand(this.gs.getGraph(), this.selectdNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                this.graphInvoker.executeCommand(command);
+                                this.paper.findViewByModel(this.selectdNode).unhighlight();
+                                this.selectdNode = null;
+                            }
+                        });
+                        console.log("added link");
+                    }
+                    else {
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.selectdNode.getName()}] to [${node.getName()}] canot be created` });
+                    }
+                }
+                else {
+                    // selecting source node
+                    var can_select_source_node = true;
+                    // message broker cannot be source for a link
+                    if (this.gs.getGraph().isMessageBroker(node)) {
+                        can_select_source_node = false;
+                    }
+                    // message broker cannot be source for a link
+                    if (this.gs.getGraph().isDatastore(node)) {
+                        can_select_source_node = false;
+                    }
+                    if (can_select_source_node) {
+                        cellView.highlight();
+                        this.selectdNode = node;
+                    }
+                    else {
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+                    }
+
+
                 }
             }
         });
@@ -391,7 +432,7 @@ export class GraphEditorComponent implements OnInit {
             }
             else if (this.gs.getGraph().isTeamGroup(cell))
                 cell.showIcons();
-            
+
         })
 
         this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
@@ -498,7 +539,7 @@ export class GraphEditorComponent implements OnInit {
                                 cellViewBelow.model.embed(cell);
                             }
                             // DIDO: fits the cells in the view
-                            cellViewBelow.model.fitEmbeds({ padding:20});
+                            cellViewBelow.model.fitEmbeds({ padding: 20 });
 
                         }
 
@@ -715,7 +756,7 @@ export class GraphEditorComponent implements OnInit {
                     }],
                     distance: 60,
                     offset: 0,
-                    action:  () =>{
+                    action: () => {
                         this.removeLink(linkView.model);
                     }
                 })
