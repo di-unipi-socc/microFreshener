@@ -1,12 +1,19 @@
 {
     "name": "hello-world",
-    "nodes": [],
+    "nodes": [
+        {
+            "name": "AD",
+            "type": "service"
+        }
+    ],
     "links": [],
     "groups": [
         {
             "name": "adad",
             "type": "edgegroup",
-            "members": []
+            "members": [
+                "AD"
+            ]
         }
     ]
 }
