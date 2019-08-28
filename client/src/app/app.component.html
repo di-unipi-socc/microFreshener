@@ -7,41 +7,39 @@
                 <h1>{{title}}</h1>
             </div>
 
-            <div class="ui-toolbar-group-right" >
-            <div class="content-section implementation">
-                <p-splitButton label="Load examples"   [model]="examples"></p-splitButton>
-                
-                <p-splitButton  icon="pi pi-sitemap" [model]="layouts"></p-splitButton>
-                
-                <button pButton icon="pi pi-plus" type="button" style="font-size:
-                1em"
-                label="Shows" class="ui-button-success" (click)="selectTeam()"></button>
+            <div class="ui-toolbar-group-right" style="padding-top: 30px">
+                <div class="p-grid p-align-stretch vertical-container">
+                        <p-splitButton label="Load examples"  (onClick)="onDropdownClick" [model]="examples"></p-splitButton>
+                        
+                        <p-splitButton  icon="pi pi-sitemap" label="Layout" (onClick)="chooseRandomLayout()" [model]="layouts"></p-splitButton>
+                        
+                        <button pButton icon="pi pi-eye" type="button" style="font-size:
+                        1em"
+                        label="View" class="ui-button-primary" (click)="selectTeam()"></button>
 
-                <button pButton type="button" (click)="analyse()" icon="pi pi-search"></button>
-                
-                <button cslass="ui-button-primary" pButton type="button" (click)="save()" icon="pi pi-save"></button>
+                        <button pButton type="button" label="Analyse" (click)="analyse()" icon="pi pi-search"></button>
+                        
+                        <button cslass="ui-button-primary" label="Save" pButton type="button" (click)="save()" icon="pi pi-save"></button>
 
-                    
-                <a pButton [attr.href]="hrefDownload" icon="pi pi-download" class="ui-button-info"></a>
+                            
+                        <a pButton [attr.href]="hrefDownload" label="Export" icon="pi pi-download" class="ui-button-info"></a>
 
-                <p-fileUpload mode="basic" 
-                            name="graph"
-                            [url]="urlUpload" 
-                            accept=".yml"
-                            (onUpload)="onUpload($event)"
-                            chooseLabel="Import">
-                </p-fileUpload>
-                
-                 <!-- pop up menu -->
-                <p-menu #menu [popup]="true" [model]="items"></p-menu>
+                        <p-fileUpload mode="basic" 
+                                    name="graph"
+                                    [url]="urlUpload" 
+                                    accept=".yml"
+                                    (onUpload)="onUpload($event)"
+                                    chooseLabel="Import">
+                        </p-fileUpload>
 
-                <button type="button"  class="ui-button-raised ui-button-secondary" pButton icon="pi pi-user" (click)="menu.toggle($event)">
-                </button>
-            </div>
+                          <!-- pop up menu -->
+                    <p-menu #menu [popup]="true" [model]="items"></p-menu>
 
+                    <button type="button" style="padding-left: 30px" class="ui-button-raised ui-button-secondary" pButton icon="pi pi-user" (click)="menu.toggle($event)">
+                    </button>
+                </div>
             </div>
         </p-toolbar>
-      
     </div>
 
     <!-- show the messages in a toast: MessageService.add(Message) -->

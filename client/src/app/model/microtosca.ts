@@ -673,8 +673,10 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            fill: "none",
-            stroke: '#7e7e77',
+            // fill: "none",
+            fill:"#E5E7E9",
+            fillOpacity:"0.4",
+            stroke: '#7e7e77', 
             strokeWidth: 2,
             strokeDasharray: "10,5",
             rx: 10,
@@ -773,8 +775,10 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         getIgnoreAlwaysSmells: function () {
             return [];
         },
+
         addMember: function(node:joint.shapes.microtosca.Node){
             this.embed(node);
+            this.toBack();
             this.fitEmbeds({ padding: 20 });
         },
         getMembers: function () {
