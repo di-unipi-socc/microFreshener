@@ -2,12 +2,12 @@
     "name": "hello-world",
     "nodes": [
         {
-            "name": "shipping",
-            "type": "service"
-        },
-        {
             "name": "order_db",
             "type": "datastore"
+        },
+        {
+            "name": "order",
+            "type": "service"
         },
         {
             "name": "rabbitmq",
@@ -16,45 +16,9 @@
         {
             "name": "Api gateway",
             "type": "messagerouter"
-        },
-        {
-            "name": "order",
-            "type": "service"
         }
     ],
     "links": [
-        {
-            "source": "shipping",
-            "target": "order_db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "shipping",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "Api gateway",
-            "target": "shipping",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "shipping",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
         {
             "source": "order",
             "target": "order_db",
@@ -77,17 +41,16 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "Api gateway",
-                "order"
+                "order",
+                "Api gateway"
             ]
         },
         {
             "name": "team-primo",
             "type": "squadgroup",
             "members": [
-                "shipping",
-                "order_db",
-                "order"
+                "order",
+                "order_db"
             ]
         },
         {
