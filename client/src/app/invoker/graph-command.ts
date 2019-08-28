@@ -79,6 +79,7 @@ export class AddMessageRouterCommand implements Command {
     }
 
     unexecute() {
+
         this.node.remove();
     }
 }
@@ -169,6 +170,7 @@ export class AddLinkCommand implements Command {
     }
 
     execute() {
+        
         this.link = this.graph.addRunTimeInteraction(this.source, this.target, this.t, this.cb, this.dd);
     }
 
@@ -178,3 +180,23 @@ export class AddLinkCommand implements Command {
 
 }
 
+
+export class AddTeamGroupCommand implements Command {
+
+    graph: Graph;
+    team_name: string;
+
+    constructor(graph: Graph, team_name:string) {
+        this.graph = graph;
+        this.team_name = team_name;
+    }
+
+    execute() {
+        this.graph.addTeamGroup(this.team_name);
+    }
+
+    unexecute() {
+        this.graph.getGroup(this.team_name).remove();
+    }
+
+}

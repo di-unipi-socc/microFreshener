@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand } from '../invoker/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand } from '../invoker/graph-command';
 import * as svgPanZoom from 'svg-pan-zoom';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
@@ -123,7 +123,7 @@ export class GraphEditorComponent implements OnInit {
     }
 
     clear() {
-        this.gs.getGraph().clear();
+        this.gs.getGraph().clearGraph();
     }
 
     fitContent() {
@@ -132,7 +132,7 @@ export class GraphEditorComponent implements OnInit {
         //     this.svgZoom.fit();
         //     this.svgZoom.center();
         //   })
-        this.paper.scaleContentToFit();// {padding:2}
+        this.paper.scaleContentToFit();
     }
 
     createSampleGraph() {
@@ -156,16 +156,21 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
         // squads
-        var s1 = this.gs.getGraph().addTeamGroup("team-primo", [s, o, odb]);
-        this.gs.getGraph().addTeamGroup("team-secondo", [cp, gw]);
+        var s1 = this.gs.getGraph().addTeamGroup("team-primo");
+        s1.addMember(s);
+        s1.addMember(o);
+        s1.addMember(odb);
 
+        var t2 =  this.gs.getGraph().addTeamGroup("team-secondo");
+        t2.addMember(gw);
+        t2.addMember(cp);
         // this.gs.getGraph().showOnlyTeam(s1);
 
         // gateway interaction
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
-        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+        let edge = this.gs.getGraph().addEdgeGroup("edgenodes",[o,gw]);
 
     }
 
@@ -182,7 +187,7 @@ export class GraphEditorComponent implements OnInit {
             // height: '50%'
         });
         ref.onClose.subscribe((data) => {
-            this.gs.getGraph().addTeamGroup(data.name, data.nodes);
+            this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
         });
     }
@@ -525,6 +530,9 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
             var cell = cellView.model;
             if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
+                console.log(cell.getBBox().center());
+                console.log(evt);
+
                 var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
 
                 if (cellViewsBelow.length) {
@@ -539,7 +547,7 @@ export class GraphEditorComponent implements OnInit {
                                 cellViewBelow.model.embed(cell);
                             }
                             // DIDO: fits the cells in the view
-                            cellViewBelow.model.fitEmbeds({ padding: 20 });
+                            cellViewBelow.model.fitEmbeds({ padding: 40 });
 
                         }
 

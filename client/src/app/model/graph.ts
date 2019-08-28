@@ -129,14 +129,10 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
     }
 
-    addTeamGroup(name: string, nodes: joint.shapes.microtosca.Node[]): joint.shapes.microtosca.SquadGroup {
+    addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
         g.addTo(this);
-
-        nodes.forEach(node => {
-            g.addMember(node);
-        });
         return g;
     }
 
@@ -304,7 +300,7 @@ export class Graph extends joint.dia.Graph {
             node.position(node.get('posXRelTeam'), node.get("posYRelTeam"), { parentRelative: true });
         })
         team.resize(100, 100);
-        team.fitEmbeds({ padding: 20 })
+        team.fitEmbeds({ padding: 40 })
     }
 
     minimizeTeam(team: joint.shapes.microtosca.SquadGroup) {
@@ -324,7 +320,7 @@ export class Graph extends joint.dia.Graph {
         })
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
-        team.fitEmbeds({ padding: 20 })
+        team.fitEmbeds({ padding: 40 })
     }
 
     minimizeAllTeam() {
@@ -420,7 +416,11 @@ export class Graph extends joint.dia.Graph {
                 group.members.forEach(member => {
                     nodes.push(this.getNode(member))
                 });
-                this.addTeamGroup(group_name, nodes);
+                var team = this.addTeamGroup(group_name);
+                nodes.forEach(node => {
+                    team.addMember(node);
+                });
+
             }
             else
                 throw new Error(`Group type ${group_type} not recognized`);
@@ -488,6 +488,11 @@ export class Graph extends joint.dia.Graph {
         return data;
     }
 
+    clearGraph(){
+        this.clear();
+        this.addEdgeGroup("adad",[]);
+    }
+
     applyLayout(rankdir: string) {
         var nodeSepator = 50;
         var edgeSepator = 50;
@@ -553,5 +558,6 @@ export class Graph extends joint.dia.Graph {
         }
 
     }
+
 
 }

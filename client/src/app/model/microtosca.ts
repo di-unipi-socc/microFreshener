@@ -674,7 +674,9 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            // fill: "none",
+            minWidth:"200px",
+            // width: '150pc',
+            // height: '100%',
             fill:"#E5E7E9",
             fillOpacity:"0.4",
             stroke: '#7e7e77', 
@@ -782,7 +784,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         addMember: function(node:joint.shapes.microtosca.Node){
             this.embed(node);
             this.toBack();
-            this.fitEmbeds({ padding: 20 });
+            this.fitEmbeds({ padding: 40});
         },
         getMembers: function () {
             var members = [];
