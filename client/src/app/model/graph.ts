@@ -1,7 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import './microtosca';
-import { group } from 'd3';
 
 export class Graph extends joint.dia.Graph {
     name: string;

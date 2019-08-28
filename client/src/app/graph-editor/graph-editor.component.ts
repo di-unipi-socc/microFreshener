@@ -234,9 +234,9 @@ export class GraphEditorComponent implements OnInit {
         })
         this.gs.getGraph().on('remove', cell=> { 
             if(cell.isElement())
-                this.messageService.add({ severity: 'warn', summary: "Node removed from the model."});
+                this.messageService.add({ severity: 'warn', summary: "Node removed from the graoìph."});
             else if (cell.isLink()){
-                this.messageService.add({ severity: 'warn', summary: "Link  removed from the model."});
+                this.messageService.add({ severity: 'warn', summary: "Link  removed from the graph."});
             }
         })
     }
@@ -315,32 +315,30 @@ export class GraphEditorComponent implements OnInit {
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;
-            console.log(node);
-
-            if(this.selectdElement !== null && node.id !== this.selectdElement.id){
-                
-                
-                const ref = this.dialogService.open(DialogAddLinkComponent, {
-                    data: {
-                        source: this.selectdElement,
-                        target: node
-                    },
-                    header: 'Add a link',
-                    width: '70%'
-                });
-                ref.onClose.subscribe((data) => {
-                    if(data){
-                        var command = new AddLinkCommand(this.gs.getGraph(), this.selectdElement, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                        this.graphInvoker.executeCommand(command);
-                        this.paper.findViewByModel(this.selectdElement).unhighlight();
-                        this.selectdElement = null;
-                    }
-                });
-                console.log("end adding link");
-                
-            }else{
-                cellView.highlight();
-                this.selectdElement = node;
+            if(!this.gs.getGraph().isTeamGroup(node)){
+                if(this.selectdElement !== null && node.id !== this.selectdElement.id){
+                    const ref = this.dialogService.open(DialogAddLinkComponent, {
+                        data: {
+                            source: this.selectdElement,
+                            target: node
+                        },
+                        header: 'Add a link',
+                        width: '70%'
+                    });
+                    ref.onClose.subscribe((data) => {
+                        if(data){
+                            var command = new AddLinkCommand(this.gs.getGraph(), this.selectdElement, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                            this.graphInvoker.executeCommand(command);
+                            this.paper.findViewByModel(this.selectdElement).unhighlight();
+                            this.selectdElement = null;
+                        }
+                    });
+                    console.log("end adding link");
+                    
+                }else{
+                    cellView.highlight();
+                    this.selectdElement = node;
+                }
             }
         });
     }
