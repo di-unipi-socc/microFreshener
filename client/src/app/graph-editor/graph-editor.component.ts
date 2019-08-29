@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 import { GraphInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand } from '../invoker/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
 import * as svgPanZoom from 'svg-pan-zoom';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
@@ -208,7 +208,6 @@ export class GraphEditorComponent implements OnInit {
 
         this.bindDoubleClickCell();
         this.bindSingleClickCell();
-        this.bindContextMenuCell();
 
         this.bindMouseEnterLink();
         this.bindMouseOverNode();
@@ -352,7 +351,7 @@ export class GraphEditorComponent implements OnInit {
                         });
                         ref.onClose.subscribe((data) => {
                             if (data) {
-                                var command = new AddLinkCommand(this.gs.getGraph(), this.selectdNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                var command = new AddLinkCommand(this.gs.getGraph(), this.selectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
                                 this.graphInvoker.executeCommand(command);
                                 this.paper.findViewByModel(this.selectdNode).unhighlight();
                                 this.selectdNode = null;
@@ -389,14 +388,6 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
-    bindContextMenuCell() {
-        this.paper.on("cell:contextmenu", (cellView, evt, x, y, ) => {
-            evt.preventDefault();
-            console.log("Context menu");
-        });
-
-    }
-
     bindDoubleClickCell() {
         this.paper.on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
             evt.preventDefault();
@@ -407,21 +398,57 @@ export class GraphEditorComponent implements OnInit {
 
     bindClickDeleteNode() {
         // delete a node event
-        this.paper.on("node:delete:pointerdown", (cellView, evt, x, y, ) => {
+        this.paper.on("node:service:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
-
             this.confirmationService.confirm({
-                message: 'Do you want to delete this node?',
+                message: 'Do you want to delete this service?',
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+                   // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
+                    this.graphInvoker.executeCommand(new RemoveServiceCommand(this.gs.getGraph(), node.getName()));
                 },
                 reject: () => {
                     node.hideIcons();
                     this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+                }
+            });
+
+        })
+
+        this.paper.on("node:communicationpattern:delete", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
+            var node = cellView.model;
+            this.confirmationService.confirm({
+                message: 'Do you want to delete this communication pattern?',
+                header: 'Node Deletion Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.gs.getGraph(), node.getName()));
+                },
+                reject: () => {
+                    node.hideIcons();
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Communication pattern ${node.getName()} not deleted` });
+                }
+            });
+
+        })
+
+        this.paper.on("node:datastore:delete", (cellView, evt, x, y, ) => {
+            evt.stopPropagation();
+            var node = cellView.model;
+            this.confirmationService.confirm({
+                message: 'Do you want to delete this datastore?',
+                header: 'Node Deletion Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                   // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
+                    this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.gs.getGraph(), node.getName()));
+                },
+                reject: () => {
+                    node.hideIcons();
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Datastore ${node.getName()} not deleted` });
                 }
             });
 
@@ -519,9 +546,12 @@ export class GraphEditorComponent implements OnInit {
             }
 
             if (cell.get('parent')) {
-                var parent = this.gs.getGraph().getCell(cell.get('parent'))
-                parent.unembed(cell);
-                // (<joint.dia.Element>parent).fitEmbeds({padding:20});
+                //unembed cell from the parent
+                var member = <joint.shapes.microtosca.Node>cell;
+                var team = this.gs.getGraph().getTeamOfNode(member);
+                var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                this.graphInvoker.executeCommand(command);
+                this.messageService.add({ severity: 'success', summary: 'Member removed from to team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
             }
         });
 
@@ -530,8 +560,6 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
             var cell = cellView.model;
             if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
-                console.log(cell.getBBox().center());
-                console.log(evt);
 
                 var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
 
@@ -544,11 +572,12 @@ export class GraphEditorComponent implements OnInit {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
                         if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)) {
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                                cellViewBelow.model.embed(cell);
+                                var team = <joint.shapes.microtosca.SquadGroup> cellViewBelow.model;
+                                var member = <joint.shapes.microtosca.Node>cell;
+                                var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                                this.graphInvoker.executeCommand(command);
+                                this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
                             }
-                            // DIDO: fits the cells in the view
-                            cellViewBelow.model.fitEmbeds({ padding: 40 });
-
                         }
 
                     }

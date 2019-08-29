@@ -126,7 +126,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     getIngoingLinks(node: joint.shapes.microtosca.Node) {
-        return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { inbound: true });
+        return <joint.shapes.microtosca.RunTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
     }
 
     addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
@@ -135,6 +135,10 @@ export class Graph extends joint.dia.Graph {
         g.addTo(this);
         return g;
     }
+
+/*     unembedMemberFromTeamGroup(team:joint.shapes.microtosca.SquadGroup){
+        team.getMembers().forEach(node => team.unembed(node));
+    } */
 
     addEdgeGroup(name: string, nodes: joint.shapes.microtosca.Node[]) {
         let g = new joint.shapes.microtosca.EdgeGroup();

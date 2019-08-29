@@ -1,7 +1,7 @@
 import * as joint from 'jointjs';
 import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
 
-let NODE_LABEL_FONT_SIZE = 20;
+let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SHARED_PERSISTENCY = "white";
 let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "white"; //"#00ff00";
@@ -41,9 +41,11 @@ declare module 'jointjs' {
             class CommunicationPattern extends Node {
                 setType(ctype: string): void;
                 getType(): string;
+                getType(): string;
             }
             class Group extends Root {
                 addMember(node:joint.shapes.microtosca.Node): void
+                removeMember(node:joint.shapes.microtosca.Node): void
                 getMembers(): joint.shapes.microtosca.Root[]
                 getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
 
@@ -89,8 +91,8 @@ joint.dia.Element.define('microtosca.Service', {
             refY: '100%',
             refY2: 15,
             fontSize: NODE_LABEL_FONT_SIZE,
-            refWidth: '75%',
-            refHeight: '75%',
+            //refWidth: '75%',
+            //refHeight: '75%',
             fill: 'black',
             text: '',
         },
@@ -98,7 +100,7 @@ joint.dia.Element.define('microtosca.Service', {
             ref: 'body',
             refX: '80%',
             refY: '0%',
-            event: 'node:delete:pointerdown',
+            event: 'node:service:delete',
             visibility: "hidden",
         },
         icon: {
@@ -306,7 +308,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
             ref: 'body',
             refX: '80%',
             refY: '0%',
-            event: 'node:delete:pointerdown',
+            event: 'node:datastore:delete',
             visibility: "hidden",
         },
         icon: {
@@ -467,7 +469,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             ref: 'body',
             refX: '80%',
             refY: '0%',
-            event: 'node:delete:pointerdown',
+            event: 'node:communicationpattern:delete',
             visibility: "hidden",
         },
         icon: {
@@ -784,6 +786,11 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         addMember: function(node:joint.shapes.microtosca.Node){
             this.embed(node);
             this.toBack();
+            this.fitEmbeds({ padding: 40});
+        },
+        removeMember: function(node:joint.shapes.microtosca.Node){
+            this.unembed(node);
+            //node.toFront();
             this.fitEmbeds({ padding: 40});
         },
         getMembers: function () {
