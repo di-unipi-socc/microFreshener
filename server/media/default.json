@@ -2,17 +2,100 @@
     "name": "hello-world",
     "nodes": [
         {
-            "name": "AD",
+            "name": "shipping",
             "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "datastore"
+        },
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "messagebroker"
+        },
+        {
+            "name": "Api gateway",
+            "type": "messagerouter"
         }
     ],
-    "links": [],
+    "links": [
+        {
+            "source": "shipping",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": true,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Api gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        }
+    ],
     "groups": [
         {
-            "name": "adad",
+            "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "AD"
+                "order",
+                "Api gateway"
+            ]
+        },
+        {
+            "name": "team-primo",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "order",
+                "order_db"
+            ]
+        },
+        {
+            "name": "team-secondo",
+            "type": "squadgroup",
+            "members": [
+                "Api gateway",
+                "rabbitmq"
             ]
         }
     ]
