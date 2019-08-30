@@ -14,13 +14,13 @@ topology_template:
     orders:
       type: micro.nodes.Service
       requirements:
-      - interaction: ordersdb
+      - interaction: orders-db
       - interaction: user
       - interaction: payment
       - interaction: carts
       - interaction: shipping
 
-    ordersdb:
+    orders-db:
       type: micro.nodes.Datastore
     payment:
       type: micro.nodes.Service

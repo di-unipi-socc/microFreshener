@@ -32,6 +32,14 @@
                                     chooseLabel="Import">
                         </p-fileUpload>
 
+                        <p-fileUpload mode="basic" 
+                                name="kubernetes"
+                                [url]="urlRefine" 
+                                accept=".yml"
+                                (onUpload)="onUploadKubernetes($event)"
+                                chooseLabel="Import Kubernetes">x
+                        </p-fileUpload>
+
                           <!-- pop up menu -->
                     <p-menu #menu [popup]="true" [model]="items"></p-menu>
 

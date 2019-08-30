@@ -161,7 +161,7 @@ export class GraphEditorComponent implements OnInit {
         s1.addMember(o);
         s1.addMember(odb);
 
-        var t2 =  this.gs.getGraph().addTeamGroup("team-secondo");
+        var t2 = this.gs.getGraph().addTeamGroup("team-secondo");
         t2.addMember(gw);
         t2.addMember(cp);
         // this.gs.getGraph().showOnlyTeam(s1);
@@ -170,7 +170,7 @@ export class GraphEditorComponent implements OnInit {
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
-        let edge = this.gs.getGraph().addEdgeGroup("edgenodes",[o,gw]);
+        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
 
     }
 
@@ -333,11 +333,15 @@ export class GraphEditorComponent implements OnInit {
                 // selecting target node
                 if (this.selectdNode !== null && node.id !== this.selectdNode.id) {
                     var add_link = true;
-                    // edge group cannot be a target node
+                    // disable link from <any> to datastore
                     if (this.gs.getGraph().isEdgeGroup(node)) {
                         add_link = false;
                     }
-                    // link from commuincation pattern to Datastore cannotobe created
+                    // disable link from edge to datastore
+                    if (this.gs.getGraph().isEdgeGroup(this.selectdNode) && this.gs.getGraph().isDatastore(node)) {
+                        add_link = false;
+                    }
+                    // disable link from communication pattern to Datastore
                     if (this.gs.getGraph().isCommunicationPattern(this.selectdNode) && this.gs.getGraph().isDatastore(node))
                         add_link = false;
                     if (add_link) {
@@ -360,7 +364,7 @@ export class GraphEditorComponent implements OnInit {
                         console.log("added link");
                     }
                     else {
-                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.selectdNode.getName()}] to [${node.getName()}] canot be created` });
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.selectdNode.getName()}] to [${node.getName()}] cannot be created` });
                     }
                 }
                 else {
@@ -381,8 +385,6 @@ export class GraphEditorComponent implements OnInit {
                     else {
                         this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
                     }
-
-
                 }
             }
         });
@@ -406,7 +408,7 @@ export class GraphEditorComponent implements OnInit {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                   // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
+                    // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
                     this.graphInvoker.executeCommand(new RemoveServiceCommand(this.gs.getGraph(), node.getName()));
                 },
                 reject: () => {
@@ -443,7 +445,7 @@ export class GraphEditorComponent implements OnInit {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                   // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
+                    // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
                     this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.gs.getGraph(), node.getName()));
                 },
                 reject: () => {
@@ -572,7 +574,7 @@ export class GraphEditorComponent implements OnInit {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
                         if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)) {
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                                var team = <joint.shapes.microtosca.SquadGroup> cellViewBelow.model;
+                                var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
                                 var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
                                 this.graphInvoker.executeCommand(command);

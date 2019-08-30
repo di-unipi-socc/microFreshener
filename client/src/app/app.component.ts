@@ -25,6 +25,8 @@ export class AppComponent {
 
   hrefDownload = environment.serverUrl + '/api/export';
   urlUpload = environment.serverUrl + '/api/import';
+  urlRefine = environment.serverUrl + '/api/refine';
+
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
 	console.log(environment.serverUrl);
@@ -135,7 +137,7 @@ export class AppComponent {
       width: '70%'
     });
     ref.onClose.subscribe((data) => {
-      this._showSmells()
+      this._showSmells();
       this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: data });
     });
   }
@@ -170,7 +172,11 @@ export class AppComponent {
 
   onUpload(event) {
     console.log(event.files);
-     this.download();
+    this.download();
+  }
+
+  onUploadKubernetes(){
+    this.download();
   }
 
   download() {
