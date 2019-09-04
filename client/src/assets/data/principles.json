@@ -43,18 +43,8 @@
             "name": "Decentralization",
             "smells": [
                 {
-                    "id": 5,
-                    "name": "ESB misuse",
-                    "description": ""
-                },
-                {
                     "id": 6,
                     "name": "Shared Persistency",
-                    "description": ""
-                },
-                {
-                    "id": 7,
-                    "name": "Single Layer Team",
                     "description": ""
                 }
             ]

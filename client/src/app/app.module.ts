@@ -48,6 +48,7 @@ import {CardModule} from 'primeng/card';
 import {InputSwitchModule} from 'primeng/inputswitch';
 import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './dialog-add-link/dialog-add-link.component';
+import { DialogRefineComponent } from './dialog-refine/dialog-refine.component';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import { DialogAddLinkComponent } from './dialog-add-link/dialog-add-link.compon
     DialogAddTeamComponent,
     DialogSelectTeamComponent,
     DialogAddLinkComponent,
+    DialogRefineComponent,
   ],
   imports: [
     BrowserModule,
@@ -109,7 +111,8 @@ import { DialogAddLinkComponent } from './dialog-add-link/dialog-add-link.compon
     DialogAddNodeComponent,
     DialogAddTeamComponent,
     DialogSelectTeamComponent,
-    DialogAddLinkComponent
+    DialogAddLinkComponent,
+    DialogRefineComponent
   ]
 })
 export class AppModule { }

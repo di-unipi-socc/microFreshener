@@ -17,10 +17,11 @@
                         1em"
                         label="View" class="ui-button-primary" (click)="selectTeam()"></button>
 
+                        <button pButton type="button" label="Refine" (click)="refine()" icon="pi pi-refresh"></button>
+
                         <button pButton type="button" label="Analyse" (click)="analyse()" icon="pi pi-search"></button>
                         
                         <button cslass="ui-button-primary" label="Save" pButton type="button" (click)="save()" icon="pi pi-save"></button>
-
                             
                         <a pButton [attr.href]="hrefDownload" label="Export" icon="pi pi-download" class="ui-button-info"></a>
 
@@ -32,23 +33,6 @@
                                     chooseLabel="Import">
                         </p-fileUpload>
 
-                        <p-fileUpload mode="basic" 
-                                name="kubernetes"
-                                [url]="urlRefineKubernetes" 
-                                accept=".yml"
-                                (onUpload)="onUploadKubernetes($event)"
-                                chooseLabel="Import Kubernetes">x
-                        </p-fileUpload>
-
-                        <p-fileUpload mode="basic" 
-                                name="istio"
-                                [url]="urlRefineIstio" 
-                                accept=".yml"
-                                (onUpload)="onUploadIstio($event)"
-                                chooseLabel="Import Istio">x
-                        </p-fileUpload>
-
-                          <!-- pop up menu -->
                     <p-menu #menu [popup]="true" [model]="items"></p-menu>
 
                     <button type="button" style="padding-left: 30px" class="ui-button-raised ui-button-secondary" pButton icon="pi pi-user" (click)="menu.toggle($event)">

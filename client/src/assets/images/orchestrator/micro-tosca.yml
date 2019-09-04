@@ -1,0 +1,176 @@
+tosca_definitions_version: micro_tosca_yaml_1.1
+description: micro.tosca
+imports:
+- micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
+topology_template:
+  node_templates:
+    front-end:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kcarts
+      - interaction: kcatalogue
+      - interaction:
+          node: korders
+          relationship: c
+      - interaction: kuser
+    orders:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kcarts
+      - interaction: korders-db
+      - interaction: kpayment
+      - interaction: kshipping
+      - interaction: kuser
+    orders-db:
+      type: micro.nodes.Datastore
+    payment:
+      type: micro.nodes.Service
+    user:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kuser-db
+    carts:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kcarts-db
+    carts-db:
+      type: micro.nodes.Datastore
+    catalogue-db:
+      type: micro.nodes.Datastore
+    catalogue:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kcatalogue-db
+    user-db:
+      type: micro.nodes.Datastore
+    shipping:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: krabbitmq
+    rabbitmq:
+      type: micro.nodes.MessageBroker
+    queue-master:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: krabbitmq
+    edge-router:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction: kfront-end
+    kcarts-db:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: carts-db
+          relationship: d
+    kcarts:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: carts
+          relationship: d
+    kcatalogue-db:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: catalogue-db
+          relationship: d
+    kcatalogue:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: catalogue
+          relationship: d
+    kfront-end:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: front-end
+          relationship: d
+    korders-db:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: orders-db
+          relationship: d
+    korders:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: orders
+          relationship: d
+    kpayment:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: payment
+          relationship: d
+    kqueue-master:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: queue-master
+          relationship: d
+    krabbitmq:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: rabbitmq
+          relationship: d
+    kshipping:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: shipping
+          relationship: d
+    kuser-db:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: user-db
+          relationship: d
+    kuser:
+      type: micro.nodes.MessageRouter
+      requirements:
+      - interaction:
+          node: user
+          relationship: d
+  groups:
+    kedge:
+      type: micro.groups.Edge
+      members:
+      - kfront-end
+  relationship_templates:
+    t:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+    c:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+    d:
+      type: micro.relationships.InteractsWith
+      properties:
+        dynamic_discovery: true
+    tc:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+    td:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        dynamic_discovery: true
+    cd:
+      type: micro.relationships.InteractsWith
+      properties:
+        circuit_breaker: true
+        dynamic_discovery: true
+    tcd:
+      type: micro.relationships.InteractsWith
+      properties:
+        timeout: true
+        circuit_breaker: true
+        dynamic_discovery: true

@@ -54,7 +54,6 @@ export class DialogAnalysisComponent implements OnInit {
     let selectedSmells: Smell[] = [];
     this.principles.forEach(principle=>{
       principle.smells.forEach(smell => {
-        // this.selectedSmells.push(smell);
         if(! ids.includes(smell.id)){
           selectedSmells.push(smell);
         }
@@ -68,7 +67,6 @@ export class DialogAnalysisComponent implements OnInit {
   }
 
   orchestratorSelect(evt) {
-   
     this.selectedSmells = this.discardSmellsWithIDIn(evt.value.resolvedSmells); 
     console.log(this.selectedSmells);
   }

@@ -7,6 +7,7 @@ import { MenuItem } from 'primeng/api';
 import { AnalyserService } from './analyser.service';
 import { environment } from '../environments/environment';
 import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
+import { DialogRefineComponent } from './dialog-refine/dialog-refine.component';
 
 @Component({
   selector: 'app-root',
@@ -27,8 +28,6 @@ export class AppComponent {
   urlUpload = environment.serverUrl + '/api/import';
   urlRefineKubernetes = environment.serverUrl + '/api/refine';
   urlRefineIstio = environment.serverUrl + '/api/refine/istio';
-
-
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
 	console.log(environment.serverUrl);
@@ -133,6 +132,16 @@ export class AppComponent {
     });
 
   }
+  refine(){
+    const ref = this.dialogService.open(DialogRefineComponent, {
+      header: 'Refine the model',
+      width: '70%'
+    });
+    ref.onClose.subscribe((data) => {
+      
+    });
+  }
+
   analyse() {
     const ref = this.dialogService.open(DialogAnalysisComponent, {
       header: 'Check the principles to analyse',
@@ -176,15 +185,6 @@ export class AppComponent {
     console.log(event.files);
     this.download();
   }
-
-  onUploadKubernetes(){
-    this.download();
-  }
-
-  onUploadIstio(){
-    this.download();
-  }
-
   download() {
     this.gs.dowloadGraph()
       .subscribe((data) => {

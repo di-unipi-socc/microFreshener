@@ -56,7 +56,8 @@ export class AnalyserService {
   getPrinciplesToAnalyse() {
     return this.http.get<any>('assets/data/principles.json')
       .toPromise()
-      .then(res => (<Principle[]>res.data).filter(principle => principle.id != 1))
+      .then(res => (<Principle[]>res.data)
+      .filter(principle => principle.id != 1))
   }
 
   getPrinciplesAndSmells() {
@@ -76,7 +77,6 @@ export class AnalyserService {
       .toPromise()
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
-
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids: number[] = smells.map(smell => smell.id);

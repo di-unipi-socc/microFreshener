@@ -7,19 +7,14 @@
                 (click)="saveName()"
                 class="ui-button-success">
             </button>
-            <button pButton icon="pi pi-plus" type="button" style="font-size:
-                1em"
-                label="Node" class="ui-button-success" (click)="addNode()"></button>
-            <button pButton icon="pi pi-plus" type="button" style="font-size:
-                1em"
-                label="Team" class="ui-button-success" (click)="addTeam()"></button>
-            <button pButton type="button" icon="pi pi-undo" label="undo"
-                (click)="undoRefactoring()"></button>
-            <button pButton type="button" label="redo"
-                (click)="redoRefactoring()"></button>
+            <button pButton icon="pi pi-plus" type="button"  label="Node" class="ui-button-success" (click)="addNode()"></button>
+            <button pButton icon="pi pi-plus" type="button"  label="Team" class="ui-button-success" (click)="addTeam()"></button>
+
+            <button pButton icon="pi pi-undo" type="button"  label="undo" (click)="undoRefactoring()"></button>
+            <button pButton icon="pi pi-replay" type="button" label="redo" (click)="redoRefactoring()"></button>
 
             <button pButton type="button" label="clear" icon="pi  pi-trash" (click)="clear()"></button>
-            <button pButton type="button" label="fit" (click)="fitContent()"></button>
+            <button pButton icon="pi pi-align-justify" type="button" label="fit" (click)="fitContent()"></button>
 
         </div>
     </div>
