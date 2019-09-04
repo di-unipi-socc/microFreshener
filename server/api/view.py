@@ -21,7 +21,7 @@ from microfreshener.core.exporter import JSONExporter, YMLExporter
 from microfreshener.core.model import MicroToscaModel
 from microfreshener.core.model import Service, Datastore, CommunicationPattern
 from microfreshener.core.errors import ImporterError, MicroFreshenerError
-from microfreshener.core.refiner import KubernetesRefiner
+from microfreshener.core.refiner import KubernetesRefiner, IstioRefiner
 
 json_importer = JSONImporter()
 yml_importer = YMLImporter()
@@ -34,7 +34,7 @@ examples_path = os.path.join(settings.MEDIA_ROOT, "examples")
 uploads_path = os.path.join(settings.MEDIA_ROOT, "uploads")
 file_uploads_path = os.path.join(uploads_path, "upload.yml")
 file_refine_path = os.path.join(uploads_path, "refinekubernetes.yml")
-
+file_refine_istio_path = os.path.join(uploads_path, "refine_istio.yml")
 
 
 @api_view(['GET'])
@@ -131,6 +131,25 @@ def graph_import(request):
         with open(model_file_path, 'w') as destination:
             json.dump(d_model, destination)
         return Response({"msg": "stored correctly"})
+
+
+@api_view(['POST'])
+def graph_refine_istio(request):
+    if request.method == 'POST':
+        graph_in_memory = request.FILES['istio']
+        with open(file_refine_istio_path, 'wb+') as destination:
+            for chunk in graph_in_memory.chunks():
+                destination.write(chunk)
+
+        microtosca = json_importer.Import(model_file_path)
+        refiner = IstioRefiner(file_refine_istio_path)
+        kmicrotosca = refiner.Refine(microtosca)
+
+        d_model = json_exporter.Export(kmicrotosca)
+        with open(model_file_path, 'w') as destination:
+            json.dump(d_model, destination)
+        dmodel = json_exporter.Export(kmicrotosca)
+        return Response(dmodel)
 
 
 @api_view(['POST'])

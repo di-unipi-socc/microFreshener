@@ -34,10 +34,18 @@
 
                         <p-fileUpload mode="basic" 
                                 name="kubernetes"
-                                [url]="urlRefine" 
+                                [url]="urlRefineKubernetes" 
                                 accept=".yml"
                                 (onUpload)="onUploadKubernetes($event)"
                                 chooseLabel="Import Kubernetes">x
+                        </p-fileUpload>
+
+                        <p-fileUpload mode="basic" 
+                                name="istio"
+                                [url]="urlRefineIstio" 
+                                accept=".yml"
+                                (onUpload)="onUploadIstio($event)"
+                                chooseLabel="Import Istio">x
                         </p-fileUpload>
 
                           <!-- pop up menu -->

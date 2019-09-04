@@ -10,7 +10,8 @@ urlpatterns = [
     path('analyse', view.graph_analysis),
     path('export', view.graph_export),
     path('import', view.graph_import),
-    path('refine', view.graph_refine),
+    path('refine/istio', view.graph_refine_istio),
+   # path('refine', view.graph_refine),
     path('example', view.graph_examples),
     # team api
     # path('team/', view.team, name='microtosca-team'),

@@ -25,7 +25,9 @@ export class AppComponent {
 
   hrefDownload = environment.serverUrl + '/api/export';
   urlUpload = environment.serverUrl + '/api/import';
-  urlRefine = environment.serverUrl + '/api/refine';
+  urlRefineKubernetes = environment.serverUrl + '/api/refine';
+  urlRefineIstio = environment.serverUrl + '/api/refine/istio';
+
 
 
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
@@ -176,6 +178,10 @@ export class AppComponent {
   }
 
   onUploadKubernetes(){
+    this.download();
+  }
+
+  onUploadIstio(){
     this.download();
   }
 

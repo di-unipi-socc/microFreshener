@@ -56,191 +56,27 @@
         {
             "name": "edge-router",
             "type": "messagerouter"
-        },
-        {
-            "name": "kcarts-db",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kcarts",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kcatalogue-db",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kcatalogue",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kfront-end",
-            "type": "messagerouter"
-        },
-        {
-            "name": "korders-db",
-            "type": "messagerouter"
-        },
-        {
-            "name": "korders",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kpayment",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kqueue-master",
-            "type": "messagerouter"
-        },
-        {
-            "name": "krabbitmq",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kshipping",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kuser-db",
-            "type": "messagerouter"
-        },
-        {
-            "name": "kuser",
-            "type": "messagerouter"
         }
     ],
     "links": [
         {
             "source": "front-end",
-            "target": "kcarts",
+            "target": "orders",
             "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": true,
             "type": "interaction"
         },
         {
             "source": "front-end",
-            "target": "kcatalogue",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "front-end",
-            "target": "korders",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "front-end",
-            "target": "kuser",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "orders",
-            "target": "kcarts",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "orders",
-            "target": "korders-db",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "orders",
-            "target": "kpayment",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "orders",
-            "target": "kshipping",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "orders",
-            "target": "kuser",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "user",
-            "target": "kuser-db",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "carts",
-            "target": "kcarts-db",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "catalogue",
-            "target": "kcatalogue-db",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "shipping",
-            "target": "krabbitmq",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "queue-master",
-            "target": "krabbitmq",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "edge-router",
-            "target": "kfront-end",
-            "timeout": false,
-            "dynamic_discovery": true,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "kcarts-db",
-            "target": "carts-db",
+            "target": "user",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "kcarts",
+            "source": "front-end",
             "target": "carts",
             "timeout": false,
             "dynamic_discovery": false,
@@ -248,15 +84,7 @@
             "type": "interaction"
         },
         {
-            "source": "kcatalogue-db",
-            "target": "catalogue-db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "kcatalogue",
+            "source": "front-end",
             "target": "catalogue",
             "timeout": false,
             "dynamic_discovery": false,
@@ -264,15 +92,7 @@
             "type": "interaction"
         },
         {
-            "source": "kfront-end",
-            "target": "front-end",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "korders-db",
+            "source": "orders",
             "target": "orders-db",
             "timeout": false,
             "dynamic_discovery": false,
@@ -280,15 +100,15 @@
             "type": "interaction"
         },
         {
-            "source": "korders",
-            "target": "orders",
+            "source": "orders",
+            "target": "user",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "kpayment",
+            "source": "orders",
             "target": "payment",
             "timeout": false,
             "dynamic_discovery": false,
@@ -296,23 +116,15 @@
             "type": "interaction"
         },
         {
-            "source": "kqueue-master",
-            "target": "queue-master",
+            "source": "orders",
+            "target": "carts",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "krabbitmq",
-            "target": "rabbitmq",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "kshipping",
+            "source": "orders",
             "target": "shipping",
             "timeout": false,
             "dynamic_discovery": false,
@@ -320,7 +132,7 @@
             "type": "interaction"
         },
         {
-            "source": "kuser-db",
+            "source": "user",
             "target": "user-db",
             "timeout": false,
             "dynamic_discovery": false,
@@ -328,8 +140,40 @@
             "type": "interaction"
         },
         {
-            "source": "kuser",
-            "target": "user",
+            "source": "carts",
+            "target": "carts-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "catalogue",
+            "target": "catalogue-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "queue-master",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "edge-router",
+            "target": "front-end",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
