@@ -66,6 +66,7 @@ import { DialogImportComponent } from './dialog-import/dialog-import.component';
     DialogSelectTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
+    DialogImportComponent
   ],
   imports: [
     BrowserModule,
