@@ -10,7 +10,11 @@
             "type": "service"
         },
         {
+<<<<<<< HEAD
+            "name": "ordersdb",
+=======
             "name": "orders-db",
+>>>>>>> f4d29bfddb8879b528ce934cf2be5a6b37a173e2
             "type": "datastore"
         },
         {
@@ -93,7 +97,11 @@
         },
         {
             "source": "orders",
+<<<<<<< HEAD
+            "target": "ordersdb",
+=======
             "target": "orders-db",
+>>>>>>> f4d29bfddb8879b528ce934cf2be5a6b37a173e2
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
