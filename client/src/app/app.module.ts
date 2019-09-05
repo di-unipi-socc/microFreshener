@@ -17,7 +17,7 @@ import { AppMenuComponent } from './app-menu/app-menu.component';
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -50,6 +50,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DialogSelectTeamComponent } from './dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './dialog-refine/dialog-refine.component';
+import { DialogImportComponent } from './dialog-import/dialog-import.component';
 
 @NgModule({
   declarations: [
@@ -103,7 +104,8 @@ import { DialogRefineComponent } from './dialog-refine/dialog-refine.component';
     InputSwitchModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [
     AppComponent
@@ -115,7 +117,8 @@ import { DialogRefineComponent } from './dialog-refine/dialog-refine.component';
     DialogAddTeamComponent,
     DialogSelectTeamComponent,
     DialogAddLinkComponent,
-    DialogRefineComponent
+    DialogRefineComponent,
+    DialogImportComponent
   ]
 })
 export class AppModule { }

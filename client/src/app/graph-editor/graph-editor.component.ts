@@ -24,15 +24,13 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html',
     styleUrls: ['./graph-editor.component.css'],
-    providers: [DialogService, ConfirmationService]
+    providers: [DialogService] //, ConfirmationService]
 })
 export class GraphEditorComponent implements OnInit {
 
     _options = { width: "95%", height: "80%" };
 
     paper: joint.dia.Paper;
-
-    // name: string; // name of the app
 
     svgZoom;
 
@@ -105,16 +103,6 @@ export class GraphEditorComponent implements OnInit {
     }
 
   
-
-    fitContent() {
-        //  $(window).resize(()=>{
-        //     this.svgZoom.resize();
-        //     this.svgZoom.fit();
-        //     this.svgZoom.center();
-        //   })
-        this.paper.scaleContentToFit();
-    }
-
     createSampleGraph() {
         //  nodes
         var s = this.gs.getGraph().addService("shipping");
@@ -154,33 +142,6 @@ export class GraphEditorComponent implements OnInit {
 
     }
 
-    // saveName() {
-    //     this.gs.getGraph().setName(this.name);
-    //     this.messageService.clear();
-    //     this.messageService.add({ severity: 'success', summary: 'App renamed correctly', detail: "New name " + this.name });
-    // }
-
-    // addTeam() {
-    //     const ref = this.dialogService.open(DialogAddTeamComponent, {
-    //         header: 'Add Team',
-    //         width: '50%',
-    //         // height: '50%'
-    //     });
-    //     ref.onClose.subscribe((data) => {
-    //         this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
-    //         this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
-    //     });
-    // }
-
-    // addNode() {
-    //     const ref = this.dialogService.open(DialogAddNodeComponent, {
-    //         header: 'Add Node',
-    //         width: '50%'
-    //     });
-    //     ref.onClose.subscribe((data) => {
-    //         this.graphInvoker.executeCommand(data.command);
-    //     });
-    // }
 
     bindEvents() {
         this.bindKeyboardEvents();
@@ -220,13 +181,6 @@ export class GraphEditorComponent implements OnInit {
             if (cell.isElement())
                 this.messageService.add({ severity: 'success', summary: "Node removed  succesfully.", detail: "Node  [" + cell.getName() + "] removed from the model." });
             else if (cell.isLink()) {
-                // console.log(cell.getSourceElement());
-
-                // var source = <joint.shapes.microtosca.Node>cell.getSourceElement();
-                // console.log(source);
-                // var target = <joint.shapes.microtosca.Node>cell.getTargetElement();
-                // console.log(target);
-
                 this.messageService.add({ severity: 'success', summary: "Link removed  succesfully." }); //detail: "Link  from  ["+ source.getName() + "] to  ["+ target.getName() +"] removed."});
             }
         })
@@ -275,6 +229,8 @@ export class GraphEditorComponent implements OnInit {
     }
 
     removeLink(link: joint.shapes.microtosca.RunTimeLink) {
+        console.log("removing link called");
+        console.log(this.confirmationService);
         this.confirmationService.confirm({
             message: 'Do you want to delete the link?',
             header: 'Link deletion',
@@ -504,7 +460,7 @@ export class GraphEditorComponent implements OnInit {
                 selectedsmell: smell
             },
             header: `Smell details`,
-            width: '80%'
+            width: '60%'
         });
 
         ref.onClose.subscribe((refactoringCommand) => {
@@ -775,6 +731,7 @@ export class GraphEditorComponent implements OnInit {
                     distance: 60,
                     offset: 0,
                     action: () => {
+                        console.log("Deleting link");
                         this.removeLink(linkView.model);
                     }
                 })

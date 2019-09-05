@@ -10,6 +10,7 @@ import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.compo
 import { DialogSelectTeamComponent } from '../dialog-select-team/dialog-select-team.component';
 import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
+import { DialogImportComponent} from '../dialog-import/dialog-import.component';
 
 import { GraphInvoker } from "../invoker/invoker";
 import { AddTeamGroupCommand } from '../invoker/graph-command';
@@ -19,7 +20,7 @@ import { AnalyserService } from '../analyser.service';
     selector: 'app-menu',
     templateUrl: './app-menu.component.html',
     styleUrls: ['./app-menu.component.css'],
-    providers: [DialogService, ConfirmationService]
+    providers: [DialogService] // , ConfirmationService]
 })
 export class AppMenuComponent implements OnInit {
 
@@ -44,6 +45,21 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-save',
                         command: () => {
                             this.save();
+                        }
+                    },
+                    {separator:true},
+                    {
+                        label: 'Import',
+                        icon: 'pi pi-fw pi-upload',
+                        command: () => {
+                            this.import()
+                        }
+                    },
+                    {
+                        label: 'Export',
+                        icon: 'pi pi-fw pi-download',
+                        command: () => {
+
                         }
                     },
                     {separator:true},
@@ -85,21 +101,6 @@ export class AppMenuComponent implements OnInit {
                             //end examples
                         ]
                     },
-                    {separator:true},
-                    {
-                        label: 'Import',
-                        icon: 'pi pi-fw pi-upload',
-                        command: () => {
-
-                        }
-                    },
-                    {
-                        label: 'Export',
-                        icon: 'pi pi-fw pi-download',
-                        command: () => {
-
-                        }
-                    }
                 ],
 
             },
@@ -318,6 +319,17 @@ export class AppMenuComponent implements OnInit {
         });
     }
 
+    import(){
+        const ref = this.dialogService.open( DialogImportComponent, {
+            header: 'Import MicroTosca',
+            width: '70%'
+        });
+        ref.onClose.subscribe((data) => {
+
+        });
+      
+    }
+
     refine() {
         const ref = this.dialogService.open(DialogRefineComponent, {
             header: 'Refine the model',
@@ -341,8 +353,8 @@ export class AppMenuComponent implements OnInit {
                   this.as.runRemoteAnalysis(smells)
                     .subscribe(data => {
                       this.as.showSmells();
-                      var res = this.as.getSummaryResultAnalysis()
-                      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail:"# nodes affected: "+res.nodes+", #groups affected: "+ res.groups});
+                      var num = this.as.getNumSmells()
+                      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail:`Found ${num} smells`});
                     });
                 });
             }

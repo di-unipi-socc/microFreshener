@@ -37,8 +37,16 @@ export class AnalyserService {
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 
-  getSummaryResultAnalysis(){
-    return {"nodes": this.analysednodes.length, "groups": this.analysedgroups.length};
+  getNumSmells(){
+    var num_smells = 0;
+    this.analysednodes.forEach((anode)=> {
+      num_smells +=  anode.getSmells().length;
+    });
+    this.analysedgroups.forEach((agroup)=> {
+      num_smells +=  agroup.getSmells().length;
+    });
+
+    return num_smells
   }
   
   showSmells() {

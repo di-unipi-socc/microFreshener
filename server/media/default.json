@@ -1,16 +1,48 @@
 {
-    "name": "hello-world",
+    "name": "micro.tosca",
     "nodes": [
         {
-            "name": "shipping",
+            "name": "front-end",
             "type": "service"
         },
         {
-            "name": "order_db",
+            "name": "orders",
+            "type": "service"
+        },
+        {
+            "name": "orders-db",
             "type": "datastore"
         },
         {
-            "name": "order",
+            "name": "payment",
+            "type": "service"
+        },
+        {
+            "name": "user",
+            "type": "service"
+        },
+        {
+            "name": "carts",
+            "type": "service"
+        },
+        {
+            "name": "carts-db",
+            "type": "datastore"
+        },
+        {
+            "name": "catalogue-db",
+            "type": "datastore"
+        },
+        {
+            "name": "catalogue",
+            "type": "service"
+        },
+        {
+            "name": "user-db",
+            "type": "datastore"
+        },
+        {
+            "name": "shipping",
             "type": "service"
         },
         {
@@ -18,14 +50,106 @@
             "type": "messagebroker"
         },
         {
-            "name": "Api gateway",
+            "name": "queue-master",
+            "type": "service"
+        },
+        {
+            "name": "edge-router",
             "type": "messagerouter"
         }
     ],
     "links": [
         {
-            "source": "shipping",
-            "target": "order_db",
+            "source": "front-end",
+            "target": "orders",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "user",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "carts",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "front-end",
+            "target": "catalogue",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "orders-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "user",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "payment",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "carts",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "orders",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "user",
+            "target": "user-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "carts",
+            "target": "carts-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "catalogue",
+            "target": "catalogue-db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
@@ -40,23 +164,7 @@
             "type": "interaction"
         },
         {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": true,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
+            "source": "queue-master",
             "target": "rabbitmq",
             "timeout": false,
             "dynamic_discovery": false,
@@ -64,39 +172,13 @@
             "type": "interaction"
         },
         {
-            "source": "Api gateway",
-            "target": "shipping",
+            "source": "edge-router",
+            "target": "front-end",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         }
     ],
-    "groups": [
-        {
-            "name": "edgenodes",
-            "type": "edgegroup",
-            "members": [
-                "order",
-                "Api gateway"
-            ]
-        },
-        {
-            "name": "team-primo",
-            "type": "squadgroup",
-            "members": [
-                "shipping",
-                "order",
-                "order_db"
-            ]
-        },
-        {
-            "name": "team-secondo",
-            "type": "squadgroup",
-            "members": [
-                "Api gateway",
-                "rabbitmq"
-            ]
-        }
-    ]
+    "groups": []
 }
