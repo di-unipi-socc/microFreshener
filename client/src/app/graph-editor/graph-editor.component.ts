@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
@@ -27,11 +28,11 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
 })
 export class GraphEditorComponent implements OnInit {
 
+    menubar: MenuItem[];
+
     _options = { width: "95%", height: "80%" };
 
     paper: joint.dia.Paper;
-    graphInvoker: GraphInvoker;
-
 
     name: string; // name of the app
 
@@ -39,11 +40,162 @@ export class GraphEditorComponent implements OnInit {
 
     selectdNode: joint.shapes.microtosca.Node;
 
-    constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-        this.graphInvoker = new GraphInvoker();
+    constructor(private graphInvoker: GraphInvoker, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.selectdNode = null;
-    }
+        this.menubar = [
+            {
+                label: "File",
+                items: [
+                    {
+                        label: 'New',
+                        icon: 'pi pi-fw pi-plus',
+                        command: () => {
+                            console.log("NEW FILE");
+                        }
+                    },
+                    {
+                        label: 'Rename',
+                        icon: 'pi pi-fw pi-pencil',
+                        command: () => {
+                            console.log("Renaming");
+                        }
+                    },
+                    {
+                        label: 'Save',
+                        icon: 'pi pi-fw pi-save',
+                        command: () => {
+                            this.gs.uploadGraph()
+                                .subscribe(json_model => {
+                                    this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correctly", detail: '' });
+                                });
+                        }
+                    },
+                    {
+                        label: 'Examples',
+                        icon: 'pi pi-fw pi-download',
+                        items: [
+                            {
 
+                                label: "gg",
+                                command: () => {
+                                }
+                            }
+
+
+                        ]
+                    },
+                    {
+                        label: 'Import',
+                        icon: 'pi pi-fw pi-upload',
+                        command: () => {
+
+                        }
+                    },
+                    {
+                        label: 'Export',
+                        icon: 'pi pi-fw pi-download',
+                        command: () => {
+
+                        }
+                    }
+                ],
+
+            },
+            {
+                label: "Edit",
+                icon: 'pi pi-fw pi-pencil',
+                items: [
+                    {
+                        label: 'add',
+                        icon: 'pi pi-fw pi-plus',
+                        items: [
+                            {
+                                label: 'node',
+                                icon: 'pi pi-fw pi-upload',
+                            },
+                            {
+                                label: 'team',
+                                icon: 'pi pi-fw pi-upload',
+                            },
+                        ]
+                    },
+                    {
+                        label: 'undo',
+                        icon: "pi pi-fw pi-redo",
+                    },
+                    {
+                        label: 'redo',
+                        icon: "pi pi-fw pi-replay",
+                    },
+
+
+
+                ]
+            },
+            {
+                label: "View",
+                icon: 'pi pi-fw pi-cog',
+                items: [
+                    {
+                        label: 'layout',
+                        icon: "pi pi-fw pi-sitemap",
+                        items: [
+                            {
+                                label: 'Botton-to-top',
+                                command: () => {
+                                    this.gs.getGraph().applyLayout("BT");
+                                }
+                            },
+                            {
+                                label: 'Top-to-bottom',
+                                command: () => {
+                                    this.gs.getGraph().applyLayout("TB");
+                                }
+                            },
+                            {
+                                label: 'Left-to-right',
+                                command: () => {
+                                    this.gs.getGraph().applyLayout("LR");
+                                }
+                            },
+                            {
+                                label: 'Right-to-left',
+                                command: () => {
+                                    this.gs.getGraph().applyLayout("RL");
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        label: 'Team',
+                        command: () => {
+                        }
+                    },
+                ]
+            },
+            {
+                label: " Actions",
+                icon: 'pi pi-fw pi-cog',
+                items: [
+                    {
+                        icon: "pi pi-fw pi-search",
+                        label: 'Analyse',
+                        command: () => {
+                            this.gs.getGraph().applyLayout("BT");
+                        }
+                    },
+                    {
+                        icon: "pi pi-fw pi-refresh",
+                        label: 'Refine',
+                        command: () => {
+                            this.gs.getGraph().applyLayout("BT");
+                        }
+                    }
+
+                ]
+            }
+        ];
+    }
 
     ngOnInit() {
         let canvas = document.getElementById('jointjsgraph');
@@ -77,7 +229,6 @@ export class GraphEditorComponent implements OnInit {
             },
         });
 
-
         // this.paper.setOrigin(this._options.width/2, this._options.height /2);
         this.name = this.gs.getGraph().getName();
 
@@ -94,8 +245,6 @@ export class GraphEditorComponent implements OnInit {
             zoomScaleSensitivity: 0.5,
         });
 
-
-
         this.paper.on('cell:pointerdown', () => {
             this.svgZoom.disablePan();
         });
@@ -103,7 +252,6 @@ export class GraphEditorComponent implements OnInit {
         this.paper.on('cell:pointerup', () => {
             this.svgZoom.enablePan();
         });
-
 
         // bind events
         this.bindEvents();

@@ -20,18 +20,38 @@ export class AppComponent {
 
   display: boolean = false;
 
+  // for menu bar
+  menubar: MenuItem[];
+
   items: MenuItem[];
-  layouts:MenuItem[];
-  examples:MenuItem[];
+  layouts: MenuItem[];
+  examples: MenuItem[];
 
   hrefDownload = environment.serverUrl + '/api/export';
   urlUpload = environment.serverUrl + '/api/import';
   urlRefineKubernetes = environment.serverUrl + '/api/refine';
   urlRefineIstio = environment.serverUrl + '/api/refine/istio';
 
+
+
   constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
-	console.log(environment.serverUrl);
-	this.items = [
+    this.menubar = [
+      {
+        label: "File",
+        items: [
+          {
+            label: 'New',
+            icon: 'pi pi-fw pi-plus',
+          }, {
+            label: 'Save',
+            icon: 'pi pi-fw pi-save'
+
+          }
+        ]
+      }
+    ];
+
+    this.items = [
       {
         label: 'Account',
         icon: 'pi pi-fw pi-user',
@@ -45,27 +65,30 @@ export class AppComponent {
     this.layouts = [
       // "TB" (top-to-bottom) / "BT" (bottom-to-top) / "LR" (left-to-right) / "RL" (right-to-left))
       {
-        label: 'Botton-to-top', command: () => {
+        label: 'Botton-to-top', 
+        command: () => {
           this.gs.getGraph().applyLayout("BT");
         }
       },
       {
-        label: 'Top-to-bottom', command: () => {
+        label: 'Top-to-bottom', 
+        command: () => {
           this.gs.getGraph().applyLayout("TB");
         }
       },
       {
-        label: 'Left-to-right', command: () => {
+        label: 'Left-to-right', 
+        command: () => {
           this.gs.getGraph().applyLayout("LR");
         }
       },
       {
-        label: 'Right-to-left', command: () => {
+        label: 'Right-to-left', 
+        command: () => {
           this.gs.getGraph().applyLayout("RL");
         }
       },
     ];
-
     this.examples = [
       {
         label: 'Hello world', command: () => {
@@ -94,11 +117,12 @@ export class AppComponent {
       },
     ];
   }
+  ngOnInit() {
 
+  }
 
-
-  chooseRandomLayout(){
-    var item = this.layouts[Math.floor(Math.random()*this.layouts.length)];
+  chooseRandomLayout() {
+    var item = this.layouts[Math.floor(Math.random() * this.layouts.length)];
     console.log(item);
     item.command();
   }
@@ -115,13 +139,13 @@ export class AppComponent {
         this.gs.getGraph().showOnlyTeam(team);
         this.messageService.add({ severity: 'success', summary: ` ${team.getName()} visualized` });
       }
-      else if (data.show == "all"){
+      else if (data.show == "all") {
         this.gs.getGraph().showGraph();
         this.gs.getGraph().maximizeAllTeam();
         this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
 
       }
-      else if (data.show == "compactall"){
+      else if (data.show == "compactall") {
         this.gs.getGraph().minimizeAllTeam();
         this.messageService.add({ severity: 'success', summary: ` All team minimized` });
       }
@@ -132,13 +156,13 @@ export class AppComponent {
     });
 
   }
-  refine(){
+  refine() {
     const ref = this.dialogService.open(DialogRefineComponent, {
       header: 'Refine the model',
       width: '70%'
     });
     ref.onClose.subscribe((data) => {
-      
+
     });
   }
 
