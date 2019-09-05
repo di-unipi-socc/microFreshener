@@ -22,16 +22,6 @@ export class DialogSelectTeamComponent implements OnInit {
   }
 
   onSelectTeam(team:joint.shapes.microtosca.SquadGroup){
-    this.ref.close({"show":"team",  team: team});
+    this.ref.close({"show": team});
   }
-
-  onSelectAll(){
-    this.ref.close({ "show":"all"});
-  }
-
-  onSelectCompactAll(){
-    this.ref.close({ "show":"compactall"});
-
-  }
-
 }

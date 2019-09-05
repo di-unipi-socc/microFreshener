@@ -1,34 +1,5 @@
-<div class="p-grid p-justify-center">
-    <div class="p-col-10">
-        <div class="content-section implementation">
-            <span>Name:</span>
-            <input type="text" pInputText placeholder="Name" [(ngModel)]="name">
-            <button pButton type="button" icon="pi pi-check"
-                (click)="saveName()"
-                class="ui-button-success">
-            </button>
-            <button pButton icon="pi pi-plus" type="button" style="font-size:
-                1em"
-                label="Node" class="ui-button-success" (click)="addNode()"></button>
-            <button pButton icon="pi pi-plus" type="button" style="font-size:
-                1em"
-                label="Team" class="ui-button-success" (click)="addTeam()"></button>
-            <button pButton type="button" icon="pi pi-undo" label="undo"
-                (click)="undoRefactoring()"></button>
-            <button pButton type="button" label="redo"
-                (click)="redoRefactoring()"></button>
-
-            <button pButton type="button" label="clear" icon="pi  pi-trash" (click)="clear()"></button>
-            <button pButton type="button" label="fit" (click)="fitContent()"></button>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- jointjs div where the graph is rendered -->
+<!-- div where the graph is rendered using jointjs-->
 <div id="jointjsgraph"> </div>
-<!-- style="width: 95%; height: 80%;" -->
 
-<!-- confirm dialog  -->
-<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+<!-- show confimaration dialog -->
+<p-confirmDialog></p-confirmDialog>

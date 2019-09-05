@@ -12,8 +12,8 @@ import { GraphService } from '../graph.service';
 })
 export class DialogAddLinkComponent implements OnInit {
 
-  source:joint.shapes.microtosca.Node;
-  target:joint.shapes.microtosca.Node;
+  source: joint.shapes.microtosca.Node;
+  target: joint.shapes.microtosca.Node;
 
   show_properties: boolean = false;
 
@@ -26,12 +26,15 @@ export class DialogAddLinkComponent implements OnInit {
   ngOnInit() {
     this.source = this.config.data.source;
     this.target = this.config.data.target;
-    if(this.gs.getGraph().isService(this.target) && this.gs.getGraph().isService(this.source))
+
+    // show properties only if the source node is a service.
+    if (this.gs.getGraph().isService(this.source))
       this.show_properties = true;
+
   }
 
-  save(){
-    this.ref.close({"circuit_breaker":this.circuit_breaker, "dynamic_discovery": this.dynamic_discovery,"timeout":this.tiemout });
+  save() {
+    this.ref.close({ "circuit_breaker": this.circuit_breaker, "dynamic_discovery": this.dynamic_discovery, "timeout": this.tiemout });
   }
 
 }

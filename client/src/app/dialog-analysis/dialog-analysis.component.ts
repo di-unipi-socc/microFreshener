@@ -54,7 +54,6 @@ export class DialogAnalysisComponent implements OnInit {
     let selectedSmells: Smell[] = [];
     this.principles.forEach(principle=>{
       principle.smells.forEach(smell => {
-        // this.selectedSmells.push(smell);
         if(! ids.includes(smell.id)){
           selectedSmells.push(smell);
         }
@@ -68,20 +67,21 @@ export class DialogAnalysisComponent implements OnInit {
   }
 
   orchestratorSelect(evt) {
-   
     this.selectedSmells = this.discardSmellsWithIDIn(evt.value.resolvedSmells); 
     console.log(this.selectedSmells);
   }
 
   save() {
-    this.gs.uploadGraph()
-      .subscribe(data => {
-        this.as.runRemoteAnalysis(this.selectedSmells)
-          .subscribe(data => {
-            //TODO: pass to the close a error code () checkin the 
-            this.ref.close();
-          });
-      });
+    this.ref.close({"selected_smells": this.selectedSmells});
+
+    // this.gs.uploadGraph()
+    //   .subscribe(data => {
+    //     this.as.runRemoteAnalysis(this.selectedSmells)
+    //       .subscribe(data => {
+    //         //TODO: pass to the close a error code () checkin the 
+    //         this.ref.close();
+    //       });
+    //   });
 
   }
 

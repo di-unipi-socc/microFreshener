@@ -37,6 +37,38 @@ export class AnalyserService {
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 
+  getNumSmells(){
+    var num_smells = 0;
+    this.analysednodes.forEach((anode)=> {
+      num_smells +=  anode.getSmells().length;
+    });
+    this.analysedgroups.forEach((agroup)=> {
+      num_smells +=  agroup.getSmells().length;
+    });
+
+    return num_smells
+  }
+  
+  showSmells() {
+    this.analysednodes.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.name);
+      anode.getSmells().forEach((smell) => {
+        n.addSmell(smell);
+      })
+    })
+
+    this.analysedgroups.forEach((agroup) => {
+      let g = this.gs.getGraph().getGroup(agroup.name);
+      agroup.getSmells().forEach((smell) => {
+        // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
+        smell.getNodeBasedCauses().forEach(node => {
+          node.addSmell(smell);
+        })
+        g.addSmell(smell);
+      })
+    })
+  }
+
   // Remove the "smells" icons in the nodes and groups
   clearSmells() {
     this.gs.getGraph().getNodes().forEach(node => {
@@ -56,7 +88,8 @@ export class AnalyserService {
   getPrinciplesToAnalyse() {
     return this.http.get<any>('assets/data/principles.json')
       .toPromise()
-      .then(res => (<Principle[]>res.data).filter(principle => principle.id != 1))
+      .then(res => (<Principle[]>res.data)
+      .filter(principle => principle.id != 1))
   }
 
   getPrinciplesAndSmells() {
@@ -76,7 +109,6 @@ export class AnalyserService {
       .toPromise()
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
-
 
   runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
     let smells_ids: number[] = smells.map(smell => smell.id);
@@ -111,17 +143,19 @@ export class AnalyserService {
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
+          // reset analysed node array
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
-          this.clearSmells(); // removed the smell in the graph view
+          this.clearSmells(); 
+
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
           });
+
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
-            console.log(agroup);
             this.analysedgroups.push(agroup);
           });
           return true;
