@@ -37,6 +37,30 @@ export class AnalyserService {
 
   constructor(private http: HttpClient, private gs: GraphService) { }
 
+  getSummaryResultAnalysis(){
+    return {"nodes": this.analysednodes.length, "groups": this.analysedgroups.length};
+  }
+  
+  showSmells() {
+    this.analysednodes.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.name);
+      anode.getSmells().forEach((smell) => {
+        n.addSmell(smell);
+      })
+    })
+
+    this.analysedgroups.forEach((agroup) => {
+      let g = this.gs.getGraph().getGroup(agroup.name);
+      agroup.getSmells().forEach((smell) => {
+        // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
+        smell.getNodeBasedCauses().forEach(node => {
+          node.addSmell(smell);
+        })
+        g.addSmell(smell);
+      })
+    })
+  }
+
   // Remove the "smells" icons in the nodes and groups
   clearSmells() {
     this.gs.getGraph().getNodes().forEach(node => {
@@ -111,17 +135,19 @@ export class AnalyserService {
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
+          // reset analysed node array
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
-          this.clearSmells(); // removed the smell in the graph view
+          this.clearSmells(); 
+
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
           });
+
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
-            console.log(agroup);
             this.analysedgroups.push(agroup);
           });
           return true;

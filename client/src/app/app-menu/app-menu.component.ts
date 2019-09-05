@@ -4,16 +4,16 @@ import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 
-import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
-import { SmellObject } from '../analyser/smell';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-
+import { DialogSelectTeamComponent } from '../dialog-select-team/dialog-select-team.component';
+import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
+import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
 
 import { GraphInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
-import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
+import { AddTeamGroupCommand } from '../invoker/graph-command';
+import { AnalyserService } from '../analyser.service';
 
 @Component({
     selector: 'app-menu',
@@ -24,8 +24,9 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
 export class AppMenuComponent implements OnInit {
 
     menubar: MenuItem[];
+    modelName: string; // name of the model
 
-    constructor(private graphInvoker: GraphInvoker, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+    constructor(private graphInvoker: GraphInvoker, private as: AnalyserService, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
 
         this.menubar = [
             {
@@ -35,40 +36,56 @@ export class AppMenuComponent implements OnInit {
                         label: 'New',
                         icon: 'pi pi-fw pi-plus',
                         command: () => {
-                            console.log("NEW FILE");
-                        }
-                    },
-                    {
-                        label: 'Rename',
-                        icon: 'pi pi-fw pi-pencil',
-                        command: () => {
-                            console.log("Renaming");
+                            this.newFile();
                         }
                     },
                     {
                         label: 'Save',
                         icon: 'pi pi-fw pi-save',
                         command: () => {
-                            this.gs.uploadGraph()
-                                .subscribe(json_model => {
-                                    this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correctly", detail: '' });
-                                });
+                            this.save();
                         }
                     },
+                    {separator:true},
                     {
                         label: 'Examples',
                         icon: 'pi pi-fw pi-download',
                         items: [
+                            // examples
                             {
-
-                                label: "gg",
+                                label: 'Hello world',
                                 command: () => {
+                                    this.downloadExample("helloworld");
+                                }
+                            },
+                            {
+                                label: 'Case study',
+                                command: () => {
+                                    this.downloadExample("case-study-initial");
+                                }
+                            },
+                            {
+                                label: 'Case study (refactored)',
+                                command: () => {
+                                    this.downloadExample("case-study-refactored");
+                                }
+                            },
+                            {
+                                label: 'Sockshop',
+                                command: () => {
+                                    this.downloadExample("sockshop");
+                                }
+                            },
+                            {
+                                label: 'FTGO',
+                                command: () => {
+                                    this.downloadExample("ftgo");
                                 }
                             }
-
-
+                            //end examples
                         ]
                     },
+                    {separator:true},
                     {
                         label: 'Import',
                         icon: 'pi pi-fw pi-upload',
@@ -86,6 +103,7 @@ export class AppMenuComponent implements OnInit {
                 ],
 
             },
+            {separator:true},
             {
                 label: "Edit",
                 icon: 'pi pi-fw pi-pencil',
@@ -96,17 +114,23 @@ export class AppMenuComponent implements OnInit {
                         items: [
                             {
                                 label: 'node',
-                                icon: 'pi pi-fw pi-upload',
+                                icon: 'pi pi-fw pi-circle-off',
+                                command: () => {
+                                    this.addNode();
+                                }
                             },
                             {
                                 label: 'team',
-                                icon: 'pi pi-fw pi-upload',
+                                icon: 'pi pi-fw pi-users',
+                                command: () => {
+                                    this.addTeam();
+                                }
                             },
                         ]
                     },
                     {
                         label: 'undo',
-                        icon: "pi pi-fw pi-redo",
+                        icon: "pi pi-fw pi-undo",
                         command: () => {
                             this.graphInvoker.undo();
                         }
@@ -123,6 +147,7 @@ export class AppMenuComponent implements OnInit {
 
                 ]
             },
+            {separator:true},
             {
                 label: "View",
                 icon: 'pi pi-fw pi-cog',
@@ -158,12 +183,34 @@ export class AppMenuComponent implements OnInit {
                         ]
                     },
                     {
-                        label: 'Team',
-                        command: () => {
-                        }
+                        label: 'Show',
+                        icon: "pi pi-fw pi-th-large",
+                        items: [
+                            {
+                                label: 'All',
+                                command: () => {
+                                    this.maximizeTeam()
+                                }
+                            },
+                            {
+                                label: 'By teams',
+                                command: () => {
+                                    this.minimizeTeam()
+                                }
+                            },
+                            {
+                                label: 'One team',
+                                command: () => {
+                                    this.showOneTeam();
+                                }
+                            }
+
+                        ]
+
                     },
                 ]
             },
+            {separator:true},
             {
                 label: " Actions",
                 icon: 'pi pi-fw pi-cog',
@@ -172,14 +219,15 @@ export class AppMenuComponent implements OnInit {
                         icon: "pi pi-fw pi-search",
                         label: 'Analyse',
                         command: () => {
-                            this.gs.getGraph().applyLayout("BT");
+                            this.analyse();
                         }
                     },
+                    {separator:true},
                     {
                         icon: "pi pi-fw pi-refresh",
                         label: 'Refine',
                         command: () => {
-                            this.gs.getGraph().applyLayout("BT");
+                            this.refine()
                         }
                     }
 
@@ -189,6 +237,117 @@ export class AppMenuComponent implements OnInit {
     }
 
     ngOnInit() {
-
+        this.modelName = this.gs.getGraph().getName();
     }
+
+    newFile() {
+        this.confirmationService.confirm({
+            header: 'New file',
+            icon: 'pi pi-exclamation-triangle',
+            message: 'Are you sure that you want to delete the current work and create a new one?',
+            accept: () => {
+                this.gs.getGraph().clearGraph();
+            }
+        });
+    }
+
+    rename() {
+        this.gs.getGraph().setName(this.modelName);
+        this.messageService.clear();
+        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" +  this.gs.getGraph().getName() + "]"  });
+    }
+
+    save() {
+        this.gs.uploadGraph().subscribe(res => {
+            if(res.msg)
+                this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
+        });
+    }
+
+    downloadExample(name: string) {
+        this.gs.downloadExample(name)
+            .subscribe((data) => {
+                this.gs.getGraph().builtFromJSON(data);
+                this.gs.getGraph().applyLayout("LR");
+                this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
+            });
+    }
+
+    addTeam() {
+        const ref = this.dialogService.open(DialogAddTeamComponent, {
+            header: 'Add Team',
+            width: '50%',
+        });
+        ref.onClose.subscribe((data) => {
+            this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
+            this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
+        });
+    }
+
+    addNode() {
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            width: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            this.graphInvoker.executeCommand(data.command);
+        });
+    }
+
+    maximizeTeam() {
+        this.gs.getGraph().maximizeAllTeam();
+        this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
+    }
+
+    minimizeTeam() {
+        this.gs.getGraph().minimizeAllTeam();
+        this.messageService.add({ severity: 'success', summary: ` All team minimized` });
+    }
+
+    showOneTeam() {
+        const ref = this.dialogService.open(DialogSelectTeamComponent, {
+            header: 'Show a Team',
+            width: '50%',
+        });
+        ref.onClose.subscribe((data) => {
+            if (data.show) {
+                var team = data.team;
+                this.gs.getGraph().showOnlyTeam(team);
+                this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} showed` });
+            }
+        });
+    }
+
+    refine() {
+        const ref = this.dialogService.open(DialogRefineComponent, {
+            header: 'Refine the model',
+            width: '70%'
+        });
+        ref.onClose.subscribe((data) => {
+
+        });
+    }
+
+    analyse() {
+        const ref = this.dialogService.open(DialogAnalysisComponent, {
+            header: 'Check the principles to analyse',
+            width: '70%'
+        });
+        ref.onClose.subscribe((data) => {
+            if(data.selected_smells){
+                var smells = data.selected_smells;
+                this.gs.uploadGraph()
+                .subscribe(data => {
+                  this.as.runRemoteAnalysis(smells)
+                    .subscribe(data => {
+                      this.as.showSmells();
+                      var res = this.as.getSummaryResultAnalysis()
+                      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail:"# nodes affected: "+res.nodes+", #groups affected: "+ res.groups});
+                    });
+                });
+            }
+           
+        });
+    }
+
 }

@@ -1,1 +1,102 @@
-{"name": "micro.tosca", "nodes": [{"name": "front-end", "type": "service"}, {"name": "orders", "type": "service"}, {"name": "orders-db", "type": "datastore"}, {"name": "payment", "type": "service"}, {"name": "user", "type": "service"}, {"name": "carts", "type": "service"}, {"name": "carts-db", "type": "datastore"}, {"name": "catalogue-db", "type": "datastore"}, {"name": "catalogue", "type": "service"}, {"name": "user-db", "type": "datastore"}, {"name": "shipping", "type": "service"}, {"name": "rabbitmq", "type": "messagebroker"}, {"name": "queue-master", "type": "service"}, {"name": "edge-router", "type": "messagerouter"}, {"name": "kcarts-db", "type": "messagerouter"}, {"name": "kcarts", "type": "messagerouter"}, {"name": "kcatalogue-db", "type": "messagerouter"}, {"name": "kcatalogue", "type": "messagerouter"}, {"name": "kfront-end", "type": "messagerouter"}, {"name": "korders-db", "type": "messagerouter"}, {"name": "korders", "type": "messagerouter"}, {"name": "kpayment", "type": "messagerouter"}, {"name": "kqueue-master", "type": "messagerouter"}, {"name": "krabbitmq", "type": "messagerouter"}, {"name": "kshipping", "type": "messagerouter"}, {"name": "kuser-db", "type": "messagerouter"}, {"name": "kuser", "type": "messagerouter"}], "links": [{"id": "5d27f53e-f38f-4d49-82cc-5b059cf6bf7c", "target": "kcarts", "source": "front-end", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "0f8fd6c0-e8fe-4920-b691-5af917c47593", "target": "kcatalogue", "source": "front-end", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "8e789352-f012-495b-b4f6-7cd565d719aa", "target": "korders", "source": "front-end", "timeout": false, "circuit_breaker": true, "dynamic_discovery": false, "type": "interaction"}, {"id": "a38fccb1-684a-4289-89e8-7415ff1784c1", "target": "kuser", "source": "front-end", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "de33aa6c-b29e-4e9d-84da-fecec7c02a5b", "target": "kcarts", "source": "orders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "bb369b0d-04fc-4625-a1c7-cc434cc78640", "target": "korders-db", "source": "orders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "199b358f-7609-47ca-871e-bc5ab058961a", "target": "kpayment", "source": "orders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "2b79a45a-5259-4cb3-acde-4d28edc72c5d", "target": "kshipping", "source": "orders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "602b2e79-d00f-4d2f-80f1-ee57fcf94456", "target": "kuser", "source": "orders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "e0538ce4-9b83-4962-a6ab-14808ebe86da", "target": "kuser-db", "source": "user", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "3483bcd7-5ba6-4a81-90b0-587f3d09535b", "target": "kcarts-db", "source": "carts", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "4cf5b8ec-d08a-41ba-ab01-1e10fc1f9822", "target": "kcatalogue-db", "source": "catalogue", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "746157a5-a36f-448d-80be-bd7f03860064", "target": "krabbitmq", "source": "shipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "f0219b84-1fbf-4b61-a926-250f4479b8e5", "target": "krabbitmq", "source": "queue-master", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "d7a2c9da-e2a7-4403-aaae-480965faf638", "target": "kfront-end", "source": "edge-router", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "e2ef371d-aa5d-49af-a9b2-c1448d7d7ca7", "target": "carts-db", "source": "kcarts-db", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "ce185cc2-fdf4-468d-9311-f90692592223", "target": "carts", "source": "kcarts", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "88161cc5-0051-47d9-9af1-35490366168c", "target": "catalogue-db", "source": "kcatalogue-db", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "78b3b208-845f-439a-8859-f94103b8f9b8", "target": "catalogue", "source": "kcatalogue", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "efc3e71b-4782-48c8-9abb-40be15699020", "target": "front-end", "source": "kfront-end", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "b31759b0-7e2f-400f-9c20-ed8dfda93070", "target": "orders-db", "source": "korders-db", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "b332c2bb-93fa-454e-8fa5-c9f88f7343a9", "target": "orders", "source": "korders", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "f707bc76-ca00-4667-92a6-20334d284cb6", "target": "payment", "source": "kpayment", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "bc57b897-7308-46aa-a64b-7b2dfbeabde4", "target": "queue-master", "source": "kqueue-master", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "13651b65-f283-4084-b03a-e1180ba0159b", "target": "rabbitmq", "source": "krabbitmq", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "5af01fd5-c681-4fbb-bc4f-c8129b30b51a", "target": "shipping", "source": "kshipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "1630b52e-c4e6-4bbc-91c0-776b03c1baf9", "target": "user-db", "source": "kuser-db", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}, {"id": "16a939a4-80a1-4ed0-8d65-e34be5a3f214", "target": "user", "source": "kuser", "timeout": false, "circuit_breaker": false, "dynamic_discovery": true, "type": "interaction"}], "groups": [{"name": "kedge", "type": "edgegroup", "members": ["kfront-end"]}]}
+{
+    "name": "hello-world",
+    "nodes": [
+        {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "datastore"
+        },
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "messagebroker"
+        },
+        {
+            "name": "Api gateway",
+            "type": "messagerouter"
+        }
+    ],
+    "links": [
+        {
+            "source": "shipping",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "timeout": true,
+            "dynamic_discovery": true,
+            "circuit_breaker": true,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Api gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        }
+    ],
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "Api gateway"
+            ]
+        },
+        {
+            "name": "team-primo",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "order",
+                "order_db"
+            ]
+        },
+        {
+            "name": "team-secondo",
+            "type": "squadgroup",
+            "members": [
+                "Api gateway",
+                "rabbitmq"
+            ]
+        }
+    ]
+}

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
-import { MenuItem } from 'primeng/api';
 
 import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph.service";
@@ -15,9 +14,10 @@ import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
+import * as svgPanZoom from 'svg-pan-zoom';
+
 import { GraphInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
-import * as svgPanZoom from 'svg-pan-zoom';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 
 @Component({
@@ -28,13 +28,11 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
 })
 export class GraphEditorComponent implements OnInit {
 
-    menubar: MenuItem[];
-
     _options = { width: "95%", height: "80%" };
 
     paper: joint.dia.Paper;
 
-    name: string; // name of the app
+    // name: string; // name of the app
 
     svgZoom;
 
@@ -42,159 +40,6 @@ export class GraphEditorComponent implements OnInit {
 
     constructor(private graphInvoker: GraphInvoker, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.selectdNode = null;
-        this.menubar = [
-            {
-                label: "File",
-                items: [
-                    {
-                        label: 'New',
-                        icon: 'pi pi-fw pi-plus',
-                        command: () => {
-                            console.log("NEW FILE");
-                        }
-                    },
-                    {
-                        label: 'Rename',
-                        icon: 'pi pi-fw pi-pencil',
-                        command: () => {
-                            console.log("Renaming");
-                        }
-                    },
-                    {
-                        label: 'Save',
-                        icon: 'pi pi-fw pi-save',
-                        command: () => {
-                            this.gs.uploadGraph()
-                                .subscribe(json_model => {
-                                    this.messageService.add({ severity: 'success', summary: json_model['name'] + " saved correctly", detail: '' });
-                                });
-                        }
-                    },
-                    {
-                        label: 'Examples',
-                        icon: 'pi pi-fw pi-download',
-                        items: [
-                            {
-
-                                label: "gg",
-                                command: () => {
-                                }
-                            }
-
-
-                        ]
-                    },
-                    {
-                        label: 'Import',
-                        icon: 'pi pi-fw pi-upload',
-                        command: () => {
-
-                        }
-                    },
-                    {
-                        label: 'Export',
-                        icon: 'pi pi-fw pi-download',
-                        command: () => {
-
-                        }
-                    }
-                ],
-
-            },
-            {
-                label: "Edit",
-                icon: 'pi pi-fw pi-pencil',
-                items: [
-                    {
-                        label: 'add',
-                        icon: 'pi pi-fw pi-plus',
-                        items: [
-                            {
-                                label: 'node',
-                                icon: 'pi pi-fw pi-upload',
-                            },
-                            {
-                                label: 'team',
-                                icon: 'pi pi-fw pi-upload',
-                            },
-                        ]
-                    },
-                    {
-                        label: 'undo',
-                        icon: "pi pi-fw pi-redo",
-                    },
-                    {
-                        label: 'redo',
-                        icon: "pi pi-fw pi-replay",
-                    },
-
-
-
-                ]
-            },
-            {
-                label: "View",
-                icon: 'pi pi-fw pi-cog',
-                items: [
-                    {
-                        label: 'layout',
-                        icon: "pi pi-fw pi-sitemap",
-                        items: [
-                            {
-                                label: 'Botton-to-top',
-                                command: () => {
-                                    this.gs.getGraph().applyLayout("BT");
-                                }
-                            },
-                            {
-                                label: 'Top-to-bottom',
-                                command: () => {
-                                    this.gs.getGraph().applyLayout("TB");
-                                }
-                            },
-                            {
-                                label: 'Left-to-right',
-                                command: () => {
-                                    this.gs.getGraph().applyLayout("LR");
-                                }
-                            },
-                            {
-                                label: 'Right-to-left',
-                                command: () => {
-                                    this.gs.getGraph().applyLayout("RL");
-                                }
-                            },
-                        ]
-                    },
-                    {
-                        label: 'Team',
-                        command: () => {
-                        }
-                    },
-                ]
-            },
-            {
-                label: " Actions",
-                icon: 'pi pi-fw pi-cog',
-                items: [
-                    {
-                        icon: "pi pi-fw pi-search",
-                        label: 'Analyse',
-                        command: () => {
-                            this.gs.getGraph().applyLayout("BT");
-                        }
-                    },
-                    {
-                        icon: "pi pi-fw pi-refresh",
-                        label: 'Refine',
-                        command: () => {
-                            this.gs.getGraph().applyLayout("BT");
-                        }
-                    }
-
-                ]
-            }
-        ];
     }
 
     ngOnInit() {
@@ -229,9 +74,6 @@ export class GraphEditorComponent implements OnInit {
             },
         });
 
-        // this.paper.setOrigin(this._options.width/2, this._options.height /2);
-        this.name = this.gs.getGraph().getName();
-
         this.createSampleGraph();
 
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
@@ -262,17 +104,7 @@ export class GraphEditorComponent implements OnInit {
         this.applyDirectedGraphLayout();
     }
 
-    undoRefactoring() {
-        this.graphInvoker.undo();
-    }
-
-    redoRefactoring() {
-        this.graphInvoker.redo();
-    }
-
-    clear() {
-        this.gs.getGraph().clearGraph();
-    }
+  
 
     fitContent() {
         //  $(window).resize(()=>{
@@ -322,33 +154,33 @@ export class GraphEditorComponent implements OnInit {
 
     }
 
-    saveName() {
-        this.gs.getGraph().setName(this.name);
-        this.messageService.clear();
-        this.messageService.add({ severity: 'success', summary: 'App renamed correctly', detail: "New name " + this.name });
-    }
+    // saveName() {
+    //     this.gs.getGraph().setName(this.name);
+    //     this.messageService.clear();
+    //     this.messageService.add({ severity: 'success', summary: 'App renamed correctly', detail: "New name " + this.name });
+    // }
 
-    addTeam() {
-        const ref = this.dialogService.open(DialogAddTeamComponent, {
-            header: 'Add Team',
-            width: '50%',
-            // height: '50%'
-        });
-        ref.onClose.subscribe((data) => {
-            this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
-            this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
-        });
-    }
+    // addTeam() {
+    //     const ref = this.dialogService.open(DialogAddTeamComponent, {
+    //         header: 'Add Team',
+    //         width: '50%',
+    //         // height: '50%'
+    //     });
+    //     ref.onClose.subscribe((data) => {
+    //         this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
+    //         this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
+    //     });
+    // }
 
-    addNode() {
-        const ref = this.dialogService.open(DialogAddNodeComponent, {
-            header: 'Add Node',
-            width: '50%'
-        });
-        ref.onClose.subscribe((data) => {
-            this.graphInvoker.executeCommand(data.command);
-        });
-    }
+    // addNode() {
+    //     const ref = this.dialogService.open(DialogAddNodeComponent, {
+    //         header: 'Add Node',
+    //         width: '50%'
+    //     });
+    //     ref.onClose.subscribe((data) => {
+    //         this.graphInvoker.executeCommand(data.command);
+    //     });
+    // }
 
     bindEvents() {
         this.bindKeyboardEvents();
@@ -753,7 +585,6 @@ export class GraphEditorComponent implements OnInit {
             this.gs.getGraph().minimizeTeam(team);
         })
     }
-
 
     bindTeamToCoverChildren() {
 

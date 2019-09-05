@@ -47,10 +47,10 @@ export class GraphService {
 
 
   /** POST: upload the local graph to the server */
-  uploadGraph(): Observable<string> {
+  uploadGraph(): Observable<any> {
     var graphJson = this.exportToJSON();
     console.log(graphJson);
-    return this.http.post<string>(this.graphUrlPost, graphJson, httpOptions);
+    return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
   }
 
   // download the graph stored into the server

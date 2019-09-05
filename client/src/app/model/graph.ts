@@ -334,6 +334,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     maximizeAllTeam() {
+        this.showGraph();
         this.getTeamGroups().forEach(team => {
             this.maximizeTeam(team);
         })

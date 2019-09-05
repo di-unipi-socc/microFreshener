@@ -1,7 +1,16 @@
-<div class="p-grid p-justify-center">
-    <div class="p-col-10">
-        <p-menubar [model]="menubar" [autoDisplay]="false"></p-menubar>
-    </div>
+
+<div style="margin-bottom:.90em">
+    <p-menubar [model]="menubar" [autoDisplay]="false">
+        <div>
+            <input type="text" pInputText placeholder="Name"
+                [(ngModel)]="modelName">
+            <button pButton type="button" icon="pi pi-check"
+                (click)="rename()">
+            </button>
+        </div>
+    </p-menubar>
 </div>
 
 
+<!-- confirm dialog -->
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
