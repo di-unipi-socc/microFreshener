@@ -12,11 +12,11 @@ services:
     environment:
       - DJANGO_SETTINGS=dev
    
-
   client:
     container_name: microfreshener-client
     build: 
       context: ./client
       dockerfile: Dockerfile
+    command: ng serve
     ports:
       - "8081:80"
