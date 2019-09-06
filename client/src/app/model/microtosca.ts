@@ -1,10 +1,11 @@
 import * as joint from 'jointjs';
 import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
+import { selector } from 'd3';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SHARED_PERSISTENCY = "white";
-let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "white"; //"#00ff00";
+let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "#1081E0"; //"#00ff00";
 let ICON_COLOR_WOBBLY_SERVICE_INTERACTION = "white";//'#0800ee';
 let ICON_COLOR_NO_API_GATEWAY = "white";//'#EFF142';
 let ICON_COLOR_SINGLE_LAYER_TEAM = "black";//'#c61aff';
@@ -109,22 +110,29 @@ joint.dia.Element.define('microtosca.Service', {
             refX: '50%',
             refY: '50%',
         },
+        // endpoint_backgound : {
+        //     ref: 'EndpointBasedServiceInteraction',
+        //     event: 'smell:EndpointBasedServiceInteraction:pointerdown',
+        //     refCx: '100%',
+        //     refCy: '100%',
+        //     refR: '100%',
+        //     //strokeWidth: 8,
+        //     stroke: '#1B6879',
+        //     fill: 'white',
+        //     magnet: false
+        // },
         EndpointBasedServiceInteraction: { // EndpointBasesdServiceInteraction
             fill: ICON_COLOR_ENDPOINT_SERVICE_INTERACTION,
-            // stroke:"red",
+            stroke:"white",
             strokeWidth: "1",
-            d: "M10.292,4.229c-1.487,0-2.691,1.205-2.691,2.691s1.205,2.691,2.691,2.691s2.69-1.205,2.69-2.691" +
-                " S11.779,4.229,10.292,4.229z M10.292,8.535c-0.892,0-1.615-0.723-1.615-1.615S9.4,5.306,10.292,5.306" +
-                " c0.891,0,1.614,0.722,1.614,1.614S11.184,8.535,10.292,8.535z M10.292,1C6.725,1,3.834,3.892,3.834,7.458" +
-                " c0,3.567,6.458,10.764,6.458,10.764s6.458-7.196,6.458-10.764C16.75,3.892,13.859,1,10.292,1z M4.91,7.525" +
-                "c0-3.009,2.41-5.449,5.382-5.449c2.971,0,5.381,2.44,5.381,5.449s-5.381,9.082-5.381,9.082S4.91,10.535,4.91,7.525z",
+            d: "M26,0C11.664,0,0,11.663,0,26s11.664,26,26,26s26-11.663,26-26S40.336,0,26,0z M38.5,28H28v11c0,1.104-0.896,2-2,2  s-2-0.896-2-2V28H13.5c-1.104,0-2-0.896-2-2s0.896-2,2-2H24V14c0-1.104,0.896-2,2-2s2,0.896,2,2v10h10.5c1.104,0,2,0.896,2,2  S39.604,28,38.5,28z",
             event: 'smell:EndpointBasedServiceInteraction:pointerdown',
-            visibility: "hidden",
+            visibility: "visible", //hidden
             ref: 'body',
-            refX: '0%',
+            refX: '50%',
             refY: '50%',
-            refWidth: '25%',
-            refHeight: '25%',
+            width: '10',
+            height: '10',
             magnet: false
         },
         wsi: { // WobblyServiceInteractionSmell
@@ -139,7 +147,7 @@ joint.dia.Element.define('microtosca.Service', {
             d: "M18.737,9.691h-5.462c-0.279,0-0.527,0.174-0.619,0.437l-1.444,4.104L8.984,3.195c-0.059-0.29-0.307-0.506-0.603-0.523C8.09,2.657,7.814,2.838,7.721,3.12L5.568,9.668H1.244c-0.36,0-0.655,0.291-0.655,0.655c0,0.36,0.294,0.655,0.655,0.655h4.8c0.281,0,0.532-0.182,0.621-0.45l1.526-4.645l2.207,10.938c0.059,0.289,0.304,0.502,0.595,0.524c0.016,0,0.031,0,0.046,0c0.276,0,0.524-0.174,0.619-0.437L13.738,11h4.999c0.363,0,0.655-0.294,0.655-0.655C19.392,9.982,19.1,9.691,18.737,9.691z",
             magnet: false
         },
-        NoApiGateway: { // WobblyServiceInteractionSmell
+        NoApiGateway: { // No api gateway
             fill: ICON_COLOR_NO_API_GATEWAY,
             event: 'smell:NoApiGateway:pointerdown',
             d: "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z",
@@ -192,6 +200,9 @@ joint.dia.Element.define('microtosca.Service', {
                 'stroke-width': 2,
                 'pointer-events': 'none'
             }
+        },{
+            tagName: 'circle',
+            selector:"endpoint_backgound"
         }
         ],
         ignoreOnce(smell: SmellObject) {

@@ -106,6 +106,8 @@ export class GraphEditorComponent implements OnInit {
     createSampleGraph() {
         //  nodes
         var s = this.gs.getGraph().addService("shipping");
+        var catalogue = this.gs.getGraph().addService("catalogue");
+
         var odb = this.gs.getGraph().addDatastore("order_db");
         var o = this.gs.getGraph().addService("order");
         var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
@@ -123,6 +125,11 @@ export class GraphEditorComponent implements OnInit {
         // this.gs.getGraph().addDeploymentTimeInteraction(o, s);
         // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
 
+        // catalogue interactions
+        this.gs.getGraph().addRunTimeInteraction(catalogue, o);
+
+        
+
         // squads
         var s1 = this.gs.getGraph().addTeamGroup("team-primo");
         s1.addMember(s);
@@ -132,6 +139,8 @@ export class GraphEditorComponent implements OnInit {
         var t2 = this.gs.getGraph().addTeamGroup("team-secondo");
         t2.addMember(gw);
         t2.addMember(cp);
+        t2.addMember(catalogue);
+
         // this.gs.getGraph().showOnlyTeam(s1);
 
         // gateway interaction
