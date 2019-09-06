@@ -1,2 +1,10 @@
 
-<p>Prova import</p>
+<p>Select a microTosca file</p>
+
+<p-fileUpload mode="basic" 
+        name="graph"
+        [url]="urlUpload" 
+        accept=".yml"
+        (onUpload)="onUpload($event)"
+        chooseLabel="Choose file">
+</p-fileUpload>

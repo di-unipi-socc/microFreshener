@@ -17,7 +17,7 @@ export class DialogSmellComponent implements OnInit {
   jointNodeModel;
   smell: SmellObject;
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService, ) {
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService ) {
     this.actions = [];
     this.selectedCommand = null;
   }

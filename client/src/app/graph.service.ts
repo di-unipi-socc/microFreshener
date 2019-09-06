@@ -55,13 +55,13 @@ export class GraphService {
 
   // download the graph stored into the server
   dowloadGraph(): Observable<string> {
-    return this.http.get<string>(this.graphUrl )
+    return this.http.get<string>(this.graphUrl)
       .pipe(
         tap(_ => this.log(`fetched graph`)),
-      // catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
-  
+
+
   // exportGraphToJSON(): Observable<string> {
   //   var url = this.graphUrl + this.getGraph().getName() + "/"
   //   let params = new HttpParams().set("responseType", "blob");

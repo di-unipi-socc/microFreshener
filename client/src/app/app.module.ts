@@ -66,7 +66,7 @@ import { DialogImportComponent } from './dialog-import/dialog-import.component';
     DialogSelectTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
-    DialogImportComponent
+    DialogImportComponent,
   ],
   imports: [
     BrowserModule,
@@ -119,7 +119,7 @@ import { DialogImportComponent } from './dialog-import/dialog-import.component';
     DialogSelectTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
-    DialogImportComponent
+    DialogImportComponent,
   ]
 })
 export class AppModule { }

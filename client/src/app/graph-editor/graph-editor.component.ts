@@ -172,7 +172,7 @@ export class GraphEditorComponent implements OnInit {
 
 
         //graph eventts
-        this.bindGraphEvents();
+       //  this.bindGraphEvents();
     }
 
     bindGraphEvents() {

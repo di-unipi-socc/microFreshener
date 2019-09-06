@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
-import { DynamicDialogConfig } from 'primeng/api';
-import { GraphService } from '../graph.service';
-
-
+import { environment } from '../../environments/environment';
+import { GraphService } from "../graph.service";
 @Component({
   selector: 'app-dialog-import',
   templateUrl: './dialog-import.component.html',
@@ -11,15 +9,28 @@ import { GraphService } from '../graph.service';
 })
 export class DialogImportComponent implements OnInit {
 
-  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
+  urlUpload: string;
+
+  constructor(private gs: GraphService, public ref: DynamicDialogRef) { }
 
   ngOnInit() {
-    
-
+    this.urlUpload = environment.serverUrl + '/api/import';
   }
 
-  save() {
-    this.ref.close();
+
+  onUpload(event) {
+    var name = "";
+    event.files.forEach(element => {
+      name += ` ${element.name}`;
+    });
+
+    this.gs.dowloadGraph()
+      .subscribe((data) => {
+        console.log(data);
+        this.gs.getGraph().builtFromJSON(data);
+        this.gs.getGraph().applyLayout("LR");
+        this.ref.close({ "msg": `${name} file uploaded correctly` });
+      });
   }
 
 }

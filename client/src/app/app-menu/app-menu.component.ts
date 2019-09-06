@@ -10,11 +10,13 @@ import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.compo
 import { DialogSelectTeamComponent } from '../dialog-select-team/dialog-select-team.component';
 import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
-import { DialogImportComponent} from '../dialog-import/dialog-import.component';
+import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 
 import { GraphInvoker } from "../invoker/invoker";
 import { AddTeamGroupCommand } from '../invoker/graph-command';
 import { AnalyserService } from '../analyser.service';
+
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-menu',
@@ -26,6 +28,8 @@ export class AppMenuComponent implements OnInit {
 
     menubar: MenuItem[];
     modelName: string; // name of the model
+
+    hrefDownload = environment.serverUrl + '/api/export';
 
     constructor(private graphInvoker: GraphInvoker, private as: AnalyserService, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
 
@@ -47,7 +51,7 @@ export class AppMenuComponent implements OnInit {
                             this.save();
                         }
                     },
-                    {separator:true},
+                    { separator: true },
                     {
                         label: 'Import',
                         icon: 'pi pi-fw pi-upload',
@@ -57,12 +61,10 @@ export class AppMenuComponent implements OnInit {
                     },
                     {
                         label: 'Export',
+                        url: this.hrefDownload,
                         icon: 'pi pi-fw pi-download',
-                        command: () => {
-
-                        }
                     },
-                    {separator:true},
+                    { separator: true },
                     {
                         label: 'Examples',
                         icon: 'pi pi-fw pi-download',
@@ -104,7 +106,7 @@ export class AppMenuComponent implements OnInit {
                 ],
 
             },
-            {separator:true},
+            { separator: true },
             {
                 label: "Edit",
                 icon: 'pi pi-fw pi-pencil',
@@ -148,7 +150,7 @@ export class AppMenuComponent implements OnInit {
 
                 ]
             },
-            {separator:true},
+            { separator: true },
             {
                 label: "View",
                 icon: 'pi pi-fw pi-cog',
@@ -211,7 +213,7 @@ export class AppMenuComponent implements OnInit {
                     },
                 ]
             },
-            {separator:true},
+            { separator: true },
             {
                 label: " Actions",
                 icon: 'pi pi-fw pi-cog',
@@ -223,7 +225,7 @@ export class AppMenuComponent implements OnInit {
                             this.analyse();
                         }
                     },
-                    {separator:true},
+                    { separator: true },
                     {
                         icon: "pi pi-fw pi-refresh",
                         label: 'Refine',
@@ -255,12 +257,12 @@ export class AppMenuComponent implements OnInit {
     rename() {
         this.gs.getGraph().setName(this.modelName);
         this.messageService.clear();
-        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" +  this.gs.getGraph().getName() + "]"  });
+        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
     }
 
     save() {
         this.gs.uploadGraph().subscribe(res => {
-            if(res.msg)
+            if (res.msg)
                 this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
         });
     }
@@ -319,16 +321,18 @@ export class AppMenuComponent implements OnInit {
         });
     }
 
-    import(){
-        const ref = this.dialogService.open( DialogImportComponent, {
+    import() {
+        const ref = this.dialogService.open(DialogImportComponent, {
             header: 'Import MicroTosca',
             width: '70%'
         });
         ref.onClose.subscribe((data) => {
-
+            if (data.msg)
+                this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
         });
-      
+
     }
+
 
     refine() {
         const ref = this.dialogService.open(DialogRefineComponent, {
@@ -346,19 +350,19 @@ export class AppMenuComponent implements OnInit {
             width: '70%'
         });
         ref.onClose.subscribe((data) => {
-            if(data.selected_smells){
+            if (data.selected_smells) {
                 var smells = data.selected_smells;
                 this.gs.uploadGraph()
-                .subscribe(data => {
-                  this.as.runRemoteAnalysis(smells)
                     .subscribe(data => {
-                      this.as.showSmells();
-                      var num = this.as.getNumSmells()
-                      this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail:`Found ${num} smells`});
+                        this.as.runRemoteAnalysis(smells)
+                            .subscribe(data => {
+                                this.as.showSmells();
+                                var num = this.as.getNumSmells()
+                                this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${num} smells` });
+                            });
                     });
-                });
             }
-           
+
         });
     }
 
