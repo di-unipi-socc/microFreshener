@@ -303,12 +303,14 @@ export class Graph extends joint.dia.Graph {
             node.resize(50, 50);
             node.position(node.get('posXRelTeam'), node.get("posYRelTeam"), { parentRelative: true });
         })
+        team.setMaximize();
         team.resize(100, 100);
         team.fitEmbeds({ padding: 40 })
     }
 
     minimizeTeam(team: joint.shapes.microtosca.SquadGroup) {
         var links = this.getInternalLinksOfTeam(team);
+
         links.forEach(link => {
             link.attr("./visibility", "hidden");
         })
@@ -322,6 +324,7 @@ export class Graph extends joint.dia.Graph {
             node.set('posYRelTeam', point.y);
             node.scale(0, 0, { x: teamPos.x, y: teamPos.y });
         })
+        team.setMinimize()
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
         team.fitEmbeds({ padding: 40 })

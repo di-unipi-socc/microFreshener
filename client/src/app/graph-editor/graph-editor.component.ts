@@ -116,6 +116,8 @@ export class GraphEditorComponent implements OnInit {
         // shipping interactions
         this.gs.getGraph().addRunTimeInteraction(s, odb);
         this.gs.getGraph().addRunTimeInteraction(s, cp);
+        this.gs.getGraph().addRunTimeInteraction(s, catalogue);
+
         // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
 
         // order interactions
@@ -127,8 +129,6 @@ export class GraphEditorComponent implements OnInit {
 
         // catalogue interactions
         this.gs.getGraph().addRunTimeInteraction(catalogue, o);
-
-        
 
         // squads
         var s1 = this.gs.getGraph().addTeamGroup("team-primo");
@@ -147,7 +147,7 @@ export class GraphEditorComponent implements OnInit {
         this.gs.getGraph().addRunTimeInteraction(gw, s);
 
         // add EdgeGroup 
-        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw]);
+        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
 
     }
 
