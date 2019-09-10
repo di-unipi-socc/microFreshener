@@ -146,7 +146,9 @@ export class AddMessageBrokerCommand implements Command {
     addedSourceTargetbrokers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
-        this.links = smell.getLinkBasedCauses();
+        // For wobbly service interaction, adding message broker is disable whe the target node is a communication pattern
+        this.links = smell.getLinkBasedCauses().filter((link)=> ! (link.getTargetElement() instanceof joint.shapes.microtosca.CommunicationPattern))
+    
         this.graph = graph;
         this.addedSourceTargetbrokers = [];
     }
@@ -437,7 +439,7 @@ export class MoveDatastoreIntoTeamCommand implements Command {
     constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
         this.graph = graph;
         this.smell = smell;
-        this.team = smell.getGroup();
+        this.team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
     }
     
     execute() {
@@ -475,7 +477,7 @@ export class MoveServiceIntoTeamCommand implements Command {
     constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
         this.graph = graph;
         this.smell = smell;
-        this.team = smell.getGroup();
+        this.team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
     }
     
     execute() {

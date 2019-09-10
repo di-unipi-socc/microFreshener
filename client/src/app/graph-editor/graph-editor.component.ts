@@ -34,10 +34,13 @@ export class GraphEditorComponent implements OnInit {
 
     svgZoom;
 
-    selectdNode: joint.shapes.microtosca.Node;
+    leftClickselectdNode: joint.shapes.microtosca.Node;
+    rightClickselectdNode: joint.shapes.microtosca.Node;
+
 
     constructor(private graphInvoker: GraphInvoker, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-        this.selectdNode = null;
+        this.leftClickselectdNode = null;
+        this.rightClickselectdNode = null;
     }
 
     ngOnInit() {
@@ -159,6 +162,8 @@ export class GraphEditorComponent implements OnInit {
         this.bindDoubleClickCell();
         this.bindSingleClickCell();
 
+        this.bindSingleRightClickCell();
+
         this.bindMouseEnterLink();
         this.bindMouseOverNode();
 
@@ -169,10 +174,17 @@ export class GraphEditorComponent implements OnInit {
         this.bindTeamMinimize();
         this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
+        this.bindChangeTeamEvents();
 
 
         //graph eventts
        //  this.bindGraphEvents();
+    }
+
+    bindChangeTeamEvents(){
+        this.gs.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
+
+        })
     }
 
     bindGraphEvents() {
@@ -220,8 +232,8 @@ export class GraphEditorComponent implements OnInit {
     }
 
     deleteSelected() {
-        if (this.selectdNode) {
-            var node = this.selectdNode;
+        if (this.leftClickselectdNode) {
+            var node = this.leftClickselectdNode;
             this.confirmationService.confirm({
                 message: 'Do you want to delete this node?',
                 header: 'Node Deletion Confirmation',
@@ -255,20 +267,26 @@ export class GraphEditorComponent implements OnInit {
 
     }
 
-
     bindSingleClickBlank() {
         this.paper.on("blank:pointerclick", (cellView, evt, x, y, ) => {
             console.log("click on blank");
-            if (this.selectdNode) {
-                this.paper.findViewByModel(this.selectdNode).unhighlight();
-                this.selectdNode = null;
+            if (this.leftClickselectdNode) {
+                this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
+                this.leftClickselectdNode = null;
             }
         });
     }
 
+    bindSingleRightClickCell(){
+        this.paper.on('element:contextmenu',(cellView, evt, x, y)=>{ 
+            console.log("right click cell");
+        })
+        
+
+    }
 
     bindSingleClickCell() {
-        this.paper.on("element:pointerclick", (cellView, evt, x, y, ) => {
+        this.paper.on("element:pointerclick", (cellView, evt, x, y) => {
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
@@ -276,23 +294,23 @@ export class GraphEditorComponent implements OnInit {
             // team group cannot be clicked (both as source and target)
             if (!this.gs.getGraph().isTeamGroup(node)) {
                 // selecting target node
-                if (this.selectdNode !== null && node.id !== this.selectdNode.id) {
+                if (this.leftClickselectdNode !== null && node.id !== this.leftClickselectdNode.id) {
                     var add_link = true;
                     // disable link from <any> to datastore
                     if (this.gs.getGraph().isEdgeGroup(node)) {
                         add_link = false;
                     }
                     // disable link from edge to datastore
-                    if (this.gs.getGraph().isEdgeGroup(this.selectdNode) && this.gs.getGraph().isDatastore(node)) {
+                    if (this.gs.getGraph().isEdgeGroup(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node)) {
                         add_link = false;
                     }
                     // disable link from communication pattern to Datastore
-                    if (this.gs.getGraph().isCommunicationPattern(this.selectdNode) && this.gs.getGraph().isDatastore(node))
+                    if (this.gs.getGraph().isCommunicationPattern(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node))
                         add_link = false;
                     if (add_link) {
                         const ref = this.dialogService.open(DialogAddLinkComponent, {
                             data: {
-                                source: this.selectdNode,
+                                source: this.leftClickselectdNode,
                                 target: node
                             },
                             header: 'Add a link',
@@ -300,16 +318,16 @@ export class GraphEditorComponent implements OnInit {
                         });
                         ref.onClose.subscribe((data) => {
                             if (data) {
-                                var command = new AddLinkCommand(this.gs.getGraph(), this.selectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickselectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
                                 this.graphInvoker.executeCommand(command);
-                                this.paper.findViewByModel(this.selectdNode).unhighlight();
-                                this.selectdNode = null;
+                                this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
+                                this.leftClickselectdNode = null;
                             }
                         });
                         console.log("added link");
                     }
                     else {
-                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.selectdNode.getName()}] to [${node.getName()}] cannot be created` });
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickselectdNode.getName()}] to [${node.getName()}] cannot be created` });
                     }
                 }
                 else {
@@ -325,7 +343,7 @@ export class GraphEditorComponent implements OnInit {
                     }
                     if (can_select_source_node) {
                         cellView.highlight();
-                        this.selectdNode = node;
+                        this.leftClickselectdNode = node;
                     }
                     else {
                         this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
@@ -448,7 +466,7 @@ export class GraphEditorComponent implements OnInit {
         })
 
         this.paper.on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation(); // stop any further actions with the element view (e.g. dragging)
+            evt.stopPropagation();
             var model: joint.shapes.microtosca.Node = cellview.model;
             var smell: SmellObject = model.getSmell("WobblyServiceInteractonSmell");
             this._openDialogSmellComponent(model, smell);
@@ -480,27 +498,28 @@ export class GraphEditorComponent implements OnInit {
         });
     }
 
+
     bindTeamEmbedNodes() {
         // First, unembed the cell that has just been grabbed by the user.
-        this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+        // this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
 
-            var cell = cellView.model;
+        //     var cell = cellView.model;
 
-            if (!cell.get('embeds') || cell.get('embeds').length === 0) {
-                // Show the dragged element above all the other cells (except when the
-                // element is a parent).
-                cell.toFront();
-            }
+        //     if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+        //         // Show the dragged element above all the other cells (except when the
+        //         // element is a parent).
+        //         cell.toFront();
+        //     }
 
-            if (cell.get('parent')) {
-                //unembed cell from the parent
-                var member = <joint.shapes.microtosca.Node>cell;
-                var team = this.gs.getGraph().getTeamOfNode(member);
-                var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-                this.graphInvoker.executeCommand(command);
-                this.messageService.add({ severity: 'success', summary: 'Member removed from to team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
-            }
-        });
+        //     if (cell.get('parent')) {
+        //         //unembed cell from the parent
+        //         // var member = <joint.shapes.microtosca.Node>cell;
+        //         // var team = this.gs.getGraph().getTeamOfNode(member);
+        //         // var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+        //         // this.graphInvoker.executeCommand(command);
+        //         // this.messageService.add({ severity: 'success', summary: 'Member removed from to team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+        //     }
+        // });
 
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
@@ -513,20 +532,40 @@ export class GraphEditorComponent implements OnInit {
                 if (cellViewsBelow.length) {
                     // Note that the findViewsFromPoint() returns the view for the `cell` itself.
                     var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
-
-                    // Prevent recursive embedding.
+                    console.log(cellViewBelow);
+                    // Prevent recursive embedding
                     if (cellViewBelow) {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
                         if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)) {
+                            // check if the elment below has the parent equal to the cell
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
                                 var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
-                                var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-                                this.graphInvoker.executeCommand(command);
-                                this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                var memberTeam = this.gs.getGraph().getTeamOfNode(member);
+                                console.log(memberTeam);
+                                // do not embed on the same team
+                                if(team && memberTeam && team.getName() == memberTeam.getName() ){
+                                    team.fitEmbeds({ padding: 40});
+                                }
+                                else {
+                                    var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                                    this.graphInvoker.executeCommand(command);
+                                    this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                }
                             }
                         }
-
+                        
+                    }else{
+                        // click on blank paper
+                        console.log("not cell view Below defined");
+                        var member = <joint.shapes.microtosca.Node>cell;
+                        var team = this.gs.getGraph().getTeamOfNode(member);
+                        if(team){
+                            var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                             this.graphInvoker.executeCommand(command);
+                             this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                        }
+                        
                     }
                 }
             }

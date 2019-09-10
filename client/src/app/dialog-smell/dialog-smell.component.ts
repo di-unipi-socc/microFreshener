@@ -17,14 +17,12 @@ export class DialogSmellComponent implements OnInit {
   jointNodeModel;
   smell: SmellObject;
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService ) {
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
     this.actions = [];
     this.selectedCommand = null;
   }
 
-
   ngOnInit() {
-
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = <SmellObject>this.config.data.selectedsmell;

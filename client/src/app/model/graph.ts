@@ -300,8 +300,9 @@ export class Graph extends joint.dia.Graph {
         links.forEach(link =>   link.attr("./visibility", "visible"))
         team.getMembers().forEach(node => {
             node.attr("./visibility", "visible");
-            node.resize(50, 50);
+            node.resize(70,70);
             node.position(node.get('posXRelTeam'), node.get("posYRelTeam"), { parentRelative: true });
+            
         })
         team.setMaximize();
         team.resize(100, 100);
