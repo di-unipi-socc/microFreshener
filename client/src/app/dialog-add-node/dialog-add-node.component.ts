@@ -39,6 +39,10 @@ export class DialogAddNodeComponent implements OnInit {
     this.showCommunicationPatternType = true;
   }
 
+  uncheckCommPattarn(){
+    this.showCommunicationPatternType = false;
+  }
+
   isDisableSave() {
     return this.name == null || this.name == "" || this.selectedNodeType == null || (this.selectedNodeType == "communicationPattern" && this.selectedCommunicationPatternType == null);
   }

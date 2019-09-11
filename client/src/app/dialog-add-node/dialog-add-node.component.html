@@ -15,12 +15,17 @@
     <div class="p-col-6">
             <div class="ui-g" style="width:250px;margin-bottom:10px">
                     <div class="ui-g-12">
-                            <p-radioButton name="group1" value="service"
-                            label="Service" [(ngModel)]="selectedNodeType" inputId="opt1"></p-radioButton>
+                            <p-radioButton name="group1" 
+                            (onClick)="uncheckCommPattarn()"
+                            value="service"
+                            label="Service" [(ngModel)]="selectedNodeType" 
+                            inputId="opt1"></p-radioButton>
                     </div>
                     <div class="ui-g-12">
                             <p-radioButton name="group1" value="datastore"
-                                label="Datastore" [(ngModel)]="selectedNodeType" inputId="opt2"></p-radioButton>
+                            (onClick)="uncheckCommPattarn()"
+                                label="Datastore" [(ngModel)]="selectedNodeType" 
+                                inputId="opt2"></p-radioButton>
                     </div>
                     <div class="ui-g-12">
                             <p-radioButton name="group1" value="communicationPattern" 
@@ -35,10 +40,10 @@
 
 
 <div class="p-grid p-justify-center" *ngIf="showCommunicationPatternType">
-    <div class="p-md-2">
+    <div class="p-col-4">
         <label for="name">Type </label>
     </div>
-    <div class="p-md-8">
+    <div class="p-col-6">
         <p-dropdown [options]="communicationPatternTypes"
             [(ngModel)]="selectedCommunicationPatternType"
             optionLabel="name"

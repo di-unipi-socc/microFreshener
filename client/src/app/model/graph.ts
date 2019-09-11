@@ -302,7 +302,6 @@ export class Graph extends joint.dia.Graph {
             node.attr("./visibility", "visible");
             node.resize(70,70);
             node.position(node.get('posXRelTeam'), node.get("posYRelTeam"), { parentRelative: true });
-            
         })
         team.setMaximize();
         team.resize(100, 100);

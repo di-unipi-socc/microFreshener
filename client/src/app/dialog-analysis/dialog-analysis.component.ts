@@ -73,16 +73,6 @@ export class DialogAnalysisComponent implements OnInit {
 
   save() {
     this.ref.close({"selected_smells": this.selectedSmells});
-
-    // this.gs.uploadGraph()
-    //   .subscribe(data => {
-    //     this.as.runRemoteAnalysis(this.selectedSmells)
-    //       .subscribe(data => {
-    //         //TODO: pass to the close a error code () checkin the 
-    //         this.ref.close();
-    //       });
-    //   });
-
   }
 
 }

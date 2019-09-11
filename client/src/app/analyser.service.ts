@@ -110,8 +110,16 @@ export class AnalyserService {
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
-  runRemoteAnalysis(smells: Smell[]): Observable<Boolean> {
-    let smells_ids: number[] = smells.map(smell => smell.id);
+  runRemoteAnalysis(smells: Smell[] = null): Observable<Boolean> {
+    let smells_ids: number[] = []; 
+    // if(smells)
+    smells_ids = smells.map(smell => smell.id);
+    // else
+    //  this.getSmells().then(smells =>{ 
+    //     smells_ids =  smells.map(smell => smell.id);
+    //     console.log(smells_ids);
+    // });
+
     /*
       {
         smell: {
