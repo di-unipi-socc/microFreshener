@@ -41,7 +41,7 @@ topology_template:
     delivery-db:
       type: micro.nodes.Datastore
     Restaurant WebUI:
-      type: micro.nodes.MessageRouter
+      type: micro.nodes.Service
       requirements:
       - interaction: Order
       - interaction: Restaurant
