@@ -1,5 +1,5 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: sockshop
+description: SOCKSHOP
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
@@ -19,7 +19,6 @@ topology_template:
       - interaction: payment
       - interaction: carts
       - interaction: shipping
-
     orders-db:
       type: micro.nodes.Datastore
     payment:
@@ -56,7 +55,11 @@ topology_template:
       type: micro.nodes.MessageRouter
       requirements:
       - interaction: front-end
-  groups: {}
+  groups:
+    edgenodes:
+      type: micro.groups.Edge
+      members:
+      - edge-router
   relationship_templates:
     t:
       type: micro.relationships.InteractsWith
@@ -91,3 +94,4 @@ topology_template:
         timeout: true
         circuit_breaker: true
         dynamic_discovery: true
+
