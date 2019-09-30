@@ -1,11 +1,9 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: micro.tosca
+description: FTGO
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
   node_templates:
-    Consumer:
-      type: micro.nodes.Service
     Order:
       type: micro.nodes.Service
       requirements:
@@ -19,13 +17,11 @@ topology_template:
       type: micro.nodes.Service
       requirements:
       - interaction: accounting-db
-    OrderHIstory:
-      type: micro.nodes.Service
     API gateway:
       type: micro.nodes.MessageRouter
       requirements:
       - interaction: Restaurant
-      - interaction: Kitchen
+      - interaction: Delivery
     Restaurant:
       type: micro.nodes.Service
       requirements:
@@ -50,12 +46,16 @@ topology_template:
       - interaction: Order
       - interaction: Restaurant
       - interaction: Kitchen
-      - interaction: Delivery
     Notification:
       type: micro.nodes.Service
     accounting-db:
       type: micro.nodes.Datastore
-  groups: {}
+  groups:
+    edgenodes:
+      type: micro.groups.Edge
+      members:
+      - Restaurant WebUI
+      - API gateway
   relationship_templates:
     t:
       type: micro.relationships.InteractsWith
