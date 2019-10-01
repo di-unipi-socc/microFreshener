@@ -1,83 +1,159 @@
 {
-    "name": "hello-world",
+    "name": "micro.tosca",
     "nodes": [
         {
-            "name": "shipping",
+            "name": "Order",
             "type": "service"
         },
         {
-            "name": "catalogue",
+            "name": "Kitchen",
             "type": "service"
         },
         {
-            "name": "order_db",
+            "name": "Accounting",
+            "type": "service"
+        },
+        {
+            "name": "API gateway",
+            "type": "messagerouter"
+        },
+        {
+            "name": "Restaurant",
+            "type": "service"
+        },
+        {
+            "name": "Delivery",
+            "type": "service"
+        },
+        {
+            "name": "order-db",
             "type": "datastore"
         },
         {
-            "name": "order",
+            "name": "Restaurant-db",
+            "type": "datastore"
+        },
+        {
+            "name": "kitchen-db",
+            "type": "datastore"
+        },
+        {
+            "name": "delivery-db",
+            "type": "datastore"
+        },
+        {
+            "name": "Restaurant WebUI",
             "type": "service"
         },
         {
-            "name": "rabbitmq",
-            "type": "messagebroker"
+            "name": "Notification",
+            "type": "service"
         },
         {
-            "name": "Api gateway",
-            "type": "messagerouter"
+            "name": "accounting-db",
+            "type": "datastore"
         }
     ],
     "links": [
         {
-            "source": "shipping",
-            "target": "order_db",
+            "source": "Order",
+            "target": "order-db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "shipping",
-            "target": "rabbitmq",
+            "source": "Order",
+            "target": "Accounting",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "order",
-            "target": "shipping",
-            "timeout": true,
-            "dynamic_discovery": true,
-            "circuit_breaker": true,
-            "type": "interaction"
-        },
-        {
-            "source": "order",
-            "target": "order_db",
+            "source": "Kitchen",
+            "target": "kitchen-db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "order",
-            "target": "rabbitmq",
+            "source": "Accounting",
+            "target": "accounting-db",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "catalogue",
-            "target": "order",
+            "source": "API gateway",
+            "target": "Restaurant",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
             "type": "interaction"
         },
         {
-            "source": "Api gateway",
-            "target": "shipping",
+            "source": "API gateway",
+            "target": "Delivery",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Restaurant",
+            "target": "Restaurant-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Restaurant",
+            "target": "Notification",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Delivery",
+            "target": "delivery-db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Delivery",
+            "target": "Accounting",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Restaurant WebUI",
+            "target": "Order",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Restaurant WebUI",
+            "target": "Restaurant",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "Restaurant WebUI",
+            "target": "Kitchen",
             "timeout": false,
             "dynamic_discovery": false,
             "circuit_breaker": false,
@@ -89,26 +165,8 @@
             "name": "edgenodes",
             "type": "edgegroup",
             "members": [
-                "order",
-                "Api gateway"
-            ]
-        },
-        {
-            "name": "team-primo",
-            "type": "squadgroup",
-            "members": [
-                "shipping",
-                "order",
-                "order_db"
-            ]
-        },
-        {
-            "name": "team-secondo",
-            "type": "squadgroup",
-            "members": [
-                "Api gateway",
-                "rabbitmq",
-                "catalogue"
+                "Restaurant WebUI",
+                "API gateway"
             ]
         }
     ]

@@ -75,6 +75,9 @@ Run the local server
 ```
 python manage.py runserver
 
+// expose the server to a specific port
+python manage.py runserver 0.0.0.0:8000
+
 ```
 
 ###  Run the client
@@ -87,6 +90,9 @@ $ cd /client
 Serve the client with a local server
 ```
 $ sudo ng serve
+ 
+// deploy on production host "neri.di.unipi.it"
+$ ng serve --host neri.di.unipi.it -c production 
 ```
 
 Open the bowser on http://127.0.0.1:4200/.
