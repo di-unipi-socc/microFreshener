@@ -99,7 +99,17 @@ Open the bowser on http://127.0.0.1:4200/.
 
 
 ## with docker compose
-
+Create the docker network
 ```
 $ docker network create web
 ```
+Build the image
+```
+$ docker-compose -f docker-compose.prod.yml build
+```
+
+```
+$ docker-compose -f docker-compose.prod.yml up
+```
+
+Open the bowser on http://127.0.0.1.
