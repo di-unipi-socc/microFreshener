@@ -96,3 +96,10 @@ $ ng serve --host neri.di.unipi.it -c production
 ```
 
 Open the bowser on http://127.0.0.1:4200/.
+
+
+## with docker compose
+
+```
+$ docker network create web
+```

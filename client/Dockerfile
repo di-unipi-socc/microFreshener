@@ -9,7 +9,7 @@ COPY package.json package-lock.json /app/
 # Install app dependencies.
 RUN npm install
 
-COPY . /app
+COPY . /app 
 
 # Default build configuration (production by default)
 ARG configuration=production
