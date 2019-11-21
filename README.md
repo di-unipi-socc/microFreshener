@@ -24,18 +24,9 @@ and to select suitable refactorings to resolve them.
 - analyse the architecture and 
 - apply refactorings.
 
-Examples of the web-based interface are shown below where:
- - (a) is an example of an architecture drawn with the GUI, where the icons on the nodes  are the architectural smells affecting such ndoes.
- - (b) is the view for choosing a refactoring.
+Examples of the web-based interface is shown below.
 
-  (a)       |  (b)
-:-------------------------:|:-------------------------:
-![](./docs/screenshot1.png)  |  ![](./docs/screenshot2.png)
-
-<!-- ## Internal Architecture
-`MicroFreshener` architecture is composed by a backend and a frontend.
-
-![](./docs/microFreshener.png) -->
+![](./docs/demo.gif)
 
 
 ## Quick Guide
