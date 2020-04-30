@@ -27,7 +27,7 @@
     "core-js": "^2.6.9",
     "dagre": "^0.8.4",
     "jointjs": "^2.2.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "lodash": "^3.10.1",
     "primeflex": "^1.0.0-rc.1",
     "primeicons": "^2.0.0",
