@@ -26,7 +26,7 @@
     "chart.js": "^2.8.0",
     "core-js": "^2.6.9",
     "dagre": "^0.8.4",
-    "jointjs": "^2.2.1",
+    "jointjs": "^3.3.0",
     "jquery": "^3.4.1",
     "lodash": "^3.10.1",
     "primeflex": "^1.0.0-rc.1",
