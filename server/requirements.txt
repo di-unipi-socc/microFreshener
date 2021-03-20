@@ -13,7 +13,7 @@ django-rest-swagger==2.2.0
 djangorestframework==3.10.2
 idna==2.8
 itypes==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 microfreshener-core==1.4.0
 nested-lookup==0.2.19
