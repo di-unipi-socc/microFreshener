@@ -23,7 +23,7 @@
     "@angular/router": "^8.1.0",
     "@dagrejs/graphlib": "^2.1.4",
     "backbone": "^1.4.0",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "core-js": "^2.6.9",
     "dagre": "^0.8.4",
     "jointjs": "^2.2.1",
