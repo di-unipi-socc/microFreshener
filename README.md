@@ -35,35 +35,35 @@ In order to run the `MicroFreshener` you should run the server and the client (f
 ## Installation
 In order to use `MicroFreshener` you should first download the repository:
 
-```
-$ git clone git@github.com:di-unipi-socc/microFreshener.git
+```bash
+git clone https://github.com/di-unipi-socc/microFreshener.git
 ```
 
 ### Run the server
 Enter in the server directotry 
 
-```
-$ cd /server
+```bash
+cd /server
 ```
 
 Create a virtual environment and install the python dependencies
 
-```
-$ virtualenv -p python3 venv  
-$ source venv/bin/activate 
-$ pip install -r requirements.txt 
+```bash
+virtualenv -p python3 venv  
+source venv/bin/activate 
+pip install -r requirements.txt 
 ```
 
 Apply migrations
 
-```
+```bash
 python manage.py migrate
 
 ```
 
 Run the local server
 
-```
+```bash
 python manage.py runserver
 
 // expose the server to a specific port
@@ -74,16 +74,17 @@ python manage.py runserver 0.0.0.0:8000
 ###  Run the client
 The client is an Angular web application.
 
-```
-$ cd /client
+```bash
+cd /client
 ```
 
 Serve the client with a local server
-```
-$ sudo ng serve
+
+```bash
+sudo ng serve
  
 // deploy on production host "neri.di.unipi.it"
-$ ng serve --host neri.di.unipi.it -c production 
+ng serve --host neri.di.unipi.it -c production 
 ```
 
 Open the bowser on http://127.0.0.1:4200/.
@@ -91,16 +92,17 @@ Open the bowser on http://127.0.0.1:4200/.
 
 ## with docker compose
 Create the docker network
-```
-$ docker network create web
+```bash
+docker network create web
 ```
 Build the image
-```
-$ docker-compose -f docker-compose.prod.yml build
+
+```bash
+docker-compose -f docker-compose.prod.yml build
 ```
 
-```
-$ docker-compose -f docker-compose.prod.yml up
+```bash
+docker-compose -f docker-compose.prod.yml up
 ```
 
 Open the bowser on http://127.0.0.1.
