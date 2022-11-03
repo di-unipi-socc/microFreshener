@@ -17,7 +17,5 @@ services:
     build: 
       context: ./client
       dockerfile: Dockerfile
-    args:
-        configuration: dev
     ports:
       - "8081:80"
