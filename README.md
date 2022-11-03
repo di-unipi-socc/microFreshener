@@ -82,10 +82,9 @@ Serve the client with a local server
 
 ```bash
 sudo ng serve
- 
-// deploy on production host "neri.di.unipi.it"
-ng serve --host neri.di.unipi.it -c production 
 ```
+[comment]: <> (// deploy on production host "neri.di.unipi.it")
+[comment]: <> (ng serve --host neri.di.unipi.it -c production)
 
 Open the bowser on http://127.0.0.1:4200/.
 
