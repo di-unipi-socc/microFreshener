@@ -17,6 +17,7 @@ services:
     build: 
       context: ./client
       dockerfile: Dockerfile
-    #command: ng serve
+    args:
+        configuration: dev
     ports:
       - "8081:80"
