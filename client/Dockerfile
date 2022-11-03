@@ -1,5 +1,5 @@
 ### Stage 1: build bundle angular
-FROM node:11.4.0-alpine as builder
+FROM node:16.10-alpine as builder
 
 RUN mkdir /app
 WORKDIR /app
