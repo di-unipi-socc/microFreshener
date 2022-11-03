@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', ")7*gu-b5^6&y81ywbz_&euk(+5alx4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['131.114.2.77', 'neri.di.unipi.it','127.0.0.1', 'api.microfreshener.localhost']
+ALLOWED_HOSTS = ['*'] # SECURITY WARNING: incoming host check to be added
 
 
 # Application definition

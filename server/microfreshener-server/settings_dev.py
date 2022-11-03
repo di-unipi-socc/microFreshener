@@ -25,7 +25,7 @@ SECRET_KEY = 'po+a%^4%qnuf6zpiluf0&zfrdt978n0#lrg0-q_%#s8f&(epcy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'neri.di.unipi.it']
+ALLOWED_HOSTS = ['*'] # SECURITY WARNING: incoming host checks to be added
 
 
 # Application definition
