@@ -90,6 +90,17 @@ Open the bowser on http://127.0.0.1:4200/.
 
 
 ## with docker compose
+
+Make sure to install the following dependencies:
+
+```bash
+pip3 install websocket
+pip3 install docopt
+pip3 install texttable
+pip3 install dockerpty
+pip3 install websocket-client==0.32.0
+```
+
 Create the docker network
 ```bash
 docker network create web
