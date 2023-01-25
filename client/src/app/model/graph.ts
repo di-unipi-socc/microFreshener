@@ -78,6 +78,10 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isService(node));
     }
 
+    getComputes(): joint.dia.Cell[] {
+        return this.getNodes().filter(node => this.isCompute(node))
+    }
+
     getDatastore(): joint.dia.Cell[] {
         return this.getNodes().filter(node => this.isDatastore(node));
     }
@@ -171,6 +175,13 @@ export class Graph extends joint.dia.Graph {
         return service;
     }
 
+    addCompute(name: string): joint.shapes.microtosca.Compute {
+        let compute = new joint.shapes.microtosca.Compute();
+        compute.setName(name);
+        compute.addTo(this);
+        return compute;
+    }
+
     addDatastore(name: string): joint.shapes.microtosca.Datastore {
         let database = new joint.shapes.microtosca.Datastore();
         database.resize(75, 100);
@@ -238,7 +249,7 @@ export class Graph extends joint.dia.Graph {
     }
 
     isNode(node: joint.dia.Cell): boolean {
-        return this.isService(node) || this.isDatastore(node) || this.isCommunicationPattern(node);
+        return this.isService(node) || this.isDatastore(node) || this.isCommunicationPattern(node) || this.isCompute(node);
     }
 
     isGroup(group: joint.dia.Cell): boolean {
@@ -258,6 +269,10 @@ export class Graph extends joint.dia.Graph {
     isService(node: joint.dia.Cell): boolean {
         return node.attributes['type'] == "microtosca.Service";
         // return node instanceof joint.shapes.microtosca.Service;
+    }
+
+    isCompute(node: joint.dia.Cell): boolean {
+        return node.attributes['type'] == 'microtosca.Compute';
     }
 
     isDatastore(node: joint.dia.Cell): boolean {
@@ -386,6 +401,8 @@ export class Graph extends joint.dia.Graph {
         json['nodes'].forEach(node => {
             if (node.type == "service")
                 this.addService(node.name)
+            else if (node.type == "compute")
+                this.addCompute(node.name)
             else if (node.type == "datastore")
                 this.addDatastore(node.name);
             else if (node.type == "messagebroker")
@@ -405,6 +422,8 @@ export class Graph extends joint.dia.Graph {
             if (link.type == "interaction")
                 // TODO: Change to add InteractionLink
                 this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'], link['circuit_breaker'], link['dynamic_discovery'], );
+            else if (link.type == "deployed_on")
+                this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
             else
                 throw new Error(`Link type of ${link.type} not recognized`);
 
@@ -441,6 +460,8 @@ export class Graph extends joint.dia.Graph {
             var dnode = { 'name': node.getName() };
             if (this.isService(node))
                 dnode['type'] = "service";
+            else if (this.isCompute(node))
+                dnode['type'] = "compute"
             else if (this.isDatastore(node))
                 dnode['type'] = "datastore";
             else if (this.isMessageBroker(node))
@@ -473,6 +494,7 @@ export class Graph extends joint.dia.Graph {
                 throw new Error(`Link type of ${link} not recognized`);
             data['links'].push(dlink);
         })
+        this.getLinks
         // Add EdgeGroups
         this.getEdgeGroups().forEach(node => {
             var edgeGroup = { 'name': node.getName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),

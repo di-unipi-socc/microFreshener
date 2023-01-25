@@ -36,6 +36,8 @@ declare module 'jointjs' {
             }
             class Service extends Node {
             }
+            class Compute extends Node {
+            }
             class Datastore extends Node {
                 topRy(t, opt?): void;
             }
@@ -176,6 +178,181 @@ joint.dia.Element.define('microtosca.Service', {
             refY: '40%',
             magnet: false
         }
+    },
+    smells: [],            // list of smells that affects a single node
+    ignoreAlwaysSmells: []       // list of smell ignored (always)
+}, {
+        markup: [{
+            tagName: 'circle',
+            selector: 'body',
+        }, {
+            tagName: 'text',
+            selector: 'label'
+        }, {
+            tagName: 'path',
+            selector: 'wsi'
+        }, {
+            tagName: 'path',
+            selector: 'NoApiGateway'
+        },
+        {
+            tagName: "path",
+            selector: "delete"
+        },
+        {
+            tagName: 'circle',
+            selector: 'button',
+            attributes: {
+                'r': 7,
+                'fill': '#FF1D00',
+                'cursor': 'pointer'
+            }
+        }, {
+            tagName: 'path',
+            selector: 'icon',
+            attributes: {
+                'd': 'M -3 -3 3 3 M -3 3 3 -3',
+                'fill': 'none',
+                'stroke': '#FFFFFF',
+                'stroke-width': 2,
+                'pointer-events': 'none'
+            }
+        },{
+            tagName: 'circle',
+            selector:"endpoint_backgound"
+        },{
+            tagName:"polygon",
+            selector :"EndpointBasedServiceInteraction"
+        }
+        ],
+        ignoreOnce(smell: SmellObject) {
+            this.hideSmell(smell);
+        },
+        addIgnoreAlwaysSmell(smell: SmellObject) {
+            this.hideSmell(smell);
+            this.attributes.ignoreAlwaysSmells.push(smell);
+        },
+        undoIgnoreAlways(smell: SmellObject) {
+            this.showSmell(smell);
+            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
+                return sm.getName() != smell.getName();
+            });
+        },
+        getIgnoreAlwaysSmells() {
+            return this.attributes.ignoreAlwaysSmells;
+        },
+        getName: function () {
+            return this.attr('label/text');
+        },
+        setName: function (text) {
+            return this.attr('label/text', text || '');
+        },
+        getSmells: function () {
+            return this.attributes.smells;
+        },
+        getSmell: function (name: string) {
+            return this.attributes.smells.find(smell => {
+                return name === smell.name;
+            });
+        },
+        showIcons: function () {
+            this.attr('icon/visibility', 'visible');
+            this.attr('button/visibility', 'visible');
+
+        },
+        hideIcons: function () {
+            this.attr('icon/visibility', 'hidden');
+            this.attr('button/visibility', 'hidden');
+        },
+        resetSmells: function () {
+            this.attributes.smells = [];
+            this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
+            this.attr('wsi/visibility', 'hidden');
+            this.attr('NoApiGateway/visibility', 'hidden');
+        },
+        hideSmell(smell: SmellObject) {
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
+                this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
+            }
+            else if (smell instanceof WobblyServiceInteractionSmellObject) {
+                this.attr('wsi/visibility', 'hidden');
+            }
+            else if (smell instanceof NoApiGatewaySmellObject) {
+                this.attr('NoApiGateway/visibility', 'hidden');
+            }
+        },
+        showSmell(smell: SmellObject) {
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
+                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
+            }
+            else if (smell instanceof WobblyServiceInteractionSmellObject) {
+                this.attr('wsi/visibility', 'visible');
+            }
+            else if (smell instanceof NoApiGatewaySmellObject) {
+                this.attr('NoApiGateway/visibility', 'visible');
+            }
+        },
+        addSmell: function (smell: SmellObject) {
+            this.attributes.smells.push(smell);
+            if (smell instanceof EndpointBasedServiceInteractionSmellObject)
+                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
+            else if (smell instanceof WobblyServiceInteractionSmellObject)
+                this.attr('wsi/visibility', 'visible');
+            else if (smell instanceof NoApiGatewaySmellObject)
+                this.attr('NoApiGateway/visibility', 'visible');
+        }
+    });
+
+
+joint.dia.Element.define('microtosca.Compute', {
+    size: { width: 75, height: 75 },
+    attrs: {
+        body: {
+            refCx: '50%',
+            refCy: '50%',
+            refR: '50%',
+            //strokeWidth: 8,
+            stroke: '#1CC288',
+            fill: '#1CC288',
+            magnet: false
+        },
+        label: {
+            textVerticalAnchor: 'middle',
+            textAnchor: 'middle',
+            refX: '50%',
+            refY: '100%',
+            refY2: 15,
+            fontSize: NODE_LABEL_FONT_SIZE,
+            //refWidth: '75%',
+            //refHeight: '75%',
+            fill: 'black',
+            text: '',
+        },
+        button: {
+            ref: 'body',
+            refX: '80%',
+            refY: '0%',
+            event: 'node:service:delete',
+            visibility: "hidden",
+        },
+        icon: {
+            visibility: "hidden",
+            ref: "button",
+            refX: '50%',
+            refY: '50%',
+        },
+        wsi: { // WobblyServiceInteractionSmell TODO cambiare nell'altro smell
+            fill: ICON_COLOR_WOBBLY_SERVICE_INTERACTION,
+            event: 'smell:WobblyServiceInteractionSmell:pointerdown',
+            stroke:"white",
+            strokeWidth: "1",
+            visibility: "hidden",
+            ref: 'body',
+            refX: '35%',
+            refY: '40%',
+            d: "M20.15243413209694,2.0800748598753587 L20.15243413209694,13.479177718203825 C20.15243413209694,14.41943099033625 19.365550607512933,15.206314514920258 18.425297335380503,15.206314514920258 L8.407903914425187,15.206314514920258 L4.953630320992318,19.006015467696415 L4.953630320992318,15.206314514920258 L1.8447840869027365,15.206314514920258 C0.9045308147703093,15.206314514920258 0.11764729018630199,14.41943099033625 0.11764729018630199,13.479177718203825 L0.11764729018630199,2.0800748598753587 C0.11764729018630199,1.1398215877429332 0.9045308147703093,0.3529380631589255 1.8447840869027365,0.3529380631589255 L18.425297335380503,0.3529380631589255 C19.365550607512933,0.3529380631589255 20.15243413209694,1.1398215877429332 20.15243413209694,2.0800748598753587 z",
+            magnet: false
+        },
     },
     smells: [],            // list of smells that affects a single node
     ignoreAlwaysSmells: []       // list of smell ignored (always)

@@ -171,3 +171,23 @@ export class Datastore extends Node {
     //     return joint.util.deepSupplement({}, super.defaults())
     // }
 }
+
+export class Compute extends Node {
+    constructor(name: string, attributes?: any, options?: any) {
+        super(name, attributes, options);
+        this.attr({
+            body: {
+                refCx: '50%',
+                refCy: '50%',
+                refR: '50%',
+                strokeWidth: 8,
+                stroke: '#74F2CE',
+                fill: 'none',
+                magnet: true
+            }
+        });
+    }
+    defaults(): Backbone.ObjectHash {
+        return joint.util.deepSupplement({}, super.defaults())
+    }
+}
