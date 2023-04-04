@@ -3,7 +3,8 @@ export enum SMELL_NAMES {
     SMELL_WOBBLY_SERVICE_INTERACTION_SMELL = "Wobbly-service-interaction",
     SMELL_SHARED_PERSITENCY = "Shared-persistency",
     SMELL_NO_API_GATEWAY = "No-api-gateway",
-    SMELL_CROSS_TEAM_DATA_MANAGEMENT = "Cross-team-data-management"
+    SMELL_CROSS_TEAM_DATA_MANAGEMENT = "Cross-team-data-management",
+    SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "Multiple-services-in-one-container"
 }
 
 export enum REFACTORING_NAMES {

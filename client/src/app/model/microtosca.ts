@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
+import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject, MultipleServicesInOneContainerSmellObject } from '../analyser/smell';
 import { selector } from 'd3';
 
 let NODE_LABEL_FONT_SIZE = 16;
@@ -7,6 +7,7 @@ let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SHARED_PERSISTENCY = "#1B6879";
 let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "#48A9A6"; //"#00ff00";
 let ICON_COLOR_WOBBLY_SERVICE_INTERACTION = "#48A9A6";//'#0800ee';
+let ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "#48A9A6";//'#0800ee';
 let ICON_COLOR_NO_API_GATEWAY = "#48A9A6";//'#EFF142';
 let ICON_COLOR_SINGLE_LAYER_TEAM = "black";//'#c61aff';
 
@@ -341,9 +342,9 @@ joint.dia.Element.define('microtosca.Compute', {
             refX: '50%',
             refY: '50%',
         },
-        wsi: { // WobblyServiceInteractionSmell TODO cambiare nell'altro smell
-            fill: ICON_COLOR_WOBBLY_SERVICE_INTERACTION,
-            event: 'smell:WobblyServiceInteractionSmell:pointerdown',
+        MultipleServicesInOneContainer: { // MultipleServicesInOneContainer
+            fill: ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER,
+            event: 'smell:MultipleServicesInOneContainer:pointerdown',
             stroke:"white",
             strokeWidth: "1",
             visibility: "hidden",
@@ -365,10 +366,7 @@ joint.dia.Element.define('microtosca.Compute', {
             selector: 'label'
         }, {
             tagName: 'path',
-            selector: 'wsi'
-        }, {
-            tagName: 'path',
-            selector: 'NoApiGateway'
+            selector: 'MultipleServicesInOneContainer'
         },
         {
             tagName: "path",
@@ -395,9 +393,6 @@ joint.dia.Element.define('microtosca.Compute', {
         },{
             tagName: 'circle',
             selector:"endpoint_backgound"
-        },{
-            tagName:"polygon",
-            selector :"EndpointBasedServiceInteraction"
         }
         ],
         ignoreOnce(smell: SmellObject) {
@@ -441,40 +436,21 @@ joint.dia.Element.define('microtosca.Compute', {
         },
         resetSmells: function () {
             this.attributes.smells = [];
-            this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
-            this.attr('wsi/visibility', 'hidden');
-            this.attr('NoApiGateway/visibility', 'hidden');
+            this.attr('MultipleServicesInOneContainer/visibility', 'hidden');
         },
         hideSmell(smell: SmellObject) {
-            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
-                this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
-            }
-            else if (smell instanceof WobblyServiceInteractionSmellObject) {
-                this.attr('wsi/visibility', 'hidden');
-            }
-            else if (smell instanceof NoApiGatewaySmellObject) {
-                this.attr('NoApiGateway/visibility', 'hidden');
-            }
+            if (smell instanceof MultipleServicesInOneContainerSmellObject)
+                this.attr("MultipleServicesInOneContainer/visibility", 'hidden')
         },
         showSmell(smell: SmellObject) {
-            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
-                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
-            }
-            else if (smell instanceof WobblyServiceInteractionSmellObject) {
-                this.attr('wsi/visibility', 'visible');
-            }
-            else if (smell instanceof NoApiGatewaySmellObject) {
-                this.attr('NoApiGateway/visibility', 'visible');
-            }
+            if (smell instanceof MultipleServicesInOneContainerSmellObject)
+                this.attr("MultipleServicesInOneContainer/visibility", 'visible')
         },
         addSmell: function (smell: SmellObject) {
             this.attributes.smells.push(smell);
-            if (smell instanceof EndpointBasedServiceInteractionSmellObject)
-                this.attr('EndpointBasedServiceInteraction/visibility', 'visible');
-            else if (smell instanceof WobblyServiceInteractionSmellObject)
-                this.attr('wsi/visibility', 'visible');
-            else if (smell instanceof NoApiGatewaySmellObject)
-                this.attr('NoApiGateway/visibility', 'visible');
+
+            if (smell instanceof MultipleServicesInOneContainerSmellObject)
+                this.attr("MultipleServicesInOneContainer/visibility", 'visible')
         }
     });
 
