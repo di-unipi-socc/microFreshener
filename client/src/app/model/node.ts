@@ -1,4 +1,4 @@
-import { SmellObject, EndpointBasedServiceInteractionSmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject } from '../analyser/smell';
+import { SmellObject, EndpointBasedServiceInteractionSmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from '../analyser/smell';
 import * as joint from 'jointjs';
 
 export class Node extends joint.dia.Element {
@@ -97,6 +97,7 @@ export class Node extends joint.dia.Element {
         this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
         this.attr('wsi/visibility', 'hidden');
         this.attr('NoApiGateway/visibility', 'hidden');
+        this.attr('MultipleServicesInOneContainer/visibility', 'hidden');
     }
     hideSmell(smell: SmellObject) {
         if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
@@ -107,6 +108,9 @@ export class Node extends joint.dia.Element {
         }
         else if (smell instanceof NoApiGatewaySmellObject) {
             this.attr('NoApiGateway/visibility', 'hidden');
+        }
+        else if (smell instanceof MultipleServicesInOneContainerSmellObject) {
+            this.attr("MultipleServicesInOneContainer/visibility", 'hidden')
         }
     }
     showSmell(smell: SmellObject) {
@@ -119,6 +123,9 @@ export class Node extends joint.dia.Element {
         else if (smell instanceof NoApiGatewaySmellObject) {
             this.attr('NoApiGateway/visibility', 'visible');
         }
+        else if (smell instanceof MultipleServicesInOneContainerSmellObject) {
+            this.attr("MultipleServicesInOneContainer/visibility", 'visible')
+        }
     }
     addSmell(smell: SmellObject) {
         this.attributes.smells.push(smell);
@@ -128,6 +135,8 @@ export class Node extends joint.dia.Element {
             this.attr('wsi/visibility', 'visible');
         else if (smell instanceof NoApiGatewaySmellObject)
             this.attr('NoApiGateway/visibility', 'visible');
+        else if (smell instanceof MultipleServicesInOneContainerSmellObject)
+            this.attr("MultipleServicesInOneContainer/visibility", 'visible')
     }
 }
 
@@ -170,4 +179,24 @@ export class Datastore extends Node {
     // defaults(): Backbone.ObjectHash {
     //     return joint.util.deepSupplement({}, super.defaults())
     // }
+}
+
+export class Compute extends Node {
+    constructor(name: string, attributes?: any, options?: any) {
+        super(name, attributes, options);
+        this.attr({
+            body: {
+                refCx: '50%',
+                refCy: '50%',
+                refR: '50%',
+                strokeWidth: 8,
+                stroke: '#74F2CE',
+                fill: 'none',
+                magnet: true
+            }
+        });
+    }
+    defaults(): Backbone.ObjectHash {
+        return joint.util.deepSupplement({}, super.defaults())
+    }
 }
