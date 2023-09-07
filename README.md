@@ -46,15 +46,15 @@ Enter in the server directotry
 cd /server
 ```
 
-Create a virtual environment and install the python dependencies
+Create a virtual environment and install the python dependencies. Python3.8 is needed.
 
 ```bash
-virtualenv -p python3 venv  
+virtualenv -p="/usr/bin/python3.8" venv  
 source venv/bin/activate 
 pip install -r requirements.txt 
 ```
 
-Apply migrations
+Apply migrations (if this doesn't work, try running it after you already run the server once)
 
 ```bash
 python manage.py migrate
