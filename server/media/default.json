@@ -1,1 +1,102 @@
-{"name": "micro.tosca", "nodes": [{"name": "carts.sock-shop.svc", "type": "messagerouter"}, {"name": "catalogue-carts-db.sock-shop.svc", "type": "messagerouter"}, {"name": "catalogue.sock-shop.svc", "type": "messagerouter"}, {"name": "orders-db.sock-shop.svc", "type": "messagerouter"}, {"name": "orders.sock-shop.svc", "type": "messagerouter"}, {"name": "queue-master.sock-shop.svc", "type": "messagerouter"}, {"name": "user.sock-shop.svc", "type": "messagerouter"}, {"name": "carts-db.catalogue-carts-db.sock-shop.deploy", "type": "datastore"}, {"name": "carts.carts.sock-shop.deploy", "type": "service"}, {"name": "catalogue.catalogue.sock-shop.deploy", "type": "service"}, {"name": "front-end.front-end.sock-shop.deploy", "type": "service"}, {"name": "orders-db.orders-db.sock-shop.deploy", "type": "datastore"}, {"name": "test.orders.sock-shop.deploy", "type": "service"}, {"name": "orders.orders.sock-shop.deploy", "type": "service"}, {"name": "payment.payment.sock-shop.deploy", "type": "service"}, {"name": "queue-master.queue-master.sock-shop.deploy", "type": "service"}, {"name": "rabbitmq.rabbitmq.sock-shop.deploy", "type": "messagebroker"}, {"name": "shipping.shipping.sock-shop.deploy", "type": "service"}, {"name": "user.user.sock-shop.deploy", "type": "service"}, {"name": "rabbitmq.sock-shop.svc", "type": "messagerouter"}, {"name": "user-db.sock-shop.svc", "type": "messagerouter"}, {"name": "carts.sock-shop.deploy", "type": "compute"}, {"name": "catalogue.sock-shop.deploy", "type": "compute"}, {"name": "user.sock-shop.deploy", "type": "compute"}, {"name": "front-end.sock-shop.deploy", "type": "compute"}, {"name": "orders-db.sock-shop.deploy", "type": "compute"}, {"name": "payment.sock-shop.deploy", "type": "compute"}, {"name": "queue-master.sock-shop.deploy", "type": "compute"}, {"name": "rabbitmq.sock-shop.deploy", "type": "compute"}, {"name": "session-db.sock-shop.deploy", "type": "compute"}, {"name": "shipping.sock-shop.deploy", "type": "compute"}, {"name": "user-db.sock-shop.deploy", "type": "compute"}, {"name": "catalogue-db.catalogue-carts-db.sock-shop.deploy", "type": "datastore"}, {"name": "user-db.user-db.sock-shop.deploy", "type": "datastore"}, {"name": "payment-clusterip-svc-mf.sock-shop.svc", "type": "messagerouter"}, {"name": "shipping-clusterip-svc-mf.sock-shop.svc", "type": "messagerouter"}, {"name": "test-orders.sock-shop.deploy", "type": "compute"}, {"name": "orders-orders.sock-shop.deploy", "type": "compute"}, {"name": "catalogue-db-catalogue-carts-db.sock-shop.deploy", "type": "compute"}, {"name": "carts-db-catalogue-carts-db.sock-shop.deploy", "type": "compute"}, {"name": "front-end-nodeport-svc-mf.sock-shop.svc", "type": "messagerouter"}], "links": [{"id": "175c9d07-0cf8-4bad-a198-c2dcb470c13b", "target": "carts.carts.sock-shop.deploy", "source": "carts.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "78e4d8b0-fced-4d86-83a3-447b3df197f7", "target": "carts-db.catalogue-carts-db.sock-shop.deploy", "source": "catalogue-carts-db.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "490279dd-1ada-415d-8c60-4d7c8ecfab51", "target": "catalogue-db.catalogue-carts-db.sock-shop.deploy", "source": "catalogue-carts-db.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "8f77ed5b-a753-4c30-bfb8-9f19201ed371", "target": "catalogue.catalogue.sock-shop.deploy", "source": "catalogue.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "e578a59a-9499-43f5-b7cd-b8c512bb4c76", "target": "orders-db.orders-db.sock-shop.deploy", "source": "orders-db.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "8507bcf7-4d47-4903-9674-d7124b7c7a16", "target": "test.orders.sock-shop.deploy", "source": "orders.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "7f9c892e-4e39-4e10-a62c-018809fb9375", "target": "orders.orders.sock-shop.deploy", "source": "orders.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "8978c451-5290-47bd-b64c-08b45ebb5764", "target": "queue-master.queue-master.sock-shop.deploy", "source": "queue-master.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "2e3f2572-902c-4961-82e9-9fd7acc6c37f", "target": "user.user.sock-shop.deploy", "source": "user.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "3cd9d007-8f1f-41f8-a40e-b99bd69998a7", "target": "carts-db-catalogue-carts-db.sock-shop.deploy", "source": "carts-db.catalogue-carts-db.sock-shop.deploy", "type": "deployed_on"}, {"id": "16b7aa13-ef2e-419b-ab64-cb795d578561", "target": "catalogue-carts-db.sock-shop.svc", "source": "carts.carts.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": true, "dynamic_discovery": false}, {"id": "23224dac-081a-4eb9-976f-37f43d4233f3", "target": "carts.sock-shop.deploy", "source": "carts.carts.sock-shop.deploy", "type": "deployed_on"}, {"id": "5baaee00-e919-4f87-a163-cb34566b9329", "target": "catalogue-carts-db.sock-shop.svc", "source": "catalogue.catalogue.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": true, "dynamic_discovery": false}, {"id": "b7e127d3-f2d0-4142-9899-8c857093b5ff", "target": "catalogue.sock-shop.deploy", "source": "catalogue.catalogue.sock-shop.deploy", "type": "deployed_on"}, {"id": "b3cbd516-fbdb-4164-a502-8a369a18c57e", "target": "catalogue.sock-shop.svc", "source": "front-end.front-end.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "ca9b615a-e306-42df-bb61-6debbca3f047", "target": "user.sock-shop.svc", "source": "front-end.front-end.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "05ef5b53-eb5b-411e-afce-10e709b77d86", "target": "carts.sock-shop.svc", "source": "front-end.front-end.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "abdc3432-c1d2-4044-9902-f0276d32a20c", "target": "orders.sock-shop.svc", "source": "front-end.front-end.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "e694ea65-02c9-4ddf-8fd5-48943313d5a9", "target": "front-end.sock-shop.deploy", "source": "front-end.front-end.sock-shop.deploy", "type": "deployed_on"}, {"id": "d3fe494f-3f5f-4a77-8764-6a5aedf1442e", "target": "orders-db.sock-shop.deploy", "source": "orders-db.orders-db.sock-shop.deploy", "type": "deployed_on"}, {"id": "0b84e70c-6116-4342-aa1a-6e26e5556356", "target": "test-orders.sock-shop.deploy", "source": "test.orders.sock-shop.deploy", "type": "deployed_on"}, {"id": "0a740174-8ebe-40fc-b31c-d84ca444ac4f", "target": "orders-db.sock-shop.svc", "source": "orders.orders.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "2037d059-0cae-4e4e-9774-b4f7a4519505", "target": "carts.sock-shop.svc", "source": "orders.orders.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "a1f3fa58-c2d1-4581-b42e-889a17de8b29", "target": "user.sock-shop.svc", "source": "orders.orders.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "985fc713-04cd-470b-a55d-a99ca4672391", "target": "payment-clusterip-svc-mf.sock-shop.svc", "source": "orders.orders.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "0cd7798b-400d-40ca-bdd6-fde0c2e6cffc", "target": "shipping-clusterip-svc-mf.sock-shop.svc", "source": "orders.orders.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "fe69d5c7-6d43-4680-a814-f58e0725e78f", "target": "orders-orders.sock-shop.deploy", "source": "orders.orders.sock-shop.deploy", "type": "deployed_on"}, {"id": "1909eb6e-1fee-4153-9253-0b6bcdab67ec", "target": "payment.sock-shop.deploy", "source": "payment.payment.sock-shop.deploy", "type": "deployed_on"}, {"id": "28af467a-de5b-4a97-bdbe-c2a7aa38ab0b", "target": "rabbitmq.sock-shop.svc", "source": "queue-master.queue-master.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": true, "dynamic_discovery": false}, {"id": "75679824-075c-4e5c-a9de-d1e34051b390", "target": "queue-master.sock-shop.deploy", "source": "queue-master.queue-master.sock-shop.deploy", "type": "deployed_on"}, {"id": "cc79aa7f-be62-4561-ad0f-15a2ed5b913a", "target": "rabbitmq.sock-shop.deploy", "source": "rabbitmq.rabbitmq.sock-shop.deploy", "type": "deployed_on"}, {"id": "c10d61b2-83f4-4b80-8248-30b3cf9a64ed", "target": "rabbitmq.sock-shop.svc", "source": "shipping.shipping.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": true, "dynamic_discovery": false}, {"id": "3a57b097-a5e1-44c9-8e6c-cb139bf940b7", "target": "shipping.sock-shop.deploy", "source": "shipping.shipping.sock-shop.deploy", "type": "deployed_on"}, {"id": "f9773e5f-52c1-4a94-b08d-57900de8043f", "target": "user-db.sock-shop.svc", "source": "user.user.sock-shop.deploy", "type": "interaction", "timeout": true, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "fefad11e-8873-4aee-b1fc-c5e4cfbb3e3e", "target": "user.sock-shop.deploy", "source": "user.user.sock-shop.deploy", "type": "deployed_on"}, {"id": "d59e262a-9ede-4f3f-8692-7f99ed1d7d8a", "target": "rabbitmq.rabbitmq.sock-shop.deploy", "source": "rabbitmq.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "66dd5060-71a8-4f98-b324-ea2da0a9c061", "target": "user-db.user-db.sock-shop.deploy", "source": "user-db.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "35884db7-6763-438c-847e-587a25648020", "target": "catalogue-db-catalogue-carts-db.sock-shop.deploy", "source": "catalogue-db.catalogue-carts-db.sock-shop.deploy", "type": "deployed_on"}, {"id": "ac41d8d9-b5ea-48d9-9ad4-8f025ea211c3", "target": "user-db.sock-shop.deploy", "source": "user-db.user-db.sock-shop.deploy", "type": "deployed_on"}, {"id": "2e1e669e-9d8a-49bb-aa0c-a1e89d7107c0", "target": "payment.payment.sock-shop.deploy", "source": "payment-clusterip-svc-mf.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "ab8f004a-18f1-4ec3-926c-64a293732699", "target": "shipping.shipping.sock-shop.deploy", "source": "shipping-clusterip-svc-mf.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}, {"id": "6a1e4ece-46f3-4ceb-ba9b-80e9b42fde91", "target": "front-end.front-end.sock-shop.deploy", "source": "front-end-nodeport-svc-mf.sock-shop.svc", "type": "interaction", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false}], "groups": [{"name": "edge", "type": "edgegroup", "members": ["front-end-nodeport-svc-mf.sock-shop.svc"]}]}
+{
+    "name": "micro.tosca",
+    "nodes": [
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "messagebroker"
+        },
+        {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "datastore"
+        },
+        {
+            "name": "gateway",
+            "type": "messagerouter"
+        }
+    ],
+    "links": [
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        }
+    ],
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "shipping",
+                "gateway"
+            ]
+        },
+        {
+            "name": "team1",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "rabbitmq"
+            ]
+        },
+        {
+            "name": "team2",
+            "type": "squadgroup",
+            "members": [
+                "order",
+                "order_db"
+            ]
+        }
+    ]
+}
