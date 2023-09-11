@@ -11,6 +11,7 @@ import { DialogSelectTeamComponent } from '../editing/dialog-select-team/dialog-
 import { DialogRefineComponent } from '../editing/dialog-refine/dialog-refine.component';
 import { DialogAnalysisComponent } from '../editing/dialog-analysis/dialog-analysis.component';
 import { DialogImportComponent } from '../editing/dialog-import/dialog-import.component';
+import { DialogSelectRoleComponent } from '../editing/dialog-select-role/dialog-select-role.component';
 
 import { GraphInvoker } from "../editing/invoker/invoker";
 import { AddTeamGroupCommand } from '../editing/invoker/graph-command';
@@ -309,14 +310,14 @@ export class AppMenuComponent implements OnInit {
 
     showOneTeam() {
         const ref = this.dialogService.open(DialogSelectTeamComponent, {
-            header: 'Show a Team',
+            header: 'Select a Team',
             width: '50%',
         });
         ref.onClose.subscribe((data) => {
             if (data.show) {
                 var team = data.team;
                 this.gs.getGraph().showOnlyTeam(team);
-                this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} showed` });
+                this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
             }
         });
     }
@@ -327,11 +328,27 @@ export class AppMenuComponent implements OnInit {
             width: '70%'
         });
         ref.onClose.subscribe((data) => {
-            if (data.msg)
+            if (data.msg) {
+                console.log(data);
                 this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
+                this.selectRole();
+            }
         });
 
     }
+
+    selectRole() {
+        const ref = this.dialogService.open(DialogSelectRoleComponent, {
+            header: 'Select your role',
+            width: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            console.log("The user declared " + data.role);
+            if(data.role == "team")
+                this.showOneTeam();
+        });
+    }
+
 
 
     refine() {

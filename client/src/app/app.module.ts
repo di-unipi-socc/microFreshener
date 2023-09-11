@@ -51,6 +51,8 @@ import { DialogSelectTeamComponent } from './editing/dialog-select-team/dialog-s
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './editing/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './editing/dialog-import/dialog-import.component';
+import { InitialMenuComponent } from './initial-menu/initial-menu.component';
+import { DialogSelectRoleComponent } from './editing/dialog-select-role/dialog-select-role.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,8 @@ import { DialogImportComponent } from './editing/dialog-import/dialog-import.com
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
+    InitialMenuComponent,
+    DialogSelectRoleComponent,
   ],
   imports: [
     BrowserModule,
@@ -120,6 +124,7 @@ import { DialogImportComponent } from './editing/dialog-import/dialog-import.com
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
+    DialogSelectRoleComponent
   ]
 })
 export class AppModule { }
