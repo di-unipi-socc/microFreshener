@@ -1,6 +1,6 @@
 import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
-import { AnalyserService } from '../analyser.service';
+import { AnalyserService } from '../analyser/analyser.service';
 import { RefactoringCommand } from '../refactor/refactoring-command';
 
 @Injectable({

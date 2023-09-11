@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
 
-import { ANode } from "./analyser/node";
-import { AGroup } from "./analyser/group";
+import { ANode } from "../analyser/node";
+import { AGroup } from "../analyser/group";
 
-import { GraphService } from './graph.service';
-import { Principle } from './model/principles';
-import { Smell } from './model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './analyser/smell';
+import { GraphService } from '../model/graph.service';
+import { Principle } from '../model/principles';
+import { Smell } from '../model/smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "./refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
-import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./analyser/smell";
-import { CommunicationPattern } from "./model/communicationpattern";
-import { SMELL_NAMES } from "./analyser/costants";
-import { REFACTORING_NAMES } from "./analyser/costants";
+import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
+import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
+import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "../analyser/smell";
+import { CommunicationPattern } from "../model/communicationpattern";
+import { SMELL_NAMES } from "../analyser/costants";
+import { REFACTORING_NAMES } from "../analyser/costants";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

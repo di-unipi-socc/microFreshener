@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/api';
-import { environment } from '../../environments/environment';
-import { GraphService } from "../graph.service";
+import { environment } from '../../../environments/environment';
+import { GraphService } from "../model/graph.service";
 import { MessageService } from 'primeng/api';
 
 @Component({

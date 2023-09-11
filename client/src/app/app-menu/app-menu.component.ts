@@ -4,17 +4,17 @@ import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 
-import { GraphService } from "../graph.service";
-import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import { DialogSelectTeamComponent } from '../dialog-select-team/dialog-select-team.component';
-import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
-import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
-import { DialogImportComponent } from '../dialog-import/dialog-import.component';
+import { GraphService } from "../editing/model/graph.service";
+import { DialogAddNodeComponent } from '../editing/dialog-add-node/dialog-add-node.component';
+import { DialogAddTeamComponent } from '../editing/dialog-add-team/dialog-add-team.component';
+import { DialogSelectTeamComponent } from '../editing/dialog-select-team/dialog-select-team.component';
+import { DialogRefineComponent } from '../editing/dialog-refine/dialog-refine.component';
+import { DialogAnalysisComponent } from '../editing/dialog-analysis/dialog-analysis.component';
+import { DialogImportComponent } from '../editing/dialog-import/dialog-import.component';
 
-import { GraphInvoker } from "../invoker/invoker";
-import { AddTeamGroupCommand } from '../invoker/graph-command';
-import { AnalyserService } from '../analyser.service';
+import { GraphInvoker } from "../editing/invoker/invoker";
+import { AddTeamGroupCommand } from '../editing/invoker/graph-command';
+import { AnalyserService } from '../editing/analyser/analyser.service';
 
 import { environment } from '../../environments/environment';
 
