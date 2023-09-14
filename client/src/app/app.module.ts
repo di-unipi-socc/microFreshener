@@ -13,7 +13,7 @@ import { DialogAnalysisComponent } from './editing/dialog-analysis/dialog-analys
 import { DialogSmellComponent } from './editing/dialog-smell/dialog-smell.component';
 import { DialogAddNodeComponent } from './editing/dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from './editing/dialog-add-team/dialog-add-team.component';
-import { AppMenuComponent } from './app-menu/app-menu.component';
+import { AppMenuComponent } from './core/app-menu/app-menu.component';
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
@@ -51,7 +51,7 @@ import { DialogSelectTeamComponent } from './editing/dialog-select-team/dialog-s
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './editing/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './editing/dialog-import/dialog-import.component';
-import { InitialMenuComponent } from './initial-menu/initial-menu.component';
+import { InitialMenuComponent } from './core/initial-menu/initial-menu.component';
 import { DialogSelectRoleComponent } from './editing/dialog-select-role/dialog-select-role.component';
 
 @NgModule({
