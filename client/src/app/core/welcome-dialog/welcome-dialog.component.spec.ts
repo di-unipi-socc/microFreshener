@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InitialMenuComponent } from './initial-menu.component';
+import { WelcomeDialogComponent } from './welcome-dialog.component';
 
-describe('InitialMenuComponent', () => {
-  let component: InitialMenuComponent;
-  let fixture: ComponentFixture<InitialMenuComponent>;
+describe('WelcomeDialogComponent', () => {
+  let component: WelcomeDialogComponent;
+  let fixture: ComponentFixture<WelcomeDialogComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InitialMenuComponent ]
+      declarations: [ WelcomeDialogComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InitialMenuComponent);
+    fixture = TestBed.createComponent(WelcomeDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/api';
 import { MessageService } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/api';
-import { AppMenuItems } from '../core/app-menu/app-menu-items';
 import { MenuItem } from 'primeng/api';
 
 import { GraphService } from "../editing/model/graph.service";
@@ -20,19 +19,95 @@ import { AnalyserService } from '../editing/analyser/analyser.service';
 
 import { environment } from '../../environments/environment';
 
-@Injectable({
-    providedIn: 'root'
+@Component({
+    selector: 'app-menu',
+    templateUrl: './app-menu.component.html',
+    styleUrls: ['./app-menu.component.css'],
+    providers: [DialogService] // , ConfirmationService]
 })
-export class EditingMenuItems implements AppMenuItems {
+export class AppMenuComponent implements OnInit {
 
-    constructor(private graphInvoker: GraphInvoker, private as: AnalyserService, private gs: GraphService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-    }
+    menubar: MenuItem[];
+    modelName: string; // name of the model
 
-    private dialogService: DialogService;
+    hrefDownload = environment.serverUrl + '/api/export';
 
-    getAppMenuItems(dialogService: DialogService): MenuItem[] {
-        this.dialogService = dialogService;
-        return [
+    constructor(private graphInvoker: GraphInvoker, private as: AnalyserService, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+
+        this.menubar = [
+            {
+                label: "File",
+                items: [
+                    {
+                        label: 'New',
+                        icon: 'pi pi-fw pi-plus',
+                        command: () => {
+                            this.newFile();
+                        }
+                    },
+                    {
+                        label: 'Save',
+                        icon: 'pi pi-fw pi-save',
+                        command: () => {
+                            this.save();
+                        }
+                    },
+                    { separator: true },
+                    {
+                        label: 'Import',
+                        icon: 'pi pi-fw pi-upload',
+                        command: () => {
+                            this.import()
+                        }
+                    },
+                    {
+                        label: 'Export',
+                        url: this.hrefDownload,
+                        icon: 'pi pi-fw pi-download',
+                    },
+                    { separator: true },
+                    {
+                        label: 'Examples',
+                        icon: 'pi pi-fw pi-download',
+                        items: [
+                            // examples
+                            {
+                                label: 'Hello world',
+                                command: () => {
+                                    this.downloadExample("helloworld");
+                                }
+                            },
+                            {
+                                label: 'Case study',
+                                command: () => {
+                                    this.downloadExample("case-study-initial");
+                                }
+                            },
+                            {
+                                label: 'Case study (refactored)',
+                                command: () => {
+                                    this.downloadExample("case-study-refactored");
+                                }
+                            },
+                            {
+                                label: 'Sockshop',
+                                command: () => {
+                                    this.downloadExample("sockshop");
+                                }
+                            },
+                            {
+                                label: 'FTGO',
+                                command: () => {
+                                    this.downloadExample("ftgo");
+                                }
+                            }
+                            //end examples
+                        ]
+                    },
+                ],
+
+            },
+            { separator: true },
             {
                 label: "Edit",
                 icon: 'pi pi-fw pi-pencil',
@@ -165,14 +240,41 @@ export class EditingMenuItems implements AppMenuItems {
         ];
     }
 
-    addNode() {
-        const ref = this.dialogService.open(DialogAddNodeComponent, {
-            header: 'Add Node',
-            width: '50%'
+    ngOnInit() {
+        this.modelName = this.gs.getGraph().getName();
+    }
+
+    newFile() {
+        this.confirmationService.confirm({
+            header: 'New file',
+            icon: 'pi pi-exclamation-triangle',
+            message: 'Are you sure that you want to delete the current work and create a new one?',
+            accept: () => {
+                this.gs.getGraph().clearGraph();
+            }
         });
-        ref.onClose.subscribe((data) => {
-            this.graphInvoker.executeCommand(data.command);
+    }
+
+    rename() {
+        this.gs.getGraph().setName(this.modelName);
+        this.messageService.clear();
+        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
+    }
+
+    save() {
+        this.gs.uploadGraph().subscribe(res => {
+            if (res.msg)
+                this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
         });
+    }
+
+    downloadExample(name: string) {
+        this.gs.downloadExample(name)
+            .subscribe((data) => {
+                this.gs.getGraph().builtFromJSON(data);
+                this.gs.getGraph().applyLayout("LR");
+                this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
+            });
     }
 
     addTeam() {
@@ -183,6 +285,16 @@ export class EditingMenuItems implements AppMenuItems {
         ref.onClose.subscribe((data) => {
             this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
+        });
+    }
+
+    addNode() {
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            width: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            this.graphInvoker.executeCommand(data.command);
         });
     }
 
@@ -209,6 +321,35 @@ export class EditingMenuItems implements AppMenuItems {
             }
         });
     }
+
+    import() {
+        const ref = this.dialogService.open(DialogImportComponent, {
+            header: 'Import MicroTosca',
+            width: '70%'
+        });
+        ref.onClose.subscribe((data) => {
+            if (data.msg) {
+                console.log(data);
+                this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
+                this.selectRole();
+            }
+        });
+
+    }
+
+    selectRole() {
+        const ref = this.dialogService.open(DialogSelectRoleComponent, {
+            header: 'Select your role',
+            width: '50%'
+        });
+        ref.onClose.subscribe((data) => {
+            console.log("The user declared " + data.role);
+            if(data.role == "team")
+                this.showOneTeam();
+        });
+    }
+
+
 
     refine() {
         const ref = this.dialogService.open(DialogRefineComponent, {
@@ -241,4 +382,5 @@ export class EditingMenuItems implements AppMenuItems {
 
         });
     }
+
 }
