@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/api';
 
 @Component({
@@ -9,17 +8,22 @@ import { DynamicDialogRef } from 'primeng/api';
 })
 export class DialogSelectRoleComponent implements OnInit {
 
+  /*public static readonly PRODUCT_OWNER_ROLE = "po";
+  public static readonly TEAM_MEMBER_ROLE = "team";*/
+
   constructor(public ref: DynamicDialogRef) { }
 
   ngOnInit() {
   }
 
   closeAsProductOwner() {
-    this.ref.close({ role: "po"});
+    //this.ref.close({ role: DialogSelectRoleComponent.PRODUCT_OWNER_ROLE});
+    this.ref.close({ role: "po" });
   }
 
   closeAsTeam() {
-    this.ref.close({ role: "team"});
+    //this.ref.close({ role: DialogSelectRoleComponent.TEAM_MEMBER_ROLE});
+    this.ref.close({ role: "team" });
   }
 
 }

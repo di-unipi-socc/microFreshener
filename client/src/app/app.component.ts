@@ -29,7 +29,7 @@ export class AppComponent {
 
   }
 
-  ngOnInit() {
+  /*ngOnInit() {
     this.items = [
       {
         label: 'Account',
@@ -68,6 +68,6 @@ export class AppComponent {
         this.gs.getGraph().applyLayout("LR");
         this.messageService.add({ severity: 'success', summary: `Graph ${name} loaded` });
       });
-  }
+  }*/
 
 }
