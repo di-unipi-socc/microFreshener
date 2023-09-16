@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GraphService } from '../model/graph.service';
-import { DynamicDialogRef } from 'primeng/api';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import * as joint from 'jointjs';
 
 

@@ -798,7 +798,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
             refX: '0%',
             refY: '100%',
             fontSize: NODE_LABEL_FONT_SIZE,
-            text: name || '',
+            text: name != undefined ? name : '',
         },
     },
     groupName: '', // groupName of the group. each nodes connected to this node are considered memeber of the EdgeGroup
@@ -876,7 +876,7 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             // yAlignment: 'hanging',
             xAlignment: 'center',
             fontSize: 18,
-            text: name || '',
+            text: name != undefined ? name : '',
             magnet: false
         },
         minimize: {

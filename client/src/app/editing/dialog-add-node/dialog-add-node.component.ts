@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DynamicDialogRef } from 'primeng/api';
-import { DynamicDialogConfig } from 'primeng/api';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { CommunicationPattern } from "../model/communicationpattern";
 import { AnalyserService } from "../analyser/analyser.service";
 
