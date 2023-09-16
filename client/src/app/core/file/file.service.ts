@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, Output } from '@angular/core';
-import { DialogService } from 'primeng/api';
-import { MessageService } from 'primeng/primeng';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { GraphService } from "../../editing/model/graph.service";

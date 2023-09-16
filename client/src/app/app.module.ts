@@ -17,7 +17,8 @@ import { AppMenuComponent } from './core/app-menu/app-menu.component';
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
-import { MessageService, ConfirmationService, DialogService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';

@@ -122,6 +122,12 @@ export class AppMenuComponent implements OnInit {
         })
     }
 
+    rename() {
+        this.gs.getGraph().setName(this.modelName);
+        this.messageService.clear();
+        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
+    }
+
     setMenuForRole(role: UserRole) {
         /*let isPO = role == UserRoles.PRODUCT_OWNER;
         let isTeamMember = role == UserRoles.TEAM_MEMBER;*/

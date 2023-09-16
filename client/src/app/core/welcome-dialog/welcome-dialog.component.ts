@@ -21,4 +21,12 @@ export class WelcomeDialogComponent implements OnInit {
     }
   }
 
+  new() {}
+
+  import() {}
+
+  close() {
+    this.visible = false;
+  }
+
 }
