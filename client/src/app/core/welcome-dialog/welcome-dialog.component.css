@@ -1,8 +1,23 @@
-::ng-deep .ui-dialog .ui-dialog-content {
+.welcome-dialog-content {
     width: 80vw;
     height: 80vh;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.welcome-dialog-close {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    align-content: flex-end;
+    margin-top: 1vh;
+    margin-right: 1vh;
+}
+
+.welcome-dialog-button {
+    width: 5vw;
+    height: 5vh;
 }

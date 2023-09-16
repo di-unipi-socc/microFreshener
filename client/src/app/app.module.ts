@@ -17,7 +17,7 @@ import { AppMenuComponent } from './core/app-menu/app-menu.component';
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MessageService, ConfirmationService, DialogService } from 'primeng/api';
 import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -47,6 +47,9 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { PickListModule } from 'primeng/picklist';
 import { CardModule } from 'primeng/card';
 import { InputSwitchModule } from 'primeng/inputswitch';
+//import { StyleClassModule } from 'primeng/styleclass';
+
+// Import dialog components
 import { DialogSelectTeamComponent } from './editing/dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './editing/dialog-refine/dialog-refine.component';
@@ -106,9 +109,11 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     SelectButtonModule,
     PickListModule,
     CardModule,
-    InputSwitchModule
+    InputSwitchModule/*,
+    StyleClassModule*/
   ],
   providers: [
+    DialogService,
     MessageService,
     ConfirmationService
   ],

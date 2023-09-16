@@ -8,7 +8,11 @@
     [resizable]="false"
     >
     
-        <h1>Welcome to microFreshener</h1>
+    <div class="welcome-dialog-close"><p-button icon="pi pi-times" aria-label="Close" styleClass="p-button-rounded p-button-text"></p-button></div>
 
+    <div class="welcome-dialog-content">
+    <h1>Welcome to microFreshener</h1>
+    <p-button class="welcome-dialog-button" icon="pi pi-plus" label="New file" (onClick)="new()"></p-button> <p-button class="welcome-dialog-button" icon="pi pi-download" label="Import file" (onClick)="import()"></p-button>
+    </div>
     
 </p-dialog>

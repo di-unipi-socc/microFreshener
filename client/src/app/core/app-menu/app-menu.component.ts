@@ -26,8 +26,7 @@ import { UserRole } from '../user-role';
 @Component({
     selector: 'app-menu',
     templateUrl: './app-menu.component.html',
-    styleUrls: ['./app-menu.component.css'],
-    providers: [DialogService] // , ConfirmationService]
+    styleUrls: ['./app-menu.component.css']
 })
 export class AppMenuComponent implements OnInit {
 
@@ -60,7 +59,7 @@ export class AppMenuComponent implements OnInit {
                     { separator: true },
                     {
                         label: 'Import',
-                        icon: 'pi pi-fw pi-upload',
+                        icon: 'pi pi-fw pi-download',
                         command: () => {
                             fileService.import()
                         }
@@ -68,12 +67,12 @@ export class AppMenuComponent implements OnInit {
                     {
                         label: 'Export',
                         url: this.hrefDownload,
-                        icon: 'pi pi-fw pi-download',
+                        icon: 'pi pi-fw pi-upload',
                     },
                     { separator: true },
                     {
                         label: 'Examples',
-                        icon: 'pi pi-fw pi-download',
+                        icon: 'pi pi-fw pi-question-circle',
                         items: [
                             // examples
                             {
