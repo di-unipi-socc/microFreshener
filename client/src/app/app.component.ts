@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { GraphService } from "./editing/model/graph.service";
 import { MessageService, MenuItem } from 'primeng/api';
-import { DialogService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from './editing/analyser/analyser.service';
 import { environment } from '../environments/environment';
 import { ConfirmationService } from 'primeng/api';

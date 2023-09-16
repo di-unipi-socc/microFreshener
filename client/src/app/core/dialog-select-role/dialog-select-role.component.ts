@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DynamicDialogRef } from 'primeng/api';
-import { UserRole } from 'src/app/core/user-role';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-dialog-select-role',
@@ -19,12 +18,12 @@ export class DialogSelectRoleComponent implements OnInit {
 
   closeAsProductOwner() {
     //this.ref.close({ role: DialogSelectRoleComponent.PRODUCT_OWNER_ROLE});
-    this.ref.close({ role: UserRole.PRODUCT_OWNER });
+    this.ref.close({ role: "po" });
   }
 
   closeAsTeam() {
     //this.ref.close({ role: DialogSelectRoleComponent.TEAM_MEMBER_ROLE});
-    this.ref.close({ role: UserRole.TEAM_MEMBER });
+    this.ref.close({ role: "team" });
   }
 
 }

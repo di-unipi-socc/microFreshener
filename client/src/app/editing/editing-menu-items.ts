@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DialogService } from 'primeng/api';
-import { MessageService } from 'primeng/primeng';
+import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { AppMenuItems } from '../core/app-menu/app-menu-items';
 import { MenuItem } from 'primeng/api';

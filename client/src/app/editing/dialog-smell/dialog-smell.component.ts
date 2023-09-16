@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DynamicDialogRef } from 'primeng/api';
-import { DynamicDialogConfig } from 'primeng/api';
-import { MessageService } from 'primeng/primeng';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 import { SmellObject } from '../analyser/smell';
 import { Command } from '../invoker/icommand';
 

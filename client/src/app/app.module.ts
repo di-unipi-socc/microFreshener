@@ -28,7 +28,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ListboxModule } from 'primeng/listbox';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FileUploadModule } from 'primeng/fileupload';
-import { TreeModule } from 'primeng/primeng';
+import { TreeModule } from 'primeng/tree';
 import { TreeTableModule } from 'primeng/treetable';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
