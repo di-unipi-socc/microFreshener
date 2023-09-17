@@ -1,4 +1,4 @@
-import { Command } from '../invoker/icommand';
+import { Command } from '../../editing/invoker/icommand';
 import { IgnoreOnceCommand, AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, AddDataManagerIntoTeamCommand, MoveServiceIntoTeamCommand } from "./refactoring-command"
 
 export class Refactoring {

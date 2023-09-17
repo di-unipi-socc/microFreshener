@@ -7,18 +7,14 @@ import { MenuItem } from 'primeng/api';
 
 import { GraphService } from "../editing/model/graph.service";
 import { DialogAddNodeComponent } from '../editing/dialog-add-node/dialog-add-node.component';
-import { DialogAddTeamComponent } from '../editing/dialog-add-team/dialog-add-team.component';
-import { DialogSelectTeamComponent } from '../editing/dialog-select-team/dialog-select-team.component';
-import { DialogRefineComponent } from '../editing/dialog-refine/dialog-refine.component';
-import { DialogAnalysisComponent } from '../editing/dialog-analysis/dialog-analysis.component';
-import { DialogImportComponent } from '../editing/dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from '../core/dialog-select-role/dialog-select-role.component';
+import { DialogAddTeamComponent } from '../teams/dialog-add-team/dialog-add-team.component';
+import { DialogSelectTeamComponent } from '../teams//dialog-select-team/dialog-select-team.component';
+import { DialogRefineComponent } from '../refactoring/dialog-refine/dialog-refine.component';
+import { DialogAnalysisComponent } from '../refactoring/dialog-analysis/dialog-analysis.component';
 
 import { GraphInvoker } from "../editing/invoker/invoker";
 import { AddTeamGroupCommand } from '../editing/invoker/graph-command';
-import { AnalyserService } from '../editing/analyser/analyser.service';
-
-import { environment } from '../../environments/environment';
+import { AnalyserService } from '../refactoring/analyser/analyser.service';
 
 @Injectable({
     providedIn: 'root'

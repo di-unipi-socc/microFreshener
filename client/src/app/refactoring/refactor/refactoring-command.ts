@@ -1,6 +1,6 @@
-import { Graph } from "../model/graph";
-import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamSmellObject } from '../analyser/smell';
-import { Command } from "../invoker/icommand";
+import { Graph } from "../../editing/model/graph";
+import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamSmellObject } from '../../refactoring/analyser/smell';
+import { Command } from "../../editing/invoker/icommand";
 import * as joint from 'jointjs';
 
 export  abstract class RefactoringCommand implements Command {

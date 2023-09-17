@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { CommunicationPattern } from "../model/communicationpattern";
-import { AnalyserService } from "../analyser/analyser.service";
+import { AnalyserService } from "../../refactoring/analyser/analyser.service";
 
 import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../invoker/graph-command';
 import { GraphService } from '../model/graph.service';

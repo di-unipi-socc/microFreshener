@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { GraphService } from "../model/graph.service";
+import { GraphService } from "../../editing/model/graph.service";
 import * as joint from 'jointjs';
-import '../model/microtosca';
+import '../../editing/model/microtosca';
 
 @Component({
   selector: 'app-dialog-add-team',

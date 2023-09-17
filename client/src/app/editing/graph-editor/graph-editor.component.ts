@@ -3,11 +3,9 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
-import { DialogSmellComponent } from '../dialog-smell/dialog-smell.component';
+import { DialogSmellComponent } from '../../refactoring/dialog-smell/dialog-smell.component';
 import { GraphService } from "../model/graph.service";
-import { SmellObject } from '../analyser/smell';
-import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
+import { SmellObject } from '../../refactoring/analyser/smell';
 
 import * as joint from 'jointjs';
 import '../model/microtosca';

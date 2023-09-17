@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { environment } from '../../../environments/environment';
-import { GraphService } from "../model/graph.service";
+import { GraphService } from "../../editing/model/graph.service";
 @Component({
   selector: 'app-dialog-import',
   templateUrl: './dialog-import.component.html',

@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { GraphService } from "../../editing/model/graph.service";
-import { DialogImportComponent } from '../../editing/dialog-import/dialog-import.component';
+import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 import { DialogSelectRoleComponent } from '../dialog-select-role/dialog-select-role.component';
 
 import { environment } from '../../../environments/environment';
