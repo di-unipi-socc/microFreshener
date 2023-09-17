@@ -25,14 +25,8 @@ export class FileService {
   }
 
   newFile() {
-    this.confirmationService.confirm({
-        header: 'New file',
-        icon: 'pi pi-exclamation-triangle',
-        message: 'Are you sure that you want to delete the current work and create a new one?',
-        accept: () => {
-            this.gs.getGraph().clearGraph();
-        }
-    });
+    this.gs.getGraph().clearGraph();
+    this.roleChoice.emit(UserRole.PRODUCT_OWNER);
   }
 
   rename() {
@@ -53,6 +47,7 @@ export class FileService {
           .subscribe((data) => {
               this.gs.getGraph().builtFromJSON(data);
               this.gs.getGraph().applyLayout("LR");
+              this.selectRole();
               this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
           });
   }
@@ -65,8 +60,8 @@ export class FileService {
       ref.onClose.subscribe((data) => {
           if (data.msg) {
               console.log(data);
-              this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
               this.selectRole();
+              this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
           }
       });
 

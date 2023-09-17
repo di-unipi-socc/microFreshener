@@ -46,7 +46,14 @@ export class AppMenuComponent implements OnInit {
                         label: 'New',
                         icon: 'pi pi-fw pi-plus',
                         command: () => {
-                            fileService.newFile();
+                            this.confirmationService.confirm({
+                                header: 'New file',
+                                icon: 'pi pi-exclamation-triangle',
+                                message: 'Are you sure that you want to delete the current work and create a new one?',
+                                accept: () => {
+                                    fileService.newFile();
+                                }
+                            });
                         }
                     },
                     {

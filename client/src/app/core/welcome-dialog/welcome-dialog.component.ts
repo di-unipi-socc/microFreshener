@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FileService } from '../file/file.service';
 
 @Component({
   selector: 'welcome-dialog',
@@ -10,7 +11,7 @@ export class WelcomeDialogComponent implements OnInit {
   visible: boolean;
   firstAccess: boolean;
 
-  constructor() {
+  constructor(public fileService: FileService) {
     this.firstAccess = true;
   }
 
@@ -21,9 +22,15 @@ export class WelcomeDialogComponent implements OnInit {
     }
   }
 
-  new() {}
+  new() {
+    this.fileService.newFile();
+    this.close();
+  }
 
-  import() {}
+  import() {
+    this.fileService.import();
+    this.close();
+  }
 
   close() {
     this.visible = false;
