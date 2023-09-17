@@ -12,7 +12,7 @@ import { DialogSelectTeamComponent } from '../editing/dialog-select-team/dialog-
 import { DialogRefineComponent } from '../editing/dialog-refine/dialog-refine.component';
 import { DialogAnalysisComponent } from '../editing/dialog-analysis/dialog-analysis.component';
 import { DialogImportComponent } from '../editing/dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from '../editing/dialog-select-role/dialog-select-role.component';
+import { DialogSelectRoleComponent } from '../core/dialog-select-role/dialog-select-role.component';
 
 import { GraphInvoker } from "../editing/invoker/invoker";
 import { AddTeamGroupCommand } from '../editing/invoker/graph-command';

@@ -75,7 +75,8 @@ export class GraphEditorComponent implements OnInit {
             },
         });
 
-        this.createSampleGraph();
+        // Create a graph on startup as an example
+        //this.createSampleGraph();
 
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
             zoomEnabled: true,

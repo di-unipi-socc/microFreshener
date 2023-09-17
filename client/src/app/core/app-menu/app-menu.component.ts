@@ -11,7 +11,7 @@ import { DialogSelectTeamComponent } from '../../editing/dialog-select-team/dial
 import { DialogRefineComponent } from '../../editing/dialog-refine/dialog-refine.component';
 import { DialogAnalysisComponent } from '../../editing/dialog-analysis/dialog-analysis.component';
 import { DialogImportComponent } from '../../editing/dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from '../../editing/dialog-select-role/dialog-select-role.component';
+
 
 import { GraphInvoker } from "../../editing/invoker/invoker";
 import { AddTeamGroupCommand } from '../../editing/invoker/graph-command';
@@ -20,12 +20,13 @@ import { AnalyserService } from '../../editing/analyser/analyser.service';
 import { environment } from '../../../environments/environment';
 import { EditingMenuItems } from '../../editing/editing-menu-items';
 import { AppMenuItems } from './app-menu-items';
+import { FileService } from '../file/file.service';
+import { UserRole } from '../user-role';
 
 @Component({
     selector: 'app-menu',
     templateUrl: './app-menu.component.html',
-    styleUrls: ['./app-menu.component.css'],
-    providers: [DialogService] // , ConfirmationService]
+    styleUrls: ['./app-menu.component.css']
 })
 export class AppMenuComponent implements OnInit {
 
@@ -35,7 +36,7 @@ export class AppMenuComponent implements OnInit {
 
     hrefDownload = environment.serverUrl + '/api/export';
 
-    constructor(private graphInvoker: GraphInvoker, private as: AnalyserService, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService, private editingMenuItems: EditingMenuItems) {
+    constructor(private gs: GraphService, public dialogService: DialogService, private fileService: FileService, private messageService: MessageService, private confirmationService: ConfirmationService, private editingMenuItems: EditingMenuItems) {
 
         this.coreMenubar = [
             {
@@ -45,63 +46,70 @@ export class AppMenuComponent implements OnInit {
                         label: 'New',
                         icon: 'pi pi-fw pi-plus',
                         command: () => {
-                            this.newFile();
+                            this.confirmationService.confirm({
+                                header: 'New file',
+                                icon: 'pi pi-exclamation-triangle',
+                                message: 'Are you sure that you want to delete the current work and create a new one?',
+                                accept: () => {
+                                    fileService.newFile();
+                                }
+                            });
                         }
                     },
                     {
                         label: 'Save',
                         icon: 'pi pi-fw pi-save',
                         command: () => {
-                            this.save();
+                            fileService.save();
                         }
                     },
                     { separator: true },
                     {
                         label: 'Import',
-                        icon: 'pi pi-fw pi-upload',
+                        icon: 'pi pi-fw pi-download',
                         command: () => {
-                            this.import()
+                            fileService.import()
                         }
                     },
                     {
                         label: 'Export',
                         url: this.hrefDownload,
-                        icon: 'pi pi-fw pi-download',
+                        icon: 'pi pi-fw pi-upload',
                     },
                     { separator: true },
                     {
                         label: 'Examples',
-                        icon: 'pi pi-fw pi-download',
+                        icon: 'pi pi-fw pi-question-circle',
                         items: [
                             // examples
                             {
                                 label: 'Hello world',
                                 command: () => {
-                                    this.downloadExample("helloworld");
+                                    fileService.downloadExample("helloworld");
                                 }
                             },
                             {
                                 label: 'Case study',
                                 command: () => {
-                                    this.downloadExample("case-study-initial");
+                                    fileService.downloadExample("case-study-initial");
                                 }
                             },
                             {
                                 label: 'Case study (refactored)',
                                 command: () => {
-                                    this.downloadExample("case-study-refactored");
+                                    fileService.downloadExample("case-study-refactored");
                                 }
                             },
                             {
                                 label: 'Sockshop',
                                 command: () => {
-                                    this.downloadExample("sockshop");
+                                    fileService.downloadExample("sockshop");
                                 }
                             },
                             {
                                 label: 'FTGO',
                                 command: () => {
-                                    this.downloadExample("ftgo");
+                                    fileService.downloadExample("ftgo");
                                 }
                             }
                             //end examples
@@ -111,23 +119,14 @@ export class AppMenuComponent implements OnInit {
 
             }
         ];
-
-        this.menubar = this.coreMenubar;
     }
 
     ngOnInit() {
         this.modelName = this.gs.getGraph().getName();
-    }
-
-    newFile() {
-        this.confirmationService.confirm({
-            header: 'New file',
-            icon: 'pi pi-exclamation-triangle',
-            message: 'Are you sure that you want to delete the current work and create a new one?',
-            accept: () => {
-                this.gs.getGraph().clearGraph();
-            }
-        });
+        this.menubar = this.coreMenubar;
+        this.fileService.roleChoice.subscribe((role) => {
+            this.setMenuForRole(role);
+        })
     }
 
     rename() {
@@ -136,56 +135,11 @@ export class AppMenuComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
     }
 
-    save() {
-        this.gs.uploadGraph().subscribe(res => {
-            if (res.msg)
-                this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
-        });
-    }
-
-    downloadExample(name: string) {
-        this.gs.downloadExample(name)
-            .subscribe((data) => {
-                this.gs.getGraph().builtFromJSON(data);
-                this.gs.getGraph().applyLayout("LR");
-                this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
-            });
-    }
-
-    import() {
-        const ref = this.dialogService.open(DialogImportComponent, {
-            header: 'Import MicroTosca',
-            width: '70%'
-        });
-        ref.onClose.subscribe((data) => {
-            if (data.msg) {
-                console.log(data);
-                this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
-                this.selectRole();
-            }
-        });
-
-    }
-
-    private TEAM_MEMBER_ROLE: string = "team";
-    private PRODUCT_OWNER_ROLE: string = "po";
-
-    selectRole() {
-        const ref = this.dialogService.open(DialogSelectRoleComponent, {
-            header: 'Select your role',
-            width: '50%'
-        });
-        ref.onClose.subscribe((data) => {
-            console.log("The user declared " + data.role);
-            this.setMenuForRole(data.role);
-        });
-    }
-
-    setMenuForRole(role: string) {
-        let isPO = role == this.PRODUCT_OWNER_ROLE;
-        let isTeamMember = role == this.TEAM_MEMBER_ROLE;
+    setMenuForRole(role: UserRole) {
+        /*let isPO = role == UserRoles.PRODUCT_OWNER;
+        let isTeamMember = role == UserRoles.TEAM_MEMBER;*/
         
-        let separator = { separator: true };
+        const separator = { separator: true };
         
         this.menubar = Array.prototype.concat(
             this.coreMenubar,

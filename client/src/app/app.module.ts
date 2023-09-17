@@ -18,6 +18,7 @@ import { AppMenuComponent } from './core/app-menu/app-menu.component';
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -47,12 +48,15 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { PickListModule } from 'primeng/picklist';
 import { CardModule } from 'primeng/card';
 import { InputSwitchModule } from 'primeng/inputswitch';
+//import { StyleClassModule } from 'primeng/styleclass';
+
+// Import dialog components
 import { DialogSelectTeamComponent } from './editing/dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './editing/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './editing/dialog-import/dialog-import.component';
-import { InitialMenuComponent } from './core/initial-menu/initial-menu.component';
-import { DialogSelectRoleComponent } from './editing/dialog-select-role/dialog-select-role.component';
+import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
+import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.component';
 
 @NgModule({
   declarations: [
@@ -69,8 +73,8 @@ import { DialogSelectRoleComponent } from './editing/dialog-select-role/dialog-s
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
-    InitialMenuComponent,
     DialogSelectRoleComponent,
+    WelcomeDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -106,9 +110,11 @@ import { DialogSelectRoleComponent } from './editing/dialog-select-role/dialog-s
     SelectButtonModule,
     PickListModule,
     CardModule,
-    InputSwitchModule
+    InputSwitchModule/*,
+    StyleClassModule*/
   ],
   providers: [
+    DialogService,
     MessageService,
     ConfirmationService
   ],
