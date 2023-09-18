@@ -299,12 +299,16 @@ export class Graph extends joint.dia.Graph {
     }
 
     getSubgraphFromNodes(nodes: joint.dia.Cell[]) {
+        console.log("in getSubgraphFromNodes nodes is " + nodes);
         return this.getSubgraph(nodes, { deep: true });
     }
 
     showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
         this.hideGraph();
+        console.log("in showOnlyTeam team is " + team);
+        console.log("got members: " + team.getMembers());
         var cells = this.getSubgraphFromNodes(team.getMembers());
+        console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
         team.attr("./visibility","visible");
         //team.set("hidden", false);

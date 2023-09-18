@@ -19,9 +19,13 @@ export class DialogSelectTeamComponent implements OnInit {
 
   ngOnInit() {
     this.teams = this.gs.getGraph().getTeamGroups();
+    console.log("Found these teams by Dialog Select Team:");
+    console.log(this.teams);
   }
 
   onSelectTeam(team:joint.shapes.microtosca.SquadGroup){
+    console.log("Selected team:");
+    console.log(team);
     this.ref.close({"show": team});
   }
 }

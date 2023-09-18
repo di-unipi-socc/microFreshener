@@ -9,6 +9,7 @@ import { DialogSelectRoleComponent } from '../dialog-select-role/dialog-select-r
 
 import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
+import { DialogSelectTeamComponent } from 'src/app/teams/dialog-select-team/dialog-select-team.component';
 
 @Injectable({
   providedIn: 'root'
@@ -45,9 +46,7 @@ export class FileService {
   downloadExample(name: string) {
       this.gs.downloadExample(name)
           .subscribe((data) => {
-              this.gs.getGraph().builtFromJSON(data);
-              this.gs.getGraph().applyLayout("LR");
-              this.selectRole();
+              this.loadGraphAsRole(data);
               this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
           });
   }
@@ -60,7 +59,7 @@ export class FileService {
       ref.onClose.subscribe((data) => {
           if (data.msg) {
               console.log(data);
-              this.selectRole();
+              this.loadGraphAsRole(data.graph);
               this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
           }
       });
@@ -70,15 +69,45 @@ export class FileService {
   public readonly TEAM_MEMBER_ROLE: string = "team";
   public readonly PRODUCT_OWNER_ROLE: string = "po";
 
-  selectRole() {
-      const ref = this.dialogService.open(DialogSelectRoleComponent, {
-          header: 'Select your role',
-          width: '50%'
-      });
-      ref.onClose.subscribe((data) => {
-          console.log("The user declared " + data.role);
-          this.roleChoice.emit(data.role);
-      });
+  loadGraphAsRole(data) {
+    let graphJson = data;
+    const ref = this.dialogService.open(DialogSelectRoleComponent, {
+        header: 'Select your role',
+        width: '50%'
+    });
+    ref.onClose.subscribe((data) => {
+        switch(data.role) {
+            case UserRole.TEAM_MEMBER:
+                this.loadGraphAsTeamMember(graphJson);
+                break;
+            default:
+                this.justLoadGraph(graphJson);
+        }
+    });
   }
+
+  loadGraphAsTeamMember(graphJson) {
+    this.justLoadGraph(graphJson);
+    this.gs.hideGraph();
+    const ref = this.dialogService.open(DialogSelectTeamComponent, {
+        header: 'Select a Team',
+        width: '50%',
+    });
+    ref.onClose.subscribe((data) => {
+        if (data.show) {
+            var team = data.show;
+            this.gs.getGraph().showOnlyTeam(team);
+            this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
+        }
+    });
+  }
+
+  justLoadGraph(graphJson) {
+    this.gs.getGraph().builtFromJSON(graphJson);
+    this.gs.getGraph().applyLayout("LR");
+  }
+
+  // To be changed with "execute" function
+  // this.roleChoice.emit(data.role);
 
 }

@@ -27,9 +27,7 @@ export class DialogImportComponent implements OnInit {
     this.gs.dowloadGraph()
       .subscribe((data) => {
         console.log(data);
-        this.gs.getGraph().builtFromJSON(data);
-        this.gs.getGraph().applyLayout("LR");
-        this.ref.close({ "msg": `${name} file uploaded correctly` });
+        this.ref.close({ graph: data, "msg": `${name} file uploaded correctly` });
       });
   }
 
