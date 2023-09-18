@@ -30,13 +30,15 @@ export class GraphEditorComponent implements OnInit {
 
     paper: joint.dia.Paper;
 
+    drawExampleGraphOnStartup: boolean = false;
+
     svgZoom;
 
     leftClickselectdNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
 
 
-    constructor(private graphInvoker: GraphInvoker, private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+    constructor(private graphInvoker: GraphInvoker, private gs: GraphService, private dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
         this.leftClickselectdNode = null;
         this.rightClickselectdNode = null;
     }
@@ -74,7 +76,10 @@ export class GraphEditorComponent implements OnInit {
         });
 
         // Create a graph on startup as an example
-        //this.createSampleGraph();
+        if(this.drawExampleGraphOnStartup)
+            this.createSampleGraph();
+        else
+            this.gs.getGraph().addEdgeGroup("edgenodes", []);
 
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
             zoomEnabled: true,

@@ -14,6 +14,11 @@ import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.co
 import { DialogAddNodeComponent } from './editing/dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
+import { ToolbarItemsArchitectureComponent } from './editing/toolbar-items-architecture/toolbar-items-architecture.component';
+import { ToolbarItemsUndoComponent } from './editing/toolbar-items-undo/toolbar-items-undo.component';
+import { ToolbarItemsGraphNavigationComponent } from './editing/toolbar-items-graph-navigation/toolbar-items-graph-navigation.component';
+import { ToolbarItemsViewComponent } from './editing/toolbar-items-view/toolbar-items-view.component';
+
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
@@ -37,17 +42,20 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MenubarModule } from 'primeng/menubar';
+import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuModule } from 'primeng/menu';
 import { PanelModule } from 'primeng/panel';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { PickListModule } from 'primeng/picklist';
 import { CardModule } from 'primeng/card';
 import { InputSwitchModule } from 'primeng/inputswitch';
-//import { StyleClassModule } from 'primeng/styleclass';
+import { DividerModule } from 'primeng/divider';
+import { StyleClassModule } from 'primeng/styleclass';
 
 // Import dialog components
 import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
@@ -74,6 +82,10 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     DialogImportComponent,
     DialogSelectRoleComponent,
     WelcomeDialogComponent,
+    ToolbarItemsArchitectureComponent,
+    ToolbarItemsUndoComponent,
+    ToolbarItemsGraphNavigationComponent,
+    ToolbarItemsViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,6 +113,7 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     SplitButtonModule,
     ProgressSpinnerModule,
     MenubarModule,
+    TabMenuModule,
     PanelModule,
     InputTextareaModule,
     RadioButtonModule,
@@ -109,8 +122,10 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     SelectButtonModule,
     PickListModule,
     CardModule,
-    InputSwitchModule/*,
-    StyleClassModule*/
+    InputSwitchModule,
+    DividerModule,
+    StyleClassModule,
+    ToggleButtonModule
   ],
   providers: [
     DialogService,

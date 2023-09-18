@@ -1,13 +1,35 @@
+<div>
 
-<div style="margin-bottom:.90em">
-    <p-menubar [model]="menubar" [autoDisplay]="false">
-        <div>
-            <input type="text" pInputText placeholder="Name"
-                [(ngModel)]="modelName">
-            <button pButton type="button" icon="pi pi-check"
-                (click)="rename()">
-            </button>
+    <p-toolbar>
+        <div class="ui-toolbar-group-start">
+            
+            <span class="app-title">microFreshener</span>
+
+            <input type="text" class="file-name" pInputText placeholder="Name" [(ngModel)]="modelName">
+            <button pButton type="button" icon="pi pi-check" (click)="rename()"></button>
+        
+            <button #btn type="button" pButton label="File" (click)="fileMenu.toggle($event)"></button>
+            <p-tieredMenu #fileMenu [model]="filemenu" [popup]="true"></p-tieredMenu>
+
         </div>
-    </p-menubar>
+    </p-toolbar>
+
+    <p-toolbar>
+        <div class="ui-toolbar-group-start tool-buttons">
+            
+            <app-toolbar-items-view></app-toolbar-items-view>
+
+            <app-toolbar-items-architecture></app-toolbar-items-architecture>
+            <p-divider layout="vertical"></p-divider>
+            <p-button icon="pi pi-fw pi-user-plus" styleClass="tool-button p-button-text p-button-lg"></p-button>
+            <p-divider layout="vertical"></p-divider>
+            <app-toolbar-items-undo></app-toolbar-items-undo>
+            <p-divider layout="vertical"></p-divider>
+            <app-toolbar-items-graph-navigation></app-toolbar-items-graph-navigation>
+            <p-divider layout="vertical"></p-divider>
+            <p-button icon="pi pi-fw pi-cog" styleClass="tool-button p-button-text p-button-lg"></p-button>
+        </div>
+    </p-toolbar>
+
 </div>
 

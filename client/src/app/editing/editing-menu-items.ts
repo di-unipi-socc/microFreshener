@@ -30,47 +30,55 @@ export class EditingMenuItems implements AppMenuItems {
         this.dialogService = dialogService;
         return [
             {
-                label: "Edit",
-                icon: 'pi pi-fw pi-pencil',
+                icon: 'pi pi-fw pi-cog',
                 items: [
-                    {
-                        label: 'add',
-                        icon: 'pi pi-fw pi-plus',
-                        items: [
-                            {
-                                label: 'node',
-                                icon: 'pi pi-fw pi-circle-off',
-                                command: () => {
-                                    this.addNode();
-                                }
-                            },
-                            {
-                                label: 'team',
-                                icon: 'pi pi-fw pi-users',
-                                command: () => {
-                                    this.addTeam();
-                                }
-                            },
-                        ]
-                    },
-                    {
-                        label: 'undo',
-                        icon: "pi pi-fw pi-undo",
-                        command: () => {
-                            this.graphInvoker.undo();
+                        {
+                            label: 'All',
+                            command: () => {
+                                this.maximizeTeam()
+                            }
+                        },
+                        {
+                            label: 'By teams',
+                            command: () => {
+                                this.minimizeTeam()
+                            }
+                        },
+                        {
+                            label: 'One team',
+                            command: () => {
+                                this.showOneTeam();
+                            }
                         }
-                    },
-                    {
-                        label: 'redo',
-                        icon: "pi pi-fw pi-replay",
-                        command: () => {
-                            this.graphInvoker.redo();
-                        }
-                    },
-
-
-
                 ]
+            },
+            {
+                label: 'node',
+                icon: 'pi pi-fw pi-circle-off',
+                command: () => {
+                    this.addNode();
+                }
+            },
+            {
+                label: 'team',
+                icon: 'pi pi-fw pi-users',
+                command: () => {
+                    this.addTeam();
+                }
+            },
+            {
+                label: 'undo',
+                icon: "pi pi-fw pi-undo",
+                command: () => {
+                    this.graphInvoker.undo();
+                }
+            },
+            {
+                label: 'redo',
+                icon: "pi pi-fw pi-replay",
+                command: () => {
+                    this.graphInvoker.redo();
+                }
             },
             { separator: true },
             {
@@ -106,33 +114,7 @@ export class EditingMenuItems implements AppMenuItems {
                                 }
                             },
                         ]
-                    },
-                    {
-                        label: 'Show',
-                        icon: "pi pi-fw pi-th-large",
-                        items: [
-                            {
-                                label: 'All',
-                                command: () => {
-                                    this.maximizeTeam()
-                                }
-                            },
-                            {
-                                label: 'By teams',
-                                command: () => {
-                                    this.minimizeTeam()
-                                }
-                            },
-                            {
-                                label: 'One team',
-                                command: () => {
-                                    this.showOneTeam();
-                                }
-                            }
-
-                        ]
-
-                    },
+                    }
                 ]
             },
             { separator: true },

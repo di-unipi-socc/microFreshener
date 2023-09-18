@@ -16,3 +16,7 @@
 @import '../node_modules/primeflex/primeflex.css';
 
 /*yFiles css styles*/
+
+.p-submenu-icon {
+    display:none;
+ }

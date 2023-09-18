@@ -4,8 +4,6 @@ import { MessageService, MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from './refactoring/analyser/analyser.service';
 import { environment } from '../environments/environment';
-import { ConfirmationService } from 'primeng/api';
-import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.component';
 
 @Component({
   selector: 'app-root',

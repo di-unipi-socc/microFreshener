@@ -1,17 +1,13 @@
-<welcome-dialog></welcome-dialog>
+<!--<welcome-dialog></welcome-dialog>-->
 <div class="p-grid sample-layout">
 
-    <div class="p-col-12">
-         <p-toolbar>
-            <div class="ui-toolbar-group-left">
-                <h1>{{title}}</h1>
-            </div>
-        </p-toolbar> 
-    </div>
+    <!--<div class="p-col-12">
+    </div>-->
 
-    <div class="p-col-12">
+    <div style="width: 100%; height: 100%">
         <app-menu></app-menu>
         <app-graph-editor ></app-graph-editor> 
+        <p-toast [style]="{marginTop: '100px'}"  position="top-right"></p-toast>
     </div>
 
     <!-- show the messages in a toast-->
@@ -22,4 +18,3 @@
         <!-- <button pButton type="button" (click)="display = true" icon="pi pi-arrow-right"></button> -->
     </div>
 </div> 
-

@@ -1,0 +1,25 @@
+.app-title {
+    font-weight: bold;
+}
+
+.file-name {
+    margin-left: 0.6em;
+}
+
+::ng-deep .p-toolbar {
+    border: 0;
+}
+
+.tool-buttons {
+    padding: 0.2em;
+    background-color: white;
+    width: 100%;
+    display: flex;
+    border-radius: 15px;
+    padding-left: 15px;
+}
+
+.tool-button {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
