@@ -14,20 +14,31 @@
         </div>
     </p-toolbar>
 
-    <p-toolbar>
+    <p-toolbar *ngIf="role=='po'">
         <div class="ui-toolbar-group-start tool-buttons">
-            
             <app-toolbar-items-view></app-toolbar-items-view>
-
+            <p-divider layout="vertical"></p-divider>
             <app-toolbar-items-architecture></app-toolbar-items-architecture>
             <p-divider layout="vertical"></p-divider>
-            <p-button icon="pi pi-fw pi-user-plus" styleClass="tool-button p-button-text p-button-lg"></p-button>
+            <app-toolbar-items-teams></app-toolbar-items-teams>
             <p-divider layout="vertical"></p-divider>
             <app-toolbar-items-undo></app-toolbar-items-undo>
             <p-divider layout="vertical"></p-divider>
             <app-toolbar-items-graph-navigation></app-toolbar-items-graph-navigation>
             <p-divider layout="vertical"></p-divider>
-            <p-button icon="pi pi-fw pi-cog" styleClass="tool-button p-button-text p-button-lg"></p-button>
+            <app-toolbar-items-refactoring></app-toolbar-items-refactoring>
+        </div>
+    </p-toolbar>
+
+    <p-toolbar *ngIf="role=='tm'">
+        <div class="ui-toolbar-group-start tool-buttons">
+            <app-toolbar-items-architecture></app-toolbar-items-architecture>
+            <p-divider layout="vertical"></p-divider>
+            <app-toolbar-items-undo></app-toolbar-items-undo>
+            <p-divider layout="vertical"></p-divider>
+            <app-toolbar-items-graph-navigation></app-toolbar-items-graph-navigation>
+            <p-divider layout="vertical"></p-divider>
+            <app-toolbar-items-refactoring></app-toolbar-items-refactoring>
         </div>
     </p-toolbar>
 

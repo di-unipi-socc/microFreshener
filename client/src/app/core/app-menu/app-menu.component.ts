@@ -7,7 +7,6 @@ import { MenuItem } from 'primeng/api';
 import { GraphService } from "../../editing/model/graph.service";
 
 import { environment } from '../../../environments/environment';
-import { EditingMenuItems } from '../../editing/editing-menu-items';
 import { FileService } from '../file/file.service';
 import { UserRole } from '../user-role';
 
@@ -18,14 +17,21 @@ import { UserRole } from '../user-role';
 })
 export class AppMenuComponent implements OnInit {
 
-    menubar: MenuItem[];
-    filemenu: MenuItem[];
     modelName: string; // name of the model
+    filemenu: MenuItem[];
     coreMenubar: MenuItem[];
+
+    role: string;
 
     hrefDownload = environment.serverUrl + '/api/export';
 
-    constructor(private gs: GraphService, public dialogService: DialogService, private fileService: FileService, private messageService: MessageService, private confirmationService: ConfirmationService, private editingMenuItems: EditingMenuItems) {
+    constructor(
+        private gs: GraphService,
+        public dialogService: DialogService,
+        private fileService: FileService,
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService
+        ) {
     }
 
     ngOnInit() {
@@ -109,27 +115,21 @@ export class AppMenuComponent implements OnInit {
         this.coreMenubar = [];
 
         this.fileService.roleChoice.subscribe((role) => {
-            this.setMenuForRole(role);
-        })
+            switch(role) {
+                case UserRole.TEAM_MEMBER:
+                    this.role = "tm";
+                    break;
+                case UserRole.PRODUCT_OWNER:
+                    this.role = "po";
+                    break;
+            }
+        });
     }
 
     rename() {
         this.gs.getGraph().setName(this.modelName);
         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
-    }
-
-    setMenuForRole(role: UserRole) {
-        /*let isPO = role == UserRoles.PRODUCT_OWNER;
-        let isTeamMember = role == UserRoles.TEAM_MEMBER;*/
-        
-        const separator = { separator: true };
-        
-        this.menubar = Array.prototype.concat(
-            this.coreMenubar,
-            separator,
-            this.editingMenuItems.getAppMenuItems(this.dialogService)
-        );
     }
 
 }

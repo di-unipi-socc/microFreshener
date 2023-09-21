@@ -19,7 +19,7 @@ export class FileService {
   modelName: string; // name of the model
 
   hrefDownload = environment.serverUrl + '/api/export';
-  
+
   @Output() roleChoice = new EventEmitter<UserRole>();
 
   constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
@@ -79,9 +79,12 @@ export class FileService {
         switch(data.role) {
             case UserRole.TEAM_MEMBER:
                 this.loadGraphAsTeamMember(graphJson);
+                
                 break;
-            default:
+            case UserRole.PRODUCT_OWNER:
                 this.justLoadGraph(graphJson);
+                this.roleChoice.emit(UserRole.PRODUCT_OWNER);
+                break;
         }
     });
   }
@@ -97,6 +100,7 @@ export class FileService {
         if (data.show) {
             var team = data.show;
             this.gs.getGraph().showOnlyTeam(team);
+            this.roleChoice.emit(UserRole.TEAM_MEMBER);
             this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
         }
     });

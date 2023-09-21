@@ -63,7 +63,8 @@ import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-lin
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
-import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.component';
+import { ToolbarItemsRefactoringComponent } from './refactoring/toolbar-items-refactoring/toolbar-items-refactoring.component';
+import { ToolbarItemsTeamsComponent } from './teams/toolbar-items-teams/toolbar-items-teams.component';
 
 @NgModule({
   declarations: [
@@ -81,11 +82,12 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     DialogRefineComponent,
     DialogImportComponent,
     DialogSelectRoleComponent,
-    WelcomeDialogComponent,
     ToolbarItemsArchitectureComponent,
     ToolbarItemsUndoComponent,
     ToolbarItemsGraphNavigationComponent,
     ToolbarItemsViewComponent,
+    ToolbarItemsRefactoringComponent,
+    ToolbarItemsTeamsComponent,
   ],
   imports: [
     BrowserModule,

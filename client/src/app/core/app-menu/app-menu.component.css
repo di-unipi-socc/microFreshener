@@ -17,9 +17,5 @@
     display: flex;
     border-radius: 15px;
     padding-left: 15px;
-}
-
-.tool-button {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
+    vertical-align: middle;
 }
