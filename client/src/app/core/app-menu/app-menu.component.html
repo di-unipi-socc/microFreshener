@@ -8,7 +8,7 @@
             <input type="text" class="file-name" pInputText placeholder="Name" [(ngModel)]="modelName">
             <button pButton type="button" icon="pi pi-check" (click)="rename()"></button>
         
-            <button #btn type="button" pButton label="File" (click)="fileMenu.toggle($event)"></button>
+            <p-button label="File" (click)="fileMenu.toggle($event)" styleClass="p-button-text" class="file-button"></p-button>
             <p-tieredMenu #fileMenu [model]="filemenu" [popup]="true"></p-tieredMenu>
 
         </div>

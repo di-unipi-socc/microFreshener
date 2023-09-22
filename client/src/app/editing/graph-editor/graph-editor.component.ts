@@ -272,27 +272,43 @@ export class GraphEditorComponent implements OnInit {
 
     }
 
+    addNode(position?: g.Point, group?: joint.shapes.microtosca.Group) {
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            width: '50%',
+            data: {
+                clickPosition: position,
+                group: group
+            }
+        });
+        ref.onClose.subscribe((data) => {
+            this.graphInvoker.executeCommand(data.command);
+        });
+    }
+
+    addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+        var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+        this.graphInvoker.executeCommand(command);
+        this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+    }
+
+    unhighlight() {
+        this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
+        this.leftClickselectdNode = null;
+    }
+
     bindSingleClickBlank() {
-        this.paper.on("blank:pointerclick", (cellView) => {
+        this.paper.on("blank:pointerclick", (evt) => {
             
-            let position: g.Point = this.paper.clientToLocalPoint(cellView.clientX, cellView.clientY);
+            let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d)", position.x, position.y);
             
-            if (this.graphInvoker.addNodeMode) {
-                const ref = this.dialogService.open(DialogAddNodeComponent, {
-                    header: 'Add Node',
-                    width: '50%',
-                    data: {
-                        clickPosition: position
-                    }
-                });
-                ref.onClose.subscribe((data) => {
-                    this.graphInvoker.executeCommand(data.command);
-                });
-            }
-            if (this.leftClickselectdNode) {
-                this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
-                this.leftClickselectdNode = null;
+            if (this.graphInvoker.addNodeAllowed) {
+                this.addNode(position);
+            } else {
+                if (this.leftClickselectdNode) {
+                    this.unhighlight();
+                }
             }
         });
     }
@@ -308,66 +324,74 @@ export class GraphEditorComponent implements OnInit {
     bindSingleClickCell() {
         this.paper.on("element:pointerclick", (cellView, evt, x, y) => {
             console.log("click on cell");
-            console.log(cellView);
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;
-            // team group cannot be clicked (both as source and target)
-            if (!this.gs.getGraph().isTeamGroup(node)) {
-                // selecting target node
-                if (this.leftClickselectdNode !== null && node.id !== this.leftClickselectdNode.id) {
-                    var add_link = true;
-                    // disable link from <any> to datastore
-                    if (this.gs.getGraph().isEdgeGroup(node)) {
-                        add_link = false;
-                    }
-                    // disable link from edge to datastore
-                    if (this.gs.getGraph().isEdgeGroup(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node)) {
-                        add_link = false;
-                    }
-                    // disable link from communication pattern to Datastore
-                    if (this.gs.getGraph().isCommunicationPattern(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node))
-                        add_link = false;
-                    if (add_link) {
-                        const ref = this.dialogService.open(DialogAddLinkComponent, {
-                            data: {
-                                source: this.leftClickselectdNode,
-                                target: node
-                            },
-                            header: 'Add a link',
-                            width: '50%'
-                        });
-                        ref.onClose.subscribe((data) => {
-                            if (data) {
-                                var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickselectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                                this.graphInvoker.executeCommand(command);
-                                this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
-                                this.leftClickselectdNode = null;
-                            }
-                        });
-                        console.log("added link");
-                    }
-                    else {
-                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickselectdNode.getName()}] to [${node.getName()}] cannot be created` });
-                    }
+            // add node to group
+            if (this.gs.getGraph().isTeamGroup(node)) {
+                if(this.graphInvoker.addNodeAllowed) {
+                    let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
+                    let team = cellView.model;
+                    this.addNode(position, team);
                 }
-                else {
-                    // selecting source node
-                    var can_select_source_node = true;
-                    // message broker cannot be source for a link
-                    if (this.gs.getGraph().isMessageBroker(node)) {
-                        can_select_source_node = false;
-                    }
-                    // message broker cannot be source for a link
-                    if (this.gs.getGraph().isDatastore(node)) {
-                        can_select_source_node = false;
-                    }
-                    if (can_select_source_node) {
-                        cellView.highlight();
-                        this.leftClickselectdNode = node;
+            } else {
+                // team group cannot be clicked (both as source and target)
+                if(this.graphInvoker.addLinkAllowed) {
+                    // selecting target node
+                    if (this.leftClickselectdNode !== null && node.id !== this.leftClickselectdNode.id) {
+                        var add_link = true;
+                        // disable link from <any> to datastore
+                        if (this.gs.getGraph().isEdgeGroup(node)) {
+                            add_link = false;
+                        }
+                        // disable link from edge to datastore
+                        if (this.gs.getGraph().isEdgeGroup(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node)) {
+                            add_link = false;
+                        }
+                        // disable link from communication pattern to Datastore
+                        if (this.gs.getGraph().isCommunicationPattern(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node))
+                            add_link = false;
+                        if (add_link) {
+                            const ref = this.dialogService.open(DialogAddLinkComponent, {
+                                data: {
+                                    source: this.leftClickselectdNode,
+                                    target: node
+                                },
+                                header: 'Add a link',
+                                width: '50%'
+                            });
+                            ref.onClose.subscribe((data) => {
+                                if (data) {
+                                    var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickselectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                    this.graphInvoker.executeCommand(command);
+                                    this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
+                                    this.leftClickselectdNode = null;
+                                }
+                            });
+                            console.log("added link");
+                        }
+                        else {
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickselectdNode.getName()}] to [${node.getName()}] cannot be created` });
+                        }
                     }
                     else {
-                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+                        // selecting source node
+                        var can_select_source_node = true;
+                        // message broker cannot be source for a link
+                        if (this.gs.getGraph().isMessageBroker(node)) {
+                            can_select_source_node = false;
+                        }
+                        // message broker cannot be source for a link
+                        if (this.gs.getGraph().isDatastore(node)) {
+                            can_select_source_node = false;
+                        }
+                        if (can_select_source_node) {
+                            cellView.highlight();
+                            this.leftClickselectdNode = node;
+                        }
+                        else {
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+                        }
                     }
                 }
             }
@@ -569,9 +593,7 @@ export class GraphEditorComponent implements OnInit {
                                     team.fitEmbeds({ padding: 40});
                                 }
                                 else {
-                                    var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-                                    this.graphInvoker.executeCommand(command);
-                                    this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                    this.addMemberToTeam(member, team);
                                 }
                             }
                         }

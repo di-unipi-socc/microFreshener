@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GraphInvoker } from '../invoker/invoker';
 
 @Component({
   selector: 'app-toolbar-items-undo',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./toolbar-items-undo.component.css']
 })
 export class ToolbarItemsUndoComponent {
+
+  constructor(private graphInvoker: GraphInvoker) {}
+
+  undo() {
+    this.graphInvoker.undo();
+  }
+
+  redo() {
+    this.graphInvoker.redo();
+  }
 
 }

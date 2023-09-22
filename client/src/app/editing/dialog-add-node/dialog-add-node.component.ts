@@ -19,6 +19,7 @@ export class DialogAddNodeComponent implements OnInit {
 
   name: string;
   position: g.Point;
+  group: joint.shapes.microtosca.Group;
 
   selectedNodeType: string;
 
@@ -31,6 +32,7 @@ export class DialogAddNodeComponent implements OnInit {
   ngOnInit() {
     this.name = null;
     this.position = this.config.data.clickPosition;
+    this.group = this.config.data.group;
     this.selectedNodeType = null;
     this.showCommunicationPatternType = false;
     this.selectedCommunicationPatternType = null;
@@ -56,7 +58,7 @@ export class DialogAddNodeComponent implements OnInit {
     let message: string;
     switch (this.selectedNodeType) {
       case "service":
-        command = new AddServiceCommand(this.gs.getGraph(), this.name, this.position);
+        command = new AddServiceCommand(this.gs.getGraph(), this.name, this.position, this.group);
         message = `Service ${this.name} added correctly`;
         break;
       case "datastore":

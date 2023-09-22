@@ -25,7 +25,7 @@ export class ToolbarItemsArchitectureComponent {
 
   addNodeChanged() {
     console.log("AddNodeChanged");
-    this.invoker.setAddNodeMode(this.toggled['addNode'].status);
+    this.invoker.allowAddNode(this.toggled['addNode'].status);
     if(this.toggled['addNode'].status) {
       this.unselectOthersThan("addNode");
     }
@@ -33,7 +33,7 @@ export class ToolbarItemsArchitectureComponent {
 
   addLinkChanged() {
     console.log("AddLinkChanged");
-    //this.invoker.setAddLinkMode(active);
+    this.invoker.allowAddLink(this.toggled['addLink'].status);
     if(this.toggled['addLink'].status) {
       this.unselectOthersThan("addLink");
     }

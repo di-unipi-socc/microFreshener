@@ -10,12 +10,14 @@ export class GraphInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
-    addNodeMode: boolean;
+    addNodeAllowed: boolean;
+    addLinkAllowed: boolean;
 
     constructor(private as: AnalyserService) {
         this.undoStack = [];
         this.redoStack = [];
-        this.addNodeMode = false;
+        this.addNodeAllowed = false;
+        this.addLinkAllowed = false;
     }
 
     executeCommand(command: Command) {
@@ -44,8 +46,12 @@ export class GraphInvoker {
         this.undoStack.push(command);
     }
 
-    setAddNodeMode(isActive: boolean) {
-        this.addNodeMode = isActive;
+    allowAddNode(isActive: boolean) {
+        this.addNodeAllowed = isActive;
+    }
+
+    allowAddLink(isActive: boolean) {
+        this.addLinkAllowed = isActive;
     }
 
 }
