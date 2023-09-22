@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject, MultipleServicesInOneContainerSmellObject } from '../analyser/smell';
+import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject, MultipleServicesInOneContainerSmellObject } from '../../refactoring/analyser/smell';
 import { selector } from 'd3';
 
 let NODE_LABEL_FONT_SIZE = 16;

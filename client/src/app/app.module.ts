@@ -8,12 +8,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphEditorComponent } from './editing/graph-editor/graph-editor.component';
-import { ModalRefactoringsComponent } from './editing/modal-refactorings/modal-refactorings.component';
-import { DialogAnalysisComponent } from './editing/dialog-analysis/dialog-analysis.component';
-import { DialogSmellComponent } from './editing/dialog-smell/dialog-smell.component';
+import { ModalRefactoringsComponent } from './refactoring/modal-refactorings/modal-refactorings.component';
+import { DialogAnalysisComponent } from './refactoring/dialog-analysis/dialog-analysis.component';
+import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.component';
 import { DialogAddNodeComponent } from './editing/dialog-add-node/dialog-add-node.component';
-import { DialogAddTeamComponent } from './editing/dialog-add-team/dialog-add-team.component';
+import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
+import { SubtoolbarArchitectureComponent } from './editing/subtoolbar-architecture/subtoolbar-architecture.component';
+import { SubtoolbarUndoComponent } from './editing/subtoolbar-undo/subtoolbar-undo.component';
+import { SubtoolbarNavigationComponent } from './editing/subtoolbar-navigation/subtoolbar-navigation.component';
+import { SubtoolbarViewComponent } from './editing/subtoolbar-view/subtoolbar-view.component';
+
 
 // Import primeNG modules
 import { AccordionModule } from 'primeng/accordion';
@@ -24,7 +29,6 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ListboxModule } from 'primeng/listbox';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -38,25 +42,29 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MenubarModule } from 'primeng/menubar';
+import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuModule } from 'primeng/menu';
 import { PanelModule } from 'primeng/panel';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { PickListModule } from 'primeng/picklist';
 import { CardModule } from 'primeng/card';
 import { InputSwitchModule } from 'primeng/inputswitch';
-//import { StyleClassModule } from 'primeng/styleclass';
+import { DividerModule } from 'primeng/divider';
+import { StyleClassModule } from 'primeng/styleclass';
 
 // Import dialog components
-import { DialogSelectTeamComponent } from './editing/dialog-select-team/dialog-select-team.component';
+import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
-import { DialogRefineComponent } from './editing/dialog-refine/dialog-refine.component';
-import { DialogImportComponent } from './editing/dialog-import/dialog-import.component';
+import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
+import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
-import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.component';
+import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
+import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +82,12 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     DialogRefineComponent,
     DialogImportComponent,
     DialogSelectRoleComponent,
-    WelcomeDialogComponent,
+    SubtoolbarArchitectureComponent,
+    SubtoolbarUndoComponent,
+    SubtoolbarNavigationComponent,
+    SubtoolbarViewComponent,
+    SubtoolbarRefactoringComponent,
+    SubtoolbarTeamsComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,6 +115,7 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     SplitButtonModule,
     ProgressSpinnerModule,
     MenubarModule,
+    TabMenuModule,
     PanelModule,
     InputTextareaModule,
     RadioButtonModule,
@@ -110,8 +124,10 @@ import { WelcomeDialogComponent } from './core/welcome-dialog/welcome-dialog.com
     SelectButtonModule,
     PickListModule,
     CardModule,
-    InputSwitchModule/*,
-    StyleClassModule*/
+    InputSwitchModule,
+    DividerModule,
+    StyleClassModule,
+    ToggleButtonModule
   ],
   providers: [
     DialogService,

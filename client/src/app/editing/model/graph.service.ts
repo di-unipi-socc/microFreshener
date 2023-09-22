@@ -40,6 +40,10 @@ export class GraphService {
     this.graph = g;
   }
 
+  hideGraph() {
+    this.graph.hideGraph();
+  }
+
   /** Export the graph to JSON format*/
   exportToJSON() {
     return JSON.stringify(this.graph.toJSON());

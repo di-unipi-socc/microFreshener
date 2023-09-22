@@ -1,7 +1,7 @@
 import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
-import { AnalyserService } from '../analyser/analyser.service';
-import { RefactoringCommand } from '../refactor/refactoring-command';
+import { AnalyserService } from '../../refactoring/analyser/analyser.service';
+import { RefactoringCommand } from '../../refactoring/refactor/refactoring-command';
 
 @Injectable({
     providedIn: 'root'
@@ -10,9 +10,14 @@ export class GraphInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
+    addNodeAllowed: boolean;
+    addLinkAllowed: boolean;
+
     constructor(private as: AnalyserService) {
         this.undoStack = [];
         this.redoStack = [];
+        this.addNodeAllowed = false;
+        this.addLinkAllowed = false;
     }
 
     executeCommand(command: Command) {
@@ -39,6 +44,30 @@ export class GraphInvoker {
         let command = this.redoStack.pop()
         command.execute();
         this.undoStack.push(command);
+    }
+
+    allowAddNode(isActive: boolean) {
+        this.addNodeAllowed = isActive;
+    }
+
+    allowAddLink(isActive: boolean) {
+        this.addLinkAllowed = isActive;
+    }
+
+    zoomIn() {
+        console.error("Callback unset");
+    }
+
+    zoomOut() {
+        console.error("Callback unset");
+    }
+
+    setZoomInCallback(callback: () => void) {
+        this.zoomIn = callback;
+    }
+
+    setZoomOutCallback(callback: () => void) {
+        this.zoomOut = callback;
     }
 
 }
