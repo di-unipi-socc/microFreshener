@@ -4,11 +4,11 @@ import { GraphService } from '../model/graph.service';
 import { GraphInvoker } from '../invoker/invoker';
 
 @Component({
-  selector: 'app-toolbar-items-graph-navigation',
-  templateUrl: './toolbar-items-graph-navigation.component.html',
-  styleUrls: ['./toolbar-items-graph-navigation.component.css']
+  selector: 'app-subtoolbar-navigation',
+  templateUrl: './subtoolbar-navigation.component.html',
+  styleUrls: ['./subtoolbar-navigation.component.css']
 })
-export class ToolbarItemsGraphNavigationComponent {
+export class SubtoolbarNavigationComponent {
 
   layoutMenuItems: MenuItem[];
 

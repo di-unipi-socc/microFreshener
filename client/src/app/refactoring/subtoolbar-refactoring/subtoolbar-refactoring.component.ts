@@ -7,11 +7,11 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { GraphService } from 'src/app/editing/model/graph.service';
 
 @Component({
-  selector: 'app-toolbar-items-refactoring',
-  templateUrl: './toolbar-items-refactoring.component.html',
-  styleUrls: ['./toolbar-items-refactoring.component.css']
+  selector: 'app-subtoolbar-refactoring',
+  templateUrl: './subtoolbar-refactoring.component.html',
+  styleUrls: ['./subtoolbar-refactoring.component.css']
 })
-export class ToolbarItemsRefactoringComponent {
+export class SubtoolbarRefactoringComponent {
 
     menuitems: MenuItem[] = [
         {

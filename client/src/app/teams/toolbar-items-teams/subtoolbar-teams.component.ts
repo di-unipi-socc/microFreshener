@@ -7,11 +7,11 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { GraphService } from 'src/app/editing/model/graph.service';
 
 @Component({
-  selector: 'app-toolbar-items-teams',
-  templateUrl: './toolbar-items-teams.component.html',
-  styleUrls: ['./toolbar-items-teams.component.css']
+  selector: 'app-subtoolbar-teams',
+  templateUrl: './subtoolbar-teams.component.html',
+  styleUrls: ['./subtoolbar-teams.component.css']
 })
-export class ToolbarItemsTeamsComponent {
+export class SubtoolbarTeamsComponent {
 
   menuitems: MenuItem[];
 

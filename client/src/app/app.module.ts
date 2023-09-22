@@ -14,10 +14,10 @@ import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.co
 import { DialogAddNodeComponent } from './editing/dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
-import { ToolbarItemsArchitectureComponent } from './editing/toolbar-items-architecture/toolbar-items-architecture.component';
-import { ToolbarItemsUndoComponent } from './editing/toolbar-items-undo/toolbar-items-undo.component';
-import { ToolbarItemsGraphNavigationComponent } from './editing/toolbar-items-graph-navigation/toolbar-items-graph-navigation.component';
-import { ToolbarItemsViewComponent } from './editing/toolbar-items-view/toolbar-items-view.component';
+import { SubtoolbarArchitectureComponent } from './editing/subtoolbar-architecture/subtoolbar-architecture.component';
+import { SubtoolbarUndoComponent } from './editing/subtoolbar-undo/subtoolbar-undo.component';
+import { SubtoolbarNavigationComponent } from './editing/subtoolbar-navigation/subtoolbar-navigation.component';
+import { SubtoolbarViewComponent } from './editing/subtoolbar-view/subtoolbar-view.component';
 
 
 // Import primeNG modules
@@ -63,8 +63,8 @@ import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-lin
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
-import { ToolbarItemsRefactoringComponent } from './refactoring/toolbar-items-refactoring/toolbar-items-refactoring.component';
-import { ToolbarItemsTeamsComponent } from './teams/toolbar-items-teams/toolbar-items-teams.component';
+import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
+import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
 
 @NgModule({
   declarations: [
@@ -82,12 +82,12 @@ import { ToolbarItemsTeamsComponent } from './teams/toolbar-items-teams/toolbar-
     DialogRefineComponent,
     DialogImportComponent,
     DialogSelectRoleComponent,
-    ToolbarItemsArchitectureComponent,
-    ToolbarItemsUndoComponent,
-    ToolbarItemsGraphNavigationComponent,
-    ToolbarItemsViewComponent,
-    ToolbarItemsRefactoringComponent,
-    ToolbarItemsTeamsComponent,
+    SubtoolbarArchitectureComponent,
+    SubtoolbarUndoComponent,
+    SubtoolbarNavigationComponent,
+    SubtoolbarViewComponent,
+    SubtoolbarRefactoringComponent,
+    SubtoolbarTeamsComponent,
   ],
   imports: [
     BrowserModule,

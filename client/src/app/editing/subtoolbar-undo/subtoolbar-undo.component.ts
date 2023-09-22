@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { GraphInvoker } from '../invoker/invoker';
 
 @Component({
-  selector: 'app-toolbar-items-undo',
-  templateUrl: './toolbar-items-undo.component.html',
-  styleUrls: ['./toolbar-items-undo.component.css']
+  selector: 'app-subtoolbar-undo',
+  templateUrl: './subtoolbar-undo.component.html',
+  styleUrls: ['./subtoolbar-undo.component.css']
 })
-export class ToolbarItemsUndoComponent {
+export class SubtoolbarUndoComponent {
 
   constructor(private graphInvoker: GraphInvoker) {}
 

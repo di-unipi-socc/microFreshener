@@ -5,11 +5,11 @@ import { DialogSelectTeamComponent } from 'src/app/teams/dialog-select-team/dial
 import { GraphService } from '../model/graph.service';
 
 @Component({
-  selector: 'app-toolbar-items-view',
-  templateUrl: './toolbar-items-view.component.html',
-  styleUrls: ['./toolbar-items-view.component.css']
+  selector: 'app-subtoolbar-view',
+  templateUrl: './subtoolbar-view.component.html',
+  styleUrls: ['./subtoolbar-view.component.css']
 })
-export class ToolbarItemsViewComponent {
+export class SubtoolbarViewComponent {
 
   viewIcon: string = "pi pi-th-large";
   viewMenuItems: MenuItem[] = [

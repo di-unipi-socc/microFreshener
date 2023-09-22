@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { GraphInvoker } from '../invoker/invoker';
 
 @Component({
-  selector: 'app-toolbar-items-architecture',
-  templateUrl: './toolbar-items-architecture.component.html',
-  styleUrls: ['./toolbar-items-architecture.component.css']
+  selector: 'app-subtoolbar-architecture',
+  templateUrl: './subtoolbar-architecture.component.html',
+  styleUrls: ['./subtoolbar-architecture.component.css']
 })
-export class ToolbarItemsArchitectureComponent {
+export class SubtoolbarArchitectureComponent {
 
   toggled;
 
