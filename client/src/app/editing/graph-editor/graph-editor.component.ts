@@ -18,6 +18,7 @@ import { GraphInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
+import { svg } from 'd3';
 
 @Component({
     selector: 'app-graph-editor',
@@ -85,12 +86,18 @@ export class GraphEditorComponent implements OnInit {
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
             zoomEnabled: true,
             panEnabled: true,
-            controlIconsEnabled: true,
+            controlIconsEnabled: false,
             fit: true,
             center: true,
             minZoom: 0.1,
             maxZoom: 10,
             zoomScaleSensitivity: 0.5,
+        });
+        this.graphInvoker.setZoomInCallback((() => {
+            this.svgZoom.zoomIn();
+        }));
+        this.graphInvoker.setZoomOutCallback(() => {
+            this.svgZoom.zoomOut();
         });
 
         this.paper.on('cell:pointerdown', () => {

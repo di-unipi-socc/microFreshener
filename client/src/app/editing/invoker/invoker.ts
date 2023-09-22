@@ -54,4 +54,20 @@ export class GraphInvoker {
         this.addLinkAllowed = isActive;
     }
 
+    zoomIn() {
+        console.error("Callback unset");
+    }
+
+    zoomOut() {
+        console.error("Callback unset");
+    }
+
+    setZoomInCallback(callback: () => void) {
+        this.zoomIn = callback;
+    }
+
+    setZoomOutCallback(callback: () => void) {
+        this.zoomOut = callback;
+    }
+
 }
