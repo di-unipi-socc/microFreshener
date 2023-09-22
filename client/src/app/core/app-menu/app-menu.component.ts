@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -19,9 +19,11 @@ export class AppMenuComponent implements OnInit {
 
     modelName: string; // name of the model
     filemenu: MenuItem[];
-    coreMenubar: MenuItem[];
 
     role: string;
+
+    @ViewChildren('renameInput') private renameInputList: QueryList<ElementRef>;
+    renaming: boolean;
 
     hrefDownload = environment.serverUrl + '/api/export';
 
@@ -32,6 +34,7 @@ export class AppMenuComponent implements OnInit {
         private messageService: MessageService,
         private confirmationService: ConfirmationService
         ) {
+            this.renaming = false;
     }
 
     ngOnInit() {
@@ -112,8 +115,6 @@ export class AppMenuComponent implements OnInit {
             }
         ];
 
-        this.coreMenubar = [];
-
         this.fileService.roleChoice.subscribe((role) => {
             switch(role) {
                 case UserRole.TEAM_MEMBER:
@@ -126,10 +127,25 @@ export class AppMenuComponent implements OnInit {
         });
     }
 
+    ngAfterViewInit() {
+        this.renameInputList.changes.subscribe((list: QueryList<ElementRef>) => {
+            if (list.length > 0) {
+                console.log(list);
+                list.first.nativeElement.focus();
+            }
+        });
+    }
+
+    editName() {
+        this.renaming = true;
+    }
+
     rename() {
         this.gs.getGraph().setName(this.modelName);
+        console.log("Renaming to " + this.modelName);
         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
+        this.renaming = false;
     }
 
 }
