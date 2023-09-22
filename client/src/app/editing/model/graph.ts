@@ -1,5 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
+import { g } from 'jointjs';
 import './microtosca';
 
 export class Graph extends joint.dia.Graph {
@@ -168,9 +169,22 @@ export class Graph extends joint.dia.Graph {
             throw new Error(`Node type ${node} not recognized`);
     }
 
-    addService(name: string): joint.shapes.microtosca.Service {
+    getCenteredPoint(e: joint.dia.Element, topLeftCorner: g.Point): g.Point {
+        let x = topLeftCorner.x;
+        let y = topLeftCorner.y;
+        let size = e.size();
+        let centerX = x-(size.width/2);
+        let centerY = y-(size.height/2);
+        return new g.Point(centerX, centerY);
+    }
+
+    addService(name: string, position?: g.Point): joint.shapes.microtosca.Service {
         let service = new joint.shapes.microtosca.Service();
         service.setName(name);
+        if(position) {
+            let center = this.getCenteredPoint(service, position);
+            service.position(center.x, center.y);
+        }
         service.addTo(this);
         return service;
     }
@@ -182,43 +196,50 @@ export class Graph extends joint.dia.Graph {
         return compute;
     }
 
-    addDatastore(name: string): joint.shapes.microtosca.Datastore {
+    addDatastore(name: string, position?: g.Point): joint.shapes.microtosca.Datastore {
         let database = new joint.shapes.microtosca.Datastore();
         database.resize(75, 100);
-        database.position(525, 75);
+        if(position) {
+            let center = this.getCenteredPoint(database, position);
+            database.position(center.x, center.y);
+        }
         database.topRy('20%');
         database.setName(name);
         database.addTo(this);
         return database;
     }
 
-    addCommunicationPattern(name: string, type: string): joint.shapes.microtosca.CommunicationPattern {
+    addCommunicationPattern(name: string, type: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
         let cp = new joint.shapes.microtosca.CommunicationPattern();
         cp.setName(name);
         cp.setType(type);
+        if(position) {
+            let center = this.getCenteredPoint(cp, position);
+            cp.position(center.x, center.y);
+        }
         cp.addTo(this);
         return cp;
     }
 
 
-    addMessageRouter(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MR");
+    addMessageRouter(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "MR", position);
     }
 
-    addMessageBroker(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MB");
+    addMessageBroker(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "MB", position);
     }
 
-    addApiGateway(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "ApiGateway");
+    addApiGateway(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "ApiGateway", position);
     }
 
-    addServiceDiscovery(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "ServiceDiscovery");
+    addServiceDiscovery(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "ServiceDiscovery", position);
     }
 
-    addCircuitBreaker(name: string): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "CircuitBreaker");
+    addCircuitBreaker(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+        return this.addCommunicationPattern(name, "CircuitBreaker", position);
     }
 
     addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node, timedout: boolean = false, with_circuit_breaker: boolean = false, with_dynamic_discovery: boolean = false): joint.shapes.microtosca.RunTimeLink {

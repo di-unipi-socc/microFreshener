@@ -8,6 +8,8 @@ import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMes
 import { GraphService } from '../model/graph.service';
 import { Command } from '../invoker/icommand';
 
+import { g } from 'jointjs';
+
 @Component({
   selector: 'app-dialog-add-node',
   templateUrl: './dialog-add-node.component.html',
@@ -16,6 +18,7 @@ import { Command } from '../invoker/icommand';
 export class DialogAddNodeComponent implements OnInit {
 
   name: string;
+  position: g.Point;
 
   selectedNodeType: string;
 
@@ -27,6 +30,7 @@ export class DialogAddNodeComponent implements OnInit {
 
   ngOnInit() {
     this.name = null;
+    this.position = this.config.data.clickPosition;
     this.selectedNodeType = null;
     this.showCommunicationPatternType = false;
     this.selectedCommunicationPatternType = null;
@@ -52,20 +56,20 @@ export class DialogAddNodeComponent implements OnInit {
     let message: string;
     switch (this.selectedNodeType) {
       case "service":
-        command = new AddServiceCommand(this.gs.getGraph(), this.name);
+        command = new AddServiceCommand(this.gs.getGraph(), this.name, this.position);
         message = `Service ${this.name} added correctly`;
         break;
       case "datastore":
-        command = new AddDatastoreCommand(this.gs.getGraph(), this.name);
+        command = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position);
         message = `Datastore  ${this.name}  added correctly`;
         break;
       case "communicationPattern":
         if(this.selectedCommunicationPatternType.type === "messagebroker" ){
-          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name);
+          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position);
           message += `Message Broker ${this.name} added correctly`;
         }
         else if(this.selectedCommunicationPatternType.type === "messagerouter" ){
-          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name);
+          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position);
           message += `Message Router ${this.name} added correctly`;
         }
         else

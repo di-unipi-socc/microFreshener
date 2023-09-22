@@ -17,6 +17,7 @@ import * as svgPanZoom from 'svg-pan-zoom';
 import { GraphInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
+import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -272,8 +273,23 @@ export class GraphEditorComponent implements OnInit {
     }
 
     bindSingleClickBlank() {
-        this.paper.on("blank:pointerclick", (cellView, evt, x, y, ) => {
-            console.log("click on blank");
+        this.paper.on("blank:pointerclick", (cellView) => {
+            
+            let position: g.Point = this.paper.clientToLocalPoint(cellView.clientX, cellView.clientY);
+            console.log("click on blank (%d,%d)", position.x, position.y);
+            
+            if (this.graphInvoker.addNodeMode) {
+                const ref = this.dialogService.open(DialogAddNodeComponent, {
+                    header: 'Add Node',
+                    width: '50%',
+                    data: {
+                        clickPosition: position
+                    }
+                });
+                ref.onClose.subscribe((data) => {
+                    this.graphInvoker.executeCommand(data.command);
+                });
+            }
             if (this.leftClickselectdNode) {
                 this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
                 this.leftClickselectdNode = null;
@@ -292,6 +308,7 @@ export class GraphEditorComponent implements OnInit {
     bindSingleClickCell() {
         this.paper.on("element:pointerclick", (cellView, evt, x, y) => {
             console.log("click on cell");
+            console.log(cellView);
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;

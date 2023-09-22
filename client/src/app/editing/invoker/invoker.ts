@@ -10,9 +10,12 @@ export class GraphInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
+    addNodeMode: boolean;
+
     constructor(private as: AnalyserService) {
         this.undoStack = [];
         this.redoStack = [];
+        this.addNodeMode = false;
     }
 
     executeCommand(command: Command) {
@@ -39,6 +42,10 @@ export class GraphInvoker {
         let command = this.redoStack.pop()
         command.execute();
         this.undoStack.push(command);
+    }
+
+    setAddNodeMode(isActive: boolean) {
+        this.addNodeMode = isActive;
     }
 
 }

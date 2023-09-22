@@ -1,2 +1,2 @@
-<p-toggleButton onIcon="pi pi-fw pi-circle-off" offIcon="pi pi-fw pi-circle-off" styleClass="p-button-text p-button-lg"></p-toggleButton>
-<p-toggleButton onIcon="pi pi-fw pi-arrow-right" offIcon="pi pi-fw pi-arrow-right" styleClass="p-button-text p-button-lg"></p-toggleButton>
+<p-toggleButton onIcon="pi pi-fw pi-circle-off" offIcon="pi pi-fw pi-circle-off" styleClass="p-button-text p-button-lg" [(ngModel)]="toggled.addNode.status" (onChange)="toggled.addNode.action()"></p-toggleButton>
+<p-toggleButton onIcon="pi pi-fw pi-arrow-right" offIcon="pi pi-fw pi-arrow-right" styleClass="p-button-text p-button-lg" [(ngModel)]="toggled.addLink.status" (onChange)="toggled.addLink.action()"></p-toggleButton>
