@@ -9,6 +9,7 @@ import { GraphService } from "../../editing/model/graph.service";
 import { environment } from '../../../environments/environment';
 import { FileService } from '../file/file.service';
 import { UserRole } from '../user-role';
+import { SessionService } from '../session/session.service';
 
 @Component({
     selector: 'app-menu',
@@ -31,6 +32,7 @@ export class AppMenuComponent implements OnInit {
         private gs: GraphService,
         public dialogService: DialogService,
         private fileService: FileService,
+        public session: SessionService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
         ) {
@@ -117,10 +119,10 @@ export class AppMenuComponent implements OnInit {
 
         this.fileService.roleChoice.subscribe((role) => {
             switch(role) {
-                case UserRole.TEAM_MEMBER:
+                case UserRole.TEAM:
                     this.role = "tm";
                     break;
-                case UserRole.PRODUCT_OWNER:
+                case UserRole.ADMIN:
                     this.role = "po";
                     break;
             }
@@ -146,6 +148,23 @@ export class AppMenuComponent implements OnInit {
         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
         this.renaming = false;
+    }
+
+    getAvatarLetter() {
+        let username = this.session.getName();
+        if(username)
+            return username.charAt(0).toUpperCase();
+        else
+            return "?";
+    }
+
+    getTooltipText() {
+        let username = this.session.getName();
+        if(username) {
+            return "Logged as " + username;
+        } else {
+            return "Unable to retrieve username";
+        }
     }
 
 }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SessionService } from '../session/session.service';
 
 @Component({
   selector: 'app-login-page',
@@ -7,12 +8,12 @@ import { Component } from '@angular/core';
 })
 export class LoginPageComponent {
 
-  constructor() {
+  username: string;
 
-  }
+  constructor(private session: SessionService) {}
 
   login() {
-    console.log('login');
+    this.session.login(this.username);
   }
 
 }

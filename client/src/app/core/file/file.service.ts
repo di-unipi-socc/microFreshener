@@ -27,7 +27,7 @@ export class FileService {
 
   newFile() {
     this.gs.getGraph().clearGraph();
-    this.roleChoice.emit(UserRole.PRODUCT_OWNER);
+    this.roleChoice.emit(UserRole.ADMIN);
   }
 
   rename() {
@@ -77,13 +77,13 @@ export class FileService {
     });
     ref.onClose.subscribe((data) => {
         switch(data.role) {
-            case UserRole.TEAM_MEMBER:
+            case UserRole.TEAM:
                 this.loadGraphAsTeamMember(graphJson);
                 
                 break;
-            case UserRole.PRODUCT_OWNER:
+            case UserRole.ADMIN:
                 this.justLoadGraph(graphJson);
-                this.roleChoice.emit(UserRole.PRODUCT_OWNER);
+                this.roleChoice.emit(UserRole.ADMIN);
                 break;
         }
     });
@@ -100,7 +100,7 @@ export class FileService {
         if (data.show) {
             var team = data.show;
             this.gs.getGraph().showOnlyTeam(team);
-            this.roleChoice.emit(UserRole.TEAM_MEMBER);
+            this.roleChoice.emit(UserRole.TEAM);
             this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
         }
     });

@@ -19,12 +19,12 @@ export class DialogSelectRoleComponent implements OnInit {
 
   closeAsProductOwner() {
     //this.ref.close({ role: DialogSelectRoleComponent.PRODUCT_OWNER_ROLE});
-    this.ref.close({ role: UserRole.PRODUCT_OWNER });
+    this.ref.close({ role: UserRole.ADMIN });
   }
 
   closeAsTeam() {
     //this.ref.close({ role: DialogSelectRoleComponent.TEAM_MEMBER_ROLE});
-    this.ref.close({ role: UserRole.TEAM_MEMBER });
+    this.ref.close({ role: UserRole.TEAM });
   }
 
 }
