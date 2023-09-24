@@ -8,7 +8,6 @@ import { GraphService } from "../../editing/model/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { FileService } from '../file/file.service';
-import { UserRole } from '../user-role';
 import { SessionService } from '../session/session.service';
 
 @Component({
@@ -19,12 +18,12 @@ import { SessionService } from '../session/session.service';
 export class AppMenuComponent implements OnInit {
 
     modelName: string; // name of the model
-    filemenu: MenuItem[];
 
-    role: string;
-
+    fileMenuItems: MenuItem[];
     @ViewChildren('renameInput') private renameInputList: QueryList<ElementRef>;
     renaming: boolean;
+    
+    sessionMenuItems: MenuItem[];
 
     hrefDownload = environment.serverUrl + '/api/export';
 
@@ -41,7 +40,7 @@ export class AppMenuComponent implements OnInit {
 
     ngOnInit() {
         this.modelName = this.gs.getGraph().getName();
-        this.filemenu = [
+        this.fileMenuItems = [
             {
                 label: 'New',
                 icon: 'pi pi-fw pi-plus',
@@ -117,16 +116,15 @@ export class AppMenuComponent implements OnInit {
             }
         ];
 
-        this.fileService.roleChoice.subscribe((role) => {
-            switch(role) {
-                case UserRole.TEAM:
-                    this.role = "tm";
-                    break;
-                case UserRole.ADMIN:
-                    this.role = "po";
-                    break;
+        this.sessionMenuItems = [
+            {
+                label: 'Logout',
+                routerLink: "..",
+                command: () => {
+                    this.session.logout();
+                }
             }
-        });
+        ];
     }
 
     ngAfterViewInit() {
