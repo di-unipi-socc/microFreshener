@@ -12,6 +12,7 @@
 
         <div class="ui-toolbar-group-end">
             <p-avatar [label]="getAvatarLetter()" [pTooltip]="getTooltipText()" showDelay="1000" tooltipPosition="bottom" styleClass="mr-2" shape="circle"></p-avatar>
+            
             <p-button icon="pi pi-times" styleClass="p-button-rounded p-button-text" (click)="this.session.logout()" [routerLink]="''"></p-button>
         </div>
     </p-toolbar>
