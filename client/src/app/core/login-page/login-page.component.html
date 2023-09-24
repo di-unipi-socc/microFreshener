@@ -1,7 +1,7 @@
 <div class="center-container">
   <div class="login-container">
     <h2>microFreshener</h2>
-    <input type="text" placeholder="Username" [(ngModel)]="username" pInputText class="input-username" (keydown.enter)="login()">
+    <input type="text" placeholder="Username" [(ngModel)]="username" pInputText class="input-username" (keydown.enter)="login()" autofocus>
     <p-button class="login-button" styleClass="p-button-text" (click)="login()">Sign in</p-button>
   </div>
 </div>

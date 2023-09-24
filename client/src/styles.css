@@ -17,6 +17,13 @@
 
 /*yFiles css styles*/
 
-.p-submenu-icon {
-    display:none;
- }
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+app-root {
+    width: 100%;
+    height: 100%;
+}

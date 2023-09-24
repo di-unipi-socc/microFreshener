@@ -28,8 +28,6 @@ import { svg } from 'd3';
 })
 export class GraphEditorComponent implements OnInit {
 
-    _options = { width: "95%", height: "80%" };
-
     paper: joint.dia.Paper;
 
     drawExampleGraphOnStartup: boolean = false;
@@ -77,11 +75,9 @@ export class GraphEditorComponent implements OnInit {
             },
         });
 
-        // Create a graph on startup as an example
-        if(this.drawExampleGraphOnStartup)
-            this.createSampleGraph();
-        else
-            this.gs.getGraph().addEdgeGroup("edgenodes", []);
+        // Create an invisibile graph on startup for avoiding errors
+        this.gs.getGraph().addEdgeGroup("edgenodes", []);
+        this.gs.hideGraph();
 
         this.svgZoom = svgPanZoom('#jointjsgraph svg', {
             zoomEnabled: true,
@@ -89,8 +85,8 @@ export class GraphEditorComponent implements OnInit {
             controlIconsEnabled: false,
             fit: true,
             center: true,
-            minZoom: 0.1,
-            maxZoom: 10,
+            minZoom: 0.01,
+            maxZoom: 3,
             zoomScaleSensitivity: 0.5,
         });
         this.graphInvoker.setZoomInCallback((() => {
@@ -118,55 +114,6 @@ export class GraphEditorComponent implements OnInit {
     }
 
   
-    createSampleGraph() {
-        //  nodes
-        var s = this.gs.getGraph().addService("shipping");
-        var catalogue = this.gs.getGraph().addService("catalogue");
-
-        var odb = this.gs.getGraph().addDatastore("order_db");
-        var o = this.gs.getGraph().addService("order");
-        var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
-        var gw = this.gs.getGraph().addMessageRouter("Api gateway");
-
-        // shipping interactions
-        this.gs.getGraph().addRunTimeInteraction(s, odb);
-        this.gs.getGraph().addRunTimeInteraction(s, cp);
-        this.gs.getGraph().addRunTimeInteraction(s, catalogue);
-
-        // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
-
-        // order interactions
-        this.gs.getGraph().addRunTimeInteraction(o, s, true, true, true);
-        this.gs.getGraph().addRunTimeInteraction(o, odb);
-        this.gs.getGraph().addRunTimeInteraction(o, cp);
-        // this.gs.getGraph().addDeploymentTimeInteraction(o, s);
-        // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
-
-        // catalogue interactions
-        this.gs.getGraph().addRunTimeInteraction(catalogue, o);
-
-        // squads
-        var s1 = this.gs.getGraph().addTeamGroup("team-primo");
-        s1.addMember(s);
-        s1.addMember(o);
-        s1.addMember(odb);
-
-        var t2 = this.gs.getGraph().addTeamGroup("team-secondo");
-        t2.addMember(gw);
-        t2.addMember(cp);
-        t2.addMember(catalogue);
-
-        // this.gs.getGraph().showOnlyTeam(s1);
-
-        // gateway interaction
-        this.gs.getGraph().addRunTimeInteraction(gw, s);
-
-        // add EdgeGroup 
-        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
-
-    }
-
-
     bindEvents() {
         this.bindKeyboardEvents();
         this.bindSingleClickBlank();
