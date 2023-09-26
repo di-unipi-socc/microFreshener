@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -12,13 +12,11 @@ import '../model/microtosca';
 import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
-import * as svgPanZoom from 'svg-pan-zoom';
 
 import { CommandInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { svg } from 'd3';
 
 @Component({
     selector: 'app-graph-editor',
@@ -30,12 +28,8 @@ export class GraphEditorComponent {
 
     paper: joint.dia.Paper;
 
-    svgZoom;
-
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
-
-    movingStatus: {isMoving: boolean};
 
 
     constructor(
@@ -145,8 +139,8 @@ export class GraphEditorComponent {
         //graph eventts
        //  this.bindGraphEvents();
 
-       this.bindDragNavigation(this.paper);
-       this.bindWheelZoom(this.paper);
+       this.bindDragNavigation();
+       this.bindWheelZoom();
     }
 
     bindChangeTeamEvents(){
@@ -917,36 +911,41 @@ export class GraphEditorComponent {
         }
     }
 
-    bindDragNavigation(paper: joint.dia.Paper) {
-        let movingStatus = { isMoving: false, offsetX: undefined, offsetY: undefined };
-        this.movingStatus = movingStatus;
-        paper.on("cell:pointerdown", (cellView, evt, x, y) => {
-            console.log("pointerdown on blank");
-            movingStatus.isMoving = true;
-            console.log("%d,%d", x, y);
-            movingStatus.offsetX = x - cellView.model.attribute.position.x;
-            movingStatus.offsetY = y - cellView.model.attribute.position.y;
-        });
-
-        paper.on("cell:pointermove", (cellView, evt, x, y) => {
-            if(movingStatus.isMoving) {
-                //paper.translate(movingStatus.lastX-x, movingStatus.lastY-y);
-                cellView.model.set('position', { x: x - movingStatus.offsetX, y: y - movingStatus.offsetY });
+    bindDragNavigation() {
+        let movingStatus = { isMoving: false, x: undefined, y: undefined };
+        this.paper.on("blank:pointerdown", (evt, x, y) => {
+            console.log("pointerdown on blank, start dragging paper");
+            if(!movingStatus.isMoving) {
+                movingStatus.isMoving = true;
+                let paperPoint = this.paper.localToPaperPoint(x, y);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
             }
         });
 
-        paper.on("cell:pointerup", () => {
+        this.paper.on("blank:pointermove", (evt, x, y) => {
             if(movingStatus.isMoving) {
+                let paperPoint = this.paper.localToPaperPoint(x, y);
+                this.paper.translate(this.paper.options.origin.x + paperPoint.x - movingStatus.x, this.paper.options.origin.y + paperPoint.y - movingStatus.y);
+                console.log(this.paper);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
+            }
+        });
+
+        this.paper.on("blank:pointerup", () => {
+            if(movingStatus.isMoving) {
+                console.log("pointerup on blank, no more dragging paper")
                 movingStatus.isMoving = false;
             }
         });
     }
 
-    bindWheelZoom(paper: joint.dia.Paper) {
+    bindWheelZoom() {
 
         let zoom = (x, y, offsetX, offsetY, delta) => {
-            const oldscale = this.paper.scale().sx;
-            const newscale = oldscale + 0.2 * delta * oldscale
+            let oldscale = this.paper.scale().sx;
+            let newscale = oldscale + 0.2 * delta * oldscale
           
             if (newscale > 0.2 && newscale < 5) {
               this.paper.scale(newscale, newscale, 0, 0);
@@ -954,11 +953,12 @@ export class GraphEditorComponent {
             }
         }
 
-        paper.on("blank:mousewheel", function(evt, x, y, delta) {
+        this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
             evt.preventDefault();
             zoom(x, y, evt.offsetX, evt.offsetY, delta);
         });
-        paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
+
+        this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
             zoom(x, y, evt.offsetX, evt.offsetY, delta);
         });
