@@ -1,15 +1,14 @@
-import { EventEmitter, Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { GraphService } from "../../editing/model/graph.service";
 import { DialogImportComponent } from '../dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from '../dialog-select-role/dialog-select-role.component';
 
 import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
-import { DialogSelectTeamComponent } from 'src/app/teams/dialog-select-team/dialog-select-team.component';
+import { SessionService } from '../session/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +19,16 @@ export class FileService {
 
   hrefDownload = environment.serverUrl + '/api/export';
 
-  @Output() roleChoice = new EventEmitter<UserRole>();
-
-  constructor(private gs: GraphService, public dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+  constructor(
+    private gs: GraphService,
+    public dialogService: DialogService,
+    private session: SessionService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService) {
   }
 
   newFile() {
     this.gs.getGraph().clearGraph();
-    this.roleChoice.emit(UserRole.ADMIN);
   }
 
   rename() {
@@ -46,7 +47,7 @@ export class FileService {
   downloadExample(name: string) {
       this.gs.downloadExample(name)
           .subscribe((data) => {
-              this.loadGraphAsRole(data);
+              this.loadGraph(data);
               this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
           });
   }
@@ -59,59 +60,30 @@ export class FileService {
       ref.onClose.subscribe((data) => {
           if (data.msg) {
               console.log(data);
-              this.loadGraphAsRole(data.graph);
+              this.loadGraph(data.graph);
               this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
           }
       });
 
   }
 
-  public readonly TEAM_MEMBER_ROLE: string = "team";
-  public readonly PRODUCT_OWNER_ROLE: string = "po";
-
-  loadGraphAsRole(data) {
+  loadGraph(data) {
     let graphJson = data;
-    const ref = this.dialogService.open(DialogSelectRoleComponent, {
-        header: 'Select your role',
-        width: '50%'
-    });
-    ref.onClose.subscribe((data) => {
-        switch(data.role) {
-            case UserRole.TEAM:
-                this.loadGraphAsTeamMember(graphJson);
-                
-                break;
-            case UserRole.ADMIN:
-                this.justLoadGraph(graphJson);
-                this.roleChoice.emit(UserRole.ADMIN);
-                break;
-        }
-    });
-  }
-
-  loadGraphAsTeamMember(graphJson) {
-    this.justLoadGraph(graphJson);
-    this.gs.hideGraph();
-    const ref = this.dialogService.open(DialogSelectTeamComponent, {
-        header: 'Select a Team',
-        width: '50%',
-    });
-    ref.onClose.subscribe((data) => {
-        if (data.show) {
-            var team = data.show;
-            this.gs.getGraph().showOnlyTeam(team);
-            this.roleChoice.emit(UserRole.TEAM);
-            this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
-        }
-    });
-  }
-
-  justLoadGraph(graphJson) {
+    let role = this.session.getRole();
+    this.gs.getGraph().clear();
     this.gs.getGraph().builtFromJSON(graphJson);
-    this.gs.getGraph().applyLayout("LR");
+    if(role == UserRole.TEAM) {
+      let teamName = this.session.getName();
+      let team = this.gs.getGraph().getTeam(teamName);
+      this.gs.getGraph().showOnlyTeam(team);
+      this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
+    }
+    console.log(this.gs.getGraph().applyLayout("LR"));
+    /*let paper = this.gs.getPaper();
+    let paperArea = paper.getArea();
+    let contentArea = paper.getContentArea();
+    console.log("paperArea: %d,%d ; contentArea: %d,%d, contentArea position: %d,%d", paperArea.width, paperArea.height, contentArea.width, contentArea.height, contentArea.x, contentArea.y);
+    paper.translate(-paperArea.width + (contentArea.width / 2), -paperArea.height + (contentArea.height / 2));*/
   }
-
-  // To be changed with "execute" function
-  // this.roleChoice.emit(data.role);
 
 }

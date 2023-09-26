@@ -13,23 +13,14 @@ export class SessionService {
 
   login(username: string) {
     console.log("Logged as " + username);
+    this.name = username;
     switch(username) {
       case "admin":
-        this.loginAsAdmin();
+        this.role = UserRole.ADMIN;
         break;
       default:
-        this.loginAsTeam(username);
+        this.role = UserRole.TEAM;
     }
-  }
-
-  loginAsAdmin() {
-    this.name = "admin";
-    this.role = UserRole.ADMIN;
-  }
-
-  loginAsTeam(teamName: string) {
-    this.name = teamName;
-    this.role = UserRole.TEAM;
   }
 
   logout() {
@@ -39,6 +30,10 @@ export class SessionService {
 
   getName(): string {
     return this.name;
+  }
+
+  getRole(): UserRole {
+    return this.role;
   }
 
   isAdmin(): boolean {

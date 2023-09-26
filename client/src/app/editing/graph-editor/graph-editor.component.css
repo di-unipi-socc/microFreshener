@@ -1,5 +1,6 @@
 :host {
   padding: 0px;
+  margin: 0;
 }
 
 :host ::ng-deep button {
@@ -11,6 +12,7 @@
 #jointjsgraph {
   width: 100%;
   height: 100%;
-  min-height: 50vh;
-  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: none;
 }

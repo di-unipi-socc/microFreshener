@@ -63,7 +63,6 @@ import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-sel
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
@@ -84,7 +83,6 @@ import { EditorPageComponent } from './core/editor-page/editor-page.component';
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
-    DialogSelectRoleComponent,
     SubtoolbarArchitectureComponent,
     SubtoolbarUndoComponent,
     SubtoolbarNavigationComponent,
@@ -143,7 +141,7 @@ import { EditorPageComponent } from './core/editor-page/editor-page.component';
   bootstrap: [
     AppComponent
   ],
-  entryComponents: [ // entry componets used in DymanimcModal of PimeNg
+  entryComponents: [ // entry components used in DynamicModal of PrimeNg
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
@@ -152,7 +150,6 @@ import { EditorPageComponent } from './core/editor-page/editor-page.component';
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
-    DialogSelectRoleComponent
   ]
 })
 export class AppModule { }

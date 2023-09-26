@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { GraphService } from '../model/graph.service';
-import { GraphInvoker } from '../invoker/invoker';
 
 @Component({
   selector: 'app-subtoolbar-navigation',
@@ -12,14 +11,14 @@ export class SubtoolbarNavigationComponent {
 
   layoutMenuItems: MenuItem[];
 
-  constructor(private graphInvoker: GraphInvoker, private gs: GraphService) {}
+  constructor(private gs: GraphService) {}
 
   zoomIn() {
-      this.graphInvoker.zoomIn();
+      this.gs.zoomIn();
   }
 
   zoomOut() {
-    this.graphInvoker.zoomOut();
+    this.gs.zoomOut();
   }
 
   ngOnInit() {

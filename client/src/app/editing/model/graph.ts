@@ -420,7 +420,6 @@ export class Graph extends joint.dia.Graph {
     }
 
     builtFromJSON(json: string) {
-        this.removeCells(this.getCells());
         // var g = new Graph(json['name']);
         this.name = json['name'];
         json['nodes'].forEach(node => {

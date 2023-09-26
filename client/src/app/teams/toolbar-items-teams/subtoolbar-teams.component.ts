@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { AddTeamGroupCommand } from 'src/app/editing/invoker/graph-command';
-import { GraphInvoker } from 'src/app/editing/invoker/invoker';
+import { CommandInvoker } from 'src/app/editing/invoker/invoker';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GraphService } from 'src/app/editing/model/graph.service';
 
@@ -15,7 +15,7 @@ export class SubtoolbarTeamsComponent {
 
   menuitems: MenuItem[];
 
-  constructor(private graphInvoker: GraphInvoker, private dialogService: DialogService, private gs: GraphService) {
+  constructor(private graphInvoker: CommandInvoker, private dialogService: DialogService, private gs: GraphService) {
 
   }
 

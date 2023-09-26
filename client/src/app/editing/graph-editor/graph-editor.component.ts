@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -14,7 +14,7 @@ import { g } from 'jointjs';
 import * as $ from 'jquery';
 import * as svgPanZoom from 'svg-pan-zoom';
 
-import { GraphInvoker } from "../invoker/invoker";
+import { CommandInvoker } from "../invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
@@ -26,32 +26,40 @@ import { svg } from 'd3';
     styleUrls: ['./graph-editor.component.css'],
     providers: [DialogService] //, ConfirmationService]
 })
-export class GraphEditorComponent implements OnInit {
+export class GraphEditorComponent {
 
     paper: joint.dia.Paper;
 
-    drawExampleGraphOnStartup: boolean = false;
-
     svgZoom;
 
-    leftClickselectdNode: joint.shapes.microtosca.Node;
+    leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
 
+    movingStatus: {isMoving: boolean};
 
-    constructor(private graphInvoker: GraphInvoker, private gs: GraphService, private dialogService: DialogService, private messageService: MessageService, private confirmationService: ConfirmationService) {
-        this.leftClickselectdNode = null;
+
+    constructor(
+        private graphInvoker: CommandInvoker,
+        private gs: GraphService,
+        private dialogService: DialogService,
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService
+    ) {
+        this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
     }
 
     ngOnInit() {
+        console.log("afterviewinit")
         let canvas = document.getElementById('jointjsgraph');
-        var c = $('#canvas');
+        console.log(canvas);
+        console.log("Parent w%d, h%d ; ow%d, oh%d", canvas.parentElement.clientWidth, canvas.parentElement.clientHeight, canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
         this.paper = new joint.dia.Paper({
             el: canvas,
             model: this.gs.getGraph(),
             preventContextMenu: true,
-            width: c.outerWidth(),
-            height: c.outerHeight(),
+            width: '100%',
+            height: '100%',
             background: { color: 'light' },
             multiLinks: true,
             clickThreshold: 1,
@@ -76,25 +84,26 @@ export class GraphEditorComponent implements OnInit {
         });
 
         // Create an invisibile graph on startup for avoiding errors
-        this.gs.getGraph().addEdgeGroup("edgenodes", []);
-        this.gs.hideGraph();
+        //this.createSampleGraph();
 
-        this.svgZoom = svgPanZoom('#jointjsgraph svg', {
+/*        this.svgZoom = svgPanZoom('#jointjsgraph svg', {
             zoomEnabled: true,
             panEnabled: true,
             controlIconsEnabled: false,
             fit: true,
             center: true,
             minZoom: 0.01,
-            maxZoom: 3,
+            maxZoom: 10,
             zoomScaleSensitivity: 0.5,
         });
-        this.graphInvoker.setZoomInCallback((() => {
-            this.svgZoom.zoomIn();
-        }));
-        this.graphInvoker.setZoomOutCallback(() => {
-            this.svgZoom.zoomOut();
-        });
+
+        this.gs.setPaper(this.paper);
+        this.gs.setZoom(this.svgZoom);
+
+        // apply layout
+        this.applyDirectedGraphLayout();
+        this.paper.scaleContentToFit();
+        this.svgZoom.zoomOut();
 
         this.paper.on('cell:pointerdown', () => {
             this.svgZoom.disablePan();
@@ -102,17 +111,15 @@ export class GraphEditorComponent implements OnInit {
 
         this.paper.on('cell:pointerup', () => {
             this.svgZoom.enablePan();
-        });
+        });*/
+
 
         // bind events
         this.bindEvents();
 
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
-
-        this.applyDirectedGraphLayout();
     }
-
   
     bindEvents() {
         this.bindKeyboardEvents();
@@ -135,9 +142,11 @@ export class GraphEditorComponent implements OnInit {
         this.bindTeamEmbedNodes();
         this.bindChangeTeamEvents();
 
-
         //graph eventts
        //  this.bindGraphEvents();
+
+       this.bindDragNavigation(this.paper);
+       this.bindWheelZoom(this.paper);
     }
 
     bindChangeTeamEvents(){
@@ -191,8 +200,8 @@ export class GraphEditorComponent implements OnInit {
     }
 
     deleteSelected() {
-        if (this.leftClickselectdNode) {
-            var node = this.leftClickselectdNode;
+        if (this.leftClickSelectedNode) {
+            var node = this.leftClickSelectedNode;
             this.confirmationService.confirm({
                 message: 'Do you want to delete this node?',
                 header: 'Node Deletion Confirmation',
@@ -247,8 +256,8 @@ export class GraphEditorComponent implements OnInit {
     }
 
     unhighlight() {
-        this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
-        this.leftClickselectdNode = null;
+        this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
+        this.leftClickSelectedNode = null;
     }
 
     bindSingleClickBlank() {
@@ -260,7 +269,7 @@ export class GraphEditorComponent implements OnInit {
             if (this.graphInvoker.addNodeAllowed) {
                 this.addNode(position);
             } else {
-                if (this.leftClickselectdNode) {
+                if (this.leftClickSelectedNode) {
                     this.unhighlight();
                 }
             }
@@ -292,23 +301,23 @@ export class GraphEditorComponent implements OnInit {
                 // team group cannot be clicked (both as source and target)
                 if(this.graphInvoker.addLinkAllowed) {
                     // selecting target node
-                    if (this.leftClickselectdNode !== null && node.id !== this.leftClickselectdNode.id) {
+                    if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
                         var add_link = true;
                         // disable link from <any> to datastore
                         if (this.gs.getGraph().isEdgeGroup(node)) {
                             add_link = false;
                         }
                         // disable link from edge to datastore
-                        if (this.gs.getGraph().isEdgeGroup(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node)) {
+                        if (this.gs.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node)) {
                             add_link = false;
                         }
                         // disable link from communication pattern to Datastore
-                        if (this.gs.getGraph().isCommunicationPattern(this.leftClickselectdNode) && this.gs.getGraph().isDatastore(node))
+                        if (this.gs.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node))
                             add_link = false;
                         if (add_link) {
                             const ref = this.dialogService.open(DialogAddLinkComponent, {
                                 data: {
-                                    source: this.leftClickselectdNode,
+                                    source: this.leftClickSelectedNode,
                                     target: node
                                 },
                                 header: 'Add a link',
@@ -316,16 +325,16 @@ export class GraphEditorComponent implements OnInit {
                             });
                             ref.onClose.subscribe((data) => {
                                 if (data) {
-                                    var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickselectdNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                    var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
                                     this.graphInvoker.executeCommand(command);
-                                    this.paper.findViewByModel(this.leftClickselectdNode).unhighlight();
-                                    this.leftClickselectdNode = null;
+                                    this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
+                                    this.leftClickSelectedNode = null;
                                 }
                             });
                             console.log("added link");
                         }
                         else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickselectdNode.getName()}] to [${node.getName()}] cannot be created` });
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
                         }
                     }
                     else {
@@ -341,7 +350,7 @@ export class GraphEditorComponent implements OnInit {
                         }
                         if (can_select_source_node) {
                             cellView.highlight();
-                            this.leftClickselectdNode = node;
+                            this.leftClickSelectedNode = node;
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
@@ -907,5 +916,100 @@ export class GraphEditorComponent implements OnInit {
             }
         }
     }
+
+    bindDragNavigation(paper: joint.dia.Paper) {
+        let movingStatus = { isMoving: false, offsetX: undefined, offsetY: undefined };
+        this.movingStatus = movingStatus;
+        paper.on("cell:pointerdown", (cellView, evt, x, y) => {
+            console.log("pointerdown on blank");
+            movingStatus.isMoving = true;
+            console.log("%d,%d", x, y);
+            movingStatus.offsetX = x - cellView.model.attribute.position.x;
+            movingStatus.offsetY = y - cellView.model.attribute.position.y;
+        });
+
+        paper.on("cell:pointermove", (cellView, evt, x, y) => {
+            if(movingStatus.isMoving) {
+                //paper.translate(movingStatus.lastX-x, movingStatus.lastY-y);
+                cellView.model.set('position', { x: x - movingStatus.offsetX, y: y - movingStatus.offsetY });
+            }
+        });
+
+        paper.on("cell:pointerup", () => {
+            if(movingStatus.isMoving) {
+                movingStatus.isMoving = false;
+            }
+        });
+    }
+
+    bindWheelZoom(paper: joint.dia.Paper) {
+
+        let zoom = (x, y, offsetX, offsetY, delta) => {
+            const oldscale = this.paper.scale().sx;
+            const newscale = oldscale + 0.2 * delta * oldscale
+          
+            if (newscale > 0.2 && newscale < 5) {
+              this.paper.scale(newscale, newscale, 0, 0);
+              this.paper.translate(-x*newscale+offsetX,-y*newscale+offsetY);
+            }
+        }
+
+        paper.on("blank:mousewheel", function(evt, x, y, delta) {
+            evt.preventDefault();
+            zoom(x, y, evt.offsetX, evt.offsetY, delta);
+        });
+        paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
+            evt.preventDefault();
+            zoom(x, y, evt.offsetX, evt.offsetY, delta);
+        });
+    }
+
+    /*createSampleGraph() {
+        //  nodes
+        var s = this.gs.getGraph().addService("shipping");
+        var catalogue = this.gs.getGraph().addService("catalogue");
+
+        var odb = this.gs.getGraph().addDatastore("order_db");
+        var o = this.gs.getGraph().addService("order");
+        var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
+        var gw = this.gs.getGraph().addMessageRouter("Api gateway");
+
+        // shipping interactions
+        this.gs.getGraph().addRunTimeInteraction(s, odb);
+        this.gs.getGraph().addRunTimeInteraction(s, cp);
+        this.gs.getGraph().addRunTimeInteraction(s, catalogue);
+
+        // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
+
+        // order interactions
+        this.gs.getGraph().addRunTimeInteraction(o, s, true, true, true);
+        this.gs.getGraph().addRunTimeInteraction(o, odb);
+        this.gs.getGraph().addRunTimeInteraction(o, cp);
+        // this.gs.getGraph().addDeploymentTimeInteraction(o, s);
+        // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
+
+        // catalogue interactions
+        this.gs.getGraph().addRunTimeInteraction(catalogue, o);
+
+        // squads
+        var s1 = this.gs.getGraph().addTeamGroup("team-primo");
+        s1.addMember(s);
+        s1.addMember(o);
+        s1.addMember(odb);
+
+        var t2 = this.gs.getGraph().addTeamGroup("team-secondo");
+        t2.addMember(gw);
+        t2.addMember(cp);
+        t2.addMember(catalogue);
+
+        // this.gs.getGraph().showOnlyTeam(s1);
+
+        // gateway interaction
+        this.gs.getGraph().addRunTimeInteraction(gw, s);
+
+        // add EdgeGroup 
+        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
+
+    }*/
 
 }

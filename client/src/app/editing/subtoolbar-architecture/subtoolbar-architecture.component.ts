@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GraphInvoker } from '../invoker/invoker';
+import { CommandInvoker } from '../invoker/invoker';
 
 @Component({
   selector: 'app-subtoolbar-architecture',
@@ -10,7 +10,7 @@ export class SubtoolbarArchitectureComponent {
 
   toggled;
 
-  constructor(public invoker: GraphInvoker) {
+  constructor(public invoker: CommandInvoker) {
     this.toggled = {
       addNode: {
         status: false,

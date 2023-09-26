@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GraphInvoker } from '../invoker/invoker';
+import { CommandInvoker } from '../invoker/invoker';
 
 @Component({
   selector: 'app-subtoolbar-undo',
@@ -8,7 +8,7 @@ import { GraphInvoker } from '../invoker/invoker';
 })
 export class SubtoolbarUndoComponent {
 
-  constructor(private graphInvoker: GraphInvoker) {}
+  constructor(private graphInvoker: CommandInvoker) {}
 
   undo() {
     this.graphInvoker.undo();

@@ -6,6 +6,8 @@ import { environment } from '../../../environments/environment';
 
 import { Graph } from '../model/graph';
 
+import * as joint from 'jointjs';
+
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -16,6 +18,10 @@ const httpOptions = {
 export class GraphService {
 
   graph: Graph;
+
+  paper: joint.dia.Paper;
+
+  zoom;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -40,12 +46,36 @@ export class GraphService {
     this.graph = g;
   }
 
+  getPaper() {
+    return this.paper;
+  }
+
+  setPaper(paper: joint.dia.Paper) {
+    this.paper = paper;
+  }
+
   hideGraph() {
     this.graph.hideGraph();
   }
 
   showGraph() {
     this.graph.showGraph();
+  }
+
+  zoomIn() {
+    this.getZoom().zoomIn();
+  }
+
+  zoomOut() {
+    this.getZoom().zoomOut();
+  }
+
+  setZoom(zoom) {
+    this.zoom = zoom;
+  }
+
+  getZoom() {
+    return this.zoom;
   }
 
   /** Export the graph to JSON format*/
