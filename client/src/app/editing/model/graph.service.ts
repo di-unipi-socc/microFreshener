@@ -42,10 +42,6 @@ export class GraphService {
     return this.graph;
   }
 
-  setGraph(g: Graph) {
-    this.graph = g;
-  }
-
   getPaper() {
     return this.paper;
   }

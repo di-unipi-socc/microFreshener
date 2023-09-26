@@ -14,7 +14,7 @@ import { g } from 'jointjs';
 import * as $ from 'jquery';
 
 import { CommandInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand } from '../invoker/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../invoker/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 
@@ -44,10 +44,8 @@ export class GraphEditorComponent {
     }
 
     ngOnInit() {
-        console.log("afterviewinit")
         let canvas = document.getElementById('jointjsgraph');
         console.log(canvas);
-        console.log("Parent w%d, h%d ; ow%d, oh%d", canvas.parentElement.clientWidth, canvas.parentElement.clientHeight, canvas.parentElement.offsetWidth, canvas.parentElement.offsetHeight);
         this.paper = new joint.dia.Paper({
             el: canvas,
             model: this.gs.getGraph(),
@@ -77,36 +75,10 @@ export class GraphEditorComponent {
             },
         });
 
-        // Create an invisibile graph on startup for avoiding errors
+        // Create a sample graph useful for debugging
         //this.createSampleGraph();
 
-/*        this.svgZoom = svgPanZoom('#jointjsgraph svg', {
-            zoomEnabled: true,
-            panEnabled: true,
-            controlIconsEnabled: false,
-            fit: true,
-            center: true,
-            minZoom: 0.01,
-            maxZoom: 10,
-            zoomScaleSensitivity: 0.5,
-        });
-
         this.gs.setPaper(this.paper);
-        this.gs.setZoom(this.svgZoom);
-
-        // apply layout
-        this.applyDirectedGraphLayout();
-        this.paper.scaleContentToFit();
-        this.svgZoom.zoomOut();
-
-        this.paper.on('cell:pointerdown', () => {
-            this.svgZoom.disablePan();
-        });
-
-        this.paper.on('cell:pointerup', () => {
-            this.svgZoom.enablePan();
-        });*/
-
 
         // bind events
         this.bindEvents();
@@ -140,7 +112,9 @@ export class GraphEditorComponent {
        //  this.bindGraphEvents();
 
        this.bindDragNavigation();
-       this.bindWheelZoom();
+       this.bindWheelZoom(this.paper);
+       this.gs.zoomIn = () => {this.zoomIn(this.paper);}
+       this.gs.zoomOut = () => {this.zoomOut(this.paper);}
     }
 
     bindChangeTeamEvents(){
@@ -258,7 +232,7 @@ export class GraphEditorComponent {
         this.paper.on("blank:pointerclick", (evt) => {
             
             let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
-            console.log("click on blank (%d,%d)", position.x, position.y);
+            console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.graphInvoker.addNodeAllowed) {
                 this.addNode(position);
@@ -927,7 +901,6 @@ export class GraphEditorComponent {
             if(movingStatus.isMoving) {
                 let paperPoint = this.paper.localToPaperPoint(x, y);
                 this.paper.translate(this.paper.options.origin.x + paperPoint.x - movingStatus.x, this.paper.options.origin.y + paperPoint.y - movingStatus.y);
-                console.log(this.paper);
                 movingStatus.x = paperPoint.x;
                 movingStatus.y = paperPoint.y;
             }
@@ -941,26 +914,52 @@ export class GraphEditorComponent {
         });
     }
 
-    bindWheelZoom() {
+    zoom(paper, x, y, offsetX, offsetY, delta) {
+        //console.log("zooming with: x%d,y%d,ox%d,oy%d", x, y, offsetX, offsetY);
+        let oldscale = paper.scale().sx;
+        let newscale = oldscale + 0.2 * delta * oldscale
+        let minscale = 0.2;
+        let maxscale = 5;
 
-        let zoom = (x, y, offsetX, offsetY, delta) => {
-            let oldscale = this.paper.scale().sx;
-            let newscale = oldscale + 0.2 * delta * oldscale
-          
-            if (newscale > 0.2 && newscale < 5) {
-              this.paper.scale(newscale, newscale, 0, 0);
-              this.paper.translate(-x*newscale+offsetX,-y*newscale+offsetY);
-            }
+        if (newscale > minscale && newscale < maxscale) {
+          paper.scale(newscale, newscale, 0, 0);
+          paper.translate(-x*newscale+offsetX, -y*newscale+offsetY);
         }
+    }
 
+    zoomIn(paper: joint.dia.Paper) {
+        let canvas = document.getElementById('jointjsgraph');
+        let offsetX = canvas.clientWidth/2;
+        let offsetY = canvas.clientHeight/2;
+        let origin = this.paper.options.origin;
+        let sf = this.paper.scale().sx;
+        let x = (offsetX-origin.x)/sf;
+        let y = (offsetY-origin.y)/sf;
+        this.zoom(paper, x, y, offsetX, offsetY, 1);
+    }
+
+    zoomOut(paper: joint.dia.Paper) {
+        let canvas = document.getElementById('jointjsgraph');
+        let offsetX = canvas.clientWidth/2;
+        let offsetY = canvas.clientHeight/2;
+        let origin = this.paper.options.origin;
+        let sf = this.paper.scale().sx;
+        let x = (offsetX-origin.x)/sf;
+        let y = (offsetY-origin.y)/sf;
+        this.zoom(paper, x, y, offsetX, offsetY, -1);
+    }
+
+    bindWheelZoom(paper: joint.dia.Paper) {
+        let zoom = this.zoom;
         this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
+            console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
             evt.preventDefault();
-            zoom(x, y, evt.offsetX, evt.offsetY, delta);
+            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
         });
 
         this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
-            zoom(x, y, evt.offsetX, evt.offsetY, delta);
+            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
         });
     }
 
@@ -1009,6 +1008,9 @@ export class GraphEditorComponent {
 
         // add EdgeGroup 
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
+
+        this.applyDirectedGraphLayout();
+        this.paper.scaleContentToFit();
 
     }*/
 
