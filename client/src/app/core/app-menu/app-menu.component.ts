@@ -128,8 +128,8 @@ export class AppMenuComponent implements OnInit {
     ngAfterViewInit() {
         this.renameInputList.changes.subscribe((list: QueryList<ElementRef>) => {
             if (list.length > 0) {
-                console.log(list);
                 list.first.nativeElement.focus();
+                console.log(list.first.nativeElement.value);
             }
         });
     }

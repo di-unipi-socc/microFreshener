@@ -5,8 +5,15 @@
             
             <p-button styleClass="app-title" [disabled]="true">microFreshener</p-button>
 
-            <p-splitButton *ngIf="!renaming" [label]="modelName" class="file-name" styleClass="file-name-button" (onClick)="editName()" [model]="fileMenuItems"></p-splitButton>
-            <input #renameInput *ngIf="renaming" type="text" class="file-name file-name-input" pInputText [(ngModel)]="modelName" (focusout)="rename()">
+            <div *ngIf="!this.session.isDocumentReady()" class="file-name-buttons">
+                <p-button icon="pi pi-fw pi-chevron-down" (click)="fileMenu.toggle($event)"></p-button>
+                <p-tieredMenu #fileMenu [model]="fileMenuItems" [popup]="true"></p-tieredMenu>
+            </div>
+
+            <div *ngIf="this.session.isDocumentReady()" class="file-name-buttons">
+                <p-splitButton *ngIf="!renaming" [label]="modelName=='' ? 'Untitled document' : modelName" styleClass="file-name-button" (onClick)="editName()" [model]="fileMenuItems"></p-splitButton>
+                <input #renameInput *ngIf="renaming" type="text" class="file-name-input" pInputText [(ngModel)]="modelName" (focusout)="rename()" (keydown.enter)="rename()">
+            </div>
         </div>
 
         <div class="ui-toolbar-group-center" *ngIf="this.session.isDocumentReady()">

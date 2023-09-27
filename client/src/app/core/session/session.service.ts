@@ -5,7 +5,7 @@ import { MessageService } from 'primeng/api';
 import { GraphService } from "../../editing/model/graph.service";
 import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 
-import { environment } from '../../../environments/environment';
+// import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
 
 @Injectable({
@@ -13,11 +13,11 @@ import { UserRole } from '../user-role';
 })
 export class SessionService {
   
-  private name: string;
+  private username: string;
   private role: UserRole;
   private documentReady: boolean;
   private modelName: string; // name of the model
-  //private hrefDownload = environment.serverUrl + '/api/export';
+  // private hrefDownload = environment.serverUrl + '/api/export';
 
   constructor(
     private gs: GraphService,
@@ -29,7 +29,7 @@ export class SessionService {
 
   login(username: string) {
     console.log("Logged as " + username);
-    this.name = username;
+    this.username = username;
     switch(username) {
       case "admin":
         this.role = UserRole.ADMIN;
@@ -45,7 +45,7 @@ export class SessionService {
   }
 
   getName(): string {
-    return this.name;
+    return this.username;
   }
 
   getRole(): UserRole {
@@ -67,6 +67,8 @@ export class SessionService {
   newFile() {
     this.gs.getGraph().clearGraph();
     this.gs.fitContent(400);
+    this.modelName = "";
+    this.gs.getGraph().setName(this.modelName);
     this.documentReady = true;
   }
 
@@ -130,7 +132,7 @@ export class SessionService {
   }
 
   resetUserData() {
-    this.name = undefined;
+    this.username = undefined;
     this.role = undefined;
   }
 

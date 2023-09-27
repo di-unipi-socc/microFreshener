@@ -479,7 +479,8 @@ export class Graph extends joint.dia.Graph {
     }
 
     toJSON() {
-        var data: Object = { 'name': this.name, 'nodes': [], 'links': [], 'groups': [] };
+        var name = this.name == '' ? 'untitled' : this.name;
+        var data: Object = { 'name': name, 'nodes': [], 'links': [], 'groups': [] };
         this.getNodes().forEach((node: joint.shapes.microtosca.Node) => {
             var dnode = { 'name': node.getName() };
             if (this.isService(node))

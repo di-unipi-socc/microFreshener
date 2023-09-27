@@ -35,7 +35,7 @@ export class GraphService {
 
 
   constructor(private http: HttpClient) {
-    this.graph = new Graph('hello-world');
+    this.graph = new Graph('');
   }
 
   getGraph(): Graph {
