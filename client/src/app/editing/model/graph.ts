@@ -370,6 +370,23 @@ export class Graph extends joint.dia.Graph {
         team.fitEmbeds({ padding: 40 })
     }
 
+    hideTeam(team: joint.shapes.microtosca.SquadGroup) {
+        /*var links = this.getInternalLinksOfTeam(team);
+        links.forEach(link => {
+            link.attr("./visibility", "hidden");
+        })
+        team.getMembers().forEach(node => {
+            node.attr("./visibility", "hidden");
+        })*/
+        team.attr("./visibility", "hidden");
+    }
+
+    hideAllTeam() {
+        for(let t of this.getTeamGroups()) {
+            this.hideTeam(t);
+        }
+    }
+
     minimizeAllTeam() {
         this.getTeamGroups().forEach(team => {
             this.minimizeTeam(team);
