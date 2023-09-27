@@ -114,8 +114,9 @@ export class GraphService {
   showTeamDependencies(teamName) {
     let team = this.graph.findGroupByName(teamName);
     this.getOutgoingFrontierLinksOfTeam(team)
-        .forEach((link) =>
-        this.showLinkAndRelatedNodesAndTheirGroups(link, <joint.shapes.microtosca.Node> link.getSourceElement()));
+        .forEach((link) => {
+          this.showLinkAndRelatedNodesAndTheirGroups(link, (<joint.shapes.microtosca.Node> link.getTargetElement()));
+        });
   }
   
 
