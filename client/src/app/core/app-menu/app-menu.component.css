@@ -7,7 +7,8 @@
     border: none;
 }
 
-.file-name {
+.file-name-buttons {
+    display: inline-block;
     margin-left: 0.6em;
     margin-right: 0.6em;
 }
@@ -24,16 +25,24 @@
     font-weight: bold;
 }
 
-.file-name-input {
-
-}
-
 .tool-buttons {
     padding: 0.2em;
     background-color: white;
-    width: 100%;
     display: flex;
     border-radius: 15px;
     padding-left: 15px;
     vertical-align: middle;
+}
+
+.ui-toolbar-group-start {
+    flex-grow: 0;
+}
+
+.ui-toolbar-group-center {
+    flex-grow: 1;
+}
+
+.ui-toolbar-group-end {
+    flex-grow: 0;
+    padding: 0.5em;
 }

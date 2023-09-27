@@ -6,7 +6,7 @@ import { RefactoringCommand } from '../../refactoring/refactor/refactoring-comma
 @Injectable({
     providedIn: 'root'
 })
-export class GraphInvoker {
+export class CommandInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
@@ -52,22 +52,6 @@ export class GraphInvoker {
 
     allowAddLink(isActive: boolean) {
         this.addLinkAllowed = isActive;
-    }
-
-    zoomIn() {
-        console.error("Callback unset");
-    }
-
-    zoomOut() {
-        console.error("Callback unset");
-    }
-
-    setZoomInCallback(callback: () => void) {
-        this.zoomIn = callback;
-    }
-
-    setZoomOutCallback(callback: () => void) {
-        this.zoomOut = callback;
     }
 
 }

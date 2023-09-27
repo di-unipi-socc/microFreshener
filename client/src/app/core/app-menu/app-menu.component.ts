@@ -7,8 +7,7 @@ import { MenuItem } from 'primeng/api';
 import { GraphService } from "../../editing/model/graph.service";
 
 import { environment } from '../../../environments/environment';
-import { FileService } from '../file/file.service';
-import { UserRole } from '../user-role';
+import { SessionService } from '../session/session.service';
 
 @Component({
     selector: 'app-menu',
@@ -18,19 +17,19 @@ import { UserRole } from '../user-role';
 export class AppMenuComponent implements OnInit {
 
     modelName: string; // name of the model
-    filemenu: MenuItem[];
 
-    role: string;
-
+    fileMenuItems: MenuItem[];
     @ViewChildren('renameInput') private renameInputList: QueryList<ElementRef>;
     renaming: boolean;
+    
+    sessionMenuItems: MenuItem[];
 
     hrefDownload = environment.serverUrl + '/api/export';
 
     constructor(
         private gs: GraphService,
         public dialogService: DialogService,
-        private fileService: FileService,
+        public session: SessionService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
         ) {
@@ -39,7 +38,7 @@ export class AppMenuComponent implements OnInit {
 
     ngOnInit() {
         this.modelName = this.gs.getGraph().getName();
-        this.filemenu = [
+        this.fileMenuItems = [
             {
                 label: 'New',
                 icon: 'pi pi-fw pi-plus',
@@ -49,7 +48,7 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-exclamation-triangle',
                         message: 'Are you sure that you want to delete the current work and create a new one?',
                         accept: () => {
-                            this.fileService.newFile();
+                            this.session.newFile();
                         }
                     });
                 }
@@ -58,7 +57,7 @@ export class AppMenuComponent implements OnInit {
                 label: 'Save',
                 icon: 'pi pi-fw pi-save',
                 command: () => {
-                    this.fileService.save();
+                    this.session.save();
                 }
             },
             { separator: true },
@@ -66,7 +65,7 @@ export class AppMenuComponent implements OnInit {
                 label: 'Import',
                 icon: 'pi pi-fw pi-download',
                 command: () => {
-                    this.fileService.import()
+                    this.session.import()
                 }
             },
             {
@@ -83,31 +82,31 @@ export class AppMenuComponent implements OnInit {
                     {
                         label: 'Hello world',
                         command: () => {
-                            this.fileService.downloadExample("helloworld");
+                            this.session.downloadExample("helloworld");
                         }
                     },
                     {
                         label: 'Case study',
                         command: () => {
-                            this.fileService.downloadExample("case-study-initial");
+                            this.session.downloadExample("case-study-initial");
                         }
                     },
                     {
                         label: 'Case study (refactored)',
                         command: () => {
-                            this.fileService.downloadExample("case-study-refactored");
+                            this.session.downloadExample("case-study-refactored");
                         }
                     },
                     {
                         label: 'Sockshop',
                         command: () => {
-                            this.fileService.downloadExample("sockshop");
+                            this.session.downloadExample("sockshop");
                         }
                     },
                     {
                         label: 'FTGO',
                         command: () => {
-                            this.fileService.downloadExample("ftgo");
+                            this.session.downloadExample("ftgo");
                         }
                     }
                     //end examples
@@ -115,23 +114,22 @@ export class AppMenuComponent implements OnInit {
             }
         ];
 
-        this.fileService.roleChoice.subscribe((role) => {
-            switch(role) {
-                case UserRole.TEAM_MEMBER:
-                    this.role = "tm";
-                    break;
-                case UserRole.PRODUCT_OWNER:
-                    this.role = "po";
-                    break;
+        this.sessionMenuItems = [
+            {
+                label: 'Logout',
+                routerLink: "..",
+                command: () => {
+                    this.session.logout();
+                }
             }
-        });
+        ];
     }
 
     ngAfterViewInit() {
         this.renameInputList.changes.subscribe((list: QueryList<ElementRef>) => {
             if (list.length > 0) {
-                console.log(list);
                 list.first.nativeElement.focus();
+                console.log(list.first.nativeElement.value);
             }
         });
     }
@@ -146,6 +144,23 @@ export class AppMenuComponent implements OnInit {
         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
         this.renaming = false;
+    }
+
+    getAvatarLetter() {
+        let username = this.session.getName();
+        if(username)
+            return username.charAt(0).toUpperCase();
+        else
+            return "?";
+    }
+
+    getTooltipText() {
+        let username = this.session.getName();
+        if(username) {
+            return "Logged as " + username;
+        } else {
+            return "Unable to retrieve username";
+        }
     }
 
 }

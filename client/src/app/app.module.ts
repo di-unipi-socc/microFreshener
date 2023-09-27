@@ -56,15 +56,17 @@ import { CardModule } from 'primeng/card';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DividerModule } from 'primeng/divider';
 import { StyleClassModule } from 'primeng/styleclass';
+import { AvatarModule } from 'primeng/avatar';
 
 // Import dialog components
 import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
-import { DialogSelectRoleComponent } from './core/dialog-select-role/dialog-select-role.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
+import { LoginPageComponent } from './core/login-page/login-page.component';
+import { EditorPageComponent } from './core/editor-page/editor-page.component';
 
 @NgModule({
   declarations: [
@@ -81,13 +83,14 @@ import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
-    DialogSelectRoleComponent,
     SubtoolbarArchitectureComponent,
     SubtoolbarUndoComponent,
     SubtoolbarNavigationComponent,
     SubtoolbarViewComponent,
     SubtoolbarRefactoringComponent,
     SubtoolbarTeamsComponent,
+    LoginPageComponent,
+    EditorPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -127,7 +130,8 @@ import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar
     InputSwitchModule,
     DividerModule,
     StyleClassModule,
-    ToggleButtonModule
+    ToggleButtonModule,
+    AvatarModule
   ],
   providers: [
     DialogService,
@@ -137,7 +141,7 @@ import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar
   bootstrap: [
     AppComponent
   ],
-  entryComponents: [ // entry componets used in DymanimcModal of PimeNg
+  entryComponents: [ // entry components used in DynamicModal of PrimeNg
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
@@ -146,7 +150,6 @@ import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
-    DialogSelectRoleComponent
   ]
 })
 export class AppModule { }
