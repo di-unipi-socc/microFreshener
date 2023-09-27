@@ -16,8 +16,8 @@ import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './editing/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './editing/subtoolbar-undo/subtoolbar-undo.component';
-import { SubtoolbarNavigationComponent } from './editing/subtoolbar-navigation/subtoolbar-navigation.component';
-import { SubtoolbarViewComponent } from './editing/subtoolbar-view/subtoolbar-view.component';
+import { SubtoolbarNavigationComponent } from './navigation/subtoolbar-navigation/subtoolbar-navigation.component';
+import { SubtoolbarViewComponent } from './navigation/subtoolbar-view/subtoolbar-view.component';
 
 
 // Import primeNG modules
@@ -67,6 +67,7 @@ import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refacto
 import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
+import { SubtoolbarInsideTeamViewComponent } from './navigation/subtoolbar-inside-team-view/subtoolbar-inside-team-view.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +92,7 @@ import { EditorPageComponent } from './core/editor-page/editor-page.component';
     SubtoolbarTeamsComponent,
     LoginPageComponent,
     EditorPageComponent,
+    SubtoolbarInsideTeamViewComponent,
   ],
   imports: [
     BrowserModule,

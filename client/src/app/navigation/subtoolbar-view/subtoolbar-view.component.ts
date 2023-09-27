@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { DialogSelectTeamComponent } from 'src/app/teams/dialog-select-team/dialog-select-team.component';
-import { GraphService } from '../model/graph.service';
+import { GraphService } from '../../editing/model/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-view',

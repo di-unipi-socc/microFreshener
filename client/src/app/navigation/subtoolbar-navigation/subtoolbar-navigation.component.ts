@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { GraphService } from '../model/graph.service';
+import { GraphService } from '../../editing/model/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-navigation',
