@@ -15,16 +15,17 @@ export class SessionService {
   
   private name: string;
   private role: UserRole;
-
-  modelName: string; // name of the model
-
-  hrefDownload = environment.serverUrl + '/api/export';
+  private documentReady: boolean;
+  private modelName: string; // name of the model
+  //private hrefDownload = environment.serverUrl + '/api/export';
 
   constructor(
     private gs: GraphService,
     public dialogService: DialogService,
     private messageService: MessageService
-  ) {}
+  ) {
+    this.documentReady = false;
+  }
 
   login(username: string) {
     console.log("Logged as " + username);
@@ -39,8 +40,8 @@ export class SessionService {
   }
 
   logout() {
-    this.name = undefined;
-    this.role = undefined;
+    this.closeDocument();
+    this.resetUserData();
   }
 
   getName(): string {
@@ -59,8 +60,14 @@ export class SessionService {
     return this.role == UserRole.TEAM;
   }
 
+  isDocumentReady(): boolean {
+    return this.documentReady;
+  }
+
   newFile() {
     this.gs.getGraph().clearGraph();
+    this.gs.fitContent(400);
+    this.documentReady = true;
   }
 
   rename() {
@@ -80,6 +87,8 @@ export class SessionService {
       this.gs.downloadExample(name)
           .subscribe((data) => {
               this.loadGraph(data);
+              this.gs.fitContent();
+              this.documentReady = true;
               this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
           });
   }
@@ -93,6 +102,8 @@ export class SessionService {
           if (data.msg) {
               console.log(data);
               this.loadGraph(data.graph);
+              this.gs.fitContent();
+              this.documentReady = true;
               this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
           }
       });
@@ -111,11 +122,16 @@ export class SessionService {
       this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
     }
     console.log(this.gs.getGraph().applyLayout("LR"));
-    /*let paper = this.gs.getPaper();
-    let paperArea = paper.getArea();
-    let contentArea = paper.getContentArea();
-    console.log("paperArea: %d,%d ; contentArea: %d,%d, contentArea position: %d,%d", paperArea.width, paperArea.height, contentArea.width, contentArea.height, contentArea.x, contentArea.y);
-    paper.translate(-paperArea.width + (contentArea.width / 2), -paperArea.height + (contentArea.height / 2));*/
+  }
+
+  closeDocument() {
+    this.gs.hideGraph();
+    this.documentReady = false;
+  }
+
+  resetUserData() {
+    this.name = undefined;
+    this.role = undefined;
   }
 
 }

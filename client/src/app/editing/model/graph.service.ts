@@ -58,6 +58,13 @@ export class GraphService {
     this.graph.showGraph();
   }
 
+  fitContent(padding?: number) {
+    if(!padding){
+      padding = 150;
+    }
+    this.paper.scaleContentToFit({padding: padding});
+  }
+
   zoomIn() {
     this.getZoom().zoomIn();
   }

@@ -9,7 +9,7 @@
             <input #renameInput *ngIf="renaming" type="text" class="file-name file-name-input" pInputText [(ngModel)]="modelName" (focusout)="rename()">
         </div>
 
-        <div class="ui-toolbar-group-center">
+        <div class="ui-toolbar-group-center" *ngIf="this.session.isDocumentReady()">
 
             <div *ngIf="this.session.isAdmin()" class="tool-buttons">
                 <app-subtoolbar-view></app-subtoolbar-view>

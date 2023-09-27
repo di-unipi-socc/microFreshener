@@ -45,7 +45,6 @@ export class GraphEditorComponent {
 
     ngOnInit() {
         let canvas = document.getElementById('jointjsgraph');
-        console.log(canvas);
         this.paper = new joint.dia.Paper({
             el: canvas,
             model: this.gs.getGraph(),
