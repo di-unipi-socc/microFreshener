@@ -7,41 +7,41 @@
 
             <p-splitButton *ngIf="!renaming" [label]="modelName" class="file-name" styleClass="file-name-button" (onClick)="editName()" [model]="fileMenuItems"></p-splitButton>
             <input #renameInput *ngIf="renaming" type="text" class="file-name file-name-input" pInputText [(ngModel)]="modelName" (focusout)="rename()">
-
         </div>
 
-        <div class="ui-toolbar-group-end">
+        <div class="ui-toolbar-group-center">
+
+            <div *ngIf="this.session.isAdmin()" class="tool-buttons">
+                <app-subtoolbar-view></app-subtoolbar-view>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-architecture></app-subtoolbar-architecture>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-teams></app-subtoolbar-teams>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-undo></app-subtoolbar-undo>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-navigation></app-subtoolbar-navigation>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
+            </div>
+
+            <div *ngIf="this.session.isTeam()" class="tool-buttons">
+                <app-subtoolbar-architecture></app-subtoolbar-architecture>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-undo></app-subtoolbar-undo>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-navigation></app-subtoolbar-navigation>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
+            </div>
+        </div>
+
+
+        <div class="ui-toolbar-group-end" style="flex-grow: 0;">
             <p-avatar [label]="getAvatarLetter()" [pTooltip]="getTooltipText()" showDelay="1000" tooltipPosition="bottom" styleClass="mr-2" shape="circle" (click)="sessionMenu.toggle($event)"></p-avatar>
             <p-menu #sessionMenu [model]="sessionMenuItems" [popup]="true"></p-menu>
         </div>
-    </p-toolbar>
 
-    <p-toolbar *ngIf="this.session.isAdmin()">
-        <div class="ui-toolbar-group-start tool-buttons">
-            <app-subtoolbar-view></app-subtoolbar-view>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-architecture></app-subtoolbar-architecture>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-teams></app-subtoolbar-teams>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-undo></app-subtoolbar-undo>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-navigation></app-subtoolbar-navigation>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
-        </div>
-    </p-toolbar>
-
-    <p-toolbar *ngIf="this.session.isTeam()">
-        <div class="ui-toolbar-group-start tool-buttons">
-            <app-subtoolbar-architecture></app-subtoolbar-architecture>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-undo></app-subtoolbar-undo>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-navigation></app-subtoolbar-navigation>
-            <p-divider layout="vertical"></p-divider>
-            <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
-        </div>
     </p-toolbar>
 
 </div>

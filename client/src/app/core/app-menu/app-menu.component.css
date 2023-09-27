@@ -32,3 +32,16 @@
     padding-left: 15px;
     vertical-align: middle;
 }
+
+.ui-toolbar-group-start {
+    flex-grow: 0;
+}
+
+.ui-toolbar-group-center {
+    flex-grow: 1;
+}
+
+.ui-toolbar-group-end {
+    flex-grow: 0;
+    padding: 0.5em;
+}

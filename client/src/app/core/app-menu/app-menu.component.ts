@@ -7,7 +7,6 @@ import { MenuItem } from 'primeng/api';
 import { GraphService } from "../../editing/model/graph.service";
 
 import { environment } from '../../../environments/environment';
-import { FileService } from '../file/file.service';
 import { SessionService } from '../session/session.service';
 
 @Component({
@@ -30,7 +29,6 @@ export class AppMenuComponent implements OnInit {
     constructor(
         private gs: GraphService,
         public dialogService: DialogService,
-        private fileService: FileService,
         public session: SessionService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
@@ -50,7 +48,7 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-exclamation-triangle',
                         message: 'Are you sure that you want to delete the current work and create a new one?',
                         accept: () => {
-                            this.fileService.newFile();
+                            this.session.newFile();
                         }
                     });
                 }
@@ -59,7 +57,7 @@ export class AppMenuComponent implements OnInit {
                 label: 'Save',
                 icon: 'pi pi-fw pi-save',
                 command: () => {
-                    this.fileService.save();
+                    this.session.save();
                 }
             },
             { separator: true },
@@ -67,7 +65,7 @@ export class AppMenuComponent implements OnInit {
                 label: 'Import',
                 icon: 'pi pi-fw pi-download',
                 command: () => {
-                    this.fileService.import()
+                    this.session.import()
                 }
             },
             {
@@ -84,31 +82,31 @@ export class AppMenuComponent implements OnInit {
                     {
                         label: 'Hello world',
                         command: () => {
-                            this.fileService.downloadExample("helloworld");
+                            this.session.downloadExample("helloworld");
                         }
                     },
                     {
                         label: 'Case study',
                         command: () => {
-                            this.fileService.downloadExample("case-study-initial");
+                            this.session.downloadExample("case-study-initial");
                         }
                     },
                     {
                         label: 'Case study (refactored)',
                         command: () => {
-                            this.fileService.downloadExample("case-study-refactored");
+                            this.session.downloadExample("case-study-refactored");
                         }
                     },
                     {
                         label: 'Sockshop',
                         command: () => {
-                            this.fileService.downloadExample("sockshop");
+                            this.session.downloadExample("sockshop");
                         }
                     },
                     {
                         label: 'FTGO',
                         command: () => {
-                            this.fileService.downloadExample("ftgo");
+                            this.session.downloadExample("ftgo");
                         }
                     }
                     //end examples
