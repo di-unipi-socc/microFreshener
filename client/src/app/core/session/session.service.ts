@@ -23,7 +23,6 @@ export class SessionService {
   constructor(
     private gs: GraphService,
     public dialogService: DialogService,
-    private session: SessionService,
     private messageService: MessageService
   ) {}
 
@@ -102,11 +101,11 @@ export class SessionService {
 
   loadGraph(data) {
     let graphJson = data;
-    let role = this.session.getRole();
+    let role = this.getRole();
     this.gs.getGraph().clear();
     this.gs.getGraph().builtFromJSON(graphJson);
     if(role == UserRole.TEAM) {
-      let teamName = this.session.getName();
+      let teamName = this.getName();
       let team = this.gs.getGraph().getTeam(teamName);
       this.gs.getGraph().showOnlyTeam(team);
       this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
