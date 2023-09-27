@@ -102,6 +102,51 @@ export class GraphService {
     );
   }
 
+  showTeams() {
+    // TODO
+    // this.graph.showAllTeam();
+  }
+
+  hideTeams() {
+    this.graph.hideAllTeamBoxes();
+  }
+
+  showTeamDependencies(teamName) {
+    let team = this.graph.findGroupByName(teamName);
+    this.getOutgoingFrontierLinksOfTeam(team)
+        .forEach((link) =>
+        this.showLinkAndRelatedNodesAndTheirGroups(link, <joint.shapes.microtosca.Node> link.getSourceElement()));
+  }
+  
+
+  hideTeamDependencies() {
+    // TODO
+  }
+
+  private getOutgoingFrontierLinksOfTeam(team: joint.shapes.microtosca.SquadGroup) {
+    return this.graph.getFrontierOfATeam(team)
+                      .map((fnode) => this.graph.getIngoingLinks(fnode) // Map frontier nodes to their ingoing links
+                                .filter(link => link.getSourceElement().isEmbeddedIn(team))) // filter by the interesting ones
+                      // put everything in one (iterable) array
+                      .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
+  }
+
+  private showLinkAndRelatedNodesAndTheirGroups(link: joint.shapes.microtosca.RunTimeLink, node: joint.shapes.microtosca.Node) {
+    // Map frontier nodes to their ingoing links
+      link.attr("./visibility","visible");
+      node.attr("./visibility","visible");
+      let team = this.graph.getTeamOfNode(node);
+      if(team != null)
+        team.attr("./visibility","visible");
+  }
+
+  /*getTeam(team_name: string): Observable<string> {
+    let url = `${this.teamUrl}${team_name}`;  
+    console.log(url)
+    return this.http.get<string>(url).pipe(
+      tap(_ => this.log(`fetched team ${team_name}`)),
+    );
+  }*/
 
   // exportGraphToJSON(): Observable<string> {
   //   var url = this.graphUrl + this.getGraph().getName() + "/"
@@ -117,14 +162,6 @@ export class GraphService {
     let params = new HttpParams().set("name", name);
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
-    );
-  }
-
-  getTeam(team_name: string): Observable<string> {
-    let url = `${this.teamUrl}${team_name}`;  
-    console.log(url)
-    return this.http.get<string>(url).pipe(
-      tap(_ => this.log(`fetched team ${team_name}`)),
     );
   }
 

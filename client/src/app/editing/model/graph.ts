@@ -104,8 +104,13 @@ export class Graph extends joint.dia.Graph {
 
     }
 
-    getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup) {
-        var frontier = [];
+    getNeighbors(node: joint.shapes.microtosca.Node, opt?: joint.dia.Graph.ConnectionOptions): joint.shapes.microtosca.Root[] {
+        let neighbors = super.getNeighbors(node, opt);
+        return <joint.shapes.microtosca.Root[]>neighbors;
+    }
+
+    getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Node[] {
+        let frontier: joint.shapes.microtosca.Node[] = [];
         team.getMembers().forEach(node => {
             this.getNeighbors(node).forEach(neigh => {
                 if (!neigh.isEmbeddedIn(team)) {
@@ -118,7 +123,7 @@ export class Graph extends joint.dia.Graph {
         return frontier;
     }
 
-    getOutboundNeighbors(node: joint.dia.Element): joint.shapes.microtosca.Node[] {
+    getOutboundNeighbors(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(node, { outbound: true });
     }
 
@@ -370,20 +375,23 @@ export class Graph extends joint.dia.Graph {
         team.fitEmbeds({ padding: 40 })
     }
 
-    hideTeam(team: joint.shapes.microtosca.SquadGroup) {
-        /*var links = this.getInternalLinksOfTeam(team);
-        links.forEach(link => {
-            link.attr("./visibility", "hidden");
-        })
-        team.getMembers().forEach(node => {
-            node.attr("./visibility", "hidden");
-        })*/
+    hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
         team.attr("./visibility", "hidden");
     }
 
-    hideAllTeam() {
+    showTeamBox(team: joint.shapes.microtosca.SquadGroup) {
+        team.attr("./visibility", "visible");
+    }
+
+    hideAllTeamBoxes() {
         for(let t of this.getTeamGroups()) {
-            this.hideTeam(t);
+            this.hideTeamBox(t);
+        }
+    }
+
+    showAllTeamBoxes() {
+        for(let t of this.getTeamGroups()) {
+            this.showTeamBox(t);
         }
     }
 

@@ -123,7 +123,8 @@ export class SessionService {
       this.gs.getGraph().showOnlyTeam(team);
       this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
     }
-    console.log(this.gs.getGraph().applyLayout("LR"));
+    this.gs.hideTeams();
+    this.gs.getGraph().applyLayout("LR");
   }
 
   closeDocument() {
