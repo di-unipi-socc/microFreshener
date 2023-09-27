@@ -4,9 +4,9 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { CommunicationPattern } from "../model/communicationpattern";
 import { AnalyserService } from "../../refactoring/analyser/analyser.service";
 
-import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../invoker/graph-command';
+import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../model/graph-command';
 import { GraphService } from '../model/graph.service';
-import { Command } from '../invoker/icommand';
+import { Command } from '../../commands/invoker/icommand';
 
 import { g } from 'jointjs';
 

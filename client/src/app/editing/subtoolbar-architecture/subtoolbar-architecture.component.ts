@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommandInvoker } from '../invoker/invoker';
+import { CommandInvoker } from '../../commands/invoker/invoker';
 
 @Component({
   selector: 'app-subtoolbar-architecture',

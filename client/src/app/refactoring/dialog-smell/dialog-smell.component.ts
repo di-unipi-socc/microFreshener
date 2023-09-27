@@ -3,7 +3,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { SmellObject } from '../../refactoring/analyser/smell';
-import { Command } from '../../editing/invoker/icommand';
+import { Command } from '../../commands/invoker/icommand';
 
 @Component({
   selector: 'app-dialog-smell',

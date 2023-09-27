@@ -15,7 +15,7 @@ import { DialogAddNodeComponent } from './editing/dialog-add-node/dialog-add-nod
 import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './editing/subtoolbar-architecture/subtoolbar-architecture.component';
-import { SubtoolbarUndoComponent } from './editing/subtoolbar-undo/subtoolbar-undo.component';
+import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
 import { SubtoolbarNavigationComponent } from './navigation/subtoolbar-navigation/subtoolbar-navigation.component';
 import { SubtoolbarViewComponent } from './navigation/subtoolbar-view/subtoolbar-view.component';
 
@@ -64,7 +64,7 @@ import { DialogAddLinkComponent } from './editing/dialog-add-link/dialog-add-lin
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
-import { SubtoolbarTeamsComponent } from './teams/toolbar-items-teams/subtoolbar-teams.component';
+import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams/subtoolbar-teams.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
 import { SubtoolbarInsideTeamViewComponent } from './navigation/subtoolbar-inside-team-view/subtoolbar-inside-team-view.component';

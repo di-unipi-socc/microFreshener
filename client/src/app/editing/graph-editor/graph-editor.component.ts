@@ -13,8 +13,8 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { CommandInvoker } from "../invoker/invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../invoker/graph-command';
+import { CommandInvoker } from "../../commands/invoker/invoker";
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../model/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 
