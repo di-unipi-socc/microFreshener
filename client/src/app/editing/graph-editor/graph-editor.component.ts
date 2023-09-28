@@ -17,6 +17,7 @@ import { CommandInvoker } from "../../commands/invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../model/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
+import { EditorPermissionsService } from './editor-permissions.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -34,6 +35,7 @@ export class GraphEditorComponent {
     constructor(
         private graphInvoker: CommandInvoker,
         private gs: GraphService,
+        private permissions: EditorPermissionsService,
         private dialogService: DialogService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
@@ -217,7 +219,7 @@ export class GraphEditorComponent {
     }
 
     addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-        if(this.gs.isTeamWriteAllowed()) {
+        if(this.permissions.isTeamWriteAllowed()) {
             var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
             this.graphInvoker.executeCommand(command);
             this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
@@ -235,7 +237,7 @@ export class GraphEditorComponent {
             let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
-            if (this.graphInvoker.addNodeAllowed) {
+            if (this.permissions.isAddNodeAllowed()) {
                 this.addNode(position);
             } else {
                 if (this.leftClickSelectedNode) {
@@ -261,14 +263,14 @@ export class GraphEditorComponent {
             var node = cellView.model;
             // add node to group
             if (this.gs.getGraph().isTeamGroup(node)) {
-                if(this.graphInvoker.addNodeAllowed) {
+                if(this.permissions.isAddNodeAllowed()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team = cellView.model;
                     this.addNode(position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
-                if(this.graphInvoker.addLinkAllowed) {
+                if(this.permissions.isAddLinkAllowed()) {
                     // selecting target node
                     if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
                         var add_link = true;
@@ -401,7 +403,7 @@ export class GraphEditorComponent {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if(this.gs.isArchitectureWriteAllowed(cell)) {
+            if(this.permissions.isArchitectureWriteAllowed(cell)) {
                 if (cell.isElement()) {
                     cell.showIcons();
                 } else if (this.gs.getGraph().isTeamGroup(cell)) {
@@ -537,7 +539,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.gs.getGraph().getTeamOfNode(member);
                         if(team){
-                            if(this.gs.isTeamWriteAllowed()) {
+                            if(this.permissions.isTeamWriteAllowed()) {
                                 var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
                                 this.graphInvoker.executeCommand(command);
                                 this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
@@ -694,7 +696,7 @@ export class GraphEditorComponent {
 
     bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            if(this.gs.isArchitectureWriteAllowed(linkView.model)) {
+            if(this.permissions.isArchitectureWriteAllowed(linkView.model)) {
                 var tools = [
                     // new joint.linkTools.SourceArrowhead(),
                     // new joint.linkTools.TargetArrowhead(),
