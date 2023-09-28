@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { CommandInvoker } from '../../commands/invoker/invoker';
+import { GraphService } from '../model/graph.service';
+import { EditorPermissionsService } from '../graph-editor/editor-permissions.service';
 
 @Component({
   selector: 'app-subtoolbar-architecture',
@@ -10,7 +11,7 @@ export class SubtoolbarArchitectureComponent {
 
   toggled;
 
-  constructor(public invoker: CommandInvoker) {
+  constructor(public gs: GraphService, private permissions: EditorPermissionsService) {
     this.toggled = {
       addNode: {
         status: false,
@@ -25,7 +26,7 @@ export class SubtoolbarArchitectureComponent {
 
   addNodeChanged() {
     console.log("AddNodeChanged");
-    this.invoker.allowAddNode(this.toggled['addNode'].status);
+    this.permissions.allowAddNode(this.toggled['addNode'].status);
     if(this.toggled['addNode'].status) {
       this.unselectOthersThan("addNode");
     }
@@ -33,7 +34,7 @@ export class SubtoolbarArchitectureComponent {
 
   addLinkChanged() {
     console.log("AddLinkChanged");
-    this.invoker.allowAddLink(this.toggled['addLink'].status);
+    this.permissions.allowAddLink(this.toggled['addLink'].status);
     if(this.toggled['addLink'].status) {
       this.unselectOthersThan("addLink");
     }
