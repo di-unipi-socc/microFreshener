@@ -112,18 +112,22 @@ export class SessionService {
 
   }
 
-  loadGraph(data) {
-    let graphJson = data;
+  loadGraph(graphJson) {
+    this.gs.load(graphJson);
     let role = this.getRole();
-    this.gs.getGraph().clear();
-    this.gs.getGraph().builtFromJSON(graphJson);
-    if(role == UserRole.TEAM) {
-      let teamName = this.getName();
-      let team = this.gs.getGraph().getTeam(teamName);
-      this.gs.getGraph().showOnlyTeam(team);
-      this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
+    switch(role) {
+      case UserRole.TEAM:
+        let teamName = this.getName();
+        let team = this.gs.getGraph().getTeam(teamName);
+        this.gs.getGraph().showOnlyTeam(team);
+        this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
+        this.gs.setWritePermissions(role, teamName);
+        break;
+      default:
+        this.gs.setWritePermissions(role);
     }
-    console.log(this.gs.getGraph().applyLayout("LR"));
+    this.gs.hideTeams();
+    this.gs.getGraph().applyLayout("LR");
   }
 
   closeDocument() {

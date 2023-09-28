@@ -10,14 +10,9 @@ export class CommandInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
-    addNodeAllowed: boolean;
-    addLinkAllowed: boolean;
-
     constructor(private as: AnalyserService) {
         this.undoStack = [];
         this.redoStack = [];
-        this.addNodeAllowed = false;
-        this.addLinkAllowed = false;
     }
 
     executeCommand(command: Command) {
@@ -44,14 +39,6 @@ export class CommandInvoker {
         let command = this.redoStack.pop()
         command.execute();
         this.undoStack.push(command);
-    }
-
-    allowAddNode(isActive: boolean) {
-        this.addNodeAllowed = isActive;
-    }
-
-    allowAddLink(isActive: boolean) {
-        this.addLinkAllowed = isActive;
     }
 
 }

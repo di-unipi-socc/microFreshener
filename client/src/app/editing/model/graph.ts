@@ -5,8 +5,7 @@ import './microtosca';
 
 export class Graph extends joint.dia.Graph {
     name: string;
-    public ticker: EventEmitter<Number> = new EventEmitter();
-    // public ticker: EventEmitter<number> = new EventEmitter();
+    //public ticker: EventEmitter<Number> = new EventEmitter();
 
     constructor(name: string) {
         super();
@@ -104,8 +103,13 @@ export class Graph extends joint.dia.Graph {
 
     }
 
-    getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup) {
-        var frontier = [];
+    getNeighbors(node: joint.shapes.microtosca.Node, opt?: joint.dia.Graph.ConnectionOptions): joint.shapes.microtosca.Root[] {
+        let neighbors = super.getNeighbors(node, opt);
+        return <joint.shapes.microtosca.Root[]>neighbors;
+    }
+
+    getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Node[] {
+        let frontier: joint.shapes.microtosca.Node[] = [];
         team.getMembers().forEach(node => {
             this.getNeighbors(node).forEach(neigh => {
                 if (!neigh.isEmbeddedIn(team)) {
@@ -118,7 +122,7 @@ export class Graph extends joint.dia.Graph {
         return frontier;
     }
 
-    getOutboundNeighbors(node: joint.dia.Element): joint.shapes.microtosca.Node[] {
+    getOutboundNeighbors(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.Node[] {
         return <joint.shapes.microtosca.Node[]>this.getNeighbors(node, { outbound: true });
     }
 
@@ -132,6 +136,14 @@ export class Graph extends joint.dia.Graph {
 
     getIngoingLinks(node: joint.shapes.microtosca.Node) {
         return <joint.shapes.microtosca.RunTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
+    }
+
+    getOutgoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
+        return this.getFrontierOfATeam(team)
+                          .map((fnode) => this.getIngoingLinks(fnode) // Map frontier nodes to their ingoing links
+                                    .filter(link => link.getSourceElement().isEmbeddedIn(team))) // filter by the interesting ones
+                          // put everything in one (iterable) array
+                          .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
     }
 
     addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
@@ -368,6 +380,26 @@ export class Graph extends joint.dia.Graph {
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
         team.fitEmbeds({ padding: 40 })
+    }
+
+    hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
+        team.attr("./visibility", "hidden");
+    }
+
+    showTeamBox(team: joint.shapes.microtosca.SquadGroup) {
+        team.attr("./visibility", "visible");
+    }
+
+    hideAllTeamBoxes() {
+        for(let t of this.getTeamGroups()) {
+            this.hideTeamBox(t);
+        }
+    }
+
+    showAllTeamBoxes() {
+        for(let t of this.getTeamGroups()) {
+            this.showTeamBox(t);
+        }
     }
 
     minimizeAllTeam() {

@@ -1,7 +1,7 @@
-import { Command } from './icommand';
+import { Command } from '../../commands/invoker/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
-import { Graph } from "../model/graph";
+import { Graph } from "./graph";
 
 
 export class AddServiceCommand implements Command {

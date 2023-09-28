@@ -7,6 +7,8 @@ import { environment } from '../../../environments/environment';
 import { Graph } from '../model/graph';
 
 import * as joint from 'jointjs';
+import { UserRole } from 'src/app/core/user-role';
+import { EditorPermissionsService } from '../graph-editor/editor-permissions.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,10 +20,7 @@ const httpOptions = {
 export class GraphService {
 
   graph: Graph;
-
   paper: joint.dia.Paper;
-
-  zoom;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -31,10 +30,9 @@ export class GraphService {
 
   private graphUrlExamples = environment.serverUrl + '/api/example';
   
-  private teamUrl = environment.serverUrl + '/api/team/';
+  // private teamUrl = environment.serverUrl + '/api/team/';
 
-
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private editorPermissions: EditorPermissionsService) {
     this.graph = new Graph('');
   }
 
@@ -66,19 +64,11 @@ export class GraphService {
   }
 
   zoomIn() {
-    this.getZoom().zoomIn();
+    console.error("Callback zoomIn not set");
   }
 
   zoomOut() {
-    this.getZoom().zoomOut();
-  }
-
-  setZoom(zoom) {
-    this.zoom = zoom;
-  }
-
-  getZoom() {
-    return this.zoom;
+    console.error("Callback zoomOut not set");
   }
 
   /** Export the graph to JSON format*/
@@ -102,6 +92,110 @@ export class GraphService {
     );
   }
 
+  load(json) {
+    this.graph.clear();
+    this.graph.builtFromJSON(json);
+  }
+
+  setWritePermissions(role: UserRole, teamName?: string) {
+    this.setArchitectureWritePermission(role, teamName);
+    this.setTeamWritePermission(role);
+  }
+
+  setArchitectureWritePermission(role: UserRole, teamName?: string) {
+    switch(role) {
+        case UserRole.ADMIN:
+            // Admin can write everything
+            this.editorPermissions.setIsAllowed( (...any: any[]) => { return true; } );
+            break;
+        case UserRole.TEAM:
+            let team = this.getGraph().findGroupByName(teamName);
+            if(!team) {
+              // The team doesn't exist in the graph, so block everything
+              this.editorPermissions.setIsAllowed = (...any: any[]): boolean => { return false; }
+            } else {
+              // The team exists, so set the consequent permissions
+              this.editorPermissions.setIsAllowed( (cell): boolean => {
+                if(cell.isLink()) {
+                  // Check the teams relative to the source and target elements of links
+                  let source = cell.getSourceElement();
+                  let sourceTeam = this.getGraph().getTeamOfNode(source);
+                  if(!sourceTeam || sourceTeam != team) {
+                    return false;
+                  }
+                  let target = cell.getTargetElement();
+                  let targetTeam = this.getGraph().getTeamOfNode(target);
+                  if(!targetTeam || targetTeam != team)
+                    return false;
+                } else {
+                  let nodeTeam = this.getGraph().getTeamOfNode(cell);
+                  // Check the node team (if any)
+                  if(!nodeTeam || nodeTeam != team)
+                    return false;
+                }
+
+                return true;
+              });
+            }
+      }
+  }
+
+  setTeamWritePermission(role: UserRole) {
+    switch(role) {
+      case UserRole.ADMIN:
+        this.editorPermissions.setIsTeamWriteAllowed( () => { return true; } );
+        break;
+      case UserRole.TEAM:
+        this.editorPermissions.setIsTeamWriteAllowed( () => { return false; } );
+        break;
+    }
+  }
+
+  showTeams() {
+    this.graph.showAllTeamBoxes();
+  }
+
+  hideTeams() {
+    this.graph.hideAllTeamBoxes();
+  }
+
+  showTeamDependencies(teamName) {
+    let team = this.graph.findGroupByName(teamName);
+    team.attr("./visibility","visible");
+    this.graph.getOutgoingLinksOfATeamFrontier(team)
+        .forEach((link) => {
+          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
+        });
+  }
+  
+  hideTeamDependencies(teamName) {
+    let team = this.graph.findGroupByName(teamName);
+    team.attr("./visibility","hidden");
+    this.graph.getOutgoingLinksOfATeamFrontier(team)
+        .forEach((link) => {
+          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
+        });
+  }
+
+  private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, color?: string) {
+    let node = <joint.shapes.microtosca.Node> link.getTargetElement();
+    let visibility = visible ? "visible" : "hidden";
+    link.attr("./visibility", visibility);
+    if(color)
+      link.attr("line/stroke", color);
+    node.attr("./visibility", visibility);
+    let team = this.graph.getTeamOfNode(node);
+    if(team != null)
+      team.attr("./visibility", visibility);
+  }
+
+  /*getTeam(team_name: string): Observable<string> {
+    let url = `${this.teamUrl}${team_name}`;  
+    console.log(url)
+    return this.http.get<string>(url).pipe(
+      tap(_ => this.log(`fetched team ${team_name}`)),
+    );
+  }*/
 
   // exportGraphToJSON(): Observable<string> {
   //   var url = this.graphUrl + this.getGraph().getName() + "/"
@@ -117,14 +211,6 @@ export class GraphService {
     let params = new HttpParams().set("name", name);
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
-    );
-  }
-
-  getTeam(team_name: string): Observable<string> {
-    let url = `${this.teamUrl}${team_name}`;  
-    console.log(url)
-    return this.http.get<string>(url).pipe(
-      tap(_ => this.log(`fetched team ${team_name}`)),
     );
   }
 
