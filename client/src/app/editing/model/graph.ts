@@ -5,8 +5,7 @@ import './microtosca';
 
 export class Graph extends joint.dia.Graph {
     name: string;
-    public ticker: EventEmitter<Number> = new EventEmitter();
-    // public ticker: EventEmitter<number> = new EventEmitter();
+    //public ticker: EventEmitter<Number> = new EventEmitter();
 
     constructor(name: string) {
         super();

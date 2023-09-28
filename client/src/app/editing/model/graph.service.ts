@@ -21,8 +21,6 @@ export class GraphService {
 
   paper: joint.dia.Paper;
 
-  zoom;
-
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
 
@@ -66,19 +64,11 @@ export class GraphService {
   }
 
   zoomIn() {
-    this.getZoom().zoomIn();
+    console.error("Callback zoomIn not set");
   }
 
   zoomOut() {
-    this.getZoom().zoomOut();
-  }
-
-  setZoom(zoom) {
-    this.zoom = zoom;
-  }
-
-  getZoom() {
-    return this.zoom;
+    console.error("Callback zoomOut not set");
   }
 
   /** Export the graph to JSON format*/
@@ -103,8 +93,7 @@ export class GraphService {
   }
 
   showTeams() {
-    // TODO
-    // this.graph.showAllTeam();
+    this.graph.showAllTeamBoxes();
   }
 
   hideTeams() {
@@ -113,15 +102,21 @@ export class GraphService {
 
   showTeamDependencies(teamName) {
     let team = this.graph.findGroupByName(teamName);
+    team.attr("./visibility","visible");
     this.getOutgoingFrontierLinksOfTeam(team)
         .forEach((link) => {
-          this.showLinkAndRelatedNodesAndTheirGroups(link, (<joint.shapes.microtosca.Node> link.getTargetElement()));
+          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
         });
   }
   
 
-  hideTeamDependencies() {
-    // TODO
+  hideTeamDependencies(teamName) {
+    let team = this.graph.findGroupByName(teamName);
+    team.attr("./visibility","hidden");
+    this.getOutgoingFrontierLinksOfTeam(team)
+        .forEach((link) => {
+          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
+        });
   }
 
   private getOutgoingFrontierLinksOfTeam(team: joint.shapes.microtosca.SquadGroup) {
@@ -132,13 +127,16 @@ export class GraphService {
                       .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
   }
 
-  private showLinkAndRelatedNodesAndTheirGroups(link: joint.shapes.microtosca.RunTimeLink, node: joint.shapes.microtosca.Node) {
-    // Map frontier nodes to their ingoing links
-      link.attr("./visibility","visible");
-      node.attr("./visibility","visible");
-      let team = this.graph.getTeamOfNode(node);
-      if(team != null)
-        team.attr("./visibility","visible");
+  private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, color?: string) {
+    let node = <joint.shapes.microtosca.Node> link.getTargetElement();
+    let visibility = visible ? "visible" : "hidden";
+    link.attr("./visibility", visibility);
+    if(color)
+      link.attr("line/stroke", color);
+    node.attr("./visibility", visibility);
+    let team = this.graph.getTeamOfNode(node);
+    if(team != null)
+      team.attr("./visibility", visibility);
   }
 
   /*getTeam(team_name: string): Observable<string> {

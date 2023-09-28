@@ -23,7 +23,7 @@ export class SubtoolbarInsideTeamViewComponent {
     if(this.showDependencies) {
       this.gs.showTeamDependencies(teamName);
     } else {
-      this.gs.hideTeamDependencies(/*teamName*/);
+      this.gs.hideTeamDependencies(teamName);
     }
   }
 
