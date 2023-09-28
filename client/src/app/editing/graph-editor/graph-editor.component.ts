@@ -536,10 +536,14 @@ export class GraphEditorComponent {
                         console.log("not cell view Below defined");
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.gs.getGraph().getTeamOfNode(member);
-                        if(team && this.gs.isTeamWriteAllowed()){
-                            var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-                             this.graphInvoker.executeCommand(command);
-                             this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                        if(team){
+                            if(this.gs.isTeamWriteAllowed()) {
+                                var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                                this.graphInvoker.executeCommand(command);
+                                this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                            } else {
+                                team.fitEmbeds({ padding: 40 })
+                            }
                         }
                         
                     }
