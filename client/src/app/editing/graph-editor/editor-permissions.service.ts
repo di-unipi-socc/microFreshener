@@ -19,12 +19,12 @@ export class EditorPermissionsService {
     this.writePermissions.isAllowed = callback;
   }
 
-  setIsTeamWriteAllowed(callback: (...any) => boolean) {
-    this.writePermissions.isTeamWriteAllowed = callback;
-  }
-
   isArchitectureWriteAllowed(cell) {
     return this.writePermissions.isAllowed(cell);
+  }
+
+  setIsTeamWriteAllowed(callback: (...any) => boolean) {
+    this.writePermissions.isTeamWriteAllowed = callback;
   }
 
   isTeamWriteAllowed() {
