@@ -26,7 +26,7 @@ export class SubtoolbarArchitectureComponent {
 
   addNodeChanged() {
     console.log("AddNodeChanged");
-    this.permissions.allowAddNode(this.toggled['addNode'].status);
+    this.permissions.enableAddNode(this.toggled['addNode'].status);
     if(this.toggled['addNode'].status) {
       this.unselectOthersThan("addNode");
     }
@@ -34,7 +34,7 @@ export class SubtoolbarArchitectureComponent {
 
   addLinkChanged() {
     console.log("AddLinkChanged");
-    this.permissions.allowAddLink(this.toggled['addLink'].status);
+    this.permissions.enableAddLink(this.toggled['addLink'].status);
     if(this.toggled['addLink'].status) {
       this.unselectOthersThan("addLink");
     }

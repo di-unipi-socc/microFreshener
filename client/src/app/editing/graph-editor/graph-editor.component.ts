@@ -237,7 +237,7 @@ export class GraphEditorComponent {
             let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
-            if (this.permissions.isAddNodeAllowed()) {
+            if (this.permissions.isAddNodeEnabled()) {
                 this.addNode(position);
             } else {
                 if (this.leftClickSelectedNode) {
@@ -263,14 +263,14 @@ export class GraphEditorComponent {
             var node = cellView.model;
             // add node to group
             if (this.gs.getGraph().isTeamGroup(node)) {
-                if(this.permissions.isAddNodeAllowed()) {
+                if(this.permissions.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team = cellView.model;
                     this.addNode(position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
-                if(this.permissions.isAddLinkAllowed()) {
+                if(this.permissions.isAddLinkEnabled()) {
                     // selecting target node
                     if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
                         var add_link = true;
@@ -285,24 +285,25 @@ export class GraphEditorComponent {
                         // disable link from communication pattern to Datastore
                         if (this.gs.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node))
                             add_link = false;
-                        if (add_link) {
-                            const ref = this.dialogService.open(DialogAddLinkComponent, {
-                                data: {
-                                    source: this.leftClickSelectedNode,
-                                    target: node
-                                },
-                                header: 'Add a link',
-                                width: '50%'
-                            });
-                            ref.onClose.subscribe((data) => {
-                                if (data) {
-                                    var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                                    this.graphInvoker.executeCommand(command);
-                                    this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
-                                    this.leftClickSelectedNode = null;
-                                }
-                            });
-                            console.log("added link");
+                        if (add_link && this.permissions.linkable(this.leftClickSelectedNode, node)) {
+                                console.log("selected, new ->", this.leftClickSelectedNode, node);
+                                const ref = this.dialogService.open(DialogAddLinkComponent, {
+                                    data: {
+                                        source: this.leftClickSelectedNode,
+                                        target: node
+                                    },
+                                    header: 'Add a link',
+                                    width: '50%'
+                                });
+                                ref.onClose.subscribe((data) => {
+                                    if (data) {
+                                        var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                        this.graphInvoker.executeCommand(command);
+                                        this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
+                                        this.leftClickSelectedNode = null;
+                                        console.log("added link");
+                                    }
+                                });
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
@@ -319,7 +320,7 @@ export class GraphEditorComponent {
                         if (this.gs.getGraph().isDatastore(node)) {
                             can_select_source_node = false;
                         }
-                        if (can_select_source_node) {
+                        if (can_select_source_node && this.permissions.linkable(node)) {
                             cellView.highlight();
                             this.leftClickSelectedNode = node;
                         }
@@ -403,7 +404,7 @@ export class GraphEditorComponent {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if(this.permissions.isArchitectureWriteAllowed(cell)) {
+            if(this.permissions.isEditingAllowed(cell)) {
                 if (cell.isElement()) {
                     cell.showIcons();
                 } else if (this.gs.getGraph().isTeamGroup(cell)) {
@@ -512,7 +513,6 @@ export class GraphEditorComponent {
                 if (cellViewsBelow.length) {
                     // Note that the findViewsFromPoint() returns the view for the `cell` itself.
                     var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
-                    console.log(cellViewBelow);
                     // Prevent recursive embedding
                     if (cellViewBelow) {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
@@ -522,7 +522,6 @@ export class GraphEditorComponent {
                                 var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
                                 var memberTeam = this.gs.getGraph().getTeamOfNode(member);
-                                console.log(memberTeam);
                                 // do not embed on the same team
                                 if(team && memberTeam && team.getName() == memberTeam.getName() ){
                                     team.fitEmbeds({ padding: 40});
@@ -696,7 +695,7 @@ export class GraphEditorComponent {
 
     bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            if(this.permissions.isArchitectureWriteAllowed(linkView.model)) {
+            if(this.permissions.isEditingAllowed(linkView.model)) {
                 var tools = [
                     // new joint.linkTools.SourceArrowhead(),
                     // new joint.linkTools.TargetArrowhead(),

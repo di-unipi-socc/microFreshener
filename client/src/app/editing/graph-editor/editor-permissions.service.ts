@@ -19,7 +19,7 @@ export class EditorPermissionsService {
     this.writePermissions.isAllowed = callback;
   }
 
-  isArchitectureWriteAllowed(cell) {
+  isEditingAllowed(cell) {
     return this.writePermissions.isAllowed(cell);
   }
 
@@ -35,20 +35,31 @@ export class EditorPermissionsService {
 
   private editingPermissions;
 
-  allowAddNode(isActive: boolean) {
+  enableAddNode(isActive: boolean) {
     this.editingPermissions.addNodeAllowed = isActive;
   }
 
-  isAddNodeAllowed(): boolean {
-    return this.editingPermissions.addNodeAllowed;
+  isAddNodeEnabled(cell?): boolean {
+    return this.editingPermissions.addNodeAllowed && (cell ? this.isEditingAllowed(cell) : true);
   }
 
-  allowAddLink(isActive: boolean) {
+  enableAddLink(isActive: boolean) {
       this.editingPermissions.addLinkAllowed = isActive;
   }
 
-  isAddLinkAllowed(): boolean {
+  isAddLinkEnabled(source?, target?): boolean {
     return this.editingPermissions.addLinkAllowed;
+  }
+
+  setLinkable(callback: (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node) => boolean) {
+    this.editingPermissions.linkable = callback;
+  }
+
+  linkable(n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node) {
+    if(this.editingPermissions.linkable)
+      return this.editingPermissions.linkable(n, n2);
+    else
+      return true;
   }
 
 }

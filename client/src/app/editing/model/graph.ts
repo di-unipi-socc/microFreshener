@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import './microtosca';

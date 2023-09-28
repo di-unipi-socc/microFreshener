@@ -98,11 +98,11 @@ export class GraphService {
   }
 
   setWritePermissions(role: UserRole, teamName?: string) {
-    this.setArchitectureWritePermission(role, teamName);
+    this.setEditingWritePermission(role, teamName);
     this.setTeamWritePermission(role);
   }
 
-  setArchitectureWritePermission(role: UserRole, teamName?: string) {
+  setEditingWritePermission(role: UserRole, teamName?: string) {
     switch(role) {
         case UserRole.ADMIN:
             // Admin can write everything
@@ -115,29 +115,41 @@ export class GraphService {
               this.editorPermissions.setIsAllowed = (...any: any[]): boolean => { return false; }
             } else {
               // The team exists, so set the consequent permissions
-              this.editorPermissions.setIsAllowed( (cell): boolean => {
-                if(cell.isLink()) {
-                  // Check the teams relative to the source and target elements of links
-                  let source = cell.getSourceElement();
-                  let sourceTeam = this.getGraph().getTeamOfNode(source);
-                  if(!sourceTeam || sourceTeam != team) {
-                    return false;
-                  }
-                  let target = cell.getTargetElement();
-                  let targetTeam = this.getGraph().getTeamOfNode(target);
-                  if(!targetTeam || targetTeam != team)
-                    return false;
-                } else {
-                  let nodeTeam = this.getGraph().getTeamOfNode(cell);
-                  // Check the node team (if any)
-                  if(!nodeTeam || nodeTeam != team)
-                    return false;
-                }
-
-                return true;
+              this.editorPermissions.setIsAllowed( (cell) => (this.isEditingAllowedForATeam(team, cell)) );
+              this.editorPermissions.setLinkable(
+                (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
+                return this.getGraph().getTeamOfNode(n) == team && (n2 ? this.getGraph().getTeamOfNode(n2) == team : true);
               });
             }
       }
+  }
+
+  isEditingAllowedForATeam(team, cell): boolean {
+    
+    let outgoingLinks = this.getGraph().getOutgoingLinksOfATeamFrontier(team);
+    let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
+    
+    if(cell.isLink()) {
+      // Check that the links the user is adding doesn't involve other teams' nodes
+      let source = cell.getSourceElement();
+      let sourceTeam = this.getGraph().getTeamOfNode(source);
+      if(!sourceTeam || sourceTeam != team) {
+        return false;
+      }
+      let target = cell.getTargetElement();
+      let targetTeam = this.getGraph().getTeamOfNode(target);
+      if(!targetTeam || targetTeam != team) {
+        return false;
+      }
+    } else {
+      let nodeTeam = this.getGraph().getTeamOfNode(cell);
+      // Check that the node belongs to the team and that it is not linked to the frontier
+      if(nodeTeam != team || nodesLinkedToFrontier.includes(cell)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   setTeamWritePermission(role: UserRole) {
@@ -177,12 +189,12 @@ export class GraphService {
         });
   }
 
-  private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, color?: string) {
+  private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, linkColor?: string) {
     let node = <joint.shapes.microtosca.Node> link.getTargetElement();
     let visibility = visible ? "visible" : "hidden";
     link.attr("./visibility", visibility);
-    if(color)
-      link.attr("line/stroke", color);
+    if(linkColor)
+      link.attr("line/stroke", linkColor);
     node.attr("./visibility", visibility);
     let team = this.graph.getTeamOfNode(node);
     if(team != null)
