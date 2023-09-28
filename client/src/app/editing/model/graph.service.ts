@@ -103,28 +103,19 @@ export class GraphService {
   showTeamDependencies(teamName) {
     let team = this.graph.findGroupByName(teamName);
     team.attr("./visibility","visible");
-    this.getOutgoingFrontierLinksOfTeam(team)
+    this.graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
           this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
         });
   }
   
-
   hideTeamDependencies(teamName) {
     let team = this.graph.findGroupByName(teamName);
     team.attr("./visibility","hidden");
-    this.getOutgoingFrontierLinksOfTeam(team)
+    this.graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
           this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
         });
-  }
-
-  private getOutgoingFrontierLinksOfTeam(team: joint.shapes.microtosca.SquadGroup) {
-    return this.graph.getFrontierOfATeam(team)
-                      .map((fnode) => this.graph.getIngoingLinks(fnode) // Map frontier nodes to their ingoing links
-                                .filter(link => link.getSourceElement().isEmbeddedIn(team))) // filter by the interesting ones
-                      // put everything in one (iterable) array
-                      .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
   }
 
   private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, color?: string) {
