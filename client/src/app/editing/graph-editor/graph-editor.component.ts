@@ -30,8 +30,7 @@ export class GraphEditorComponent {
 
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
-
-
+    
     constructor(
         private graphInvoker: CommandInvoker,
         private gs: GraphService,
@@ -86,6 +85,7 @@ export class GraphEditorComponent {
         this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
     }
   
+
     bindEvents() {
         this.bindKeyboardEvents();
         this.bindSingleClickBlank();
@@ -217,9 +217,11 @@ export class GraphEditorComponent {
     }
 
     addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-        var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-        this.graphInvoker.executeCommand(command);
-        this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+        if(this.gs.isTeamWriteAllowed()) {
+            var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+            this.graphInvoker.executeCommand(command);
+            this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+        }
     }
 
     unhighlight() {
@@ -399,12 +401,13 @@ export class GraphEditorComponent {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if (cell.isElement()) {
-                cell.showIcons();
+            if(this.gs.isArchitectureWriteAllowed(cell)) {
+                if (cell.isElement()) {
+                    cell.showIcons();
+                } else if (this.gs.getGraph().isTeamGroup(cell)) {
+                    cell.showIcons();
+                }
             }
-            else if (this.gs.getGraph().isTeamGroup(cell))
-                cell.showIcons();
-
         })
 
         this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
@@ -533,7 +536,7 @@ export class GraphEditorComponent {
                         console.log("not cell view Below defined");
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.gs.getGraph().getTeamOfNode(member);
-                        if(team){
+                        if(team && this.gs.isTeamWriteAllowed()){
                             var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
                              this.graphInvoker.executeCommand(command);
                              this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
@@ -687,82 +690,83 @@ export class GraphEditorComponent {
 
     bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            var tools = [
-                // new joint.linkTools.SourceArrowhead(),
-                // new joint.linkTools.TargetArrowhead(),
-                new joint.linkTools.Vertices({
-                    snapRadius: 0,
-                    redundancyRemoval: false,
-                    vertexAdding: false
-                }),
-                new joint.linkTools.TargetAnchor(),
-                // new joint.linkTools.Remove(),
-                new joint.linkTools.Button({
-                    markup: [{
-                        tagName: 'circle',
-                        selector: 'button',
-                        attributes: {
-                            'r': 7,
-                            'stroke': '#fe854f',
-                            'stroke-width': 3,
-                            'fill': 'white',
-                            'cursor': 'pointer'
+            if(this.gs.isArchitectureWriteAllowed(linkView.model)) {
+                var tools = [
+                    // new joint.linkTools.SourceArrowhead(),
+                    // new joint.linkTools.TargetArrowhead(),
+                    new joint.linkTools.Vertices({
+                        snapRadius: 0,
+                        redundancyRemoval: false,
+                        vertexAdding: false
+                    }),
+                    new joint.linkTools.TargetAnchor(),
+                    // new joint.linkTools.Remove(),
+                    new joint.linkTools.Button({
+                        markup: [{
+                            tagName: 'circle',
+                            selector: 'button',
+                            attributes: {
+                                'r': 7,
+                                'stroke': '#fe854f',
+                                'stroke-width': 3,
+                                'fill': 'white',
+                                'cursor': 'pointer'
+                            }
+                        }, {
+                            tagName: 'path',
+                            selector: 'icon',
+                            attributes: {
+                                'd': 'M -2 4 2 4 M 0 3 0 0 M -2 -1 1 -1 M -1 -4 1 -4',
+                                'fill': 'none',
+                                'stroke': '#FFFFFF',
+                                'stroke-width': 2,
+                                'pointer-events': 'none'
+                            }
+                        }],
+                        distance: -30,
+                        action: function () {
+                            var link = this.model;
+                            var source = link.source();
+                            var target = link.target();
+                            link.source(target);
+                            link.target(source);
                         }
-                    }, {
-                        tagName: 'path',
-                        selector: 'icon',
-                        attributes: {
-                            'd': 'M -2 4 2 4 M 0 3 0 0 M -2 -1 1 -1 M -1 -4 1 -4',
-                            'fill': 'none',
-                            'stroke': '#FFFFFF',
-                            'stroke-width': 2,
-                            'pointer-events': 'none'
+                    }),
+                    // button remove a link
+                    new joint.linkTools.Button({
+                        markup: [{
+                            tagName: 'circle',
+                            selector: 'button',
+                            attributes: {
+                                'r': 7,
+                                'fill': '#FF1D00',
+                                'cursor': 'pointer'
+                            }
+                        }, {
+                            tagName: 'path',
+                            selector: 'icon',
+                            attributes: {
+                                'd': 'M -3 -3 3 3 M -3 3 3 -3',
+                                'fill': 'none',
+                                'stroke': '#FFFFFF',
+                                'stroke-width': 2,
+                                'pointer-events': 'none'
+                            }
+                        }],
+                        distance: 60,
+                        offset: 0,
+                        action: () => {
+                            console.log("Deleting link");
+                            this.removeLink(linkView.model);
                         }
-                    }],
-                    distance: -30,
-                    action: function () {
-                        var link = this.model;
-                        var source = link.source();
-                        var target = link.target();
-                        link.source(target);
-                        link.target(source);
-                    }
-                }),
-                // button remove a link
-                new joint.linkTools.Button({
-                    markup: [{
-                        tagName: 'circle',
-                        selector: 'button',
-                        attributes: {
-                            'r': 7,
-                            'fill': '#FF1D00',
-                            'cursor': 'pointer'
-                        }
-                    }, {
-                        tagName: 'path',
-                        selector: 'icon',
-                        attributes: {
-                            'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                            'fill': 'none',
-                            'stroke': '#FFFFFF',
-                            'stroke-width': 2,
-                            'pointer-events': 'none'
-                        }
-                    }],
-                    distance: 60,
-                    offset: 0,
-                    action: () => {
-                        console.log("Deleting link");
-                        this.removeLink(linkView.model);
-                    }
-                })
-            ];
+                    })
+                ];
 
-            linkView.addTools(new joint.dia.ToolsView({
-                name: 'onhover',
-                tools: tools
-            }));
-
+                linkView.addTools(new joint.dia.ToolsView({
+                    name: 'onhover',
+                    tools: tools
+                }));
+            }
         });
 
         this.paper.on('link:mouseleave', function (linkView) {
