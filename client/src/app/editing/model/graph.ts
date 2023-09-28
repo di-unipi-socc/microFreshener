@@ -145,6 +145,14 @@ export class Graph extends joint.dia.Graph {
                           .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
     }
 
+    getIngoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
+        return this.getFrontierOfATeam(team)
+                          .map((fnode) => this.getOutgoingLinks(fnode) // Map frontier nodes to their ingoing links
+                                    .filter(link => link.getTargetElement().isEmbeddedIn(team))) // filter by the interesting ones
+                          // put everything in one (iterable) array
+                          .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
+    }
+
     addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
