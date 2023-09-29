@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -13,12 +13,15 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { CommandInvoker } from "../../commands/invoker/invoker";
+import { CommandInvoker } from "../../commands/invoker/command-invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../../graph/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { EditorPermissionsService } from './../permissions/editor-permissions.service';
 import { NavigationService } from '../navigation/navigation.service';
+import { AnalyserService } from 'src/app/refactoring/analyser/analyser.service';
+import { Command } from 'src/app/commands/invoker/icommand';
+import { Invoker } from 'src/app/commands/invoker/iinvoker';
 
 @Component({
     selector: 'app-graph-editor',
@@ -33,8 +36,10 @@ export class GraphEditorComponent {
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
     
+    graphInvoker;
+
     constructor(
-        private graphInvoker: CommandInvoker,
+        invoker: CommandInvoker,
         private gs: GraphService,
         private navigation: NavigationService,
         private permissions: EditorPermissionsService,
@@ -44,6 +49,27 @@ export class GraphEditorComponent {
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
+        this.graphInvoker = this.invokerEventPublisher(invoker, gs.getGraphUpdateEmitter());
+    }
+
+    invokerEventPublisher(invoker: CommandInvoker, emitter: EventEmitter<string>) {
+        return new class implements Invoker {
+
+            executeCommand(command: Command): void {
+                invoker.executeCommand(command);
+                emitter.emit("graph-update");
+            }
+
+            undo() {
+                invoker.undo();
+                emitter.emit("graph-update");
+            }
+
+            redo() {
+                invoker.redo();
+                emitter.emit("graph-update");
+            }
+        }
     }
 
     ngOnInit() {

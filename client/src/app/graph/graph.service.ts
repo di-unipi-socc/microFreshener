@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -18,7 +18,8 @@ const httpOptions = {
 })
 export class GraphService {
 
-  graph: Graph;
+  private readonly graph: Graph;
+  private readonly graphEventUpdates: EventEmitter<string>;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -32,10 +33,15 @@ export class GraphService {
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('');
+    this.graphEventUpdates = new EventEmitter();
   }
 
   getGraph(): Graph {
     return this.graph;
+  }
+
+  getGraphUpdateEmitter(): EventEmitter<string> {
+    return this.graphEventUpdates;
   }
 
   /*getTeam(team_name: string): Observable<string> {
