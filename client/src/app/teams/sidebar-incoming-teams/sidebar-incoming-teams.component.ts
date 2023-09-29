@@ -4,6 +4,7 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Subscription } from 'rxjs';
+import * as joint from 'jointjs';
 
 @Component({
   selector: 'app-sidebar-incoming-teams',
@@ -12,7 +13,11 @@ import { Subscription } from 'rxjs';
 })
 export class SidebarIncomingTeamsComponent {
 
-  groups: Array<{ groupName: string, recipients: string[] }>;
+  groups: Array<{
+    group: joint.shapes.microtosca.Group,
+    recipients: joint.shapes.microtosca.Node[]
+  }>;
+
   subscription: Subscription;
 
   constructor(
@@ -26,11 +31,10 @@ export class SidebarIncomingTeamsComponent {
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
     this.subscription = this.gs.getUpdates().subscribe({
-      next: (evt) => { console.log("update!", evt); this.updateIngoingRequestGroups(); },
+      next: (evt) => { this.updateIngoingRequestGroups() },
       error: (evt) => { console.error("update error") },
-      complete: () => { console.log("completing...") }
+      complete: () => {}
     });
-    console.log(this.subscription);
   }
 
   ngOnDestroy() {
@@ -41,11 +45,30 @@ export class SidebarIncomingTeamsComponent {
   }
 
   updateIngoingRequestGroups() {
+    // Defined only for Team users
     if(this.session.getRole() == UserRole.TEAM) {
       let teamName = this.session.getName();
+      // Get the groups that use the team's nodes and sort (edge first, then by number of recipients descending)
       let groupsMap = this.teams.getIngoingRequestSenderGroups(teamName);
-      this.groups = Array.from(groupsMap, ([group, recipients]) => ( { groupName: group.getName(), recipients: recipients.map((r) => r.getName()) } ));
+      this.groups = Array.from(groupsMap,
+        ([group, recipients]) => ({ group: group, recipients: recipients}))
+        .sort((g1, g2) => {
+          if(g1.group && g1.group instanceof joint.shapes.microtosca.EdgeGroup) return -1;
+          if(g1.recipients.length >= g2.recipients.length) return -1;
+        });
     }
+  }
+
+  getSeverity(group: joint.shapes.microtosca.Group) {
+    if(!group) return "warning"; // Unassigned nodes
+    if(group instanceof joint.shapes.microtosca.EdgeGroup) return "success";
+    else return "primary";
+  }
+
+  getUIGroupName(group: joint.shapes.microtosca.Group) {
+    if(!group) return "Unassigned nodes";
+    if(group instanceof joint.shapes.microtosca.EdgeGroup) return "External users";
+    return group.getName();
   }
 
 }

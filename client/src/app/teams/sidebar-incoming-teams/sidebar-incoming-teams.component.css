@@ -1,0 +1,16 @@
+:host {
+    padding: 0.5em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin: 5px 0;
+}
+
+p-tag.node {
+    margin-left: 2px;
+    margin-right: 2px;
+}
