@@ -1,6 +1,10 @@
 <div class="editor-page-content">
-    <app-menu></app-menu>
+
+    <app-menu (onSidebarChange)="sidebarChange($event)"></app-menu>
+
     <app-graph-editor></app-graph-editor>
+    <app-sidebar-incoming-teams *ngIf="sidebar.viewIncomingTeams"></app-sidebar-incoming-teams>
+
 </div>
 
 <!-- show the messages in a toast-->

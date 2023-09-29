@@ -7,4 +7,20 @@ import { Component } from '@angular/core';
 })
 export class EditorPageComponent {
 
+  sidebar: {
+    viewIncomingTeams: boolean
+  };
+
+  constructor() {
+    this.sidebar = {
+      viewIncomingTeams: false
+    };
+  }
+
+  sidebarChange(sidebarUpdate) {
+    for(let name in sidebarUpdate) {
+      this.sidebar[name] = sidebarUpdate[name];
+    }
+  }
+
 }

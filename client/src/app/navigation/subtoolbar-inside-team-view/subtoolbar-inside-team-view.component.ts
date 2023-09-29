@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/editing/model/graph.service';
 
@@ -10,12 +11,19 @@ import { GraphService } from 'src/app/editing/model/graph.service';
 export class SubtoolbarInsideTeamViewComponent {
 
   showDependencies: boolean;
+  showIncomingTeams: boolean;
 
+  public static readonly EVENT_NAME: string = 'insideTeamView';
+
+  //Declare the property
+  @Output() viewIncomingTeams: EventEmitter<SidebarEvent> = new EventEmitter();
+ 
   constructor(
     private session: SessionService,
     private gs: GraphService
   ) {
     this.showDependencies = false;
+    this.showIncomingTeams = false;
   }
 
   toggleViewDependencies() {
@@ -25,6 +33,14 @@ export class SubtoolbarInsideTeamViewComponent {
     } else {
       this.gs.hideTeamDependencies(teamName);
     }
+  }
+
+  toggleViewIncomingTeams() {
+    let sidebarEvent: SidebarEvent = {
+      name: 'viewIncomingTeams',
+      visible: this.showIncomingTeams
+    }
+    this.viewIncomingTeams.emit(sidebarEvent);
   }
 
 }

@@ -28,45 +28,4 @@ export class AppComponent {
 
   }
 
-  /*ngOnInit() {
-    this.items = [
-      {
-        label: 'Account',
-        icon: 'pi pi-fw pi-user',
-        items: [
-          { label: 'Detail', icon: "pi pi-user" },
-          { label: 'Log out', icon: 'pi pi-sign-out' },
-        ]
-      }
-    ];
-  }
-
-  onUpload(event) {
-    this.download();
-  }
-
-  download() {
-    this.gs.dowloadGraph()
-      .subscribe((data) => {
-        this.closeSidebar();
-        console.log(data);
-        this.gs.getGraph().builtFromJSON(data);
-        this.gs.getGraph().applyLayout("LR");
-        this.messageService.add({ severity: 'success', summary: 'Graph downloaded correctly', detail: '' });
-      });
-  }
-
-  closeSidebar() {
-    this.display = false;
-  }
-
-  downloadExample(name: string) {
-    this.gs.downloadExample(name)
-      .subscribe((data) => {
-        this.gs.getGraph().builtFromJSON(data);
-        this.gs.getGraph().applyLayout("LR");
-        this.messageService.add({ severity: 'success', summary: `Graph ${name} loaded` });
-      });
-  }*/
-
 }

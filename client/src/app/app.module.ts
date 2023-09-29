@@ -57,6 +57,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DividerModule } from 'primeng/divider';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
+import { SplitterModule } from 'primeng/splitter';
 
 // Import dialog components
 import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
@@ -68,6 +69,7 @@ import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams/subtoolbar-te
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
 import { SubtoolbarInsideTeamViewComponent } from './navigation/subtoolbar-inside-team-view/subtoolbar-inside-team-view.component';
+import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +95,7 @@ import { SubtoolbarInsideTeamViewComponent } from './navigation/subtoolbar-insid
     LoginPageComponent,
     EditorPageComponent,
     SubtoolbarInsideTeamViewComponent,
+    SidebarIncomingTeamsComponent,
   ],
   imports: [
     BrowserModule,
