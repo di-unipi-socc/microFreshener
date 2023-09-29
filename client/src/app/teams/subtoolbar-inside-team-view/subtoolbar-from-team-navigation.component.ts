@@ -2,13 +2,14 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
+import { TeamsManagementService } from '../teams-management/teams-management.service';
 
 @Component({
-  selector: 'app-subtoolbar-inside-team-view',
-  templateUrl: './subtoolbar-inside-team-view.component.html',
-  styleUrls: ['./subtoolbar-inside-team-view.component.css']
+  selector: 'app-subtoolbar-from-team-navigation',
+  templateUrl: './subtoolbar-from-team-navigation.component.html',
+  styleUrls: ['./subtoolbar-from-team-navigation.component.css']
 })
-export class SubtoolbarInsideTeamViewComponent {
+export class SubtoolbarFromTeamNavigationComponent {
 
   showDependencies: boolean;
   showIncomingTeams: boolean;
@@ -20,7 +21,8 @@ export class SubtoolbarInsideTeamViewComponent {
  
   constructor(
     private session: SessionService,
-    private gs: GraphService
+    private gs: GraphService,
+    private teams: TeamsManagementService
   ) {
     this.showDependencies = false;
     this.showIncomingTeams = false;
@@ -29,9 +31,9 @@ export class SubtoolbarInsideTeamViewComponent {
   toggleViewDependencies() {
     let teamName = this.session.getName();
     if(this.showDependencies) {
-      this.gs.showTeamDependencies(teamName);
+      this.teams.showTeamDependencies(teamName);
     } else {
-      this.gs.hideTeamDependencies(teamName);
+      this.teams.hideTeamDependencies(teamName);
     }
   }
 

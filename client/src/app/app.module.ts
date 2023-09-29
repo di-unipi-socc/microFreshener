@@ -67,7 +67,7 @@ import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refacto
 import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams/subtoolbar-teams.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
-import { SubtoolbarInsideTeamViewComponent } from './editor/subtoolbar-inside-team-view/subtoolbar-inside-team-view.component';
+import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-inside-team-view/subtoolbar-from-team-navigation.component';
 import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
 
 @NgModule({
@@ -93,7 +93,7 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     SubtoolbarTeamsComponent,
     LoginPageComponent,
     EditorPageComponent,
-    SubtoolbarInsideTeamViewComponent,
+    SubtoolbarFromTeamNavigationComponent,
     SidebarIncomingTeamsComponent,
   ],
   imports: [

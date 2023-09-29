@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GraphService } from '../../graph/graph.service';
-import { EditorPermissionsService } from '../graph-editor/editor-permissions.service';
+import { EditorPermissionsService } from '../permissions/editor-permissions.service';
 
 @Component({
   selector: 'app-subtoolbar-architecture',

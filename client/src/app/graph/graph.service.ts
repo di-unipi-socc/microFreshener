@@ -6,21 +6,19 @@ import { environment } from '../../environments/environment';
 
 import { Graph } from './model/graph';
 
-import * as joint from 'jointjs';
-import { UserRole } from 'src/app/core/user-role';
-import { EditorPermissionsService } from '../editor/graph-editor/editor-permissions.service';
-
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
+/**
+ * This service allows the Graph to be injected.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class GraphService {
 
   graph: Graph;
-  paper: joint.dia.Paper;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -32,155 +30,12 @@ export class GraphService {
   
   // private teamUrl = environment.serverUrl + '/api/team/';
 
-  constructor(private http: HttpClient, private editorPermissions: EditorPermissionsService) {
+  constructor(private http: HttpClient) {
     this.graph = new Graph('');
   }
 
-  // Graph and Paper
-
   getGraph(): Graph {
     return this.graph;
-  }
-
-  getPaper() {
-    return this.paper;
-  }
-
-  setPaper(paper: joint.dia.Paper) {
-    this.paper = paper;
-  }
-
-  hideGraph() {
-    this.graph.hideGraph();
-  }
-
-  showGraph() {
-    this.graph.showGraph();
-  }
-
-  // Navigation
-
-  fitContent(padding?: number) {
-    if(!padding){
-      padding = 150;
-    }
-    this.paper.scaleContentToFit({padding: padding});
-  }
-
-  zoomIn() {
-    console.error("Callback zoomIn not set");
-  }
-
-  zoomOut() {
-    console.error("Callback zoomOut not set");
-  }
-
-  // Permissions
-
-  setWritePermissions(role: UserRole, teamName?: string) {
-    this.setEditingWritePermission(role, teamName);
-    this.setTeamWritePermission(role);
-  }
-
-  setEditingWritePermission(role: UserRole, teamName?: string) {
-    switch(role) {
-        case UserRole.ADMIN:
-            // Admin can write everything
-            this.editorPermissions.setIsAllowed( (...any: any[]) => { return true; } );
-            break;
-        case UserRole.TEAM:
-            let team = this.getGraph().findGroupByName(teamName);
-            if(!team) {
-              // The team doesn't exist in the graph, so block everything
-              this.editorPermissions.setIsAllowed = (...any: any[]): boolean => { return false; }
-            } else {
-              // The team exists, so set the consequent permissions
-              this.editorPermissions.setIsAllowed( (cell) => (this.isEditingAllowedForATeam(team, cell)) );
-              this.editorPermissions.setLinkable(
-                (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
-                return this.getGraph().getTeamOfNode(n) == team && (n2 ? this.getGraph().getTeamOfNode(n2) == team : true);
-              });
-            }
-      }
-  }
-
-  isEditingAllowedForATeam(team, cell): boolean {
-    
-    let outgoingLinks = this.getGraph().getOutgoingLinksOfATeamFrontier(team);
-    let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
-    
-    if(cell.isLink()) {
-      // Check that the links the user is adding doesn't involve other teams' nodes
-      let source = cell.getSourceElement();
-      let sourceTeam = this.getGraph().getTeamOfNode(source);
-      if(!sourceTeam || sourceTeam != team) {
-        return false;
-      }
-      let target = cell.getTargetElement();
-      let targetTeam = this.getGraph().getTeamOfNode(target);
-      if(!targetTeam || targetTeam != team) {
-        return false;
-      }
-    } else {
-      let nodeTeam = this.getGraph().getTeamOfNode(cell);
-      // Check that the node belongs to the team and that it is not linked to the frontier
-      if(nodeTeam != team || nodesLinkedToFrontier.includes(cell)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  setTeamWritePermission(role: UserRole) {
-    switch(role) {
-      case UserRole.ADMIN:
-        this.editorPermissions.setIsTeamWriteAllowed( () => { return true; } );
-        break;
-      case UserRole.TEAM:
-        this.editorPermissions.setIsTeamWriteAllowed( () => { return false; } );
-        break;
-    }
-  }
-
-  // Teams
-
-  showTeams() {
-    this.graph.showAllTeamBoxes();
-  }
-
-  hideTeams() {
-    this.graph.hideAllTeamBoxes();
-  }
-
-  showTeamDependencies(teamName) {
-    let team = this.graph.findGroupByName(teamName);
-    team.attr("./visibility","visible");
-    this.graph.getOutgoingLinksOfATeamFrontier(team)
-        .forEach((link) => {
-          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
-        });
-  }
-  
-  hideTeamDependencies(teamName) {
-    let team = this.graph.findGroupByName(teamName);
-    team.attr("./visibility","hidden");
-    this.graph.getOutgoingLinksOfATeamFrontier(team)
-        .forEach((link) => {
-          this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
-        });
-  }
-
-  private setVisibilityOfLinkAndRelatedNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, linkColor?: string) {
-    let node = <joint.shapes.microtosca.Node> link.getTargetElement();
-    let visibility = visible ? "visible" : "hidden";
-    link.attr("./visibility", visibility);
-    if(linkColor)
-      link.attr("line/stroke", linkColor);
-    node.attr("./visibility", visibility);
-    let team = this.graph.getTeamOfNode(node);
-    if(team != null)
-      team.attr("./visibility", visibility);
   }
 
   /*getTeam(team_name: string): Observable<string> {

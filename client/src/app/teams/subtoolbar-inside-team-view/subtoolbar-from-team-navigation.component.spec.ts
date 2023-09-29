@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SubtoolbarInsideTeamViewComponent } from './subtoolbar-inside-team-view.component';
+import { SubtoolbarFromTeamNavigationComponent } from './subtoolbar-from-team-navigation.component';
 
 describe('SubtoolbarInsideTeamViewComponent', () => {
-  let component: SubtoolbarInsideTeamViewComponent;
-  let fixture: ComponentFixture<SubtoolbarInsideTeamViewComponent>;
+  let component: SubtoolbarFromTeamNavigationComponent;
+  let fixture: ComponentFixture<SubtoolbarFromTeamNavigationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SubtoolbarInsideTeamViewComponent ]
+      declarations: [ SubtoolbarFromTeamNavigationComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SubtoolbarInsideTeamViewComponent);
+    fixture = TestBed.createComponent(SubtoolbarFromTeamNavigationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

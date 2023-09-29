@@ -17,7 +17,8 @@ import { CommandInvoker } from "../../commands/invoker/invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../../graph/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { EditorPermissionsService } from './editor-permissions.service';
+import { EditorPermissionsService } from './../permissions/editor-permissions.service';
+import { NavigationService } from '../navigation/navigation.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -35,6 +36,7 @@ export class GraphEditorComponent {
     constructor(
         private graphInvoker: CommandInvoker,
         private gs: GraphService,
+        private navigation: NavigationService,
         private permissions: EditorPermissionsService,
         private dialogService: DialogService,
         private messageService: MessageService,
@@ -78,7 +80,7 @@ export class GraphEditorComponent {
         // Create a sample graph useful for debugging
         //this.createSampleGraph();
 
-        this.gs.setPaper(this.paper);
+        this.navigation.setPaper(this.paper);
 
         // bind events
         this.bindEvents();
@@ -114,8 +116,8 @@ export class GraphEditorComponent {
 
        this.bindDragNavigation();
        this.bindWheelZoom(this.paper);
-       this.gs.zoomIn = () => {this.zoomIn(this.paper);}
-       this.gs.zoomOut = () => {this.zoomOut(this.paper);}
+       this.navigation.zoomIn = () => {this.zoomIn(this.paper);}
+       this.navigation.zoomOut = () => {this.zoomOut(this.paper);}
     }
 
     bindChangeTeamEvents(){
@@ -219,7 +221,7 @@ export class GraphEditorComponent {
     }
 
     addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-        if(this.permissions.isTeamWriteAllowed()) {
+        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
             var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
             this.graphInvoker.executeCommand(command);
             this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
@@ -285,7 +287,7 @@ export class GraphEditorComponent {
                         // disable link from communication pattern to Datastore
                         if (this.gs.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node))
                             add_link = false;
-                        if (add_link && this.permissions.linkable(this.leftClickSelectedNode, node)) {
+                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
                                 console.log("selected, new ->", this.leftClickSelectedNode, node);
                                 const ref = this.dialogService.open(DialogAddLinkComponent, {
                                     data: {
@@ -320,7 +322,7 @@ export class GraphEditorComponent {
                         if (this.gs.getGraph().isDatastore(node)) {
                             can_select_source_node = false;
                         }
-                        if (can_select_source_node && this.permissions.linkable(node)) {
+                        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
                             cellView.highlight();
                             this.leftClickSelectedNode = node;
                         }
@@ -404,7 +406,7 @@ export class GraphEditorComponent {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if(this.permissions.isEditingAllowed(cell)) {
+            if(this.permissions.writePermissions.isAllowed(cell)) {
                 if (cell.isElement()) {
                     cell.showIcons();
                 } else if (this.gs.getGraph().isTeamGroup(cell)) {
@@ -538,7 +540,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.gs.getGraph().getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.isTeamWriteAllowed()) {
+                            if(this.permissions.writePermissions.isTeamWriteAllowed()) {
                                 var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
                                 this.graphInvoker.executeCommand(command);
                                 this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
@@ -695,7 +697,7 @@ export class GraphEditorComponent {
 
     bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            if(this.permissions.isEditingAllowed(linkView.model)) {
+            if(this.permissions.writePermissions.isAllowed(linkView.model)) {
                 var tools = [
                     // new joint.linkTools.SourceArrowhead(),
                     // new joint.linkTools.TargetArrowhead(),
