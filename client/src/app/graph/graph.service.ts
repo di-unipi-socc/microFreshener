@@ -1,10 +1,10 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 import { Graph } from './model/graph';
+import { Observable, Observer } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,7 +19,8 @@ const httpOptions = {
 export class GraphService {
 
   private readonly graph: Graph;
-  private readonly graphEventUpdates: EventEmitter<string>;
+  private readonly observable: Observable<String>;
+  private readonly observers: Set<Observer<String>>;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -33,15 +34,27 @@ export class GraphService {
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('');
-    this.graphEventUpdates = new EventEmitter();
+    this.observers = new Set<Observer<String>>();
+    this.observable = new Observable<String>((observer) => {
+      this.observers.add(observer);
+      return {
+        unsubscribe: () => { this.observers.delete(observer); }
+      }
+    });
   }
 
   getGraph(): Graph {
     return this.graph;
   }
 
-  getGraphUpdateEmitter(): EventEmitter<string> {
-    return this.graphEventUpdates;
+  getUpdates() {
+    return this.observable;
+  }
+
+  emitUpdate() {
+    this.observers.forEach((observer) => {
+      observer.next("graph-update");
+    });
   }
 
   /*getTeam(team_name: string): Observable<string> {

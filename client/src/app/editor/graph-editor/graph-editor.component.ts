@@ -19,7 +19,6 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { EditorPermissionsService } from './../permissions/editor-permissions.service';
 import { NavigationService } from '../navigation/navigation.service';
-import { AnalyserService } from 'src/app/refactoring/analyser/analyser.service';
 import { Command } from 'src/app/commands/invoker/icommand';
 import { Invoker } from 'src/app/commands/invoker/iinvoker';
 
@@ -49,25 +48,25 @@ export class GraphEditorComponent {
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
-        this.graphInvoker = this.invokerEventPublisher(invoker, gs.getGraphUpdateEmitter());
+        this.graphInvoker = this.invokerEventPublisher(invoker, gs);
     }
 
-    invokerEventPublisher(invoker: CommandInvoker, emitter: EventEmitter<string>) {
+    invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {
         return new class implements Invoker {
 
             executeCommand(command: Command): void {
                 invoker.executeCommand(command);
-                emitter.emit("graph-update");
+                gs.emitUpdate();
             }
 
             undo() {
                 invoker.undo();
-                emitter.emit("graph-update");
+                gs.emitUpdate();
             }
 
             redo() {
                 invoker.redo();
-                emitter.emit("graph-update");
+                gs.emitUpdate();
             }
         }
     }
