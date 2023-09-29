@@ -1,0 +1,57 @@
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-4">
+        <div class="box">Name:</div>
+    </div>
+    <div class="p-col-6">
+        <input  [(ngModel)]="name" type="text" pInputText />
+    </div>
+</div>
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-4">
+        <div class="box">Select node type:</div>
+    </div>
+    <div class="p-col-6">
+            <div class="ui-g" style="width:250px;margin-bottom:10px">
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" 
+                            (onClick)="uncheckCommPattarn()"
+                            value="service"
+                            label="Service" [(ngModel)]="selectedNodeType" 
+                            inputId="opt1"></p-radioButton>
+                    </div>
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" value="datastore"
+                            (onClick)="uncheckCommPattarn()"
+                                label="Datastore" [(ngModel)]="selectedNodeType" 
+                                inputId="opt2"></p-radioButton>
+                    </div>
+                    <div class="ui-g-12">
+                            <p-radioButton name="group1" value="communicationPattern" 
+                            label="Communication Pattern"
+                           (onClick)="checkedCommPattern()"
+                           [(ngModel)]="selectedNodeType" inputId="opt3">
+                       </p-radioButton>
+                    </div>
+                </div>
+    </div>
+</div>
+
+
+<div class="p-grid p-justify-center" *ngIf="showCommunicationPatternType">
+    <div class="p-col-4">
+        <label for="name">Type </label>
+    </div>
+    <div class="p-col-6">
+        <p-dropdown [options]="communicationPatternTypes"
+            [(ngModel)]="selectedCommunicationPatternType"
+            optionLabel="name"
+            placeholder="Select a Type"  [showClear]="true"></p-dropdown>
+    </div>
+</div>
+
+
+<div class="p-grid p-justify-end">
+    <p-button label="Save" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+</div>

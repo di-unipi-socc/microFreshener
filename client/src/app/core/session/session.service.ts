@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 
-import { GraphService } from "../../editing/model/graph.service";
+import { GraphService } from "../../graph/graph.service";
 import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 
 // import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
+import { EditorPermissionsService } from 'src/app/editor/permissions/editor-permissions.service';
+import { NavigationService } from 'src/app/editor/navigation/navigation.service';
+import { TeamsManagementService } from 'src/app/teams/teams-management/teams-management.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +24,9 @@ export class SessionService {
 
   constructor(
     private gs: GraphService,
+    private navigation: NavigationService,
+    private permissions: EditorPermissionsService,
+    private teams: TeamsManagementService,
     public dialogService: DialogService,
     private messageService: MessageService
   ) {
@@ -66,7 +72,7 @@ export class SessionService {
 
   newFile() {
     this.gs.getGraph().clearGraph();
-    this.gs.fitContent(400);
+    this.navigation.fitContent(400);
     this.modelName = "";
     this.gs.getGraph().setName(this.modelName);
     this.documentReady = true;
@@ -89,7 +95,7 @@ export class SessionService {
       this.gs.downloadExample(name)
           .subscribe((data) => {
               this.loadGraph(data);
-              this.gs.fitContent();
+              this.navigation.fitContent();
               this.documentReady = true;
               this.messageService.add({ severity: 'success', summary: 'Loaded example', detail: `Example ${name} ` });
           });
@@ -104,7 +110,7 @@ export class SessionService {
           if (data.msg) {
               console.log(data);
               this.loadGraph(data.graph);
-              this.gs.fitContent();
+              this.navigation.fitContent();
               this.documentReady = true;
               this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
           }
@@ -121,17 +127,17 @@ export class SessionService {
         let team = this.gs.getGraph().getTeam(teamName);
         this.gs.getGraph().showOnlyTeam(team);
         this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
-        this.gs.setWritePermissions(role, teamName);
+        this.permissions.updatePermissions(role, teamName);
         break;
       default:
-        this.gs.setWritePermissions(role);
+        this.permissions.updatePermissions(role);
     }
-    this.gs.hideTeams();
+    this.teams.hideTeams();
     this.gs.getGraph().applyLayout("LR");
   }
 
   closeDocument() {
-    this.gs.hideGraph();
+    this.gs.getGraph().hideGraph();
     this.documentReady = false;
   }
 

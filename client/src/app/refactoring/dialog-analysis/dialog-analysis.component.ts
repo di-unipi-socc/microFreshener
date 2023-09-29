@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../../refactoring/analyser/analyser.service';
-import { GraphService } from "../../editing/model/graph.service";
+import { GraphService } from "../../graph/graph.service";
 import { MessageService } from 'primeng/api';
-import { Smell } from "../../editing/model/smell";
-import { Principle } from '../../editing/model/principles';
+import { Smell } from "../../graph/model/smell";
+import { Principle } from '../../graph/model/principles';
 
 interface Orchestrator {
   id?: number,

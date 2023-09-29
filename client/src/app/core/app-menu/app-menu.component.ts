@@ -1,13 +1,14 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 
-import { GraphService } from "../../editing/model/graph.service";
+import { GraphService } from "../../graph/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { SessionService } from '../session/session.service';
+import { SidebarEvent } from './sidebar-event';
 
 @Component({
     selector: 'app-menu',
@@ -17,6 +18,7 @@ import { SessionService } from '../session/session.service';
 export class AppMenuComponent implements OnInit {
 
     modelName: string; // name of the model
+    hrefDownload = environment.serverUrl + '/api/export';
 
     fileMenuItems: MenuItem[];
     @ViewChildren('renameInput') private renameInputList: QueryList<ElementRef>;
@@ -24,7 +26,8 @@ export class AppMenuComponent implements OnInit {
     
     sessionMenuItems: MenuItem[];
 
-    hrefDownload = environment.serverUrl + '/api/export';
+    @Output() onSidebarChange: EventEmitter<SidebarEvent> = new EventEmitter();
+    sidebarStatus;
 
     constructor(
         private gs: GraphService,
@@ -34,6 +37,9 @@ export class AppMenuComponent implements OnInit {
         private confirmationService: ConfirmationService
         ) {
             this.renaming = false;
+            this.sidebarStatus = {
+                viewIncomingTeams: false
+            };
     }
 
     ngOnInit() {
@@ -129,9 +135,13 @@ export class AppMenuComponent implements OnInit {
         this.renameInputList.changes.subscribe((list: QueryList<ElementRef>) => {
             if (list.length > 0) {
                 list.first.nativeElement.focus();
-                console.log(list.first.nativeElement.value);
             }
         });
+    }
+
+    sidebarChange(event) {
+        this.sidebarStatus[event.name] = event.visible;
+        this.onSidebarChange.emit(this.sidebarStatus);
     }
 
     editName() {
@@ -140,7 +150,6 @@ export class AppMenuComponent implements OnInit {
 
     rename() {
         this.gs.getGraph().setName(this.modelName);
-        console.log("Renaming to " + this.modelName);
         this.messageService.clear();
         this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
         this.renaming = false;

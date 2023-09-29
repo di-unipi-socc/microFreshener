@@ -15,6 +15,7 @@
 
 ::ng-deep .p-toolbar {
     border: 0;
+    padding: 0;
 }
 
 .file-button {
@@ -40,6 +41,7 @@
 
 .ui-toolbar-group-center {
     flex-grow: 1;
+    margin: 5px 0;
 }
 
 .ui-toolbar-group-end {

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import { AddTeamGroupCommand } from 'src/app/editing/model/graph-command';
+import { AddTeamGroupCommand } from '../../graph/graph-command';
 import { CommandInvoker } from 'src/app/commands/invoker/invoker';
 import { DialogService } from 'primeng/dynamicdialog';
-import { GraphService } from 'src/app/editing/model/graph.service';
+import { GraphService } from '../../graph/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-teams',
