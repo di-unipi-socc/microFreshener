@@ -1,5 +1,4 @@
-import { Component, Input } from '@angular/core';
-import { SidebarModule } from 'primeng/sidebar';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar-incoming-teams',

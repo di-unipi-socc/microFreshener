@@ -36,6 +36,8 @@ export class GraphService {
     this.graph = new Graph('');
   }
 
+  // Graph and Paper
+
   getGraph(): Graph {
     return this.graph;
   }
@@ -56,6 +58,8 @@ export class GraphService {
     this.graph.showGraph();
   }
 
+  // Navigation
+
   fitContent(padding?: number) {
     if(!padding){
       padding = 150;
@@ -71,31 +75,7 @@ export class GraphService {
     console.error("Callback zoomOut not set");
   }
 
-  /** Export the graph to JSON format*/
-  exportToJSON() {
-    return JSON.stringify(this.graph.toJSON());
-  }
-
-
-  /** POST: upload the local graph to the server */
-  uploadGraph(): Observable<any> {
-    var graphJson = this.exportToJSON();
-    console.log(graphJson);
-    return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
-  }
-
-  // download the graph stored into the server
-  dowloadGraph(): Observable<string> {
-    return this.http.get<string>(this.graphUrl)
-      .pipe(
-        tap(_ => this.log(`fetched graph`)),
-    );
-  }
-
-  load(json) {
-    this.graph.clear();
-    this.graph.builtFromJSON(json);
-  }
+  // Permissions
 
   setWritePermissions(role: UserRole, teamName?: string) {
     this.setEditingWritePermission(role, teamName);
@@ -163,6 +143,8 @@ export class GraphService {
     }
   }
 
+  // Teams
+
   showTeams() {
     this.graph.showAllTeamBoxes();
   }
@@ -209,7 +191,42 @@ export class GraphService {
     );
   }*/
 
-  // exportGraphToJSON(): Observable<string> {
+  // Logging
+
+  // Log a HeroService message with the MessageService
+  private log(message: string) {
+    console.log(`GraphService: ${message}`)
+  }
+
+  // Import and Export
+
+  // Export the graph to JSON format
+  exportToJSON() {
+    return JSON.stringify(this.graph.toJSON());
+  }
+
+
+  /** POST: upload the local graph to the server */
+  uploadGraph(): Observable<any> {
+    var graphJson = this.exportToJSON();
+    console.log(graphJson);
+    return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
+  }
+
+  // download the graph stored into the server
+  dowloadGraph(): Observable<string> {
+    return this.http.get<string>(this.graphUrl)
+      .pipe(
+        tap(_ => this.log(`fetched graph`)),
+    );
+  }
+
+  load(json) {
+    this.graph.clear();
+    this.graph.builtFromJSON(json);
+  }
+
+    // exportGraphToJSON(): Observable<string> {
   //   var url = this.graphUrl + this.getGraph().getName() + "/"
   //   let params = new HttpParams().set("responseType", "blob");
   //   return this.http.get<string>(this.graphUrl, { params: params })
@@ -224,12 +241,6 @@ export class GraphService {
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
       tap(_ => this.log(`fetched example ${name}`)),
     );
-  }
-
-  /** Log a HeroService message with the MessageService */
-  private log(message: string) {
-    console.log(`GraphServiceService: ${message}`)
-    // this.messageService.add(`HeroService: ${message}`);
   }
 
 }

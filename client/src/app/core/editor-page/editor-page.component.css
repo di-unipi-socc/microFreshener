@@ -21,12 +21,14 @@ app-graph-editor {
     padding: 0;
 }
 
-app-sidebar-incoming-teams {
+.sidebar {
     flex-grow: 2;
     height: 100%;
+    border-left: 5px solid #f4f4f4;
+    background-color: #f4f4f4;
+    padding: 5px;
     margin: 0;
     padding: 0;
-    border-left: 5px solid #f4f4f4;
 }
 
 :host {
