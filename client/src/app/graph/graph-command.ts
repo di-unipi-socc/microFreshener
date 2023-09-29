@@ -10,19 +10,19 @@ export class AddServiceCommand implements Command {
     node: joint.shapes.microtosca.Root;
     name: string;
     position: g.Point;
-    group: joint.shapes.microtosca.Group;
+    team: joint.shapes.microtosca.SquadGroup;
 
-    constructor(graph: Graph, name: string, position?: g.Point, group?: joint.shapes.microtosca.Group) {
+    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
         this.graph = graph;
         this.name = name;
         this.position = position;
-        this.group = group;
+        this.team = team;
     }
 
     execute() {
-        this.node = this.graph.addService(this.name, this.position);
-        if(this.group)
-            this.group.addMember(this.node);
+        this.node = this.graph.addService(this.name, this.position, this.team);
+        if(this.team)
+            this.team.addMember(this.node);
     }
 
     unexecute() {
@@ -36,15 +36,19 @@ export class AddDatastoreCommand implements Command {
     node: joint.shapes.microtosca.Root;
     name: string;
     position: g.Point;
+    team: joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
         this.graph = graph;
         this.name = name;
         this.position = position;
+        this.team = team;
     }
 
     execute() {
         this.node = this.graph.addDatastore(this.name, this.position);
+        if(this.team)
+            this.team.addMember(this.node);
     }
 
     unexecute() {
@@ -58,15 +62,19 @@ export class AddMessageBrokerCommand implements Command {
     node: joint.shapes.microtosca.Root;
     name: string;
     position: g.Point;
+    team: joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
         this.graph = graph;
         this.name = name;
         this.position = position;
+        this.team = team;
     }
 
     execute() {
         this.node = this.graph.addMessageBroker(this.name, this.position);
+        if(this.team)
+            this.team.addMember(this.node);
     }
 
     unexecute() {
@@ -80,19 +88,22 @@ export class AddMessageRouterCommand implements Command {
     node: joint.shapes.microtosca.Root;
     name: string;
     position: g.Point;
+    team: joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
         this.graph = graph;
         this.name = name;
         this.position = position;
+        this.team = team;
     }
 
     execute() {
         this.node = this.graph.addMessageRouter(this.name, this.position);
+        if(this.team)
+            this.team.addMember(this.node);
     }
 
     unexecute() {
-
         this.node.remove();
     }
 }

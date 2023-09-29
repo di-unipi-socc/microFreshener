@@ -13,12 +13,16 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { CommandInvoker } from "../../commands/invoker/invoker";
+import { CommandInvoker } from "../../commands/invoker/command-invoker";
 import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../../graph/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { EditorPermissionsService } from './../permissions/editor-permissions.service';
 import { NavigationService } from '../navigation/navigation.service';
+import { Command } from 'src/app/commands/invoker/icommand';
+import { Invoker } from 'src/app/commands/invoker/iinvoker';
+import { SessionService } from 'src/app/core/session/session.service';
+import { UserRole } from 'src/app/core/user-role';
 
 @Component({
     selector: 'app-graph-editor',
@@ -33,9 +37,12 @@ export class GraphEditorComponent {
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
     
+    graphInvoker;
+
     constructor(
-        private graphInvoker: CommandInvoker,
+        invoker: CommandInvoker,
         private gs: GraphService,
+        private session: SessionService,
         private navigation: NavigationService,
         private permissions: EditorPermissionsService,
         private dialogService: DialogService,
@@ -44,6 +51,27 @@ export class GraphEditorComponent {
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
+        this.graphInvoker = this.invokerEventPublisher(invoker, gs);
+    }
+
+    invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {
+        return new class implements Invoker {
+
+            executeCommand(command: Command): void {
+                invoker.executeCommand(command);
+                gs.emitUpdate();
+            }
+
+            undo() {
+                invoker.undo();
+                gs.emitUpdate();
+            }
+
+            redo() {
+                invoker.redo();
+                gs.emitUpdate();
+            }
+        }
     }
 
     ngOnInit() {
@@ -207,6 +235,11 @@ export class GraphEditorComponent {
     }
 
     addNode(position?: g.Point, group?: joint.shapes.microtosca.Group) {
+        // Team members add nodes to their team by default
+        if(!group && this.session.getRole() == UserRole.TEAM) {
+            group = this.gs.getGraph().findGroupByName(this.session.getName());
+        }
+        // Create the AddNodeCommand and execute it
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
             width: '50%',

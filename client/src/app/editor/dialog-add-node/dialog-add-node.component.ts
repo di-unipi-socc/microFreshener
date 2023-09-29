@@ -62,16 +62,16 @@ export class DialogAddNodeComponent implements OnInit {
         message = `Service ${this.name} added correctly`;
         break;
       case "datastore":
-        command = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position);
+        command = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position, this.group);
         message = `Datastore  ${this.name}  added correctly`;
         break;
       case "communicationPattern":
         if(this.selectedCommunicationPatternType.type === "messagebroker" ){
-          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position);
+          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position, this.group);
           message += `Message Broker ${this.name} added correctly`;
         }
         else if(this.selectedCommunicationPatternType.type === "messagerouter" ){
-          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position);
+          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position, this.group);
           message += `Message Router ${this.name} added correctly`;
         }
         else
@@ -80,7 +80,6 @@ export class DialogAddNodeComponent implements OnInit {
       default:
         throw new Error(`Type of node '${this.selectedNodeType}' not found `);
         // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
-        break;
     }
     this.ref.close({"command":command, "msg":message});
   }

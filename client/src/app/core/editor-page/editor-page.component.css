@@ -13,7 +13,7 @@ app-menu {
 }
 
 app-graph-editor {
-    flex-grow: 3;
+    flex-grow: 4;
     height: 100%;
     display: block;
     min-height: 50vh;
@@ -22,13 +22,14 @@ app-graph-editor {
 }
 
 .sidebar {
-    flex-grow: 2;
+    flex-grow: 1;
     height: 100%;
     border-left: 5px solid #f4f4f4;
     background-color: #f4f4f4;
     padding: 5px;
     margin: 0;
-    padding: 0;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 :host {

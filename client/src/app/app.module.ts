@@ -57,6 +57,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DividerModule } from 'primeng/divider';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
+import { TagModule } from 'primeng/tag';
 
 // Import dialog components
 import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
@@ -135,7 +136,8 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     DividerModule,
     StyleClassModule,
     ToggleButtonModule,
-    AvatarModule
+    AvatarModule,
+    TagModule
   ],
   providers: [
     DialogService,
