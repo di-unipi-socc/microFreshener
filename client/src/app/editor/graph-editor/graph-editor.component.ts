@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -21,6 +21,8 @@ import { EditorPermissionsService } from './../permissions/editor-permissions.se
 import { NavigationService } from '../navigation/navigation.service';
 import { Command } from 'src/app/commands/invoker/icommand';
 import { Invoker } from 'src/app/commands/invoker/iinvoker';
+import { SessionService } from 'src/app/core/session/session.service';
+import { UserRole } from 'src/app/core/user-role';
 
 @Component({
     selector: 'app-graph-editor',
@@ -40,6 +42,7 @@ export class GraphEditorComponent {
     constructor(
         invoker: CommandInvoker,
         private gs: GraphService,
+        private session: SessionService,
         private navigation: NavigationService,
         private permissions: EditorPermissionsService,
         private dialogService: DialogService,
@@ -232,6 +235,11 @@ export class GraphEditorComponent {
     }
 
     addNode(position?: g.Point, group?: joint.shapes.microtosca.Group) {
+        // Team members add nodes to their team by default
+        if(!group && this.session.getRole() == UserRole.TEAM) {
+            group = this.gs.getGraph().findGroupByName(this.session.getName());
+        }
+        // Create the AddNodeCommand and execute it
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
             width: '50%',

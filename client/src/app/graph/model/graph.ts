@@ -197,7 +197,7 @@ export class Graph extends joint.dia.Graph {
         return new g.Point(centerX, centerY);
     }
 
-    addService(name: string, position?: g.Point): joint.shapes.microtosca.Service {
+    addService(name: string, position?: g.Point, group?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Service {
         let service = new joint.shapes.microtosca.Service();
         service.setName(name);
         if(position) {
@@ -205,6 +205,9 @@ export class Graph extends joint.dia.Graph {
             service.position(center.x, center.y);
         }
         service.addTo(this);
+        if(group) {
+            group.addMember(service);
+        }
         return service;
     }
 
