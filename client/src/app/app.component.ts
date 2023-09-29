@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { GraphService } from "./editing/model/graph.service";
-import { MessageService, MenuItem } from 'primeng/api';
+//import { GraphService } from "./editor/model/graph.service";
+import { /*MessageService, */MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { AnalyserService } from './refactoring/analyser/analyser.service';
+//import { AnalyserService } from './refactoring/analyser/analyser.service';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -23,7 +23,7 @@ export class AppComponent {
   urlRefineKubernetes = environment.serverUrl + '/api/refine';
   urlRefineIstio = environment.serverUrl + '/api/refine/istio';
 
-  constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService) {
+  constructor(/*private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public dialogService: DialogService*/) {
 
 
   }

@@ -7,15 +7,15 @@ import { tap, map, catchError } from 'rxjs/operators';
 import { ANode } from "./node";
 import { AGroup } from "./group";
 
-import { GraphService } from '../../editing/model/graph.service';
-import { Principle } from '../../editing/model/principles';
-import { Smell } from '../../editing/model/smell';
+import { GraphService } from '../../graph/graph.service';
+import { Principle } from '../../graph/model/principles';
+import { Smell } from '../../graph/model/smell';
 import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './smell';
 
 import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
 import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
-import { CommunicationPattern } from "../../editing/model/communicationpattern";
+import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
 

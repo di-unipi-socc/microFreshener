@@ -4,7 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 
-import { GraphService } from "../../editing/model/graph.service";
+import { GraphService } from "../../graph/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { SessionService } from '../session/session.service';

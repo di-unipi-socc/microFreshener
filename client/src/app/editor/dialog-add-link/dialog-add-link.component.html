@@ -1,0 +1,50 @@
+
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-18">
+        <h2>
+        Adding link from [{{source.getName()}}] to [{{target.getName()}}]
+        </h2>
+    </div>
+</div>
+
+<div *ngIf="show_properties" >
+        <div class="p-grid p-justify-center">
+            <div class="p-col-4">
+               <p>Set the properties of the link:</p>
+            </div>
+        </div>
+
+        <div class="p-grid p-justify-center">
+                <div class="p-col-4">
+                    <div class="box">With Circuit breaker </div>
+                </div>
+                <div class="p-col-1">
+                  <div class="box"><p-inputSwitch [(ngModel)]="circuit_breaker"></p-inputSwitch></div>
+                </div>
+            </div>
+            
+            <div class="p-grid p-justify-center">
+                <div class="p-col-4">
+                    <div class="box">With dynamic discovery </div>
+                </div>
+                <div class="p-col-1">
+                    <div class="box"><p-inputSwitch [(ngModel)]="dynamic_discovery"></p-inputSwitch></div>
+                </div>
+            </div>
+            
+            <div class="p-grid p-justify-center">
+                <div class="p-col-4">
+                    <div class="box">With timeout </div>
+                </div>
+                <div class="p-col-1">
+                    <div class="box"><p-inputSwitch [(ngModel)]="tiemout"></p-inputSwitch></div>
+                </div>
+            </div>
+
+</div>
+
+
+<div class="p-grid p-justify-end">
+    <p-button label="ok" icon="pi pi-check" (onClick)="save()"></p-button>
+</div>

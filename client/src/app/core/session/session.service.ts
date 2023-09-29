@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 
-import { GraphService } from "../../editing/model/graph.service";
+import { GraphService } from "../../graph/graph.service";
 import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 
 // import { environment } from '../../../environments/environment';

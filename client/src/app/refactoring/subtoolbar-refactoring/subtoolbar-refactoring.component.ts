@@ -4,7 +4,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser/analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
 import { MenuItem, MessageService } from 'primeng/api';
-import { GraphService } from 'src/app/editing/model/graph.service';
+import { GraphService } from '../../graph/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-refactoring',
