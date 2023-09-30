@@ -35,17 +35,16 @@ export class DialogAddNodeComponent implements OnInit {
     this.group = this.config.data.group;
     this.showCommunicationPatternType = false;
     this.communicationPatternTypes = [ToolSelectionService.MESSAGE_BROKER, ToolSelectionService.MESSAGE_ROUTER];
-    if(this.config.data.nodeType == ToolSelectionService.MESSAGE_BROKER) {
+    
+    if(this.config.data.nodeType === ToolSelectionService.MESSAGE_BROKER) {
       this.selectedNodeType = ToolSelectionService.COMMUNICATION_PATTERN;
       this.selectedCommunicationPatternType = ToolSelectionService.MESSAGE_BROKER;
       this.showCommunicationPatternType = true;
-    }
-    if(this.config.data.nodeType == ToolSelectionService.MESSAGE_ROUTER) {
+    } else if(this.config.data.nodeType === ToolSelectionService.MESSAGE_ROUTER) {
       this.selectedNodeType = ToolSelectionService.COMMUNICATION_PATTERN;
-      this.selectedCommunicationPatternType = ToolSelectionService.MESSAGE_BROKER;
+      this.selectedCommunicationPatternType = ToolSelectionService.MESSAGE_ROUTER;
       this.showCommunicationPatternType = true;
-    }
-    else {
+    } else {
       this.selectedNodeType = this.config.data.nodeType;
       this.selectedCommunicationPatternType = null;
     }

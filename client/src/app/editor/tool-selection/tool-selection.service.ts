@@ -12,13 +12,16 @@ export class ToolSelectionService {
   public static readonly MESSAGE_BROKER = "messagebroker";
   public static readonly DATASTORE = "datastore";
 
-  public enabledActions = {
-    addServiceEnabled: false,
+  public enabledActions;
 
-    addLinkEnabled: false,
-  };
-
-  constructor() { }
+  constructor() {
+    this.enabledActions = {};
+    this.enabledActions[ToolSelectionService.SERVICE] = false;
+    this.enabledActions[ToolSelectionService.LINK] = false;
+    this.enabledActions[ToolSelectionService.MESSAGE_ROUTER] = false;
+    this.enabledActions[ToolSelectionService.MESSAGE_BROKER] = false;
+    this.enabledActions[ToolSelectionService.DATASTORE] = false;
+  }
 
   enable(name: string, isActive: boolean) {
     this.enabledActions[name] = isActive;

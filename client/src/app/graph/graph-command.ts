@@ -4,29 +4,48 @@ import { g } from 'jointjs';
 import { Graph } from "./model/graph";
 
 
-export class AddServiceCommand implements Command {
+abstract class AddNodeCommand implements Command {
 
-    graph: Graph;
     node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
 
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
-        this.graph = graph;
+    name: string;
+    position?: g.Point;
+    team?: joint.shapes.microtosca.SquadGroup;    
+
+    constructor(name: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
         this.name = name;
         this.position = position;
         this.team = team;
     }
 
+    abstract createNode(): joint.shapes.microtosca.Root;
+
     execute() {
-        this.node = this.graph.addService(this.name, this.position, this.team);
-        if(this.team)
+        this.node = this.createNode();
+        if(this.team) {
             this.team.addMember(this.node);
+            this.team.fitEmbeds();
+        }
     }
 
     unexecute() {
         this.node.remove();
+    }
+}
+
+export class AddServiceCommand extends AddNodeCommand implements Command {
+
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+        public team?: joint.shapes.microtosca.Group
+    ) {
+        super(name, position, team);
+    }
+
+    createNode() {
+        return this.graph.addService(this.name, this.position, this.team);
     }
 }
 
@@ -46,7 +65,7 @@ export class AddDatastoreCommand implements Command {
     }
 
     execute() {
-        this.node = this.graph.addDatastore(this.name, this.position);
+        this.node = this.graph.addDatastore(this.name, this.position, this.team);
         if(this.team)
             this.team.addMember(this.node);
     }

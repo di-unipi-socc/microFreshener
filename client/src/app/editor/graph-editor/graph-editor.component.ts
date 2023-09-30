@@ -14,7 +14,7 @@ import { g } from 'jointjs';
 import * as $ from 'jquery';
 
 import { CommandInvoker } from "../../commands/invoker/command-invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../../graph/graph-command';
+import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand} from '../../graph/graph-command';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { EditorPermissionsService } from './../permissions/editor-permissions.service';
