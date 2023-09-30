@@ -23,6 +23,7 @@ import { Command } from 'src/app/commands/invoker/icommand';
 import { Invoker } from 'src/app/commands/invoker/iinvoker';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
+import { ToolSelectionService } from '../tool-selection/tool-selection.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -45,6 +46,7 @@ export class GraphEditorComponent {
         private session: SessionService,
         private navigation: NavigationService,
         private permissions: EditorPermissionsService,
+        private toolSelection: ToolSelectionService,
         private dialogService: DialogService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
@@ -242,10 +244,11 @@ export class GraphEditorComponent {
         // Create the AddNodeCommand and execute it
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
-            width: '50%',
+            height: '50%',
             data: {
                 clickPosition: position,
-                group: group
+                group: group,
+                nodeType: this.toolSelection.getSelected()
             }
         });
         ref.onClose.subscribe((data) => {
@@ -272,7 +275,7 @@ export class GraphEditorComponent {
             let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
-            if (this.permissions.isAddNodeEnabled()) {
+            if (this.toolSelection.isAddNodeEnabled()) {
                 this.addNode(position);
             } else {
                 if (this.leftClickSelectedNode) {
@@ -298,14 +301,14 @@ export class GraphEditorComponent {
             var node = cellView.model;
             // add node to group
             if (this.gs.getGraph().isTeamGroup(node)) {
-                if(this.permissions.isAddNodeEnabled()) {
+                if(this.toolSelection.isAddNodeEnabled() && this.permissions.writePermissions.isAllowed(node)) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team = cellView.model;
                     this.addNode(position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
-                if(this.permissions.isAddLinkEnabled()) {
+                if(this.toolSelection.isAddLinkEnabled()) {
                     // selecting target node
                     if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
                         var add_link = true;

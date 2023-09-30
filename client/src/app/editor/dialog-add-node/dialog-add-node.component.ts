@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { AnalyserService } from "../../refactoring/analyser/analyser.service";
 
 import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../../graph/graph-command';
@@ -9,6 +8,7 @@ import { GraphService } from '../../graph/graph.service';
 import { Command } from '../../commands/invoker/icommand';
 
 import { g } from 'jointjs';
+import { ToolSelectionService } from '../tool-selection/tool-selection.service';
 
 @Component({
   selector: 'app-dialog-add-node',
@@ -23,9 +23,9 @@ export class DialogAddNodeComponent implements OnInit {
 
   selectedNodeType: string;
 
-  communicationPatternTypes: CommunicationPattern[];
-  selectedCommunicationPatternType: CommunicationPattern;
-  showCommunicationPatternType: boolean = false;
+  communicationPatternTypes: string[]; //CommunicationPattern[];
+  selectedCommunicationPatternType: string; //CommunicationPattern;
+  showCommunicationPatternType: boolean;
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, public as: AnalyserService, public gs: GraphService) { }
 
@@ -33,44 +33,54 @@ export class DialogAddNodeComponent implements OnInit {
     this.name = null;
     this.position = this.config.data.clickPosition;
     this.group = this.config.data.group;
-    this.selectedNodeType = null;
     this.showCommunicationPatternType = false;
-    this.selectedCommunicationPatternType = null;
-
-    this.as.getCommunicationPatterns()
-      .then(cps => this.communicationPatternTypes = cps);
+    this.communicationPatternTypes = [ToolSelectionService.MESSAGE_BROKER, ToolSelectionService.MESSAGE_ROUTER];
+    if(this.config.data.nodeType == ToolSelectionService.MESSAGE_BROKER) {
+      this.selectedNodeType = ToolSelectionService.COMMUNICATION_PATTERN;
+      this.selectedCommunicationPatternType = ToolSelectionService.MESSAGE_BROKER;
+      this.showCommunicationPatternType = true;
+    }
+    if(this.config.data.nodeType == ToolSelectionService.MESSAGE_ROUTER) {
+      this.selectedNodeType = ToolSelectionService.COMMUNICATION_PATTERN;
+      this.selectedCommunicationPatternType = ToolSelectionService.MESSAGE_BROKER;
+      this.showCommunicationPatternType = true;
+    }
+    else {
+      this.selectedNodeType = this.config.data.nodeType;
+      this.selectedCommunicationPatternType = null;
+    }
   }
 
   checkedCommPattern() {
     this.showCommunicationPatternType = true;
   }
 
-  uncheckCommPattarn(){
+  uncheckCommPattern(){
     this.showCommunicationPatternType = false;
   }
 
   isDisableSave() {
-    return this.name == null || this.name == "" || this.selectedNodeType == null || (this.selectedNodeType == "communicationPattern" && this.selectedCommunicationPatternType == null);
+    return this.name == null || this.name == "" || this.selectedNodeType == null || (this.selectedNodeType == ToolSelectionService.COMMUNICATION_PATTERN && this.selectedCommunicationPatternType == null);
   }
 
   save() {
     let command: Command;
     let message: string;
     switch (this.selectedNodeType) {
-      case "service":
+      case ToolSelectionService.SERVICE:
         command = new AddServiceCommand(this.gs.getGraph(), this.name, this.position, this.group);
         message = `Service ${this.name} added correctly`;
         break;
-      case "datastore":
+      case ToolSelectionService.DATASTORE:
         command = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position, this.group);
         message = `Datastore  ${this.name}  added correctly`;
         break;
-      case "communicationPattern":
-        if(this.selectedCommunicationPatternType.type === "messagebroker" ){
+      case ToolSelectionService.COMMUNICATION_PATTERN:
+        if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_BROKER){
           command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position, this.group);
           message += `Message Broker ${this.name} added correctly`;
         }
-        else if(this.selectedCommunicationPatternType.type === "messagerouter" ){
+        else if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
           command = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position, this.group);
           message += `Message Router ${this.name} added correctly`;
         }
