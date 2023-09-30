@@ -22,6 +22,10 @@ export class SubtoolbarNavigationComponent {
     this.navigation.zoomOut();
   }
 
+  zoomReset() {
+    this.navigation.fitContent();
+  }
+
   ngOnInit() {
     this.layoutMenuItems = [
         {
