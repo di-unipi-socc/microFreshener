@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
-import { TeamsManagementService } from '../teams-management/teams-management.service';
+import { TeamsManagementService } from '../teams.service';
 
 @Component({
   selector: 'app-subtoolbar-from-team-navigation',

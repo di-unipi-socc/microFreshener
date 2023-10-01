@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TeamsManagementService } from './teams-management.service';
+import { TeamsManagementService } from './teams.service';
 
 describe('TeamsManagementService', () => {
   let service: TeamsManagementService;

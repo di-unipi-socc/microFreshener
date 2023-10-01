@@ -3,27 +3,38 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class NavigationService {
+export class EditorNavigationService {
 
-  paper: joint.dia.Paper;
+  private paper: joint.dia.Paper;
+
+  private readonly FIT_CONTENT_PADDING = 150;
 
   constructor() { }
 
-  // Navigation
-
-  getPaper() {
-    return this.paper;
-  }
+  // Paper
 
   setPaper(paper: joint.dia.Paper) {
     this.paper = paper;
   }
 
-  fitContent(padding?: number) {
-    if(!padding){
-      padding = 150;
+  // Move
+  mousewheel
+  move(dx: number, dy: number) {
+    this.paper.translate(dx, dy);
+  }
+
+  // Zoom
+
+  zoom(x, y, offsetX, offsetY, delta) {
+    let oldscale = this.paper.scale().sx;
+    let newscale = oldscale + 0.2 * delta * oldscale
+    let minscale = 0.2;
+    let maxscale = 5;
+
+    if (newscale > minscale && newscale < maxscale) {
+      this.paper.scale(newscale, newscale, 0, 0);
+      this.paper.translate(-x*newscale+offsetX, -y*newscale+offsetY);
     }
-    this.paper.scaleContentToFit({padding: padding});
   }
 
   zoomIn() {
@@ -48,17 +59,11 @@ export class NavigationService {
     this.zoom(x, y, offsetX, offsetY, -1);
   }
 
-  zoom(x, y, offsetX, offsetY, delta) {
-    //console.log("zooming with: x%d,y%d,ox%d,oy%d", x, y, offsetX, offsetY);
-    let oldscale = this.paper.scale().sx;
-    let newscale = oldscale + 0.2 * delta * oldscale
-    let minscale = 0.2;
-    let maxscale = 5;
-
-    if (newscale > minscale && newscale < maxscale) {
-      this.paper.scale(newscale, newscale, 0, 0);
-      this.paper.translate(-x*newscale+offsetX, -y*newscale+offsetY);
+  fitContent(padding?: number) {
+    if(!padding){
+      padding = this.FIT_CONTENT_PADDING;
     }
-}
+    this.paper.scaleContentToFit({padding: padding});
+  }
 
 }

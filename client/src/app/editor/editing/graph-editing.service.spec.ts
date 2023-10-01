@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EditorNavigationService } from './navigation.service';
+import { GraphEditingService } from './graph-editing.service';
 
-describe('NavigationService', () => {
-  let service: EditorNavigationService;
+describe('GraphEditingService', () => {
+  let service: GraphEditingService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EditorNavigationService);
+    service = TestBed.inject(GraphEditingService);
   });
 
   it('should be created', () => {

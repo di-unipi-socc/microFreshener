@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 //import my component
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GraphEditorComponent } from './editor/graph-editor/graph-editor.component';
+import { GraphEditorComponent } from './editor/graph-editor.component';
 import { ModalRefactoringsComponent } from './refactoring/modal-refactorings/modal-refactorings.component';
 import { DialogAnalysisComponent } from './refactoring/dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.component';

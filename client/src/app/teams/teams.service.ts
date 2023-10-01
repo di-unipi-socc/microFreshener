@@ -1,44 +1,73 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
+import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from '../commands/team-commands';
+import { Invoker } from '../commands/invoker/iinvoker';
+import { MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamsManagementService {
 
-  constructor(private gs: GraphService) { }
+  private graphInvoker: Invoker;
+  public readonly TEAM_PADDING = 40;
 
-    // Teams
+  constructor(
+    private graph: GraphService,
+    private messageService: MessageService
+  ) { }
+
+  start(graphInvoker: Invoker) {
+    this.graphInvoker = graphInvoker;
+  }
+
+    // Team editing
+
+    addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+      var command = new AddMemberToTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
+      this.graphInvoker.executeCommand(command);
+      team.fitEmbeds({ padding: this.TEAM_PADDING });
+      this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+    }
+
+    removeMemberFromTeam(member, team) {
+      var command = new RemoveMemberFromTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
+      this.graphInvoker.executeCommand(command);
+      team.fitEmbeds({ padding: this.TEAM_PADDING });
+      this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+    }
+
+    // Team visualization
 
     showTeams() {
-      this.gs.getGraph().showAllTeamBoxes();
+      this.graph.getGraph().showAllTeamBoxes();
     }
   
     hideTeams() {
-      this.gs.getGraph().hideAllTeamBoxes();
+      this.graph.getGraph().hideAllTeamBoxes();
     }
   
     showTeamDependencies(teamName) {
-      let team = this.gs.getGraph().findGroupByName(teamName);
+      let team = this.graph.getGraph().findGroupByName(teamName);
       team.attr("./visibility","visible");
-      this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team)
+      this.graph.getGraph().getOutgoingLinksOfATeamFrontier(team)
           .forEach((link) => {
             this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
           });
     }
     
     hideTeamDependencies(teamName) {
-      let team = this.gs.getGraph().findGroupByName(teamName);
+      let team = this.graph.getGraph().findGroupByName(teamName);
       team.attr("./visibility","hidden");
-      this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team)
+      this.graph.getGraph().getOutgoingLinksOfATeamFrontier(team)
           .forEach((link) => {
             this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
           });
     }
 
     getIngoingRequestSenderGroups(teamName) {
-      let graph = this.gs.getGraph();
+      let graph = this.graph.getGraph();
       let team = graph.findGroupByName(teamName);
       // Get the links that go from the outside to team's
       return graph.getIngoingLinksOfATeamFrontier(team)
@@ -71,7 +100,7 @@ export class TeamsManagementService {
       if(linkColor)
         link.attr("line/stroke", linkColor);
       node.attr("./visibility", visibility);
-      let team = this.gs.getGraph().getTeamOfNode(node);
+      let team = this.graph.getGraph().getTeamOfNode(node);
       if(team != null)
         team.attr("./visibility", visibility);
     }

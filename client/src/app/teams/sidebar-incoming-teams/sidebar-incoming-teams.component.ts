@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TeamsManagementService } from '../teams-management/teams-management.service';
+import { TeamsManagementService } from '../teams.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';

@@ -1,4 +1,4 @@
-import { Command } from "./icommand";
+import { Command } from "../icommand";
 
 export interface Invoker {
     executeCommand(command: Command): void;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';
-import { NavigationService } from '../navigation/navigation.service';
+import { EditorNavigationService } from '../navigation/navigation.service';
 
 @Component({
   selector: 'app-subtoolbar-navigation',
@@ -12,7 +12,7 @@ export class SubtoolbarNavigationComponent {
 
   layoutMenuItems: MenuItem[];
 
-  constructor(private gs: GraphService, private navigation: NavigationService) {}
+  constructor(private gs: GraphService, private navigation: EditorNavigationService) {}
 
   zoomIn() {
       this.navigation.zoomIn();

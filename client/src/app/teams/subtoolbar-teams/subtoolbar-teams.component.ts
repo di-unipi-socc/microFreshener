@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import { AddTeamGroupCommand } from '../../graph/graph-command';
+import { AddTeamGroupCommand } from '../../commands/team-commands';
 import { CommandInvoker } from 'src/app/commands/invoker/command-invoker';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GraphService } from '../../graph/graph.service';
