@@ -43,7 +43,7 @@ export class ToolSelectionService {
             this.enabledActions[ToolSelectionService.MESSAGE_ROUTER];
   }
 
-  isAddLinkEnabled(source?, target?): boolean {
-    return this.enabledActions.addLinkEnabled;
+  isAddLinkEnabled(): boolean {
+    return this.enabledActions[ToolSelectionService.LINK];
   }
 }

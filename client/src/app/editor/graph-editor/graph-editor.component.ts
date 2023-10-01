@@ -42,7 +42,7 @@ export class GraphEditorComponent {
 
     constructor(
         invoker: CommandInvoker,
-        private gs: GraphService,
+        private graph: GraphService,
         private session: SessionService,
         private navigation: NavigationService,
         private permissions: EditorPermissionsService,
@@ -53,7 +53,7 @@ export class GraphEditorComponent {
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
-        this.graphInvoker = this.invokerEventPublisher(invoker, gs);
+        this.graphInvoker = this.invokerEventPublisher(invoker, graph);
     }
 
     invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {
@@ -80,7 +80,7 @@ export class GraphEditorComponent {
         let canvas = document.getElementById('jointjsgraph');
         this.paper = new joint.dia.Paper({
             el: canvas,
-            model: this.gs.getGraph(),
+            model: this.graph.getGraph(),
             preventContextMenu: true,
             width: '100%',
             height: '100%',
@@ -116,7 +116,7 @@ export class GraphEditorComponent {
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
+        this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.paper);
     }
   
 
@@ -146,18 +146,16 @@ export class GraphEditorComponent {
 
        this.bindDragNavigation();
        this.bindWheelZoom(this.paper);
-       this.navigation.zoomIn = () => {this.zoomIn(this.paper);}
-       this.navigation.zoomOut = () => {this.zoomOut(this.paper);}
     }
 
     bindChangeTeamEvents(){
-        this.gs.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
+        this.graph.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
 
         })
     }
 
     bindGraphEvents() {
-        this.gs.getGraph().on('add', cell => {
+        this.graph.getGraph().on('add', cell => {
             if (cell.isElement())
                 this.messageService.add({ severity: 'success', summary: "Node added succesfully", detail: "Node  [" + cell.getName() + "] added." });
             else if (cell.isLink()) {
@@ -167,7 +165,7 @@ export class GraphEditorComponent {
             }
 
         })
-        this.gs.getGraph().on('remove', cell => {
+        this.graph.getGraph().on('remove', cell => {
             if (cell.isElement())
                 this.messageService.add({ severity: 'success', summary: "Node removed  succesfully.", detail: "Node  [" + cell.getName() + "] removed from the model." });
             else if (cell.isLink()) {
@@ -208,7 +206,7 @@ export class GraphEditorComponent {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
+                    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graph.getGraph(), node))
                     this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
                 },
                 reject: () => {
@@ -226,7 +224,7 @@ export class GraphEditorComponent {
             header: 'Link deletion',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.graphInvoker.executeCommand(new RemoveLinkCommand(this.gs.getGraph(), link));
+                this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graph.getGraph(), link));
                 //this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
             },
             reject: () => {
@@ -239,7 +237,7 @@ export class GraphEditorComponent {
     addNode(position?: g.Point, group?: joint.shapes.microtosca.Group) {
         // Team members add nodes to their team by default
         if(!group && this.session.getRole() == UserRole.TEAM) {
-            group = this.gs.getGraph().findGroupByName(this.session.getName());
+            group = this.graph.getGraph().findGroupByName(this.session.getName());
         }
         // Create the AddNodeCommand and execute it
         const ref = this.dialogService.open(DialogAddNodeComponent, {
@@ -258,7 +256,7 @@ export class GraphEditorComponent {
 
     addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
         if(this.permissions.writePermissions.isTeamWriteAllowed()) {
-            var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+            var command = new AddMemberToTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
             this.graphInvoker.executeCommand(command);
             this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
         }
@@ -300,7 +298,7 @@ export class GraphEditorComponent {
             evt.stopPropagation()
             var node = cellView.model;
             // add node to group
-            if (this.gs.getGraph().isTeamGroup(node)) {
+            if (this.graph.getGraph().isTeamGroup(node)) {
                 if(this.toolSelection.isAddNodeEnabled() && this.permissions.writePermissions.isAllowed(node)) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team = cellView.model;
@@ -308,20 +306,39 @@ export class GraphEditorComponent {
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
+                console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
                 if(this.toolSelection.isAddLinkEnabled()) {
                     // selecting target node
-                    if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
+                    if(this.leftClickSelectedNode == null || node.id == this.leftClickSelectedNode.id) {
+                        // selecting source node
+                        var can_select_source_node = true;
+                        // message broker cannot be source for a link
+                        if (this.graph.getGraph().isMessageBroker(node)) {
+                            can_select_source_node = false;
+                        }
+                        // message broker cannot be source for a link
+                        if (this.graph.getGraph().isDatastore(node)) {
+                            can_select_source_node = false;
+                        }
+                        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
+                            cellView.highlight();
+                            this.leftClickSelectedNode = node;
+                        }
+                        else {
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+                        }
+                    } else if(this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
                         var add_link = true;
                         // disable link from <any> to datastore
-                        if (this.gs.getGraph().isEdgeGroup(node)) {
+                        if (this.graph.getGraph().isEdgeGroup(node)) {
                             add_link = false;
                         }
                         // disable link from edge to datastore
-                        if (this.gs.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node)) {
+                        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node)) {
                             add_link = false;
                         }
                         // disable link from communication pattern to Datastore
-                        if (this.gs.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node))
+                        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node))
                             add_link = false;
                         if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
                                 console.log("selected, new ->", this.leftClickSelectedNode, node);
@@ -335,7 +352,7 @@ export class GraphEditorComponent {
                                 });
                                 ref.onClose.subscribe((data) => {
                                     if (data) {
-                                        var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                        var command = new AddLinkCommand(this.graph.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
                                         this.graphInvoker.executeCommand(command);
                                         this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
                                         this.leftClickSelectedNode = null;
@@ -345,25 +362,6 @@ export class GraphEditorComponent {
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
-                        }
-                    }
-                    else {
-                        // selecting source node
-                        var can_select_source_node = true;
-                        // message broker cannot be source for a link
-                        if (this.gs.getGraph().isMessageBroker(node)) {
-                            can_select_source_node = false;
-                        }
-                        // message broker cannot be source for a link
-                        if (this.gs.getGraph().isDatastore(node)) {
-                            can_select_source_node = false;
-                        }
-                        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
-                            cellView.highlight();
-                            this.leftClickSelectedNode = node;
-                        }
-                        else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
                         }
                     }
                 }
@@ -390,7 +388,7 @@ export class GraphEditorComponent {
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.graphInvoker.executeCommand(new RemoveServiceCommand(this.gs.getGraph(), node.getName()));
+                    this.graphInvoker.executeCommand(new RemoveServiceCommand(this.graph.getGraph(), node.getName()));
                 },
                 reject: () => {
                     node.hideIcons();
@@ -408,7 +406,7 @@ export class GraphEditorComponent {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.gs.getGraph(), node.getName()));
+                    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.graph.getGraph(), node.getName()));
                 },
                 reject: () => {
                     node.hideIcons();
@@ -427,7 +425,7 @@ export class GraphEditorComponent {
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.gs.getGraph(), node.getName()));
+                    this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.graph.getGraph(), node.getName()));
                 },
                 reject: () => {
                     node.hideIcons();
@@ -445,7 +443,7 @@ export class GraphEditorComponent {
             if(this.permissions.writePermissions.isAllowed(cell)) {
                 if (cell.isElement()) {
                     cell.showIcons();
-                } else if (this.gs.getGraph().isTeamGroup(cell)) {
+                } else if (this.graph.getGraph().isTeamGroup(cell)) {
                     cell.showIcons();
                 }
             }
@@ -554,12 +552,12 @@ export class GraphEditorComponent {
                     // Prevent recursive embedding
                     if (cellViewBelow) {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
-                        if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)) {
+                        if (this.graph.getGraph().isTeamGroup(cellViewBelow.model)) {
                             // check if the elment below has the parent equal to the cell
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
                                 var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
-                                var memberTeam = this.gs.getGraph().getTeamOfNode(member);
+                                var memberTeam = this.graph.getGraph().getTeamOfNode(member);
                                 // do not embed on the same team
                                 if(team && memberTeam && team.getName() == memberTeam.getName() ){
                                     team.fitEmbeds({ padding: 40});
@@ -574,10 +572,10 @@ export class GraphEditorComponent {
                         // click on blank paper
                         console.log("not cell view Below defined");
                         var member = <joint.shapes.microtosca.Node>cell;
-                        var team = this.gs.getGraph().getTeamOfNode(member);
+                        var team = this.graph.getGraph().getTeamOfNode(member);
                         if(team){
                             if(this.permissions.writePermissions.isTeamWriteAllowed()) {
-                                var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
+                                var command = new RemoveMemberFromTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
                                 this.graphInvoker.executeCommand(command);
                                 this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
                             } else {
@@ -597,7 +595,7 @@ export class GraphEditorComponent {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.gs.getGraph().maximizeTeam(team);
+            this.graph.getGraph().maximizeTeam(team);
         })
     }
 
@@ -605,13 +603,13 @@ export class GraphEditorComponent {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.gs.getGraph().minimizeTeam(team);
+            this.graph.getGraph().minimizeTeam(team);
         })
     }
 
     bindTeamToCoverChildren() {
 
-        this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
+        this.graph.getGraph().on('change:size', function (cell, newPosition, opt) {
 
             if (opt.skipParentHandler) return;
 
@@ -624,7 +622,7 @@ export class GraphEditorComponent {
             }
         });
 
-        this.gs.getGraph().on('change:position', (cell, newPosition, opt) => {
+        this.graph.getGraph().on('change:position', (cell, newPosition, opt) => {
 
             if (opt.skipParentHandler) return;
 
@@ -699,7 +697,7 @@ export class GraphEditorComponent {
 
     applyDirectedGraphLayout() {
         // Directed graph layout
-        joint.layout.DirectedGraph.layout(this.gs.getGraph(), {
+        joint.layout.DirectedGraph.layout(this.graph.getGraph(), {
             nodeSep: 50,
             edgeSep: 80,
             rankDir: "TB", // TB
@@ -960,52 +958,16 @@ export class GraphEditorComponent {
         });
     }
 
-    zoom(paper, x, y, offsetX, offsetY, delta) {
-        //console.log("zooming with: x%d,y%d,ox%d,oy%d", x, y, offsetX, offsetY);
-        let oldscale = paper.scale().sx;
-        let newscale = oldscale + 0.2 * delta * oldscale
-        let minscale = 0.2;
-        let maxscale = 5;
-
-        if (newscale > minscale && newscale < maxscale) {
-          paper.scale(newscale, newscale, 0, 0);
-          paper.translate(-x*newscale+offsetX, -y*newscale+offsetY);
-        }
-    }
-
-    zoomIn(paper: joint.dia.Paper) {
-        let canvas = document.getElementById('jointjsgraph');
-        let offsetX = canvas.clientWidth/2;
-        let offsetY = canvas.clientHeight/2;
-        let origin = this.paper.options.origin;
-        let sf = this.paper.scale().sx;
-        let x = (offsetX-origin.x)/sf;
-        let y = (offsetY-origin.y)/sf;
-        this.zoom(paper, x, y, offsetX, offsetY, 1);
-    }
-
-    zoomOut(paper: joint.dia.Paper) {
-        let canvas = document.getElementById('jointjsgraph');
-        let offsetX = canvas.clientWidth/2;
-        let offsetY = canvas.clientHeight/2;
-        let origin = this.paper.options.origin;
-        let sf = this.paper.scale().sx;
-        let x = (offsetX-origin.x)/sf;
-        let y = (offsetY-origin.y)/sf;
-        this.zoom(paper, x, y, offsetX, offsetY, -1);
-    }
-
     bindWheelZoom(paper: joint.dia.Paper) {
-        let zoom = this.zoom;
         this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
             console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
             evt.preventDefault();
-            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
+            this.navigation.zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
         });
 
         this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
-            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
+            this.navigation.zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
         });
     }
 
