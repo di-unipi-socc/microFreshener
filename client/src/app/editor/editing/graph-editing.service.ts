@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { GraphEditorComponent } from '../graph-editor.component';
-import { RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
+import { RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { Invoker } from '../../commands/invoker/iinvoker';
 import { SessionService } from '../../core/session/session.service';
 import { GraphService } from '../../graph/graph.service';
-import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from '../../commands/team-commands';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
 import { UserRole } from '../../core/user-role';
 
@@ -121,6 +120,10 @@ export class GraphEditingService {
         }
     });
 
+  }
+
+  removeCommunicationPattern(node) {
+    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.graph.getGraph(), node.getName()));
   }
 
   addLink(leftClickSelectedNode, node) {

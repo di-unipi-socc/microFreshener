@@ -20,7 +20,6 @@ import { Command } from 'src/app/commands/icommand';
 import { Invoker } from 'src/app/commands/invoker/iinvoker';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { GraphEditingService } from './editing/graph-editing.service';
-import { RemoveCommunicationPatternCommand } from '../commands/node-commands';
 import { TeamsService } from '../teams/teams.service';
 
 @Component({
@@ -317,7 +316,7 @@ export class GraphEditorComponent {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.graph.getGraph(), node.getName()));
+                    this.editing.removeCommunicationPattern(node);
                 },
                 reject: () => {
                     node.hideIcons();
