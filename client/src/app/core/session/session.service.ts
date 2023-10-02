@@ -9,7 +9,7 @@ import { DialogImportComponent } from '../dialog-import/dialog-import.component'
 import { UserRole } from '../user-role';
 import { EditorPermissionsService } from 'src/app/editor/permissions/editor-permissions.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
-import { TeamsManagementService } from 'src/app/teams/teams.service';
+import { TeamsService } from 'src/app/teams/teams.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class SessionService {
     private gs: GraphService,
     private navigation: EditorNavigationService,
     private permissions: EditorPermissionsService,
-    private teams: TeamsManagementService,
+    private teams: TeamsService,
     public dialogService: DialogService,
     private messageService: MessageService
   ) {

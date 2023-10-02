@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
-import { TeamsManagementService } from '../teams.service';
+import { TeamsService } from '../teams.service';
 
 @Component({
   selector: 'app-subtoolbar-from-team-navigation',
@@ -22,7 +22,7 @@ export class SubtoolbarFromTeamNavigationComponent {
   constructor(
     private session: SessionService,
     private gs: GraphService,
-    private teams: TeamsManagementService
+    private teams: TeamsService
   ) {
     this.showDependencies = false;
     this.showIncomingTeams = false;

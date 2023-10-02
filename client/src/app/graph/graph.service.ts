@@ -74,16 +74,16 @@ export class GraphService {
 
   // Import and Export
 
-  // Export the graph to JSON format
-  exportToJSON() {
-    return JSON.stringify(this.graph.toJSON());
-  }
-
-
-  /** POST: upload the local graph to the server */
-  uploadGraph(): Observable<any> {
-    var graphJson = this.exportToJSON();
-    console.log(graphJson);
+  // POST: upload the local graph to the server
+  uploadGraph(teamFilter?: joint.shapes.microtosca.SquadGroup): Observable<any> {
+    let graph: Graph = this.graph;
+    if(teamFilter) {
+      let subGraphName = teamFilter.getName() + "-subgraph";
+      let subGraph: Graph = new Graph(subGraphName);
+      subGraph.addCells(this.getGraph().getSubgraphFromNodes(teamFilter.getMembers()));
+      graph = subGraph;
+    }
+    let graphJson = JSON.stringify(graph.toJSON());
     return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
   }
 

@@ -4,127 +4,111 @@ import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
+export abstract class NodeCommand implements Command {
+    
+    abstract execute(node?): joint.shapes.microtosca.Node;
+    abstract unexecute(node?): joint.shapes.microtosca.Node;
 
-abstract class AddNodeCommand implements Command {
+    protected node: joint.shapes.microtosca.Node;
 
-    node: joint.shapes.microtosca.Root;
+    then(next: NodeCommand): NodeCommand {
+        let myExecute = (node?) => this.execute(node);
+        let myUnexecute = (node?) => this.unexecute(node);
+        return new class extends NodeCommand {
+            execute(node) {
+                node = myExecute(node);
+                return next.execute(node);
+            }
+            unexecute(node: joint.shapes.microtosca.Node) {
+                node = next.unexecute(node);
+                return myUnexecute(node);
+            }
+        };
+    }
+}
+
+
+abstract class GenerateNodeCommand extends NodeCommand {
 
     name: string;
     position?: g.Point;
-    team?: joint.shapes.microtosca.SquadGroup;    
 
-    constructor(name: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
+    constructor(name: string, position?: g.Point) {
+        super();
         this.name = name;
         this.position = position;
-        this.team = team;
     }
 
-    abstract createNode(): joint.shapes.microtosca.Root;
+    protected abstract generateNode(): joint.shapes.microtosca.Node;
 
-    execute() {
-        this.node = this.createNode();
-        if(this.team) {
-            this.team.addMember(this.node);
-            this.team.fitEmbeds();
-        }
+    execute(): joint.shapes.microtosca.Node {
+        this.node = this.generateNode();
+        return this.node;
     }
 
     unexecute() {
         this.node.remove();
+        return this.node;
     }
 }
 
-export class AddServiceCommand extends AddNodeCommand implements Command {
+export class AddServiceCommand extends GenerateNodeCommand implements Command {
 
     constructor(
         private graph: Graph,
         public name: string,
         public position?: g.Point,
-        public team?: joint.shapes.microtosca.Group
     ) {
-        super(name, position, team);
+        super(name, position);
     }
 
-    createNode() {
-        return this.graph.addService(this.name, this.position, this.team);
-    }
-}
-
-export class AddDatastoreCommand implements Command {
-
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
-    }
-
-    execute() {
-        this.node = this.graph.addDatastore(this.name, this.position, this.team);
-        if(this.team)
-            this.team.addMember(this.node);
-    }
-
-    unexecute() {
-        this.node.remove();
+    generateNode() {
+        return this.graph.addService(this.name, this.position);
     }
 }
 
-export class AddMessageBrokerCommand implements Command {
+export class AddDatastoreCommand extends GenerateNodeCommand implements Command {
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    execute() {
-        this.node = this.graph.addMessageBroker(this.name, this.position);
-        if(this.team)
-            this.team.addMember(this.node);
-    }
-
-    unexecute() {
-        this.node.remove();
+    generateNode() {
+        return this.graph.addDatastore(this.name, this.position);
     }
 }
 
-export class AddMessageRouterCommand implements Command {
+export class AddMessageBrokerCommand extends GenerateNodeCommand implements Command {
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    execute() {
-        this.node = this.graph.addMessageRouter(this.name, this.position);
-        if(this.team)
-            this.team.addMember(this.node);
+    generateNode() {
+        return this.graph.addMessageBroker(this.name, this.position);
+    }
+}
+
+export class AddMessageRouterCommand extends GenerateNodeCommand implements Command {
+
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    unexecute() {
-        this.node.remove();
+    generateNode() {
+        return this.graph.addMessageRouter(this.name, this.position);
     }
 }
 

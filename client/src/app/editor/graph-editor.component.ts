@@ -21,7 +21,7 @@ import { Invoker } from 'src/app/commands/invoker/iinvoker';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { GraphEditingService } from './editing/graph-editing.service';
 import { RemoveCommunicationPatternCommand } from '../commands/node-commands';
-import { TeamsManagementService } from '../teams/teams.service';
+import { TeamsService } from '../teams/teams.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -44,7 +44,7 @@ export class GraphEditorComponent {
         invoker: CommandInvoker,
         private editing: GraphEditingService,
         private graph: GraphService,
-        private teams: TeamsManagementService,
+        private teams: TeamsService,
         private navigation: EditorNavigationService,
         private permissions: EditorPermissionsService,
         private toolSelection: ToolSelectionService,

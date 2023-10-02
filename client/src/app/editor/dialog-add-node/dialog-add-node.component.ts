@@ -3,12 +3,12 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from "../../refactoring/analyser/analyser.service";
 
-import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand } from '../../commands/node-commands';
+import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, NodeCommand } from '../../commands/node-commands';
 import { GraphService } from '../../graph/graph.service';
-import { Command } from '../../commands/icommand';
 
 import { g } from 'jointjs';
 import { ToolSelectionService } from '../tool-selection/tool-selection.service';
+import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
 
 @Component({
   selector: 'app-dialog-add-node',
@@ -19,7 +19,7 @@ export class DialogAddNodeComponent implements OnInit {
 
   name: string;
   position: g.Point;
-  group: joint.shapes.microtosca.Group;
+  team: joint.shapes.microtosca.SquadGroup;
 
   selectedNodeType: string;
 
@@ -32,7 +32,7 @@ export class DialogAddNodeComponent implements OnInit {
   ngOnInit() {
     this.name = null;
     this.position = this.config.data.clickPosition;
-    this.group = this.config.data.group;
+    this.team = this.config.data.group;
     this.showCommunicationPatternType = false;
     this.communicationPatternTypes = [ToolSelectionService.MESSAGE_BROKER, ToolSelectionService.MESSAGE_ROUTER];
     
@@ -63,24 +63,24 @@ export class DialogAddNodeComponent implements OnInit {
   }
 
   save() {
-    let command: Command;
+    let createNode: NodeCommand;
     let message: string;
     switch (this.selectedNodeType) {
       case ToolSelectionService.SERVICE:
-        command = new AddServiceCommand(this.gs.getGraph(), this.name, this.position, this.group);
+        createNode = new AddServiceCommand(this.gs.getGraph(), this.name, this.position);
         message = `Service ${this.name} added correctly`;
         break;
       case ToolSelectionService.DATASTORE:
-        command = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position, this.group);
+        createNode = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position);
         message = `Datastore  ${this.name}  added correctly`;
         break;
       case ToolSelectionService.COMMUNICATION_PATTERN:
         if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_BROKER){
-          command = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position, this.group);
+          createNode = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position);
           message += `Message Broker ${this.name} added correctly`;
         }
         else if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
-          command = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position, this.group);
+          createNode = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position);
           message += `Message Router ${this.name} added correctly`;
         }
         else
@@ -90,7 +90,14 @@ export class DialogAddNodeComponent implements OnInit {
         throw new Error(`Type of node '${this.selectedNodeType}' not found `);
         // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
     }
-    this.ref.close({"command":command, "msg":message});
+
+    console.log("team?", this.team);
+    if(this.team) {
+      let addToTeam = new AddMemberToTeamGroupCommand(this.team);
+      createNode = createNode.then(addToTeam);
+    }
+
+    this.ref.close({"command":createNode, "msg":message});
   }
 
 }

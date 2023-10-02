@@ -1,5 +1,6 @@
 import { Command } from './icommand';
 import { Graph } from "../graph/model/graph";
+import { NodeCommand } from './node-commands';
 
 
 export class AddTeamGroupCommand implements Command {
@@ -23,53 +24,48 @@ export class AddTeamGroupCommand implements Command {
 
 }
 
-export class AddMemberToTeamGroupCommand implements Command {
+export class AddMemberToTeamGroupCommand extends NodeCommand {
 
-    graph: Graph;
-    team_name: string;
-    member_name: string;
-
-    constructor(graph: Graph, team_name: string, member_name:string) {
-        this.graph = graph;
-        this.team_name = team_name;
-        this.member_name = member_name;
+    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
+        super();
     }
 
-    execute() {
-        var team = this.graph.getGroup(this.team_name)
-        var node = this.graph.getNode(this.member_name);
-        team.addMember(node);
+    execute(node?) {
+        if(!node) {
+            node = this.member;
+        }
+        this.team.addMember(node);
+        this.member = node;
+        return node;
     }
 
-    unexecute() {
-        var team = this.graph.getGroup(this.team_name);
-        var node = this.graph.getNode(this.member_name);
-        team.removeMember(node);
+    unexecute(node?: joint.shapes.microtosca.Node) {
+        if(!node)
+            node = this.member;
+        this.team.removeMember(node);
+        return node;
     }
 }
 
+export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
 
-export class RemoveMemberFromTeamGroupCommand implements Command {
-
-    graph: Graph;
-    team_name: string;
-    member_name: string;
-
-    constructor(graph: Graph, team_name: string, member_name:string) {
-        this.graph = graph;
-        this.team_name = team_name;
-        this.member_name = member_name;
+    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
+        super();
     }
 
-    execute() {
-        var team = this.graph.getGroup(this.team_name)
-        var node = this.graph.getNode(this.member_name);
-        team.removeMember(node);
+    execute(node?) {
+        if(!node) {
+            node = this.member;
+        }
+        this.team.removeMember(node);
+        this.member = node;
+        return node;
     }
 
-    unexecute() {
-        var team = this.graph.getGroup(this.team_name);
-        var node = this.graph.getNode(this.member_name);
-        team.addMember(node);
-    }   
+    unexecute(node?: joint.shapes.microtosca.Node) {
+        if(!node)
+            node = this.member;
+        this.team.addMember(node);
+        return node;
+    }
 }

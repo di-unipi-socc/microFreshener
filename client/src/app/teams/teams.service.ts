@@ -8,7 +8,7 @@ import { MessageService } from 'primeng/api';
 @Injectable({
   providedIn: 'root'
 })
-export class TeamsManagementService {
+export class TeamsService {
 
   private graphInvoker: Invoker;
   public readonly TEAM_PADDING = 40;
@@ -25,14 +25,14 @@ export class TeamsManagementService {
     // Team editing
 
     addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-      var command = new AddMemberToTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
+      var command = new AddMemberToTeamGroupCommand(team, member);
       this.graphInvoker.executeCommand(command);
       team.fitEmbeds({ padding: this.TEAM_PADDING });
       this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
     }
 
     removeMemberFromTeam(member, team) {
-      var command = new RemoveMemberFromTeamGroupCommand(this.graph.getGraph(), team.getName(), member.getName());
+      var command = new RemoveMemberFromTeamGroupCommand(team, member);
       this.graphInvoker.executeCommand(command);
       team.fitEmbeds({ padding: this.TEAM_PADDING });
       this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });

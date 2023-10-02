@@ -18,6 +18,7 @@ import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, Endp
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
+import { TeamsService } from 'src/app/teams/teams.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -35,7 +36,11 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService) { }
+  constructor(
+    private http: HttpClient,
+    private gs: GraphService,
+    private teams: TeamsService
+  ) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -148,6 +153,7 @@ export class AnalyserService {
     // TODO: the analysis should send ignore always command to the analyser.
 
     // Maybe instead of a get is s POST operation.
+    console.log("analysisUrl is", this.analysisUrl);
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
@@ -156,6 +162,7 @@ export class AnalyserService {
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
           this.clearSmells(); 
 
+          console.log("response is", response);
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
