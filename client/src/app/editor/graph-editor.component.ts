@@ -54,7 +54,7 @@ export class GraphEditorComponent {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
         this.graphInvoker = this.invokerEventPublisher(invoker, graph);
-        this.TEAM_PADDING = teams.TEAM_PADDING;
+        this.TEAM_PADDING = graph.getGraph().TEAM_PADDING;
     }
 
     invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {

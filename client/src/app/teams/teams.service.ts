@@ -11,12 +11,14 @@ import { MessageService } from 'primeng/api';
 export class TeamsService {
 
   private graphInvoker: Invoker;
-  public readonly TEAM_PADDING = 40;
+  public readonly TEAM_PADDING;
 
   constructor(
-    private graph: GraphService,
+    private graphService: GraphService,
     private messageService: MessageService
-  ) { }
+  ) {
+    this.TEAM_PADDING = graphService.getGraph().TEAM_PADDING;
+  }
 
   start(graphInvoker: Invoker) {
     this.graphInvoker = graphInvoker;
@@ -41,33 +43,35 @@ export class TeamsService {
     // Team visualization
 
     showTeams() {
-      this.graph.getGraph().showAllTeamBoxes();
+      this.graphService.getGraph().showAllTeamBoxes();
     }
   
     hideTeams() {
-      this.graph.getGraph().hideAllTeamBoxes();
+      this.graphService.getGraph().hideAllTeamBoxes();
     }
   
     showTeamDependencies(teamName) {
-      let team = this.graph.getGraph().findGroupByName(teamName);
-      team.attr("./visibility","visible");
-      this.graph.getGraph().getOutgoingLinksOfATeamFrontier(team)
+      let graph = this.graphService.getGraph();
+      let team = graph.findGroupByName(teamName);
+      graph.showTeamBox(team);
+      this.graphService.getGraph().getOutgoingLinksOfATeamFrontier(team)
           .forEach((link) => {
             this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, true, "#007ad9");
           });
     }
     
     hideTeamDependencies(teamName) {
-      let team = this.graph.getGraph().findGroupByName(teamName);
-      team.attr("./visibility","hidden");
-      this.graph.getGraph().getOutgoingLinksOfATeamFrontier(team)
+      let graph = this.graphService.getGraph();
+      let team = graph.findGroupByName(teamName);
+      graph.showTeamBox(team);
+      graph.getOutgoingLinksOfATeamFrontier(team)
           .forEach((link) => {
             this.setVisibilityOfLinkAndRelatedNodesAndGroups(link, false);
           });
     }
 
     getIngoingRequestSenderGroups(teamName) {
-      let graph = this.graph.getGraph();
+      let graph = this.graphService.getGraph();
       let team = graph.findGroupByName(teamName);
       // Get the links that go from the outside to team's
       return graph.getIngoingLinksOfATeamFrontier(team)
@@ -100,8 +104,12 @@ export class TeamsService {
       if(linkColor)
         link.attr("line/stroke", linkColor);
       node.attr("./visibility", visibility);
-      let team = this.graph.getGraph().getTeamOfNode(node);
+      let graph = this.graphService.getGraph();
+      let team = graph.getTeamOfNode(node);
       if(team != null)
-        team.attr("./visibility", visibility);
+        if(visibility == "visible")
+          graph.showTeamBox(team);
+        else
+          graph.hideTeamBox(team);
     }
 }

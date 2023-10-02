@@ -4,6 +4,8 @@ import './microtosca';
 
 export class Graph extends joint.dia.Graph {
     name: string;
+
+    public readonly TEAM_PADDING: number = 40;
     //public ticker: EventEmitter<Number> = new EventEmitter();
 
     constructor(name: string) {
@@ -359,7 +361,7 @@ export class Graph extends joint.dia.Graph {
         var cells = this.getSubgraphFromNodes(team.getMembers());
         console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
-        team.attr("./visibility","visible");
+        this.showTeamBox(team);
         //team.set("hidden", false);
     }
 
@@ -373,7 +375,7 @@ export class Graph extends joint.dia.Graph {
         })
         team.setMaximize();
         team.resize(100, 100);
-        team.fitEmbeds({ padding: 40 })
+        team.fitEmbeds({ padding: this.TEAM_PADDING })
     }
 
     minimizeTeam(team: joint.shapes.microtosca.SquadGroup) {
@@ -395,7 +397,7 @@ export class Graph extends joint.dia.Graph {
         team.setMinimize()
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
-        team.fitEmbeds({ padding: 40 })
+        team.fitEmbeds({ padding: this.TEAM_PADDING })
     }
 
     hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
@@ -404,6 +406,7 @@ export class Graph extends joint.dia.Graph {
 
     showTeamBox(team: joint.shapes.microtosca.SquadGroup) {
         team.attr("./visibility", "visible");
+        team.fitEmbeds({ padding: this.TEAM_PADDING });
     }
 
     hideAllTeamBoxes() {
