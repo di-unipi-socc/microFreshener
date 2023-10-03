@@ -45,7 +45,8 @@ export class GraphEditingService {
         }
     });
     ref.onClose.subscribe((data) => {
-        this.graphInvoker.executeCommand(data.command);
+        if(data)
+            this.graphInvoker.executeCommand(data.command);
     });
   }
 
