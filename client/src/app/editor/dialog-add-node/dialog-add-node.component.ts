@@ -63,41 +63,43 @@ export class DialogAddNodeComponent implements OnInit {
   }
 
   save() {
-    let createNode: NodeCommand;
-    let message: string;
-    switch (this.selectedNodeType) {
-      case ToolSelectionService.SERVICE:
-        createNode = new AddServiceCommand(this.gs.getGraph(), this.name, this.position);
-        message = `Service ${this.name} added correctly`;
-        break;
-      case ToolSelectionService.DATASTORE:
-        createNode = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position);
-        message = `Datastore  ${this.name}  added correctly`;
-        break;
-      case ToolSelectionService.COMMUNICATION_PATTERN:
-        if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_BROKER){
-          createNode = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position);
-          message += `Message Broker ${this.name} added correctly`;
-        }
-        else if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
-          createNode = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position);
-          message += `Message Router ${this.name} added correctly`;
-        }
-        else
-         throw new Error(`Node type ${this.selectedNodeType} not recognized`);
-        break;
-      default:
-        throw new Error(`Type of node '${this.selectedNodeType}' not found `);
-        // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
-    }
+    if(this.name) {
+      let createNode: NodeCommand;
+      let message: string;
+      switch (this.selectedNodeType) {
+        case ToolSelectionService.SERVICE:
+          createNode = new AddServiceCommand(this.gs.getGraph(), this.name, this.position);
+          message = `Service ${this.name} added correctly`;
+          break;
+        case ToolSelectionService.DATASTORE:
+          createNode = new AddDatastoreCommand(this.gs.getGraph(), this.name, this.position);
+          message = `Datastore  ${this.name}  added correctly`;
+          break;
+        case ToolSelectionService.COMMUNICATION_PATTERN:
+          if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_BROKER){
+            createNode = new AddMessageBrokerCommand(this.gs.getGraph(), this.name, this.position);
+            message += `Message Broker ${this.name} added correctly`;
+          }
+          else if(this.selectedCommunicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
+            createNode = new AddMessageRouterCommand(this.gs.getGraph(), this.name, this.position);
+            message += `Message Router ${this.name} added correctly`;
+          }
+          else
+          throw new Error(`Node type ${this.selectedNodeType} not recognized`);
+          break;
+        default:
+          throw new Error(`Type of node '${this.selectedNodeType}' not found `);
+          // this.messageService.add({ severity: 'error', summary: `${data.type} is not recognized has node type` });
+      }
 
-    console.log("team?", this.team);
-    if(this.team) {
-      let addToTeam = new AddMemberToTeamGroupCommand(this.team);
-      createNode = createNode.then(addToTeam);
-    }
+      console.log("team?", this.team);
+      if(this.team) {
+        let addToTeam = new AddMemberToTeamGroupCommand(this.team);
+        createNode = createNode.then(addToTeam);
+      }
 
-    this.ref.close({"command":createNode, "msg":message});
+      this.ref.close({"command":createNode, "msg":message});
+    }
   }
 
 }

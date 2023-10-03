@@ -22,7 +22,7 @@
         <h3>Description:</h3>
     </div>
     <div class="p-col-8">
-        <textarea pInputTextarea> {{smell.getDescription()}}</textarea>
+        {{smell.getDescription()}}
     </div>
 </div>
 
@@ -33,7 +33,7 @@
         <h3>Action:</h3>
     </div>
     <div class="p-col-8">
-        <p-dropdown [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
+        <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
     </div>
 </div>
 <div class="p-grid p-justify-center p-align-center vertical-container">
@@ -41,11 +41,11 @@
         <h3>Description:</h3>
     </div>
     <div class="p-col-8">
-        <textarea *ngIf="selectedCommand" pInputTextarea> {{selectedCommand.getDescription() || 'none'}}</textarea>
+        <p *ngIf="selectedCommand" pInputTextarea> {{selectedCommand.getDescription() || 'none'}}</p>
     </div>
 </div>
 
 <div class="p-grid p-justify-end">
-    <button class="p-col-2" type="button" pButton (click)="save()" label="Save" class="ui-button-success">
+    <button class="p-col-2" type="button" pButton (click)="save()" label="Apply" class="ui-button-success">
     </button>
 </div>

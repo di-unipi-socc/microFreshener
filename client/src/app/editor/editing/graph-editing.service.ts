@@ -37,7 +37,6 @@ export class GraphEditingService {
     // Create the AddNodeCommand and execute it
     const ref = this.dialogService.open(DialogAddNodeComponent, {
         header: 'Add Node',
-        height: '50%',
         data: {
             clickPosition: position,
             group: group,
@@ -130,7 +129,6 @@ export class GraphEditingService {
             target: node
         },
         header: 'Add a link',
-        width: '50%'
     });
     ref.onClose.subscribe((data) => {
         if (data) {

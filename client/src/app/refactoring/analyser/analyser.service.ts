@@ -35,10 +35,7 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(
-    private http: HttpClient,
-    private gs: GraphService
-  ) { }
+  constructor(private http: HttpClient, private gs: GraphService) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -151,7 +148,6 @@ export class AnalyserService {
     // TODO: the analysis should send ignore always command to the analyser.
 
     // Maybe instead of a get is s POST operation.
-    console.log("analysisUrl is", this.analysisUrl);
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
@@ -160,7 +156,6 @@ export class AnalyserService {
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
           this.clearSmells(); 
 
-          console.log("response is", response);
           response['nodes'].forEach((node) => {
             var anode = this.buildAnalysedNodeFromJson(node);
             this.analysednodes.push(anode);
@@ -196,7 +191,7 @@ export class AnalyserService {
       }
       smellJson['nodes'].forEach((node_name) => {
         let node = this.gs.getGraph().findNodeByName(node_name);
-        smell.addNodeBasedCuase(node);
+        smell.addNodeBasedCause(node);
         smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
         smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
       });
@@ -260,7 +255,7 @@ export class AnalyserService {
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
-        smell.addNodeBasedCuase(this.gs.getGraph().findNodeByName(anode.name))
+        smell.addNodeBasedCause(this.gs.getGraph().findNodeByName(anode.name))
       });
 
       let node = this.gs.getGraph().findRootByName(anode.name);

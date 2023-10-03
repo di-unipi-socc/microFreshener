@@ -4,7 +4,7 @@
         <div class="box">Name:</div>
     </div>
     <div class="p-col-6">
-        <input  [(ngModel)]="name" type="text" pInputText />
+        <input  [(ngModel)]="name" type="text" pInputText (keydown.enter)="save()" />
     </div>
 </div>
 
@@ -44,7 +44,7 @@
         <label for="name">Type</label>
     </div>
     <div class="p-col-6">
-        <p-dropdown [options]="communicationPatternTypes"
+        <p-dropdown appendTo="body" [options]="communicationPatternTypes"
             [(ngModel)]="selectedCommunicationPatternType"
             placeholder="Select a Type"  [showClear]="false"></p-dropdown>
     </div>
@@ -52,5 +52,5 @@
 
 
 <div class="p-grid p-justify-end">
-    <p-button label="Add" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+    <p-button label="Add" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
 </div>

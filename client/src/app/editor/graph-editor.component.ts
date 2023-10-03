@@ -374,7 +374,6 @@ export class GraphEditorComponent {
                 selectedsmell: smell
             },
             header: `Smell details`,
-            width: '60%'
         });
 
         ref.onClose.subscribe((refactoringCommand) => {

@@ -30,11 +30,21 @@ export class DialogSmellComponent implements OnInit {
       this.smell.getRefactorings().forEach(refactoring => {
         this.actions.push({ "label": refactoring.getName(), "description": refactoring.getDescription(), "value": refactoring.getCommand() });
       });
+      this.moveIgnoreActionsToButtonInDropdownMenu();
     }
   }
 
   save() {
     this.ref.close(this.selectedCommand);
+  }
+
+  moveIgnoreActionsToButtonInDropdownMenu() {
+    let ignoreActions = this.actions.filter(action => action["label"] === "Ignore Once" || action["label"] === "Ignore Always");
+    if (ignoreActions.length > 0) {
+      let index = this.actions.indexOf(ignoreActions[0]);
+      this.actions.splice(index, 1);
+      this.actions.push(ignoreActions[0]);
+    }
   }
 
 }
