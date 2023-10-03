@@ -199,6 +199,7 @@ export class AnalyserService {
         var source = this.gs.getGraph().findNodeByName(causa_link['source']);
         var target = this.gs.getGraph().findNodeByName(causa_link['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        console.log("source/target", source.getName(), target.getName());
         smell.addLinkBasedCause(link);
       });
       smellJson['refactorings'].forEach((refactoringJson) => {
@@ -241,7 +242,7 @@ export class AnalyserService {
         case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
           smell = new WobblyServiceInteractionSmellObject();
           break;
-        case SMELL_NAMES.SMELL_SHARED_PERSITENCY:
+        case SMELL_NAMES.SMELL_SHARED_PERSISTENCY:
           smell = new SharedPersistencySmellObject();
           break;
         case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:

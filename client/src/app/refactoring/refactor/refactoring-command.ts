@@ -66,11 +66,11 @@ export class IgnoreAlwaysCommand extends RefactoringCommand {
 export class AddApiGatewayCommand extends RefactoringCommand {
 
     smell: GroupSmellObject;
-    graph: Graph;
+
 
     apiGateways: joint.shapes.microtosca.CommunicationPattern[];
 
-    constructor(graph: Graph, smell: NoApiGatewaySmellObject) {
+    constructor(private graph: Graph, smell: NoApiGatewaySmellObject) {
         super();
 
         this.smell = smell;

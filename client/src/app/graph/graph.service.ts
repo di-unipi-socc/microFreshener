@@ -18,10 +18,6 @@ const httpOptions = {
 })
 export class GraphService {
 
-  private readonly graph: Graph;
-  private readonly observable: Observable<String>;
-  private readonly observers: Set<Observer<String>>;
-
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
 
@@ -32,29 +28,12 @@ export class GraphService {
   
   // private teamUrl = environment.serverUrl + '/api/team/';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private graph: Graph) {
     this.graph = new Graph('');
-    this.observers = new Set<Observer<String>>();
-    this.observable = new Observable<String>((observer) => {
-      this.observers.add(observer);
-      return {
-        unsubscribe: () => { this.observers.delete(observer); }
-      }
-    });
   }
-
+  
   getGraph(): Graph {
     return this.graph;
-  }
-
-  getUpdates() {
-    return this.observable;
-  }
-
-  emitUpdate() {
-    this.observers.forEach((observer) => {
-      observer.next("graph-update");
-    });
   }
 
   /*getTeam(team_name: string): Observable<string> {
