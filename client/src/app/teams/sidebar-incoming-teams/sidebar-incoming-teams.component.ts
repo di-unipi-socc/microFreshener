@@ -30,11 +30,13 @@ export class SidebarIncomingTeamsComponent {
     // Get the groups and relative interacting nodes
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
-    this.subscription = this.gs.getUpdates().subscribe({
+    this.gs.getGraph().on("add", () => { this.updateIngoingRequestGroups() });
+    this.gs.getGraph().on("remove", () => { this.updateIngoingRequestGroups() });
+    /*this.subscription = this.gs.getUpdates().subscribe({
       next: (evt) => { this.updateIngoingRequestGroups() },
       error: (evt) => { console.error("update error") },
       complete: () => {}
-    });
+    });*/
   }
 
   ngOnDestroy() {

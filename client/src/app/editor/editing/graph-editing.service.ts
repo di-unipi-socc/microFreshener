@@ -3,7 +3,7 @@ import { GraphEditorComponent } from '../graph-editor.component';
 import { RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { Invoker } from '../../commands/invoker/iinvoker';
+import { GraphInvoker } from '../../commands/invoker';
 import { SessionService } from '../../core/session/session.service';
 import { GraphService } from '../../graph/graph.service';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
@@ -19,9 +19,9 @@ import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.compo
 export class GraphEditingService {
 
   private paper: joint.dia.Paper = undefined;
-  private graphInvoker: Invoker = undefined;
 
   constructor(
+    private graphInvoker: GraphInvoker,
     private graph: GraphService,
     private session: SessionService,
     private dialogService: DialogService,
@@ -29,9 +29,8 @@ export class GraphEditingService {
     private confirmationService: ConfirmationService
   ) { }
 
-  start(paper, invoker) {
+  start(paper) {
     this.paper = paper;
-    this.graphInvoker = invoker;
   }
 
   addNode(nodeType: string, position?: g.Point, group?: joint.shapes.microtosca.Group) {

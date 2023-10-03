@@ -18,7 +18,6 @@ import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, Endp
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
-import { TeamsService } from 'src/app/teams/teams.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -38,8 +37,7 @@ export class AnalyserService {
 
   constructor(
     private http: HttpClient,
-    private gs: GraphService,
-    private teams: TeamsService
+    private gs: GraphService
   ) { }
 
   getNumSmells(){

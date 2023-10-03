@@ -36,6 +36,7 @@ export class AddMemberToTeamGroupCommand extends NodeCommand {
         }
         this.team.addMember(node);
         this.member = node;
+        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         return node;
     }
 
@@ -43,6 +44,7 @@ export class AddMemberToTeamGroupCommand extends NodeCommand {
         if(!node)
             node = this.member;
         this.team.removeMember(node);
+        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         return node;
     }
 }
@@ -59,6 +61,7 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
         }
         this.team.removeMember(node);
         this.member = node;
+        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         return node;
     }
 
@@ -66,6 +69,7 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
         if(!node)
             node = this.member;
         this.team.addMember(node);
+        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         return node;
     }
 }

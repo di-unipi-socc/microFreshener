@@ -1,13 +1,12 @@
-import { Command } from "../icommand";
+import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
-import { AnalyserService } from '../../refactoring/analyser/analyser.service';
-import { RefactoringCommand } from '../../refactoring/refactor/refactoring-command';
-import { Invoker } from "./iinvoker";
+import { AnalyserService } from '../refactoring/analyser/analyser.service';
+import { RefactoringCommand } from '../refactoring/refactor/refactoring-command';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CommandInvoker implements Invoker {
+export class GraphInvoker {
     undoStack: Command[];
     redoStack: Command[];
 

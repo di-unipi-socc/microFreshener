@@ -13,14 +13,13 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { CommandInvoker } from "../commands/invoker/command-invoker";
 import { EditorPermissionsService } from './permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
-import { Command } from 'src/app/commands/icommand';
-import { Invoker } from 'src/app/commands/invoker/iinvoker';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { GraphEditingService } from './editing/graph-editing.service';
 import { TeamsService } from '../teams/teams.service';
+import { GraphInvoker } from '../commands/invoker';
+import { Graph } from '../graph/model/graph';
 
 @Component({
     selector: 'app-graph-editor',
@@ -37,10 +36,8 @@ export class GraphEditorComponent {
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
     
-    graphInvoker;
-
     constructor(
-        invoker: CommandInvoker,
+        private graphInvoker: GraphInvoker,
         private editing: GraphEditingService,
         private graph: GraphService,
         private teams: TeamsService,
@@ -53,28 +50,7 @@ export class GraphEditorComponent {
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
-        this.graphInvoker = this.invokerEventPublisher(invoker, graph);
-        this.TEAM_PADDING = graph.getGraph().TEAM_PADDING;
-    }
-
-    invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {
-        return new class implements Invoker {
-
-            executeCommand(command: Command): void {
-                invoker.executeCommand(command);
-                gs.emitUpdate();
-            }
-
-            undo() {
-                invoker.undo();
-                gs.emitUpdate();
-            }
-
-            redo() {
-                invoker.redo();
-                gs.emitUpdate();
-            }
-        }
+        this.TEAM_PADDING = Graph.TEAM_PADDING;
     }
 
     ngOnInit() {
@@ -111,9 +87,8 @@ export class GraphEditorComponent {
         // Create a sample graph useful for debugging
         //this.createSampleGraph();
 
-        this.editing.start(this.paper, this.graphInvoker);
+        this.editing.start(this.paper);
         this.navigation.setPaper(this.paper);
-        this.teams.start(this.graphInvoker);
 
         // bind events
         this.bindEvents();
@@ -457,7 +432,7 @@ export class GraphEditorComponent {
                                 var memberTeam = this.graph.getGraph().getTeamOfNode(member);
                                 // do not embed on the same team
                                 if(team && memberTeam && team.getName() == memberTeam.getName() ){
-                                    team.fitEmbeds({ padding: this.TEAM_PADDING });
+                                    team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
                                     if(this.permissions.writePermissions.isTeamWriteAllowed()) {
@@ -476,7 +451,7 @@ export class GraphEditorComponent {
                             if(this.permissions.writePermissions.isTeamWriteAllowed()) {
                                 this.teams.removeMemberFromTeam(member, team);
                             } else {
-                                team.fitEmbeds({ padding: this.TEAM_PADDING })
+                                team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                             }
                         }
                         

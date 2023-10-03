@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
-import { AddTeamGroupCommand } from '../../commands/team-commands';
-import { CommandInvoker } from 'src/app/commands/invoker/command-invoker';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GraphService } from '../../graph/graph.service';
+import { TeamsService } from '../teams.service';
 
 @Component({
   selector: 'app-subtoolbar-teams',
@@ -15,7 +14,7 @@ export class SubtoolbarTeamsComponent {
 
   menuitems: MenuItem[];
 
-  constructor(private graphInvoker: CommandInvoker, private dialogService: DialogService, private gs: GraphService) {
+  constructor(private teams: TeamsService, private dialogService: DialogService, private gs: GraphService) {
 
   }
 
@@ -25,7 +24,7 @@ export class SubtoolbarTeamsComponent {
         width: '50%',
     });
     ref.onClose.subscribe((data) => {
-        this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.gs.getGraph(), data.name));
+        this.teams.addTeam(data.name);
         //this.messageService.add({ severity: 'success', summary: `Team ${data.name} inserted correctly` });
     });
 }
