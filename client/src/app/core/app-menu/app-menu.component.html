@@ -16,9 +16,9 @@
             </div>
         </div>
 
-        <div class="ui-toolbar-group-center" ><!--*ngIf="this.session.isDocumentReady()"-->
+        <div class="ui-toolbar-group-center" *ngIf="this.session.isDocumentReady()">
 
-            <!--*ngIf="this.session.isAdmin()"--><div  class="tool-buttons">
+            <div  class="tool-buttons" *ngIf="this.session.isAdmin()">
                 <app-subtoolbar-view></app-subtoolbar-view>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-architecture></app-subtoolbar-architecture>
