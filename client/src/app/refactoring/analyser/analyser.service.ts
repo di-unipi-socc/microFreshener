@@ -36,7 +36,7 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService, private session: SessionService) { }
+  constructor(private http: HttpClient, private gs: GraphService) { }
 
   getNumSmells(){
     var num_smells = 0;

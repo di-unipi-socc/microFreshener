@@ -18,6 +18,8 @@ const httpOptions = {
 })
 export class GraphService {
 
+  private graph: Graph;
+
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
 
@@ -28,7 +30,7 @@ export class GraphService {
   
   // private teamUrl = environment.serverUrl + '/api/team/';
 
-  constructor(private http: HttpClient, private graph: Graph) {
+  constructor(private http: HttpClient) {
     this.graph = new Graph('');
   }
   
