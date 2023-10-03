@@ -12,26 +12,22 @@ import { UserRole } from '../../core/user-role';
 import { g } from 'jointjs';
 import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
+import { EditorNavigationService } from '../navigation/navigation.service';
 
 @Injectable({
   providedIn: GraphEditorComponent
 })
 export class GraphEditingService {
 
-  private paper: joint.dia.Paper = undefined;
-
   constructor(
     private graphInvoker: GraphInvoker,
     private graph: GraphService,
+    private navigation: EditorNavigationService,
     private session: SessionService,
     private dialogService: DialogService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) { }
-
-  start(paper) {
-    this.paper = paper;
-  }
 
   addNode(nodeType: string, position?: g.Point, group?: joint.shapes.microtosca.Group) {
     // Team members add nodes to their team by default
@@ -139,7 +135,7 @@ export class GraphEditingService {
         if (data) {
             var command = new AddLinkCommand(this.graph.getGraph(), leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
             this.graphInvoker.executeCommand(command);
-            this.paper.findViewByModel(leftClickSelectedNode).unhighlight();
+            this.navigation.getPaper().findViewByModel(leftClickSelectedNode).unhighlight();
             console.log("added link");
         }
     });

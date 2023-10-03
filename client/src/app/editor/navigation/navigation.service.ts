@@ -17,6 +17,10 @@ export class EditorNavigationService {
     this.paper = paper;
   }
 
+  getPaper() {
+    return this.paper;
+  }
+
   // Move
   mousewheel
   move(dx: number, dy: number) {

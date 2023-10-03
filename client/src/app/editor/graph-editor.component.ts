@@ -83,12 +83,10 @@ export class GraphEditorComponent {
                 // return (end === 'target' ? cellViewT : cellViewS) instanceof joint.dia.ElementView;
             },
         });
+        this.navigation.setPaper(this.paper);
 
         // Create a sample graph useful for debugging
         //this.createSampleGraph();
-
-        this.editing.start(this.paper);
-        this.navigation.setPaper(this.paper);
 
         // bind events
         this.bindEvents();
