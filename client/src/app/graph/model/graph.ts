@@ -4,6 +4,8 @@ import './microtosca';
 
 export class Graph extends joint.dia.Graph {
     name: string;
+
+    public static readonly TEAM_PADDING: number = 40;
     //public ticker: EventEmitter<Number> = new EventEmitter();
 
     constructor(name: string) {
@@ -197,7 +199,7 @@ export class Graph extends joint.dia.Graph {
         return new g.Point(centerX, centerY);
     }
 
-    addService(name: string, position?: g.Point, group?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Service {
+    addService(name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Service {
         let service = new joint.shapes.microtosca.Service();
         service.setName(name);
         if(position) {
@@ -205,8 +207,8 @@ export class Graph extends joint.dia.Graph {
             service.position(center.x, center.y);
         }
         service.addTo(this);
-        if(group) {
-            group.addMember(service);
+        if(team) {
+            team.addMember(service);
         }
         return service;
     }
@@ -218,7 +220,7 @@ export class Graph extends joint.dia.Graph {
         return compute;
     }
 
-    addDatastore(name: string, position?: g.Point): joint.shapes.microtosca.Datastore {
+    addDatastore(name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Datastore {
         let database = new joint.shapes.microtosca.Datastore();
         database.resize(75, 100);
         if(position) {
@@ -228,10 +230,13 @@ export class Graph extends joint.dia.Graph {
         database.topRy('20%');
         database.setName(name);
         database.addTo(this);
+        if(team) {
+            team.addMember(database);
+        }
         return database;
     }
 
-    addCommunicationPattern(name: string, type: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
+    addCommunicationPattern(name: string, type: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.CommunicationPattern {
         let cp = new joint.shapes.microtosca.CommunicationPattern();
         cp.setName(name);
         cp.setType(type);
@@ -240,6 +245,9 @@ export class Graph extends joint.dia.Graph {
             cp.position(center.x, center.y);
         }
         cp.addTo(this);
+        if(team) {
+            team.addMember(cp);
+        }
         return cp;
     }
 
@@ -353,7 +361,7 @@ export class Graph extends joint.dia.Graph {
         var cells = this.getSubgraphFromNodes(team.getMembers());
         console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
-        team.attr("./visibility","visible");
+        this.showTeamBox(team);
         //team.set("hidden", false);
     }
 
@@ -367,7 +375,7 @@ export class Graph extends joint.dia.Graph {
         })
         team.setMaximize();
         team.resize(100, 100);
-        team.fitEmbeds({ padding: 40 })
+        team.fitEmbeds({ padding: Graph.TEAM_PADDING })
     }
 
     minimizeTeam(team: joint.shapes.microtosca.SquadGroup) {
@@ -389,7 +397,7 @@ export class Graph extends joint.dia.Graph {
         team.setMinimize()
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
-        team.fitEmbeds({ padding: 40 })
+        team.fitEmbeds({ padding: Graph.TEAM_PADDING })
     }
 
     hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
@@ -398,6 +406,7 @@ export class Graph extends joint.dia.Graph {
 
     showTeamBox(team: joint.shapes.microtosca.SquadGroup) {
         team.attr("./visibility", "visible");
+        team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     }
 
     hideAllTeamBoxes() {

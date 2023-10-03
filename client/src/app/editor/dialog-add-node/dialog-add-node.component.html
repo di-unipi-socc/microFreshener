@@ -4,7 +4,7 @@
         <div class="box">Name:</div>
     </div>
     <div class="p-col-6">
-        <input  [(ngModel)]="name" type="text" pInputText />
+        <input  [(ngModel)]="name" type="text" pInputText (keydown.enter)="save()" autofocus />
     </div>
 </div>
 
@@ -16,14 +16,14 @@
             <div class="ui-g" style="width:250px;margin-bottom:10px">
                     <div class="ui-g-12">
                             <p-radioButton name="group1" 
-                            (onClick)="uncheckCommPattarn()"
+                            (onClick)="uncheckCommPattern()"
                             value="service"
                             label="Service" [(ngModel)]="selectedNodeType" 
                             inputId="opt1"></p-radioButton>
                     </div>
                     <div class="ui-g-12">
                             <p-radioButton name="group1" value="datastore"
-                            (onClick)="uncheckCommPattarn()"
+                            (onClick)="uncheckCommPattern()"
                                 label="Datastore" [(ngModel)]="selectedNodeType" 
                                 inputId="opt2"></p-radioButton>
                     </div>
@@ -41,17 +41,16 @@
 
 <div class="p-grid p-justify-center" *ngIf="showCommunicationPatternType">
     <div class="p-col-4">
-        <label for="name">Type </label>
+        <label for="name">Type</label>
     </div>
     <div class="p-col-6">
-        <p-dropdown [options]="communicationPatternTypes"
+        <p-dropdown appendTo="body" [options]="communicationPatternTypes"
             [(ngModel)]="selectedCommunicationPatternType"
-            optionLabel="name"
-            placeholder="Select a Type"  [showClear]="true"></p-dropdown>
+            placeholder="Select a Type"  [showClear]="false"></p-dropdown>
     </div>
 </div>
 
 
 <div class="p-grid p-justify-end">
-    <p-button label="Save" icon="pi pi-save" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+    <p-button label="Add" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
 </div>

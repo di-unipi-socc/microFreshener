@@ -19,7 +19,7 @@ export class SmellObject {
         return this.name;
     }
 
-    addNodeBasedCuase(node) {
+    addNodeBasedCause(node) {
         this.nodesCause.push(node);
     }
 
@@ -80,7 +80,7 @@ export class GroupSmellObject {
         return this.group;
     }
 
-    addNodeBasedCuase(node) {
+    addNodeBasedCause(node) {
         this.nodesCause.push(node);
     }
 

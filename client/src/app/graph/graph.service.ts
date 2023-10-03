@@ -18,9 +18,7 @@ const httpOptions = {
 })
 export class GraphService {
 
-  private readonly graph: Graph;
-  private readonly observable: Observable<String>;
-  private readonly observers: Set<Observer<String>>;
+  private graph: Graph;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -34,27 +32,10 @@ export class GraphService {
 
   constructor(private http: HttpClient) {
     this.graph = new Graph('');
-    this.observers = new Set<Observer<String>>();
-    this.observable = new Observable<String>((observer) => {
-      this.observers.add(observer);
-      return {
-        unsubscribe: () => { this.observers.delete(observer); }
-      }
-    });
   }
-
+  
   getGraph(): Graph {
     return this.graph;
-  }
-
-  getUpdates() {
-    return this.observable;
-  }
-
-  emitUpdate() {
-    this.observers.forEach((observer) => {
-      observer.next("graph-update");
-    });
   }
 
   /*getTeam(team_name: string): Observable<string> {
@@ -74,16 +55,16 @@ export class GraphService {
 
   // Import and Export
 
-  // Export the graph to JSON format
-  exportToJSON() {
-    return JSON.stringify(this.graph.toJSON());
-  }
-
-
-  /** POST: upload the local graph to the server */
-  uploadGraph(): Observable<any> {
-    var graphJson = this.exportToJSON();
-    console.log(graphJson);
+  // POST: upload the local graph to the server
+  uploadGraph(teamFilter?: joint.shapes.microtosca.SquadGroup): Observable<any> {
+    let graph: Graph = this.graph;
+    if(teamFilter) {
+      let subGraphName = teamFilter.getName() + "-subgraph";
+      let subGraph: Graph = new Graph(subGraphName);
+      subGraph.addCells(this.getGraph().getSubgraphFromNodes(teamFilter.getMembers()));
+      graph = subGraph;
+    }
+    let graphJson = JSON.stringify(graph.toJSON());
     return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
   }
 

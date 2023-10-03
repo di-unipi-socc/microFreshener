@@ -8,8 +8,8 @@ import { DialogImportComponent } from '../dialog-import/dialog-import.component'
 // import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
 import { EditorPermissionsService } from 'src/app/editor/permissions/editor-permissions.service';
-import { NavigationService } from 'src/app/editor/navigation/navigation.service';
-import { TeamsManagementService } from 'src/app/teams/teams-management/teams-management.service';
+import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
+import { TeamsService } from 'src/app/teams/teams.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +24,9 @@ export class SessionService {
 
   constructor(
     private gs: GraphService,
-    private navigation: NavigationService,
+    private navigation: EditorNavigationService,
     private permissions: EditorPermissionsService,
-    private teams: TeamsManagementService,
+    private teams: TeamsService,
     public dialogService: DialogService,
     private messageService: MessageService
   ) {

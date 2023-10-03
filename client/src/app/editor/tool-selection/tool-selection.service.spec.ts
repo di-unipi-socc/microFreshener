@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EditorNavigationService } from './navigation.service';
+import { ToolSelectionService } from './tool-selection.service';
 
-describe('NavigationService', () => {
-  let service: EditorNavigationService;
+describe('ToolSelectionService', () => {
+  let service: ToolSelectionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EditorNavigationService);
+    service = TestBed.inject(ToolSelectionService);
   });
 
   it('should be created', () => {

@@ -18,6 +18,7 @@ import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, Endp
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
+import { SessionService } from 'src/app/core/session/session.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -31,7 +32,7 @@ export class AnalyserService {
 
 
   private analysisUrl = environment.serverUrl + '/api/analyse';
-
+  
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
@@ -110,7 +111,7 @@ export class AnalyserService {
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
-  runRemoteAnalysis(smells: Smell[] = null): Observable<Boolean> {
+  runRemoteAnalysis(smells: Smell[] = null, teamRestriction?: joint.shapes.microtosca.SquadGroup): Observable<Boolean> {
     let smells_ids: number[] = []; 
     // if(smells)
     smells_ids = smells.map(smell => smell.id);
@@ -164,6 +165,7 @@ export class AnalyserService {
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
+            if(teamRestriction && teamRestriction.getName() == agroup.name)
             this.analysedgroups.push(agroup);
           });
           return true;
@@ -191,7 +193,7 @@ export class AnalyserService {
       }
       smellJson['nodes'].forEach((node_name) => {
         let node = this.gs.getGraph().findNodeByName(node_name);
-        smell.addNodeBasedCuase(node);
+        smell.addNodeBasedCause(node);
         smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
         smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
       });
@@ -199,6 +201,7 @@ export class AnalyserService {
         var source = this.gs.getGraph().findNodeByName(causa_link['source']);
         var target = this.gs.getGraph().findNodeByName(causa_link['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        console.log("source/target", source.getName(), target.getName());
         smell.addLinkBasedCause(link);
       });
       smellJson['refactorings'].forEach((refactoringJson) => {
@@ -241,7 +244,7 @@ export class AnalyserService {
         case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
           smell = new WobblyServiceInteractionSmellObject();
           break;
-        case SMELL_NAMES.SMELL_SHARED_PERSITENCY:
+        case SMELL_NAMES.SMELL_SHARED_PERSISTENCY:
           smell = new SharedPersistencySmellObject();
           break;
         case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
@@ -255,7 +258,7 @@ export class AnalyserService {
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
-        smell.addNodeBasedCuase(this.gs.getGraph().findNodeByName(anode.name))
+        smell.addNodeBasedCause(this.gs.getGraph().findNodeByName(anode.name))
       });
 
       let node = this.gs.getGraph().findRootByName(anode.name);
@@ -299,12 +302,6 @@ export class AnalyserService {
       anode.addSmell(smell);
     });
     return anode;
-  }
-
-  getAnalysedNodeByName(name: string) {
-    return this.analysednodes.find(node => {
-      return name === node.name;
-    });
   }
 
   /** Log a AnalyserService message with the MessageService */

@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 //import my component
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GraphEditorComponent } from './editor/graph-editor/graph-editor.component';
+import { GraphEditorComponent } from './editor/graph-editor.component';
 import { ModalRefactoringsComponent } from './refactoring/modal-refactorings/modal-refactorings.component';
 import { DialogAnalysisComponent } from './refactoring/dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.component';
@@ -68,7 +68,7 @@ import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refacto
 import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams/subtoolbar-teams.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
-import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-inside-team-view/subtoolbar-from-team-navigation.component';
+import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
 import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
 
 @NgModule({

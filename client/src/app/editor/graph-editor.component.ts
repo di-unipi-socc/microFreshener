@@ -3,9 +3,9 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
-import { DialogSmellComponent } from '../../refactoring/dialog-smell/dialog-smell.component';
-import { GraphService } from "../../graph/graph.service";
-import { SmellObject } from '../../refactoring/analyser/smell';
+import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
+import { GraphService } from "../graph/graph.service";
+import { SmellObject } from '../refactoring/analyser/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';
@@ -13,72 +13,54 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { CommandInvoker } from "../../commands/invoker/command-invoker";
-import { RemoveNodeCommand, AddLinkCommand, RemoveLinkCommand, AddTeamGroupCommand, AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveServiceCommand, RemoveDatastoreCommand, RemoveCommunicationPatternCommand, AddServiceCommand } from '../../graph/graph-command';
-import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
-import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { EditorPermissionsService } from './../permissions/editor-permissions.service';
-import { NavigationService } from '../navigation/navigation.service';
-import { Command } from 'src/app/commands/invoker/icommand';
-import { Invoker } from 'src/app/commands/invoker/iinvoker';
-import { SessionService } from 'src/app/core/session/session.service';
-import { UserRole } from 'src/app/core/user-role';
+import { EditorPermissionsService } from './permissions/editor-permissions.service';
+import { EditorNavigationService } from './navigation/navigation.service';
+import { ToolSelectionService } from './tool-selection/tool-selection.service';
+import { GraphEditingService } from './editing/graph-editing.service';
+import { TeamsService } from '../teams/teams.service';
+import { GraphInvoker } from '../commands/invoker';
+import { Graph } from '../graph/model/graph';
+import { UserRole } from '../core/user-role';
+import { SessionService } from '../core/session/session.service';
 
 @Component({
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html',
     styleUrls: ['./graph-editor.component.css'],
-    providers: [DialogService] //, ConfirmationService]
+    providers: [GraphEditingService, DialogService] //, ConfirmationService]
 })
 export class GraphEditorComponent {
+
+    private readonly TEAM_PADDING;
 
     paper: joint.dia.Paper;
 
     leftClickSelectedNode: joint.shapes.microtosca.Node;
     rightClickselectdNode: joint.shapes.microtosca.Node;
     
-    graphInvoker;
-
     constructor(
-        invoker: CommandInvoker,
-        private gs: GraphService,
-        private session: SessionService,
-        private navigation: NavigationService,
-        private permissions: EditorPermissionsService,
+        private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
+        private toolSelection: ToolSelectionService, // Editor tool selection
+        private editing: GraphEditingService, // Editing operations business logic
+        private graph: GraphService, // Injectable JointJS graph singleton
+        private teams: TeamsService, // Team-related operations business logic
+        private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
+        private permissions: EditorPermissionsService, // Privilege manager
+        private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
     ) {
         this.leftClickSelectedNode = null;
         this.rightClickselectdNode = null;
-        this.graphInvoker = this.invokerEventPublisher(invoker, gs);
-    }
-
-    invokerEventPublisher(invoker: CommandInvoker, gs: GraphService) {
-        return new class implements Invoker {
-
-            executeCommand(command: Command): void {
-                invoker.executeCommand(command);
-                gs.emitUpdate();
-            }
-
-            undo() {
-                invoker.undo();
-                gs.emitUpdate();
-            }
-
-            redo() {
-                invoker.redo();
-                gs.emitUpdate();
-            }
-        }
+        this.TEAM_PADDING = Graph.TEAM_PADDING;
     }
 
     ngOnInit() {
         let canvas = document.getElementById('jointjsgraph');
         this.paper = new joint.dia.Paper({
             el: canvas,
-            model: this.gs.getGraph(),
+            model: this.graph.getGraph(),
             preventContextMenu: true,
             width: '100%',
             height: '100%',
@@ -104,17 +86,16 @@ export class GraphEditorComponent {
                 // return (end === 'target' ? cellViewT : cellViewS) instanceof joint.dia.ElementView;
             },
         });
+        this.navigation.setPaper(this.paper);
 
         // Create a sample graph useful for debugging
         //this.createSampleGraph();
-
-        this.navigation.setPaper(this.paper);
 
         // bind events
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.gs.getGraph(), this.paper);
+        this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.paper);
     }
   
 
@@ -143,19 +124,17 @@ export class GraphEditorComponent {
        //  this.bindGraphEvents();
 
        this.bindDragNavigation();
-       this.bindWheelZoom(this.paper);
-       this.navigation.zoomIn = () => {this.zoomIn(this.paper);}
-       this.navigation.zoomOut = () => {this.zoomOut(this.paper);}
+       this.bindWheelZoom();
     }
 
     bindChangeTeamEvents(){
-        this.gs.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
+        this.graph.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
 
         })
     }
 
     bindGraphEvents() {
-        this.gs.getGraph().on('add', cell => {
+        this.graph.getGraph().on('add', cell => {
             if (cell.isElement())
                 this.messageService.add({ severity: 'success', summary: "Node added succesfully", detail: "Node  [" + cell.getName() + "] added." });
             else if (cell.isLink()) {
@@ -165,7 +144,7 @@ export class GraphEditorComponent {
             }
 
         })
-        this.gs.getGraph().on('remove', cell => {
+        this.graph.getGraph().on('remove', cell => {
             if (cell.isElement())
                 this.messageService.add({ severity: 'success', summary: "Node removed  succesfully.", detail: "Node  [" + cell.getName() + "] removed from the model." });
             else if (cell.isLink()) {
@@ -182,7 +161,7 @@ export class GraphEditorComponent {
 
 
             if (e.which == DELETE_KEY) {
-                this.deleteSelected();
+                this.editing.deleteSelected(this.leftClickSelectedNode);
             }
             if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
@@ -198,69 +177,6 @@ export class GraphEditorComponent {
         });
     }
 
-    deleteSelected() {
-        if (this.leftClickSelectedNode) {
-            var node = this.leftClickSelectedNode;
-            this.confirmationService.confirm({
-                message: 'Do you want to delete this node?',
-                header: 'Node Deletion Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-                },
-                reject: () => {
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
-                }
-            });
-        }
-    }
-
-    removeLink(link: joint.shapes.microtosca.RunTimeLink) {
-        console.log("removing link called");
-        console.log(this.confirmationService);
-        this.confirmationService.confirm({
-            message: 'Do you want to delete the link?',
-            header: 'Link deletion',
-            icon: 'pi pi-exclamation-triangle',
-            accept: () => {
-                this.graphInvoker.executeCommand(new RemoveLinkCommand(this.gs.getGraph(), link));
-                //this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
-            }
-        });
-
-    }
-
-    addNode(position?: g.Point, group?: joint.shapes.microtosca.Group) {
-        // Team members add nodes to their team by default
-        if(!group && this.session.getRole() == UserRole.TEAM) {
-            group = this.gs.getGraph().findGroupByName(this.session.getName());
-        }
-        // Create the AddNodeCommand and execute it
-        const ref = this.dialogService.open(DialogAddNodeComponent, {
-            header: 'Add Node',
-            width: '50%',
-            data: {
-                clickPosition: position,
-                group: group
-            }
-        });
-        ref.onClose.subscribe((data) => {
-            this.graphInvoker.executeCommand(data.command);
-        });
-    }
-
-    addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
-            var command = new AddMemberToTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-            this.graphInvoker.executeCommand(command);
-            this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
-        }
-    }
-
     unhighlight() {
         this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
         this.leftClickSelectedNode = null;
@@ -272,8 +188,8 @@ export class GraphEditorComponent {
             let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
-            if (this.permissions.isAddNodeEnabled()) {
-                this.addNode(position);
+            if (this.toolSelection.isAddNodeEnabled()) {
+                this.editing.addNode(this.toolSelection.getSelected(), position);
             } else {
                 if (this.leftClickSelectedNode) {
                     this.unhighlight();
@@ -296,63 +212,32 @@ export class GraphEditorComponent {
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;
-            // add node to group
-            if (this.gs.getGraph().isTeamGroup(node)) {
-                if(this.permissions.isAddNodeEnabled()) {
+            // click on group
+            if (this.graph.getGraph().isTeamGroup(node)) {
+                if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
-                    let team = cellView.model;
-                    this.addNode(position, team);
+                    let team;
+                    if(this.session.getRole() == UserRole.TEAM) {
+                        team = this.graph.getGraph().findGroupByName(this.session.getName())
+                     } else {
+                        team = cellView.model;
+                     }
+                    this.editing.addNode(this.toolSelection.getSelected(), position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
-                if(this.permissions.isAddLinkEnabled()) {
+                console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
+                if(this.toolSelection.isAddLinkEnabled()) {
                     // selecting target node
-                    if (this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
-                        var add_link = true;
-                        // disable link from <any> to datastore
-                        if (this.gs.getGraph().isEdgeGroup(node)) {
-                            add_link = false;
-                        }
-                        // disable link from edge to datastore
-                        if (this.gs.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node)) {
-                            add_link = false;
-                        }
-                        // disable link from communication pattern to Datastore
-                        if (this.gs.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.gs.getGraph().isDatastore(node))
-                            add_link = false;
-                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
-                                console.log("selected, new ->", this.leftClickSelectedNode, node);
-                                const ref = this.dialogService.open(DialogAddLinkComponent, {
-                                    data: {
-                                        source: this.leftClickSelectedNode,
-                                        target: node
-                                    },
-                                    header: 'Add a link',
-                                    width: '50%'
-                                });
-                                ref.onClose.subscribe((data) => {
-                                    if (data) {
-                                        var command = new AddLinkCommand(this.gs.getGraph(), this.leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                                        this.graphInvoker.executeCommand(command);
-                                        this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
-                                        this.leftClickSelectedNode = null;
-                                        console.log("added link");
-                                    }
-                                });
-                        }
-                        else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
-                        }
-                    }
-                    else {
+                    if(this.leftClickSelectedNode == null || node.id == this.leftClickSelectedNode.id) {
                         // selecting source node
                         var can_select_source_node = true;
                         // message broker cannot be source for a link
-                        if (this.gs.getGraph().isMessageBroker(node)) {
+                        if (this.graph.getGraph().isMessageBroker(node)) {
                             can_select_source_node = false;
                         }
                         // message broker cannot be source for a link
-                        if (this.gs.getGraph().isDatastore(node)) {
+                        if (this.graph.getGraph().isDatastore(node)) {
                             can_select_source_node = false;
                         }
                         if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
@@ -361,6 +246,26 @@ export class GraphEditorComponent {
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+                        }
+                    } else if(this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
+                        var add_link = true;
+                        // disable link from <any> to datastore
+                        if (this.graph.getGraph().isEdgeGroup(node)) {
+                            add_link = false;
+                        }
+                        // disable link from edge to datastore
+                        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node)) {
+                            add_link = false;
+                        }
+                        // disable link from communication pattern to Datastore
+                        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node))
+                            add_link = false;
+                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
+                            this.editing.addLink(this.leftClickSelectedNode, node);
+                            this.leftClickSelectedNode = null;
+                        }
+                        else {
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
                         }
                     }
                 }
@@ -381,20 +286,7 @@ export class GraphEditorComponent {
         this.paper.on("node:service:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
-            this.confirmationService.confirm({
-                message: 'Do you want to delete this service?',
-                header: 'Node Deletion Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.graphInvoker.executeCommand(new RemoveServiceCommand(this.gs.getGraph(), node.getName()));
-                },
-                reject: () => {
-                    node.hideIcons();
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
-                }
-            });
-
+            this.editing.deleteService(node);
         })
 
         this.paper.on("node:communicationpattern:delete", (cellView, evt, x, y, ) => {
@@ -405,7 +297,7 @@ export class GraphEditorComponent {
                 header: 'Node Deletion Confirmation',
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
-                    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.gs.getGraph(), node.getName()));
+                    this.editing.removeCommunicationPattern(node);
                 },
                 reject: () => {
                     node.hideIcons();
@@ -418,20 +310,7 @@ export class GraphEditorComponent {
         this.paper.on("node:datastore:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
-            this.confirmationService.confirm({
-                message: 'Do you want to delete this datastore?',
-                header: 'Node Deletion Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-                    this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.gs.getGraph(), node.getName()));
-                },
-                reject: () => {
-                    node.hideIcons();
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Datastore ${node.getName()} not deleted` });
-                }
-            });
-
+            this.editing.deleteDatastore(node);
         })
     }
 
@@ -442,7 +321,7 @@ export class GraphEditorComponent {
             if(this.permissions.writePermissions.isAllowed(cell)) {
                 if (cell.isElement()) {
                     cell.showIcons();
-                } else if (this.gs.getGraph().isTeamGroup(cell)) {
+                } else if (this.graph.getGraph().isTeamGroup(cell)) {
                     cell.showIcons();
                 }
             }
@@ -503,7 +382,6 @@ export class GraphEditorComponent {
                 selectedsmell: smell
             },
             header: `Smell details`,
-            width: '60%'
         });
 
         ref.onClose.subscribe((refactoringCommand) => {
@@ -551,34 +429,34 @@ export class GraphEditorComponent {
                     // Prevent recursive embedding
                     if (cellViewBelow) {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
-                        if (this.gs.getGraph().isTeamGroup(cellViewBelow.model)) {
+                        if (this.graph.getGraph().isTeamGroup(cellViewBelow.model)) {
                             // check if the elment below has the parent equal to the cell
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
                                 var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
-                                var memberTeam = this.gs.getGraph().getTeamOfNode(member);
+                                var memberTeam = this.graph.getGraph().getTeamOfNode(member);
                                 // do not embed on the same team
                                 if(team && memberTeam && team.getName() == memberTeam.getName() ){
-                                    team.fitEmbeds({ padding: 40});
+                                    team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    this.addMemberToTeam(member, team);
+                                    if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+                                        this.teams.addMemberToTeam(member, team);
+                                    }
                                 }
                             }
                         }
                         
-                    }else{
+                    } else {
                         // click on blank paper
                         console.log("not cell view Below defined");
                         var member = <joint.shapes.microtosca.Node>cell;
-                        var team = this.gs.getGraph().getTeamOfNode(member);
+                        var team = this.graph.getGraph().getTeamOfNode(member);
                         if(team){
                             if(this.permissions.writePermissions.isTeamWriteAllowed()) {
-                                var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-                                this.graphInvoker.executeCommand(command);
-                                this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                this.teams.removeMemberFromTeam(member, team);
                             } else {
-                                team.fitEmbeds({ padding: 40 })
+                                team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                             }
                         }
                         
@@ -594,7 +472,7 @@ export class GraphEditorComponent {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.gs.getGraph().maximizeTeam(team);
+            this.graph.getGraph().maximizeTeam(team);
         })
     }
 
@@ -602,13 +480,13 @@ export class GraphEditorComponent {
         this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.gs.getGraph().minimizeTeam(team);
+            this.graph.getGraph().minimizeTeam(team);
         })
     }
 
     bindTeamToCoverChildren() {
 
-        this.gs.getGraph().on('change:size', function (cell, newPosition, opt) {
+        this.graph.getGraph().on('change:size', function (cell, newPosition, opt) {
 
             if (opt.skipParentHandler) return;
 
@@ -621,7 +499,7 @@ export class GraphEditorComponent {
             }
         });
 
-        this.gs.getGraph().on('change:position', (cell, newPosition, opt) => {
+        this.graph.getGraph().on('change:position', (cell, newPosition, opt) => {
 
             if (opt.skipParentHandler) return;
 
@@ -696,7 +574,7 @@ export class GraphEditorComponent {
 
     applyDirectedGraphLayout() {
         // Directed graph layout
-        joint.layout.DirectedGraph.layout(this.gs.getGraph(), {
+        joint.layout.DirectedGraph.layout(this.graph.getGraph(), {
             nodeSep: 50,
             edgeSep: 80,
             rankDir: "TB", // TB
@@ -797,7 +675,7 @@ export class GraphEditorComponent {
                         offset: 0,
                         action: () => {
                             console.log("Deleting link");
-                            this.removeLink(linkView.model);
+                            this.editing.removeLink(linkView.model);
                         }
                     })
                 ];
@@ -943,7 +821,9 @@ export class GraphEditorComponent {
         this.paper.on("blank:pointermove", (evt, x, y) => {
             if(movingStatus.isMoving) {
                 let paperPoint = this.paper.localToPaperPoint(x, y);
-                this.paper.translate(this.paper.options.origin.x + paperPoint.x - movingStatus.x, this.paper.options.origin.y + paperPoint.y - movingStatus.y);
+                let dx = this.paper.options.origin.x + paperPoint.x - movingStatus.x;
+                let dy = this.paper.options.origin.y + paperPoint.y - movingStatus.y;
+                this.navigation.move(dx, dy);
                 movingStatus.x = paperPoint.x;
                 movingStatus.y = paperPoint.y;
             }
@@ -957,52 +837,17 @@ export class GraphEditorComponent {
         });
     }
 
-    zoom(paper, x, y, offsetX, offsetY, delta) {
-        //console.log("zooming with: x%d,y%d,ox%d,oy%d", x, y, offsetX, offsetY);
-        let oldscale = paper.scale().sx;
-        let newscale = oldscale + 0.2 * delta * oldscale
-        let minscale = 0.2;
-        let maxscale = 5;
-
-        if (newscale > minscale && newscale < maxscale) {
-          paper.scale(newscale, newscale, 0, 0);
-          paper.translate(-x*newscale+offsetX, -y*newscale+offsetY);
-        }
-    }
-
-    zoomIn(paper: joint.dia.Paper) {
-        let canvas = document.getElementById('jointjsgraph');
-        let offsetX = canvas.clientWidth/2;
-        let offsetY = canvas.clientHeight/2;
-        let origin = this.paper.options.origin;
-        let sf = this.paper.scale().sx;
-        let x = (offsetX-origin.x)/sf;
-        let y = (offsetY-origin.y)/sf;
-        this.zoom(paper, x, y, offsetX, offsetY, 1);
-    }
-
-    zoomOut(paper: joint.dia.Paper) {
-        let canvas = document.getElementById('jointjsgraph');
-        let offsetX = canvas.clientWidth/2;
-        let offsetY = canvas.clientHeight/2;
-        let origin = this.paper.options.origin;
-        let sf = this.paper.scale().sx;
-        let x = (offsetX-origin.x)/sf;
-        let y = (offsetY-origin.y)/sf;
-        this.zoom(paper, x, y, offsetX, offsetY, -1);
-    }
-
-    bindWheelZoom(paper: joint.dia.Paper) {
-        let zoom = this.zoom;
+    bindWheelZoom() {
+        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
         this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
             console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
             evt.preventDefault();
-            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
+            wheelAction(x, y, evt, delta);
         });
 
         this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
-            zoom(paper, x, y, evt.offsetX, evt.offsetY, delta);
+            wheelAction(x, y, evt, delta);
         });
     }
 

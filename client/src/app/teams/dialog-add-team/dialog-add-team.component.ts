@@ -30,8 +30,10 @@ export class DialogAddTeamComponent implements OnInit {
   }
 
   save() {
-    console.log(this.selectedNodes),
-    this.ref.close({ name: this.teamName, nodes: this.selectedNodes});
+    if(this.teamName) {
+      console.log(this.selectedNodes),
+      this.ref.close({ name: this.teamName, nodes: this.selectedNodes});
+    }
   }
 
 }

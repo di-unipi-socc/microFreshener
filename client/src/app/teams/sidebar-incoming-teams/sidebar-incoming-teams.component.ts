@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { TeamsManagementService } from '../teams-management/teams-management.service';
+import { TeamsService } from '../teams.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';
-import { Subscription } from 'rxjs';
 import * as joint from 'jointjs';
 
 @Component({
@@ -18,11 +17,12 @@ export class SidebarIncomingTeamsComponent {
     recipients: joint.shapes.microtosca.Node[]
   }>;
 
-  subscription: Subscription;
+  private readonly GRAPH_EVENTS: string = "add remove";
+  private graphEventsListener: () => void;
 
   constructor(
     private session: SessionService,
-    private teams: TeamsManagementService,
+    private teams: TeamsService,
     private gs: GraphService
   ) {}
 
@@ -30,18 +30,13 @@ export class SidebarIncomingTeamsComponent {
     // Get the groups and relative interacting nodes
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
-    this.subscription = this.gs.getUpdates().subscribe({
-      next: (evt) => { this.updateIngoingRequestGroups() },
-      error: (evt) => { console.error("update error") },
-      complete: () => {}
-    });
+    this.graphEventsListener = () => { this.updateIngoingRequestGroups() };
+    this.gs.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
   ngOnDestroy() {
-    if(this.subscription)
-      this.subscription.unsubscribe();
-    else
-      console.log("subscription undefined")
+    if(this.graphEventsListener)
+      this.gs.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
   updateIngoingRequestGroups() {

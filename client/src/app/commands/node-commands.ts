@@ -1,110 +1,114 @@
-import { Command } from '../commands/invoker/icommand';
+import { Command } from './icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
-import { Graph } from "./model/graph";
+import { Graph } from "../graph/model/graph";
 
 
-export class AddServiceCommand implements Command {
+export abstract class NodeCommand implements Command {
+    
+    abstract execute(node?): joint.shapes.microtosca.Node;
+    abstract unexecute(node?): joint.shapes.microtosca.Node;
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
+    protected node: joint.shapes.microtosca.Node;
 
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
-    }
-
-    execute() {
-        this.node = this.graph.addService(this.name, this.position, this.team);
-        if(this.team)
-            this.team.addMember(this.node);
-    }
-
-    unexecute() {
-        this.node.remove();
+    then(next: NodeCommand): NodeCommand {
+        let myExecute = (node?) => this.execute(node);
+        let myUnexecute = (node?) => this.unexecute(node);
+        return new class extends NodeCommand {
+            execute(node) {
+                node = myExecute(node);
+                return next.execute(node);
+            }
+            unexecute(node: joint.shapes.microtosca.Node) {
+                node = next.unexecute(node);
+                return myUnexecute(node);
+            }
+        };
     }
 }
 
-export class AddDatastoreCommand implements Command {
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
+abstract class GenerateNodeCommand extends NodeCommand {
+
     name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
+    position?: g.Point;
 
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
+    constructor(name: string, position?: g.Point) {
+        super();
         this.name = name;
         this.position = position;
-        this.team = team;
     }
 
-    execute() {
-        this.node = this.graph.addDatastore(this.name, this.position);
-        if(this.team)
-            this.team.addMember(this.node);
+    protected abstract generateNode(): joint.shapes.microtosca.Node;
+
+    execute(): joint.shapes.microtosca.Node {
+        this.node = this.generateNode();
+        return this.node;
     }
 
     unexecute() {
         this.node.remove();
+        return this.node;
     }
 }
 
-export class AddMessageBrokerCommand implements Command {
+export class AddServiceCommand extends GenerateNodeCommand implements Command {
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    execute() {
-        this.node = this.graph.addMessageBroker(this.name, this.position);
-        if(this.team)
-            this.team.addMember(this.node);
-    }
-
-    unexecute() {
-        this.node.remove();
+    generateNode() {
+        return this.graph.addService(this.name, this.position);
     }
 }
 
-export class AddMessageRouterCommand implements Command {
+export class AddDatastoreCommand extends GenerateNodeCommand implements Command {
 
-    graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    name: string;
-    position: g.Point;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, name: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup) {
-        this.graph = graph;
-        this.name = name;
-        this.position = position;
-        this.team = team;
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    execute() {
-        this.node = this.graph.addMessageRouter(this.name, this.position);
-        if(this.team)
-            this.team.addMember(this.node);
+    generateNode() {
+        return this.graph.addDatastore(this.name, this.position);
+    }
+}
+
+export class AddMessageBrokerCommand extends GenerateNodeCommand implements Command {
+
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
     }
 
-    unexecute() {
-        this.node.remove();
+    generateNode() {
+        return this.graph.addMessageBroker(this.name, this.position);
+    }
+}
+
+export class AddMessageRouterCommand extends GenerateNodeCommand implements Command {
+
+    constructor(
+        private graph: Graph,
+        public name: string,
+        public position?: g.Point,
+    ) {
+        super(name, position);
+    }
+
+    generateNode() {
+        return this.graph.addMessageRouter(this.name, this.position);
     }
 }
 
@@ -301,144 +305,4 @@ export class RemoveCommunicationPatternCommand implements Command {
         if(this.team_name)
             this.graph.getTeam(this.team_name).addMember(node);
     }
-}
-
-export class RemoveLinkCommand implements Command {
-
-    graph: Graph;
-    link: joint.shapes.microtosca.RunTimeLink;
-    source_name: string;
-    target_name: string;
-    t: boolean;
-    cb:boolean;
-    sd:boolean;
-
-    constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
-        this.graph = graph;
-        this.link = link;
-        var source = <joint.shapes.microtosca.Root>link.getSourceElement();
-        var target = <joint.shapes.microtosca.Root>link.getTargetElement();
-        this.source_name = source.getName();
-        this.target_name = target.getName();
-        this.t = this.link.hasTimeout();
-        this.cb = this.link.hasCircuitBreaker();
-        this.sd =  this.link.hasDynamicDiscovery();
-    }
-
-    execute() {
-        this.link.remove();
-    }
-
-    unexecute() {
-        var source = this.graph.getNode(this.source_name);
-        var target = this.graph.getNode(this.target_name);
-        this.graph.addRunTimeInteraction(source, target, this.t, this.cb, this.sd);
-    }
-}
-
-export class AddLinkCommand implements Command {
-
-    graph: Graph;
-    link: joint.shapes.microtosca.RunTimeLink;
-    source_name: string;
-    target_name: string;
-
-    t: boolean = false; // timeout
-    cb: boolean = false; // circuit breaker
-    dd: boolean = false;  // dyamic discovery
-
-    constructor(graph: Graph, source_name: string, target_name: string, timeout, circuit_breaker, dynamic_discovery) {
-        this.graph = graph;
-        this.source_name = source_name;
-        this.target_name = target_name;
-
-        this.t = timeout;
-        this.cb = circuit_breaker;
-        this.dd = dynamic_discovery;
-    }
-
-    execute() {
-        var source = this.graph.getNode(this.source_name);
-        var target = this.graph.getNode(this.target_name);
-        this.link = this.graph.addRunTimeInteraction(source, target, this.t, this.cb, this.dd);
-    }
-
-    unexecute() {
-        this.link.remove();
-    }
-
-}
-
-
-export class AddTeamGroupCommand implements Command {
-
-    graph: Graph;
-    team_name: string;
-
-    constructor(graph: Graph, team_name: string) {
-        this.graph = graph;
-        this.team_name = team_name;
-    }
-
-    execute() {
-        this.graph.addTeamGroup(this.team_name);
-    }
-
-    unexecute() {
-        var team = this.graph.getGroup(this.team_name);
-        team.remove();
-    }
-
-}
-
-
-export class AddMemberToTeamGroupCommand implements Command {
-
-    graph: Graph;
-    team_name: string;
-    member_name: string;
-
-    constructor(graph: Graph, team_name: string, member_name:string) {
-        this.graph = graph;
-        this.team_name = team_name;
-        this.member_name = member_name;
-    }
-
-    execute() {
-        var team = this.graph.getGroup(this.team_name)
-        var node = this.graph.getNode(this.member_name);
-        team.addMember(node);
-    }
-
-    unexecute() {
-        var team = this.graph.getGroup(this.team_name);
-        var node = this.graph.getNode(this.member_name);
-        team.removeMember(node);
-    }
-}
-
-
-export class RemoveMemberFromTeamGroupCommand implements Command {
-
-    graph: Graph;
-    team_name: string;
-    member_name: string;
-
-    constructor(graph: Graph, team_name: string, member_name:string) {
-        this.graph = graph;
-        this.team_name = team_name;
-        this.member_name = member_name;
-    }
-
-    execute() {
-        var team = this.graph.getGroup(this.team_name)
-        var node = this.graph.getNode(this.member_name);
-        team.removeMember(node);
-    }
-
-    unexecute() {
-        var team = this.graph.getGroup(this.team_name);
-        var node = this.graph.getNode(this.member_name);
-        team.addMember(node);
-    }   
 }
