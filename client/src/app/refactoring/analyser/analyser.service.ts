@@ -18,6 +18,7 @@ import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, Endp
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
+import { SessionService } from 'src/app/core/session/session.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -31,11 +32,11 @@ export class AnalyserService {
 
 
   private analysisUrl = environment.serverUrl + '/api/analyse';
-
+  
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService) { }
+  constructor(private http: HttpClient, private gs: GraphService, private session: SessionService) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -110,7 +111,7 @@ export class AnalyserService {
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
-  runRemoteAnalysis(smells: Smell[] = null): Observable<Boolean> {
+  runRemoteAnalysis(smells: Smell[] = null, teamRestriction?: joint.shapes.microtosca.SquadGroup): Observable<Boolean> {
     let smells_ids: number[] = []; 
     // if(smells)
     smells_ids = smells.map(smell => smell.id);
@@ -164,6 +165,7 @@ export class AnalyserService {
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
+            if(teamRestriction && teamRestriction.getName() == agroup.name)
             this.analysedgroups.push(agroup);
           });
           return true;
@@ -300,12 +302,6 @@ export class AnalyserService {
       anode.addSmell(smell);
     });
     return anode;
-  }
-
-  getAnalysedNodeByName(name: string) {
-    return this.analysednodes.find(node => {
-      return name === node.name;
-    });
   }
 
   /** Log a AnalyserService message with the MessageService */
