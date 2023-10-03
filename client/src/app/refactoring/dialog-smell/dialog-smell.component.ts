@@ -41,9 +41,11 @@ export class DialogSmellComponent implements OnInit {
   moveIgnoreActionsToButtonInDropdownMenu() {
     let ignoreActions = this.actions.filter(action => action["label"] === "Ignore Once" || action["label"] === "Ignore Always");
     if (ignoreActions.length > 0) {
-      let index = this.actions.indexOf(ignoreActions[0]);
-      this.actions.splice(index, 1);
-      this.actions.push(ignoreActions[0]);
+      for(let action of ignoreActions) {
+        let index = this.actions.indexOf(action);
+        this.actions.splice(index, 1);
+        this.actions.push(action);
+      }
     }
   }
 
