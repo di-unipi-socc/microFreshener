@@ -211,7 +211,7 @@ export class GraphEditorComponent {
             var node = cellView.model;
             // add node to group
             if (this.graph.getGraph().isTeamGroup(node)) {
-                if(this.toolSelection.isAddNodeEnabled() && this.permissions.writePermissions.isAllowed(node)) {
+                if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team = cellView.model;
                     this.editing.addNode(this.toolSelection.getSelected(), position, team);
