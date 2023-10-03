@@ -20,6 +20,8 @@ import { GraphEditingService } from './editing/graph-editing.service';
 import { TeamsService } from '../teams/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
+import { UserRole } from '../core/user-role';
+import { SessionService } from '../core/session/session.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -37,13 +39,14 @@ export class GraphEditorComponent {
     rightClickselectdNode: joint.shapes.microtosca.Node;
     
     constructor(
-        private graphInvoker: GraphInvoker,
-        private editing: GraphEditingService,
-        private graph: GraphService,
-        private teams: TeamsService,
-        private navigation: EditorNavigationService,
-        private permissions: EditorPermissionsService,
-        private toolSelection: ToolSelectionService,
+        private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
+        private toolSelection: ToolSelectionService, // Editor tool selection
+        private editing: GraphEditingService, // Editing operations business logic
+        private graph: GraphService, // Injectable JointJS graph singleton
+        private teams: TeamsService, // Team-related operations business logic
+        private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
+        private permissions: EditorPermissionsService, // Privilege manager
+        private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
@@ -213,7 +216,7 @@ export class GraphEditorComponent {
             if (this.graph.getGraph().isTeamGroup(node)) {
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
-                    let team = cellView.model;
+                    let team = this.session.getRole() == UserRole.TEAM ? this.session.getName() : cellView.model;
                     this.editing.addNode(this.toolSelection.getSelected(), position, team);
                 }
             } else {
@@ -830,15 +833,16 @@ export class GraphEditorComponent {
     }
 
     bindWheelZoom() {
+        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
         this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
             console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
             evt.preventDefault();
-            this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta);
+            wheelAction(x, y, evt, delta);
         });
 
         this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
-            this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta);
+            wheelAction(x, y, evt, delta);
         });
     }
 
