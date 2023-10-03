@@ -212,11 +212,16 @@ export class GraphEditorComponent {
             evt.preventDefault();
             evt.stopPropagation()
             var node = cellView.model;
-            // add node to group
+            // click on group
             if (this.graph.getGraph().isTeamGroup(node)) {
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
-                    let team = this.session.getRole() == UserRole.TEAM ? this.session.getName() : cellView.model;
+                    let team;
+                    if(this.session.getRole() == UserRole.TEAM) {
+                        team = this.graph.getGraph().findGroupByName(this.session.getName())
+                     } else {
+                        team = cellView.model;
+                     }
                     this.editing.addNode(this.toolSelection.getSelected(), position, team);
                 }
             } else {
