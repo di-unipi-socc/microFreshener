@@ -1,3 +1,3 @@
 # Graph model
 
-These clases are independent from Angular.
+These classes are independent from Angular.

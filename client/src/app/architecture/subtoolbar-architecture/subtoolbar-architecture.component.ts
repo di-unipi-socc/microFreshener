@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GraphService } from '../../graph/graph.service';
-import { ToolSelectionService } from '../tool-selection/tool-selection.service';
+import { ToolSelectionService } from '../../editor/tool-selection/tool-selection.service';
 
 @Component({
   selector: 'app-subtoolbar-architecture',

@@ -7,7 +7,7 @@ import { AddServiceCommand, AddDatastoreCommand, AddMessageBrokerCommand, AddMes
 import { GraphService } from '../../graph/graph.service';
 
 import { g } from 'jointjs';
-import { ToolSelectionService } from '../tool-selection/tool-selection.service';
+import { ToolSelectionService } from '../../editor/tool-selection/tool-selection.service';
 import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
 
 @Component({

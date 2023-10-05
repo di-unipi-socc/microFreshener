@@ -11,10 +11,10 @@ import { GraphEditorComponent } from './editor/graph-editor.component';
 import { ModalRefactoringsComponent } from './refactoring/modal-refactorings/modal-refactorings.component';
 import { DialogAnalysisComponent } from './refactoring/dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.component';
-import { DialogAddNodeComponent } from './editor/dialog-add-node/dialog-add-node.component';
+import { DialogAddNodeComponent } from './architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
-import { SubtoolbarArchitectureComponent } from './editor/subtoolbar-architecture/subtoolbar-architecture.component';
+import { SubtoolbarArchitectureComponent } from './architecture/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
 import { SubtoolbarNavigationComponent } from './editor/subtoolbar-navigation/subtoolbar-navigation.component';
 import { SubtoolbarViewComponent } from './editor/subtoolbar-view/subtoolbar-view.component';
@@ -61,7 +61,7 @@ import { TagModule } from 'primeng/tag';
 
 // Import dialog components
 import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
-import { DialogAddLinkComponent } from './editor/dialog-add-link/dialog-add-link.component';
+import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
