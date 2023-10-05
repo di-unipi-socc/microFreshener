@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { DialogSelectTeamComponent } from 'src/app/teams/dialog-select-team/dialog-select-team.component';
 import { GraphService } from '../../graph/graph.service';
 
 @Component({
@@ -28,18 +27,10 @@ export class SubtoolbarViewComponent {
               this.viewIcon = "pi pi-users"
               this.minimizeTeam()
           }
-      },
-      {
-          label: 'One team',
-          icon: 'pi pi-fw pi-user',
-          command: () => {
-              this.viewIcon = "pi pi-user"
-              this.showOneTeam();
-          }
       }
   ];
 
-  constructor(private dialogService: DialogService, private gs: GraphService) {}
+  constructor(private gs: GraphService) {}
 
   maximizeTeam() {
     this.gs.getGraph().maximizeAllTeam();
@@ -49,20 +40,6 @@ export class SubtoolbarViewComponent {
 minimizeTeam() {
     this.gs.getGraph().minimizeAllTeam();
     //this.messageService.add({ severity: 'success', summary: ` All team minimized` });
-}
-
-showOneTeam() {
-    const ref = this.dialogService.open(DialogSelectTeamComponent, {
-        header: 'Select a Team',
-        width: '50%',
-    });
-    ref.onClose.subscribe((data) => {
-        if (data.show) {
-            var team = data.show;
-            this.gs.getGraph().showOnlyTeam(team);
-            //this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
-        }
-    });
 }
 
 }

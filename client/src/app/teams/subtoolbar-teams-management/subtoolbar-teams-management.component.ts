@@ -6,9 +6,9 @@ import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 
 @Component({
-  selector: 'app-subtoolbar-teams',
-  templateUrl: './subtoolbar-teams.component.html',
-  styleUrls: ['./subtoolbar-teams.component.css']
+  selector: 'app-subtoolbar-teams-management',
+  templateUrl: './subtoolbar-teams-management.component.html',
+  styleUrls: ['./subtoolbar-teams-management.component.css']
 })
 export class SubtoolbarTeamsComponent {
 

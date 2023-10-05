@@ -60,12 +60,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 
 // Import dialog components
-import { DialogSelectTeamComponent } from './teams/dialog-select-team/dialog-select-team.component';
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
-import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams/subtoolbar-teams.component';
+import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
 import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
@@ -82,7 +81,6 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     DialogAddNodeComponent,
     DialogAddNodeComponent,
     DialogAddTeamComponent,
-    DialogSelectTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
@@ -152,7 +150,6 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     DialogSmellComponent,
     DialogAddNodeComponent,
     DialogAddTeamComponent,
-    DialogSelectTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
