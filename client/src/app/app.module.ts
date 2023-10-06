@@ -58,6 +58,7 @@ import { DividerModule } from 'primeng/divider';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
@@ -135,7 +136,8 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     StyleClassModule,
     ToggleButtonModule,
     AvatarModule,
-    TagModule
+    TagModule,
+    MultiSelectModule
   ],
   providers: [
     DialogService,

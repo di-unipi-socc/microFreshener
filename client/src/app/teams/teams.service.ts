@@ -23,7 +23,7 @@ export class TeamsService {
 
     // Team editing
 
-    addTeam(name: string) { // TODO should use the command
+    addTeam(name: string, nodes?: joint.shapes.microtosca.Node[]) { // TODO should use the command
       this.graphInvoker.executeCommand(new AddTeamGroupCommand(this.graphService.getGraph(), name));
     }
 
