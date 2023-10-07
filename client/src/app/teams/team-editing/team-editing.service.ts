@@ -33,7 +33,7 @@ export class TeamEditingService {
   }
 
   private buildCreateTeamThenAddNodesCommand(invoker: GraphInvoker, graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
-    let buildChangeNodeOwnershipCommand = this.buildMoveNodeCommand;
+    let buildMoveNodeCommand = this.buildMoveNodeCommand;
     return new class implements Command {
       private newTeamCommand: Command;
       private addOrMoveMembersToNewTeamCommands: Command[];
@@ -47,8 +47,8 @@ export class TeamEditingService {
               selectedNodes
               .map((node) => [node, graph.getTeamOfNode(node)])
               .map(([node, previousTeam]: [joint.shapes.microtosca.Node, joint.shapes.microtosca.SquadGroup]) => {
-                    if(previousTeam) return buildChangeNodeOwnershipCommand(node, previousTeam, newTeam)
-                    else return new AddMemberToTeamGroupCommand(newTeam, node) });
+                    if(previousTeam) { console.log("previousTeam: node, team", node.getName(), previousTeam.getName()); return buildMoveNodeCommand(node, previousTeam, newTeam); }
+                    else { return new AddMemberToTeamGroupCommand(newTeam, node); } });
         this.addOrMoveMembersToNewTeamCommands.forEach((cmd) => cmd.execute());
       }
 
@@ -63,10 +63,12 @@ export class TeamEditingService {
     return new class implements Command {
       removeMemberFromTeam;
       addMemberToTeam;
-      execute() {
-        this.removeMemberFromTeam = new RemoveMemberFromTeamGroupCommand(fromTeam, node);
-        this.removeMemberFromTeam.execute();
+      constructor() {
+        this.removeMemberFromTeam = new RemoveMemberFromTeamGroupCommand(fromTeam, node)
         this.addMemberToTeam = new AddMemberToTeamGroupCommand(toTeam, node);
+      }
+      execute() {
+        this.removeMemberFromTeam.execute();
         this.addMemberToTeam.execute();
       }
       unexecute() {
@@ -82,7 +84,7 @@ export class TeamEditingService {
     this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
   }
 
-  removeMemberFromTeam(member, team) {
+  removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     var command = new RemoveMemberFromTeamGroupCommand(team, member);
     this.invoker.executeCommand(command);
     this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
