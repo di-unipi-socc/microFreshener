@@ -79,7 +79,13 @@ export class TeamEditingService {
   }
 
   addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-    var command = new AddMemberToTeamGroupCommand(team, member);
+    let previousTeam = this.graphService.getGraph().getTeamOfNode(member);
+    let command;
+    if(previousTeam) {
+      command = this.buildMoveNodeCommand(member, previousTeam, team);
+    } else {
+      command = new AddMemberToTeamGroupCommand(team, member);
+    }
     this.invoker.executeCommand(command);
     this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
   }
