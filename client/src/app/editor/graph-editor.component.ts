@@ -419,7 +419,10 @@ export class GraphEditorComponent {
         // element below.
         this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
             var cell = cellView.model;
-            if (!cell.isLink()) { // otherwise Error when cell.getBBox() is called.
+            if (
+                !cell.isLink() && // otherwise Error when cell.getBBox() is called.
+                !this.graph.getGraph().isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                !this.graph.getGraph().isGroup(cell)) {
 
                 var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
 
