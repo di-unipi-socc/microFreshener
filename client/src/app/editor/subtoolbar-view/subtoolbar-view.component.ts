@@ -33,12 +33,12 @@ export class SubtoolbarViewComponent {
   constructor(private gs: GraphService) {}
 
   maximizeTeam() {
-    this.gs.getGraph().maximizeAllTeam();
+    this.gs.getGraph().maximizeAllTeams();
     //this.messageService.add({ severity: 'success', summary: ` All graph visualized` });
 }
 
 minimizeTeam() {
-    this.gs.getGraph().minimizeAllTeam();
+    this.gs.getGraph().minimizeAllTeams();
     //this.messageService.add({ severity: 'success', summary: ` All team minimized` });
 }
 

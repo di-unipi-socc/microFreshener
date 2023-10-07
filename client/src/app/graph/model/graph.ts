@@ -421,13 +421,13 @@ export class Graph extends joint.dia.Graph {
         }
     }
 
-    minimizeAllTeam() {
+    minimizeAllTeams() {
         this.getTeamGroups().forEach(team => {
             this.minimizeTeam(team);
         })
     }
 
-    maximizeAllTeam() {
+    maximizeAllTeams() {
         this.showGraph();
         this.getTeamGroups().forEach(team => {
             this.maximizeTeam(team);

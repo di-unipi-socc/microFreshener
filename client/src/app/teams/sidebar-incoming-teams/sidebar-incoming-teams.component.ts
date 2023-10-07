@@ -40,14 +40,15 @@ export class SidebarIncomingTeamsComponent {
   }
 
   updateIngoingRequestGroups() {
-    // Defined only for Team users
+    // Defined for team members only
     if(this.session.getRole() == UserRole.TEAM) {
       let teamName = this.session.getName();
       // Get the groups that use the team's nodes and sort (edge first, then by number of recipients descending)
       let groupsMap = this.teams.getIngoingRequestSenderGroups(teamName);
       this.groups = Array.from(groupsMap,
-        ([group, recipients]) => ({ group: group, recipients: recipients}))
-        .sort((g1, g2) => {
+        ([group, recipients]: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]]) =>
+        ({ group: group, recipients: recipients}));
+      this.groups.sort((g1, g2) => {
           if(g1.group && g1.group instanceof joint.shapes.microtosca.EdgeGroup) return -1;
           if(g1.recipients.length >= g2.recipients.length) return -1;
         });
