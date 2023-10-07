@@ -3,7 +3,6 @@
     <div class="p-col-2">
         <div class="box">New team's name:</div>
     </div>
-    <p *ngFor="selectedNodes"></p>
     <div class="p-col-8">
         <input placeholder="Team name" [(ngModel)]="teamName" type="text"
             pInputText (keydown.enter)="save()" autofocus />
