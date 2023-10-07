@@ -1,0 +1,25 @@
+<p-multiSelect
+    *ngIf="addTeamToggled"
+    defaultLabel="Nodes in new team"
+    styleClass="add-node-input"
+    [showToggleAll]="false"
+    [group]="true"
+    [options]="nodeList"
+    [(ngModel)]="selectedNodes"
+    scrollHeight="500px"
+    display="chip">
+    <ng-template let-group pTemplate="group">
+        <div class="flex align-items-center">
+            <span>{{ group.label }}</span>
+        </div>
+    </ng-template>
+</p-multiSelect>
+<p-toggleButton
+    onIcon="pi pi-user-plus" offIcon="pi pi-user-plus"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="New team"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="addTeamToggled"
+    (onChange)="toggleAddTeam($event)"
+></p-toggleButton>

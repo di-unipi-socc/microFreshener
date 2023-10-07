@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GraphEditorComponent } from '../graph-editor.component';
+import { GraphEditorComponent } from '../../editor/graph-editor.component';
 import { RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -12,12 +12,12 @@ import { UserRole } from '../../core/user-role';
 import { g } from 'jointjs';
 import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
-import { EditorNavigationService } from '../navigation/navigation.service';
+import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 
 @Injectable({
   providedIn: GraphEditorComponent
 })
-export class GraphEditingService {
+export class ArchitectureEditingService {
 
   constructor(
     private graphInvoker: GraphInvoker,

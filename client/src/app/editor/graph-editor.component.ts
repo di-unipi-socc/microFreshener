@@ -16,7 +16,7 @@ import * as $ from 'jquery';
 import { EditorPermissionsService } from './permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
-import { GraphEditingService } from './editing/graph-editing.service';
+import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
 import { TeamsService } from '../teams/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
@@ -27,7 +27,7 @@ import { SessionService } from '../core/session/session.service';
     selector: 'app-graph-editor',
     templateUrl: './graph-editor.component.html',
     styleUrls: ['./graph-editor.component.css'],
-    providers: [GraphEditingService, DialogService] //, ConfirmationService]
+    providers: [ArchitectureEditingService, DialogService] //, ConfirmationService]
 })
 export class GraphEditorComponent {
 
@@ -41,7 +41,7 @@ export class GraphEditorComponent {
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
         private toolSelection: ToolSelectionService, // Editor tool selection
-        private editing: GraphEditingService, // Editing operations business logic
+        private editing: ArchitectureEditingService, // Editing operations business logic
         private graph: GraphService, // Injectable JointJS graph singleton
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper

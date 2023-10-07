@@ -13,27 +13,25 @@ import '../../graph/model/microtosca';
 export class DialogAddTeamComponent implements OnInit {
 
   teamName: string;
-  nodes: joint.shapes.microtosca.Node[];
   selectedNodes: joint.shapes.microtosca.Node[];
 
-  constructor(private gs: GraphService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { }
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {}
 
   ngOnInit() {
     this.teamName = null;
-    this.selectedNodes = [];
-    this.nodes = this.gs.getGraph().getNodes();
-
+    if(this.config.data) {
+      console.log("received data", this.config.data);
+      this.selectedNodes = this.config.data.selectedNodes;
+    }
   }
 
   isDisableSave() {
-    return this.teamName == null;
+    return !(this.teamName !== null && this.teamName.replace(" ", "").length>0);
   }
 
   save() {
-    if(this.teamName) {
-      console.log(this.selectedNodes),
-      this.ref.close({ name: this.teamName, nodes: this.selectedNodes});
-    }
+    let teamName = this.teamName.replace(" ", "");
+    this.ref.close({ name: teamName, nodes: this.selectedNodes});
   }
 
 }
