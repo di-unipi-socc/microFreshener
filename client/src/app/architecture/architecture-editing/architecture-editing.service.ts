@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphEditorComponent } from '../../editor/graph-editor.component';
-import { RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GraphInvoker } from '../../commands/invoker';
@@ -13,6 +13,9 @@ import { g } from 'jointjs';
 import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
+import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
+import { Command } from 'src/app/commands/icommand';
+import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
 
 @Injectable({
   providedIn: GraphEditorComponent
@@ -21,7 +24,7 @@ export class ArchitectureEditingService {
 
   constructor(
     private graphInvoker: GraphInvoker,
-    private graph: GraphService,
+    private graphService: GraphService,
     private navigation: EditorNavigationService,
     private session: SessionService,
     private dialogService: DialogService,
@@ -29,23 +32,52 @@ export class ArchitectureEditingService {
     private confirmationService: ConfirmationService
   ) { }
 
-  addNode(nodeType: string, position?: g.Point, group?: joint.shapes.microtosca.Group) {
-    // Team members add nodes to their team by default
-    if(!group && this.session.getRole() == UserRole.TEAM) {
-        group = this.graph.getGraph().findGroupByName(this.session.getName());
-    }
-    // Create the AddNodeCommand and execute it
+  addNode(nodeType: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
+    // Ask for node required data
     const ref = this.dialogService.open(DialogAddNodeComponent, {
         header: 'Add Node',
         data: {
             clickPosition: position,
-            group: group,
+            group: team,
             nodeType: nodeType
         }
     });
     ref.onClose.subscribe((data) => {
-        if(data)
-            this.graphInvoker.executeCommand(data.command);
+        // Create the AddNodeCommand
+        if(data) {
+          let addNodeCommand: Command;
+          let message: string;
+          switch (data.nodeType) {
+            case ToolSelectionService.SERVICE:
+              addNodeCommand = new AddServiceCommand(this.graphService.getGraph(), data.name, data.position);
+              message = `Service ${data.name} added correctly`;
+              break;
+            case ToolSelectionService.DATASTORE:
+              addNodeCommand = new AddDatastoreCommand(this.graphService.getGraph(), data.name, data.position);
+              message = `Datastore  ${data.name}  added correctly`;
+              break;
+            case ToolSelectionService.COMMUNICATION_PATTERN:
+              if(data.communicationPatternType === ToolSelectionService.MESSAGE_BROKER){
+                addNodeCommand = new AddMessageBrokerCommand(this.graphService.getGraph(), data.name, data.position);
+                message += `Message Broker ${data.name} added correctly`;
+              }
+              else if(data.communicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
+                addNodeCommand = new AddMessageRouterCommand(this.graphService.getGraph(), data.name, data.position);
+                message += `Message Router ${data.name} added correctly`;
+              }
+              else
+                this.messageService.add({ severity: 'error', summary: `Node type ${data.nodeType} not recognized`});
+              break;
+            default:
+              this.messageService.add({ severity: 'error', summary: `Type of node '${data.nodeType}' not found `});
+          }
+
+          // If a team has been specified, atomically add the node into it
+          if(team) {
+            let createNodeAndAddToTeam = new AddMemberToTeamGroupCommand();
+            addNodeCommand = addNodeCommand.then(addToTeam);
+          }
+        }
     });
   }
 
@@ -55,7 +87,7 @@ export class ArchitectureEditingService {
         header: 'Node Deletion Confirmation',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
-            this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graph.getGraph(), node))
+            this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.getGraph(), node))
             this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
         },
         reject: () => {
@@ -71,7 +103,7 @@ export class ArchitectureEditingService {
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
             // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-            this.graphInvoker.executeCommand(new RemoveServiceCommand(this.graph.getGraph(), node.getName()));
+            this.graphInvoker.executeCommand(new RemoveServiceCommand(this.graphService.getGraph(), node.getName()));
         },
         reject: () => {
             node.hideIcons();
@@ -87,7 +119,7 @@ export class ArchitectureEditingService {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
           // this.graphInvoker.executeCommand(new RemoveNodeCommand(this.gs.getGraph(), node))
-          this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.graph.getGraph(), node.getName()));
+          this.graphInvoker.executeCommand(new RemoveDatastoreCommand(this.graphService.getGraph(), node.getName()));
       },
       reject: () => {
           node.hideIcons();
@@ -104,7 +136,7 @@ export class ArchitectureEditingService {
         header: 'Link deletion',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
-            this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graph.getGraph(), link));
+            this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.getGraph(), link));
             //this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
         },
         reject: () => {
@@ -115,7 +147,7 @@ export class ArchitectureEditingService {
   }
 
   removeCommunicationPattern(node) {
-    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.graph.getGraph(), node.getName()));
+    this.graphInvoker.executeCommand(new RemoveCommunicationPatternCommand(this.graphService.getGraph(), node.getName()));
   }
 
   addLink(leftClickSelectedNode, node) {
@@ -129,7 +161,7 @@ export class ArchitectureEditingService {
     });
     ref.onClose.subscribe((data) => {
         if (data) {
-            var command = new AddLinkCommand(this.graph.getGraph(), leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
+            var command = new AddLinkCommand(this.graphService.getGraph(), leftClickSelectedNode.getName(), node.getName(), data.timeout, data.circuit_breaker, data.dynamic_discovery);
             this.graphInvoker.executeCommand(command);
             this.navigation.getPaper().findViewByModel(leftClickSelectedNode).unhighlight();
             console.log("added link");

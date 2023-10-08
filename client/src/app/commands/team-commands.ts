@@ -1,7 +1,5 @@
 import { Command } from './icommand';
 import { Graph } from "../graph/model/graph";
-import { NodeCommand } from './node-commands';
-import { remove } from 'lodash';
 
 
 export class AddTeamGroupCommand implements Command {
@@ -25,41 +23,30 @@ export class AddTeamGroupCommand implements Command {
 
 }
 
-export class AddMemberToTeamGroupCommand extends NodeCommand {
+export class AddMemberToTeamGroupCommand {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
-        super();
+    constructor(private team: joint.shapes.microtosca.SquadGroup, private node: joint.shapes.microtosca.Node) {}
+
+    execute() {
+        this.team.addMember(this.node);
+        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     }
 
-    execute(node?) {
-        if(!node) {
-            node = this.member;
-        }
-        this.team.addMember(node);
-        this.member = node;
+    unexecute() {
+        this.team.removeMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
-    }
-
-    unexecute(node?: joint.shapes.microtosca.Node) {
-        if(!node)
-            node = this.member;
-        this.team.removeMember(node);
-        this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
     }
 }
 
-export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
+export class RemoveMemberFromTeamGroupCommand {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
-        super();
-    }
+    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {}
 
     execute(node?) {
         if(!node) {
             node = this.member;
         }
+        console.log("Removing node from team", node, this.team.getName());
         this.team.removeMember(node);
         this.member = node;
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
