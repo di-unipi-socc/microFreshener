@@ -1001,18 +1001,20 @@ joint.dia.Element.define('microtosca.SquadGroup', {
 joint.shapes.standard.Link.define('microtosca.RunTimeLink', {
     // joint.dia.Link.define('microtosca.RunTimeLink', {
     smooth: true,
-    // attrs: {
-    //     // line: {
+    attrs: {
+        line: {
+            cursor: 'default',
     //     //     connection: true,
     //     //     stroke: '#0E343D',
     //     //     strokeWidth: 2,
-    //     // },
-    //     // wrapper: {
+        },
+        wrapper: {
+            cursor: 'default',
     //     //     // connection: true,
     //     //     strokeWidth: 10,
     //     //     strokeLinejoin: 'round'
-    //     // }
-    // },
+        }
+    },
 
     timeout: false,
     circuit_breaker: false,

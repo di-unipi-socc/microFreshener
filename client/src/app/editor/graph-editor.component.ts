@@ -22,7 +22,6 @@ import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { UserRole } from '../core/user-role';
 import { SessionService } from '../core/session/session.service';
-import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
     selector: 'app-graph-editor',
@@ -107,8 +106,8 @@ export class GraphEditorComponent {
 
         this.bindSingleRightClickCell();
 
-        this.bindMouseEnterLink();
-        this.bindMouseOverNode();
+        //this.bindMouseEnterLink();
+        //this.bindMouseOverNode();
 
         this.bindClickOnSmells();
         this.bindClickDeleteNode();
@@ -231,6 +230,19 @@ export class GraphEditorComponent {
         return nodeContextMenuItems;
     }
 
+    getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
+        let interactionLinkContextMenuItems = [];
+        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
+            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
+                //this.editing.reverse(rightClickedInteractionLink);
+            }});
+            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
+                this.editing.removeLink(rightClickedInteractionLink);
+            }});
+        }
+        return interactionLinkContextMenuItems;
+    }
+
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
         if(this.permissions.writePermissions.isTeamWriteAllowed()) {
@@ -248,19 +260,6 @@ export class GraphEditorComponent {
             }});
         }
         return teamContextMenuItems;
-    }
-
-    getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
-        let interactionLinkContextMenuItems = [];
-        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
-            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
-                //this.editing.reverse(rightClickedInteractionLink);
-            }});
-            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
-                this.editing.removeLink(rightClickedInteractionLink);
-            }});
-        }
-        return interactionLinkContextMenuItems;
     }
 
     bindSingleClickCell() {
@@ -371,16 +370,14 @@ export class GraphEditorComponent {
         })
     }
 
-    bindMouseOverNode() {
+    /*bindMouseOverNode() {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if(this.permissions.writePermissions.isAllowed(cell)) {
-                if (cell.isElement()) {
-                    cell.showIcons();
-                } else if (this.graph.getGraph().isTeamGroup(cell)) {
-                    cell.showIcons();
-                }
+            if (cell.isElement()) {
+                cell.showIcons();
+            } else if (this.graph.getGraph().isTeamGroup(cell)) {
+                cell.showIcons();
             }
         })
 
@@ -392,8 +389,7 @@ export class GraphEditorComponent {
 
             }
         })
-
-    }
+    }*/
 
     bindClickOnSmells() {
         this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
@@ -666,9 +662,10 @@ export class GraphEditorComponent {
     //     });
     // }
 
-    bindMouseEnterLink() {
+    /*bindMouseEnterLink() {
         this.paper.on('link:mouseenter', (linkView) => {
-            if(this.permissions.writePermissions.isAllowed(linkView.model)) {
+            let link = linkView.model;
+            if(this.permissions.writePermissions.isAllowed(link)) {
                 var tools = [
                     // new joint.linkTools.SourceArrowhead(),
                     // new joint.linkTools.TargetArrowhead(),
@@ -702,12 +699,9 @@ export class GraphEditorComponent {
                             }
                         }],
                         distance: -30,
-                        action: function () {
-                            var link = this.model;
-                            var source = link.source();
-                            var target = link.target();
-                            link.source(target);
-                            link.target(source);
+                        action: () => {
+                            console.log("Reversing link");
+                            this.editing.reverseLink(link);
                         }
                     }),
                     // button remove a link
@@ -751,7 +745,7 @@ export class GraphEditorComponent {
             if (!linkView.hasTools('onhover')) return;
             linkView.removeTools();
         });
-    }
+    }*/
 
     adjustVertices = (graph, cell) => {
 

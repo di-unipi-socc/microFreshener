@@ -136,4 +136,12 @@ export class ArchitectureEditingService {
         }
     });
   }
+
+  reverseLink(link) {
+    let source = link.source();
+    let target = link.target();
+    link.source(target);
+    link.target(source);
+  }
+
 }
