@@ -18,6 +18,8 @@ export class SubtoolbarTeamsComponent {
   addTeamToggled: boolean;
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
+
+  showTeamToggled: boolean;
   
   private readonly GRAPH_EVENTS_LABELS: string;
   private readonly PAPER_EVENTS_LABELS: string;
@@ -67,6 +69,14 @@ export class SubtoolbarTeamsComponent {
           }
         });
       }
+    }
+  }
+
+  toggleShowTeam() {
+    if(this.showTeamToggled) {
+      this.teams.showTeams();
+    } else {
+      this.teams.hideTeams();
     }
   }
 
