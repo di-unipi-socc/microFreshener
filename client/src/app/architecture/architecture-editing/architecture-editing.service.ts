@@ -49,22 +49,19 @@ export class ArchitectureEditingService {
     });
   }
 
-  deleteSelected(leftClickSelectedNode) {
-    if (leftClickSelectedNode) {
-        var node = leftClickSelectedNode;
-        this.confirmationService.confirm({
-            message: 'Do you want to delete this node?',
-            header: 'Node Deletion Confirmation',
-            icon: 'pi pi-exclamation-triangle',
-            accept: () => {
-                this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graph.getGraph(), node))
-                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
-            }
-        });
-    }
+  deleteNode(node) {
+    this.confirmationService.confirm({
+        message: 'Do you want to delete this node?',
+        header: 'Node Deletion Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graph.getGraph(), node))
+            this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+        },
+        reject: () => {
+            this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+        }
+    });
   }
 
   deleteService(node) {

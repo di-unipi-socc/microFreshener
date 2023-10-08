@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
@@ -22,6 +22,7 @@ import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { UserRole } from '../core/user-role';
 import { SessionService } from '../core/session/session.service';
+import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
     selector: 'app-graph-editor',
@@ -30,13 +31,15 @@ import { SessionService } from '../core/session/session.service';
     providers: [ArchitectureEditingService, DialogService] //, ConfirmationService]
 })
 export class GraphEditorComponent {
-
-    private readonly TEAM_PADDING;
-
+    
+    @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
     paper: joint.dia.Paper;
 
     leftClickSelectedNode: joint.shapes.microtosca.Node;
-    rightClickselectdNode: joint.shapes.microtosca.Node;
+    rightClickSelectedNode: joint.shapes.microtosca.Node;
+
+    @ViewChild('contextMenu') contextMenu;
+    contextMenuItems;
     
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
@@ -51,15 +54,12 @@ export class GraphEditorComponent {
         private messageService: MessageService,
         private confirmationService: ConfirmationService
     ) {
-        this.leftClickSelectedNode = null;
-        this.rightClickselectdNode = null;
-        this.TEAM_PADDING = Graph.TEAM_PADDING;
+        this.contextMenuItems = [];
     }
 
-    ngOnInit() {
-        let canvas = document.getElementById('jointjsgraph');
+    ngAfterViewInit() {
         this.paper = new joint.dia.Paper({
-            el: canvas,
+            el: this.jointJsGraph.nativeElement,
             model: this.graph.getGraph(),
             preventContextMenu: true,
             width: '100%',
@@ -97,7 +97,6 @@ export class GraphEditorComponent {
         // enable interactions
         this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.paper);
     }
-  
 
     bindEvents() {
         this.bindKeyboardEvents();
@@ -160,8 +159,8 @@ export class GraphEditorComponent {
             var YPSILON_KEY = 89;
 
 
-            if (e.which == DELETE_KEY) {
-                this.editing.deleteSelected(this.leftClickSelectedNode);
+            if (e.which == DELETE_KEY && this.leftClickSelectedNode) {
+                this.editing.deleteNode(this.leftClickSelectedNode);
             }
             if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
@@ -199,11 +198,69 @@ export class GraphEditorComponent {
     }
 
     bindSingleRightClickCell(){
-        this.paper.on('element:contextmenu',(cellView, evt, x, y)=>{ 
+        this.paper.on('cell:contextmenu', (cellView, evt, x, y) => {
             console.log("right click cell");
-        })
-        
 
+            let cell = cellView.model;
+            let graph = this.graph.getGraph();
+            this.contextMenuItems = [];
+            if(graph.isNode(cell)) {
+                this.contextMenuItems = this.getNodeContextMenu(cell);
+                console.log("this cm items are now", this.contextMenuItems)
+            } else if(graph.isTeamGroup(cell)) {
+                this.contextMenuItems = this.getTeamContextMenu(cell);
+            } else if(graph.isInteractionLink(cell)) {
+                this.contextMenuItems = this.getInteractionLinkContextMenu(cell);
+            }
+            // Avoid showing an empty context menu if no valid option is available
+            if(this.contextMenuItems.length == 0)
+                this.contextMenu.hide();
+        });
+        this.paper.on('blank:contextmenu', (evt, x, y) => {
+            this.contextMenu.hide();
+        });
+    }
+
+    getNodeContextMenu(rightClickedNode): MenuItem[] {
+        let nodeContextMenuItems = [];
+        if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+            nodeContextMenuItems.push({label: "Delete node", icon: "pi pi-trash", command: () => {
+                this.editing.deleteNode(rightClickedNode);
+            }});
+        }
+        return nodeContextMenuItems;
+    }
+
+    getTeamContextMenu(rightClickedTeam): MenuItem[] {
+        let teamContextMenuItems = [];
+        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+            teamContextMenuItems.push({label: "Split team", icon: "pi pi-trash", command: () => {
+                //this.teams.split(rightClickedTeam);
+            }});
+            teamContextMenuItems.push({label: "Merge team into other", icon: "pi pi-plus", command: () => {
+                //this.teams.merge(rightClickedTeam);
+            }});
+            teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
+                //this.teams.removeTeam(rightClickedTeam);
+            }});
+            teamContextMenuItems.push({label: "Delete team with members", icon: "pi pi-eraser", command: () => {
+                //this.teams.removeTeam(rightClickedTeam);
+            }});
+        }
+        return teamContextMenuItems;
+    }
+
+    getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
+        let interactionLinkContextMenuItems = [];
+        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
+            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
+                //this.editing.reverse(rightClickedInteractionLink);
+            }});
+            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
+                this.editing.removeLink(rightClickedInteractionLink);
+            }});
+        }
+        return interactionLinkContextMenuItems;
     }
 
     bindSingleClickCell() {

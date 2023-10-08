@@ -24,12 +24,14 @@ export class EditorPermissionsService {
   updatePermissions(role: UserRole, teamName?: string) {
     switch(role) {
         case UserRole.ADMIN:
+            console.warn("ADMIN privileges have been set.");
             // Admin can write everything
             this.writePermissions.isAllowed = this.ALLOW_ALL;
             this.writePermissions.linkable = this.ALLOW_ALL;
             this.writePermissions.isTeamWriteAllowed = this.ALLOW_ALL;
             break;
         case UserRole.TEAM:
+            console.warn("TEAM privileges have been set.");
             let team = this.gs.getGraph().findGroupByName(teamName);
             if(!team) {
               // The team doesn't exist in the graph, so block everything
@@ -53,10 +55,7 @@ export class EditorPermissionsService {
   }
 
   isEditingAllowedForATeam(team, cell): boolean {
-    
-    let outgoingLinks = this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team);
-    let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
-    
+
     if(cell.isLink()) {
       // Check that the links the user is adding doesn't involve other teams' nodes
       let source = cell.getSourceElement();
@@ -70,8 +69,10 @@ export class EditorPermissionsService {
         return false;
       }
     } else {
-      let nodeTeam = this.gs.getGraph().getTeamOfNode(cell);
       // Check that the node belongs to the team and that it is not linked to the frontier
+      let nodeTeam = this.gs.getGraph().getTeamOfNode(cell);
+      let outgoingLinks = this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team);
+      let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
       if(nodeTeam != team || nodesLinkedToFrontier.includes(cell)) {
         return false;
       }

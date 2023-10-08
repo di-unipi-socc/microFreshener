@@ -1,5 +1,7 @@
 <!-- div where the graph is rendered using jointjs-->
-<div id="jointjsgraph"></div>
+<div #jointjsgraph></div>
 
 <!-- show confimaration dialog -->
 <p-confirmDialog></p-confirmDialog>
+
+<p-contextMenu #contextMenu [model]="contextMenuItems" [target]="jointjsgraph"></p-contextMenu>
