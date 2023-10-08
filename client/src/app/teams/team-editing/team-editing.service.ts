@@ -26,13 +26,17 @@ export class TeamEditingService {
       commandToExecute = new AddTeamGroupCommand(this.graphService.getGraph(), name);
     } else {
       // Add a new team and add its nodes atomically
-      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.invoker, this.graphService.getGraph(), name, selectedNodes);
+      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.graphService.getGraph(), name, selectedNodes);
       commandToExecute = createTeamThenMoveSelectedMembersIntoIt;
     }
     this.invoker.executeCommand(commandToExecute);
   }
 
-  private buildCreateTeamThenAddNodesCommand(invoker: GraphInvoker, graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
+  removeTeam(team: joint.shapes.microtosca.SquadGroup) {
+    this.invoker.executeCommand(new RemoveMemberFromTeamGroupCommand(team));
+  }
+
+  private buildCreateTeamThenAddNodesCommand(graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
     let buildMoveNodeCommand = this.buildMoveNodeCommand;
     return new class implements Command {
       private newTeamCommand: Command;

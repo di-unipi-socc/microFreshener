@@ -1,6 +1,7 @@
 import { Command } from './icommand';
 import { Graph } from "../graph/model/graph";
 import { NodeCommand } from './node-commands';
+import { remove } from 'lodash';
 
 
 export class AddTeamGroupCommand implements Command {
@@ -18,7 +19,7 @@ export class AddTeamGroupCommand implements Command {
     }
 
     unexecute() {
-        var team = this.graph.getGroup(this.team_name);
+        let team = this.graph.getGroup(this.team_name);
         team.remove();
     }
 
@@ -71,5 +72,30 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
         this.team.addMember(node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         return node;
+    }
+}
+
+export class RemoveTeamGroupCommand implements Command {
+
+    removeMemberCommands: RemoveMemberFromTeamGroupCommand[];
+
+    constructor(
+        private graph: Graph,
+        private team: joint.shapes.microtosca.SquadGroup
+    ) {}
+
+    execute() {
+        this.removeMemberCommands = [];
+        this.team.getMembers().map((member) => new RemoveMemberFromTeamGroupCommand(this.team, member))
+        .forEach((command) => {
+            this.removeMemberCommands.push(command);
+            command.execute();
+        });
+        this.team.remove();
+    }
+
+    unexecute() {
+        this.graph.addTeamGroup(this.team.getName());
+        this.removeMemberCommands.forEach((command) => command.unexecute());
     }
 }

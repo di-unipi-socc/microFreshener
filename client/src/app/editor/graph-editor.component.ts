@@ -256,11 +256,8 @@ export class GraphEditorComponent {
             if(teamContextMenuItems.length > 0)
                 teamContextMenuItems.push({separator: true});
             
-                teamContextMenuItems.push({label: "Delete team", icon: "pi pi-eraser", command: () => {
-                //this.teams.removeTeam(rightClickedTeam);
-            }});
-            teamContextMenuItems.push({label: "Delete team with members", icon: "pi pi-trash", command: () => {
-                //this.teams.removeTeam(rightClickedTeam);
+                teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
+                this.teams.removeTeam(rightClickedTeam);
             }});
         }
         return teamContextMenuItems;
