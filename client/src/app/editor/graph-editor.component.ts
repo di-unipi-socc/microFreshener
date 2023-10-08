@@ -234,7 +234,7 @@ export class GraphEditorComponent {
         let interactionLinkContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
             interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
-                //this.editing.reverse(rightClickedInteractionLink);
+                this.editing.reverseLink(rightClickedInteractionLink);
             }});
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
                 this.editing.removeLink(rightClickedInteractionLink);
@@ -246,16 +246,20 @@ export class GraphEditorComponent {
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
         if(this.permissions.writePermissions.isTeamWriteAllowed()) {
-            teamContextMenuItems.push({label: "Split team", icon: "pi pi-trash", command: () => {
+            teamContextMenuItems.push({label: "Split team", icon: "pi pi-clone", command: () => {
                 //this.teams.split(rightClickedTeam);
             }});
-            teamContextMenuItems.push({label: "Merge team into other", icon: "pi pi-plus", command: () => {
+            teamContextMenuItems.push({label: "Merge team into other", icon: "pi pi-plus-circle", command: () => {
                 //this.teams.merge(rightClickedTeam);
             }});
-            teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
+
+            if(teamContextMenuItems.length > 0)
+                teamContextMenuItems.push({separator: true});
+            
+                teamContextMenuItems.push({label: "Delete team", icon: "pi pi-eraser", command: () => {
                 //this.teams.removeTeam(rightClickedTeam);
             }});
-            teamContextMenuItems.push({label: "Delete team with members", icon: "pi pi-eraser", command: () => {
+            teamContextMenuItems.push({label: "Delete team with members", icon: "pi pi-trash", command: () => {
                 //this.teams.removeTeam(rightClickedTeam);
             }});
         }
