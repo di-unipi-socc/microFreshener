@@ -22,6 +22,7 @@ import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
+import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -50,7 +51,8 @@ export class GraphEditorComponent {
         private permissions: EditorPermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private confirmationService: ConfirmationService
     ) {
         this.contextMenuItems = [];
     }
@@ -158,7 +160,7 @@ export class GraphEditorComponent {
 
 
             if (e.which == DELETE_KEY && this.leftClickSelectedNode) {
-                this.editing.deleteNode(this.leftClickSelectedNode);
+                this.openDeleteNodeDialog(this.leftClickSelectedNode);
             }
             if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
@@ -180,20 +182,35 @@ export class GraphEditorComponent {
     }
 
     openAddNodeDialog(nodeType, position, team?) {
-    // Ask for node required data
-    const ref = this.dialogService.open(DialogAddNodeComponent, {
-        header: 'Add Node',
-        data: {
-            clickPosition: position,
-            nodeType: nodeType
-        }
-    });
-    ref.onClose.subscribe((data) => {
-        // Create the AddNodeCommand
-        if(data) {
-            this.editing.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
-        }
-    });
+        // Ask for node required data
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            data: {
+                clickPosition: position,
+                nodeType: nodeType
+            }
+        });
+        ref.onClose.subscribe((data) => {
+            // Create the AddNodeCommand
+            if(data) {
+                this.editing.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+            }
+        });
+    }
+
+    openDeleteNodeDialog(node) {
+        this.confirmationService.confirm({
+            message: 'Do you want to delete this node?',
+            header: 'Node Deletion Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.editing.deleteNode(node);
+                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+            }
+        });
     }
 
     bindSingleClickBlank() {
@@ -239,7 +256,7 @@ export class GraphEditorComponent {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push({label: "Delete node", icon: "pi pi-trash", command: () => {
-                this.editing.deleteNode(rightClickedNode);
+                this.openDeleteNodeDialog(rightClickedNode);
             }});
         }
         return nodeContextMenuItems;
@@ -252,7 +269,19 @@ export class GraphEditorComponent {
                 this.editing.reverseLink(rightClickedInteractionLink);
             }});
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
-                this.editing.removeLink(rightClickedInteractionLink);
+                //this.editing.removeLink(rightClickedInteractionLink);
+                this.confirmationService.confirm({
+                    message: 'Do you want to delete the link?',
+                    header: 'Link deletion',
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.editing.removeLink(rightClickedInteractionLink);
+                        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
+                    },
+                    reject: () => {
+                        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+                    }
+                });
             }});
         }
         return interactionLinkContextMenuItems;
@@ -333,7 +362,18 @@ export class GraphEditorComponent {
                         if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node))
                             add_link = false;
                         if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
-                            this.editing.addLink(this.leftClickSelectedNode, node);
+                            const ref = this.dialogService.open(DialogAddLinkComponent, {
+                                data: {
+                                    source: this.leftClickSelectedNode,
+                                    target: node
+                                },
+                                header: 'Add a link',
+                            });
+                            ref.onClose.subscribe((data) => {
+                                if (data) {
+                                    this.editing.addLink(this.leftClickSelectedNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                }
+                            });
                             this.leftClickSelectedNode = null;
                         }
                         else {
