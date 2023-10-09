@@ -51,6 +51,7 @@ export class SubtoolbarTeamsComponent {
     } else {
       // Toggle off
       this.gs.getGraph().off(this.GRAPH_EVENTS_LABELS, this.graphListener);
+      this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
       if(this.selectedNodes.length > 0) {
         const ref = this.dialogService.open(DialogAddTeamComponent, {
           header: 'Add Team',
