@@ -334,9 +334,9 @@ export class GraphEditorComponent {
                             ref.onClose.subscribe((data) => {
                                 if (data) {
                                     this.editing.addLink(this.leftClickSelectedNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                    this.leftClickSelectedNode = null;
                                 }
                             });
-                            this.leftClickSelectedNode = null;
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
