@@ -17,6 +17,8 @@ import { SidebarEvent } from './sidebar-event';
 })
 export class AppMenuComponent implements OnInit {
 
+    sidebarVisible2
+
     modelName: string; // name of the model
     hrefDownload = environment.serverUrl + '/api/export';
 
