@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { EventEmitter, Component, Output } from '@angular/core';
 import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -6,6 +6,7 @@ import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
+import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -14,16 +15,21 @@ import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selecti
 })
 export class SubtoolbarTeamsComponent {
 
+  // Add team
   public readonly ADD_TEAM_LABEL: string;
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
-
-  showTeamToggled: boolean;
-  
   private readonly GRAPH_EVENTS_LABELS: string;
   private readonly PAPER_EVENTS_LABELS: string;
   private graphListener;
   private paperListener;
+
+  // Show/Hide teams
+  showTeamToggled: boolean;
+
+  // Show Teams Info
+  @Output() viewTeamsInfo: EventEmitter<SidebarEvent> = new EventEmitter();
+  showTeamsInfoToggled: boolean;
 
   constructor(
     public tools: ToolSelectionService,
@@ -80,7 +86,7 @@ export class SubtoolbarTeamsComponent {
     }
   }
 
-  updateNodeList() {
+  private updateNodeList() {
     let graph = this.gs.getGraph();
     let nodeList: joint.shapes.microtosca.Node[] = graph.getNodes();
     let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodeList
@@ -101,7 +107,7 @@ export class SubtoolbarTeamsComponent {
     });
   }
 
-  nodeClicked(cellView: joint.dia.CellView) {
+  private nodeClicked(cellView: joint.dia.CellView) {
     // priority gently left to addLink when clicking an element
     if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
       let graph = this.gs.getGraph();
@@ -121,6 +127,14 @@ export class SubtoolbarTeamsComponent {
         this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
       }
     }
+  }
+
+  toggleTeamsInfo() {
+    let sidebarEvent: SidebarEvent = {
+      name: 'viewTeamsInfo',
+      visible: this.showTeamsInfoToggled
+    }
+    this.viewTeamsInfo.emit(sidebarEvent);
   }
 
   ngOnDestroy() {
