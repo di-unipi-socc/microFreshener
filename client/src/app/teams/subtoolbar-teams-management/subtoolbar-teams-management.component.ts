@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -14,7 +14,7 @@ import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selecti
 })
 export class SubtoolbarTeamsComponent {
 
-  addTeamToggled: boolean;
+  public readonly ADD_TEAM_LABEL: string;
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
 
@@ -26,24 +26,24 @@ export class SubtoolbarTeamsComponent {
   private paperListener;
 
   constructor(
+    public tools: ToolSelectionService,
     private teams: TeamsService,
     private dialogService: DialogService,
     private gs: GraphService,
     private navigation: EditorNavigationService,
-    private tools: ToolSelectionService,
     private messageService: MessageService
   ) {
-    this.addTeamToggled = false;
+    this.ADD_TEAM_LABEL = ToolSelectionService.ADD_TEAM;
     this.GRAPH_EVENTS_LABELS = 'change';
-    this.PAPER_EVENTS_LABELS = 'element:pointerclick';
-    this.graphListener = () => {this.updateNodeList()};
+    this.graphListener = (cellView, evt, x, y) => {this.updateNodeList()};
+    this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
     this.paperListener = (cellView, evt, x, y) => {this.nodeClicked(cellView)};
     this.nodeList = [];
     this.selectedNodes = [];
   }
 
   toggleAddTeam() {
-    if(this.addTeamToggled) {
+    if(this.tools.enabledActions[ToolSelectionService.ADD_TEAM]) {
       // Toggle on
       this.updateNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
@@ -65,6 +65,7 @@ export class SubtoolbarTeamsComponent {
             this.teams.addTeam(data.name, data.nodes);
             this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` });
             this.resetLists();
+            this.teams.showTeams();
           }
         });
       }
@@ -104,14 +105,20 @@ export class SubtoolbarTeamsComponent {
     // priority gently left to addLink when clicking an element
     if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
       let graph = this.gs.getGraph();
-      if(graph.isNode(cellView.model)) {
-        console.log("cellView.model", cellView.model);
-        let node = <joint.shapes.microtosca.Node> cellView.model;
+      let cell = cellView.model;
+      if(graph.isNode(cell)) {
+        console.log("cellView.model", cell);
+        let node = <joint.shapes.microtosca.Node> cell;
         if((graph.isService(node) || graph.isCommunicationPattern(node) || graph.isDatastore(node))
           && !this.selectedNodes.includes(node)) {
           this.selectedNodes.push(node);
           this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
         }
+      } else if(graph.isTeamGroup(cell)) {
+        console.log("adding members of a team")
+        let team = <joint.shapes.microtosca.SquadGroup> cell;
+        this.selectedNodes = this.selectedNodes.concat(team.getMembers());
+        this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
       }
     }
   }

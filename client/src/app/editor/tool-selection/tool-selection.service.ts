@@ -12,6 +12,8 @@ export class ToolSelectionService {
   public static readonly MESSAGE_BROKER = "messagebroker";
   public static readonly DATASTORE = "datastore";
 
+  public static readonly ADD_TEAM = "addTeam";
+
   public enabledActions;
 
   constructor() {
