@@ -44,8 +44,10 @@ export class AppMenuComponent implements OnInit {
 
     ngOnInit() {
         this.modelName = this.gs.getGraph().getName();
-        this.fileMenuItems = [
-            {
+        this.fileMenuItems = [];
+        // Add 'New' button if admin
+        if(this.session.isAdmin())
+            this.fileMenuItems.push({
                 label: 'New',
                 icon: 'pi pi-fw pi-plus',
                 command: () => {
@@ -58,12 +60,15 @@ export class AppMenuComponent implements OnInit {
                         }
                     });
                 }
-            },
+            });
+        // Populate file menu
+        this.fileMenuItems = this.fileMenuItems.concat([
             {
                 label: 'Save',
                 icon: 'pi pi-fw pi-save',
                 command: () => {
-                    this.session.save();
+                    if(this.session.isDocumentReady())
+                        this.session.save();
                 }
             },
             { separator: true },
@@ -118,7 +123,7 @@ export class AppMenuComponent implements OnInit {
                     //end examples
                 ]
             }
-        ];
+        ]);
 
         this.sessionMenuItems = [
             {
