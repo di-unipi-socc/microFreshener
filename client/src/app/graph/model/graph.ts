@@ -524,6 +524,9 @@ export class Graph extends joint.dia.Graph {
                 });
                 var team = this.addTeamGroup(group_name);
                 nodes.forEach(node => {
+                    let prevTeam = this.getTeamOfNode(node);
+                    if(prevTeam)
+                        prevTeam.removeMember(node); // only one team per node (last one)
                     team.addMember(node);
                 });
 
