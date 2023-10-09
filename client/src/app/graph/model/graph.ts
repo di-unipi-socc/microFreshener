@@ -349,6 +349,10 @@ export class Graph extends joint.dia.Graph {
         return node.attr('type/text')=="MR";
     }
 
+    isInteractionLink(node: joint.dia.Cell) {
+        return node.attributes['type'] == "microtosca.RunTimeLink";
+    }
+
     getSubgraphFromNodes(nodes: joint.dia.Cell[]) {
         console.log("in getSubgraphFromNodes nodes is " + nodes);
         return this.getSubgraph(nodes, { deep: true });
@@ -663,6 +667,7 @@ export class Graph extends joint.dia.Graph {
             }
         }
 
+        this.getTeamGroups().forEach((team) => team.fitEmbeds({padding: Graph.TEAM_PADDING}));
     }
 
 

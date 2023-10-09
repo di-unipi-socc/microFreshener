@@ -59,6 +59,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
@@ -137,7 +138,8 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     ToggleButtonModule,
     AvatarModule,
     TagModule,
-    MultiSelectModule
+    MultiSelectModule,
+    ContextMenuModule
   ],
   providers: [
     DialogService,

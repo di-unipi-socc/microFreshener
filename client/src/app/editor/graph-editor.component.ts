@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
@@ -20,8 +20,9 @@ import { ArchitectureEditingService } from '../architecture/architecture-editing
 import { TeamsService } from '../teams/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
-import { UserRole } from '../core/user-role';
 import { SessionService } from '../core/session/session.service';
+import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
+import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -30,13 +31,14 @@ import { SessionService } from '../core/session/session.service';
     providers: [ArchitectureEditingService, DialogService] //, ConfirmationService]
 })
 export class GraphEditorComponent {
-
-    private readonly TEAM_PADDING;
-
-    paper: joint.dia.Paper;
+    
+    @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
 
     leftClickSelectedNode: joint.shapes.microtosca.Node;
-    rightClickselectdNode: joint.shapes.microtosca.Node;
+    rightClickSelectedNode: joint.shapes.microtosca.Node;
+
+    @ViewChild('contextMenu') contextMenu;
+    contextMenuItems;
     
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
@@ -51,42 +53,12 @@ export class GraphEditorComponent {
         private messageService: MessageService,
         private confirmationService: ConfirmationService
     ) {
-        this.leftClickSelectedNode = null;
-        this.rightClickselectdNode = null;
-        this.TEAM_PADDING = Graph.TEAM_PADDING;
+        this.contextMenuItems = [];
     }
 
-    ngOnInit() {
-        let canvas = document.getElementById('jointjsgraph');
-        this.paper = new joint.dia.Paper({
-            el: canvas,
-            model: this.graph.getGraph(),
-            preventContextMenu: true,
-            width: '100%',
-            height: '100%',
-            background: { color: 'light' },
-            multiLinks: true,
-            clickThreshold: 1,
-            // restrictTranslate: true,
-            gridSize: 1,
-            defaultLink: new joint.shapes.microtosca.RunTimeLink(),
-            linkPinning: false, // do not allow link without a target node
-            validateMagnet: function (cellView, magnet) {
-                //return false;
-                return magnet.getAttribute('magnet') !== 'false';
-            },
-            validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-                var sourceId = cellViewS.model.id;
-                var targetId = cellViewT.model.id;
-                if (sourceId && targetId && sourceId === targetId) // avoid self loop
-                    return false;
-                else
-                    return true;
-                // return sourceId === targetId;
-                // return (end === 'target' ? cellViewT : cellViewS) instanceof joint.dia.ElementView;
-            },
-        });
-        this.navigation.setPaper(this.paper);
+    ngAfterViewInit() {
+        // Initialize JointJS paper
+        this.navigation.initPaper(this.jointJsGraph.nativeElement);
 
         // Create a sample graph useful for debugging
         //this.createSampleGraph();
@@ -95,9 +67,8 @@ export class GraphEditorComponent {
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.paper);
+        this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.navigation.getPaper());
     }
-  
 
     bindEvents() {
         this.bindKeyboardEvents();
@@ -108,11 +79,11 @@ export class GraphEditorComponent {
 
         this.bindSingleRightClickCell();
 
-        this.bindMouseEnterLink();
-        this.bindMouseOverNode();
+        //this.bindMouseEnterLink();
+        //this.bindMouseOverNode();
 
         this.bindClickOnSmells();
-        this.bindClickDeleteNode();
+        //this.bindClickDeleteNode();
 
         // this.bindTeamToCoverChildren();
         this.bindTeamMinimize();
@@ -160,8 +131,8 @@ export class GraphEditorComponent {
             var YPSILON_KEY = 89;
 
 
-            if (e.which == DELETE_KEY) {
-                this.editing.deleteSelected(this.leftClickSelectedNode);
+            if (e.which == DELETE_KEY && this.leftClickSelectedNode) {
+                this.openDeleteNodeDialog(this.leftClickSelectedNode);
             }
             if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
@@ -178,18 +149,50 @@ export class GraphEditorComponent {
     }
 
     unhighlight() {
-        this.paper.findViewByModel(this.leftClickSelectedNode).unhighlight();
+        this.navigation.getPaper().findViewByModel(this.leftClickSelectedNode).unhighlight();
         this.leftClickSelectedNode = null;
     }
 
+    openAddNodeDialog(nodeType, position, team?) {
+        // Ask for node required data
+        const ref = this.dialogService.open(DialogAddNodeComponent, {
+            header: 'Add Node',
+            data: {
+                clickPosition: position,
+                nodeType: nodeType
+            }
+        });
+        ref.onClose.subscribe((data) => {
+            // Create the AddNodeCommand
+            if(data) {
+                this.editing.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+            }
+        });
+    }
+
+    openDeleteNodeDialog(node) {
+        this.confirmationService.confirm({
+            message: 'Do you want to delete this node?',
+            header: 'Node Deletion Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.editing.deleteNode(node);
+                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+            }
+        });
+    }
+
     bindSingleClickBlank() {
-        this.paper.on("blank:pointerclick", (evt) => {
+        this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
-            let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
+            let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                this.editing.addNode(this.toolSelection.getSelected(), position);
+                this.openAddNodeDialog(this.toolSelection.getSelected(), position);
             } else {
                 if (this.leftClickSelectedNode) {
                     this.unhighlight();
@@ -199,15 +202,75 @@ export class GraphEditorComponent {
     }
 
     bindSingleRightClickCell(){
-        this.paper.on('element:contextmenu',(cellView, evt, x, y)=>{ 
+        this.navigation.getPaper().on('cell:contextmenu', (cellView, evt, x, y) => {
             console.log("right click cell");
-        })
-        
 
+            let cell = cellView.model;
+            let graph = this.graph.getGraph();
+            this.contextMenuItems = [];
+            if(graph.isNode(cell)) {
+                this.contextMenuItems = this.getNodeContextMenu(cell);
+            } else if(graph.isTeamGroup(cell)) {
+                this.contextMenuItems = this.getTeamContextMenu(cell);
+            } else if(graph.isInteractionLink(cell)) {
+                this.contextMenuItems = this.getInteractionLinkContextMenu(cell);
+            }
+            // Avoid showing an empty context menu if no valid option is available
+            if(this.contextMenuItems.length == 0)
+                this.contextMenu.hide();
+        });
+        this.navigation.getPaper().on('blank:contextmenu', (evt, x, y) => {
+            this.contextMenu.hide();
+        });
+    }
+
+    getNodeContextMenu(rightClickedNode): MenuItem[] {
+        let nodeContextMenuItems = [];
+        if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+            nodeContextMenuItems.push({label: "Delete node", icon: "pi pi-trash", command: () => {
+                this.openDeleteNodeDialog(rightClickedNode);
+            }});
+        }
+        return nodeContextMenuItems;
+    }
+
+    getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
+        let interactionLinkContextMenuItems = [];
+        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
+            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
+                this.editing.reverseLink(rightClickedInteractionLink);
+            }});
+            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
+                //this.editing.removeLink(rightClickedInteractionLink);
+                this.confirmationService.confirm({
+                    message: 'Do you want to delete the link?',
+                    header: 'Link deletion',
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.editing.removeLink(rightClickedInteractionLink);
+                        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
+                    },
+                    reject: () => {
+                        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+                    }
+                });
+            }});
+        }
+        return interactionLinkContextMenuItems;
+    }
+
+    getTeamContextMenu(rightClickedTeam): MenuItem[] {
+        let teamContextMenuItems = [];
+        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+            teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
+                this.teams.removeTeam(rightClickedTeam);
+            }});
+        }
+        return teamContextMenuItems;
     }
 
     bindSingleClickCell() {
-        this.paper.on("element:pointerclick", (cellView, evt, x, y) => {
+        this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
@@ -215,14 +278,14 @@ export class GraphEditorComponent {
             // click on group
             if (this.graph.getGraph().isTeamGroup(node)) {
                 if(this.toolSelection.isAddNodeEnabled()) {
-                    let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
+                    let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
-                    if(this.session.getRole() == UserRole.TEAM) {
+                    if(this.session.isTeam()) {
                         team = this.graph.getGraph().findGroupByName(this.session.getName())
                      } else {
                         team = cellView.model;
                      }
-                    this.editing.addNode(this.toolSelection.getSelected(), position, team);
+                     this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)
@@ -261,7 +324,18 @@ export class GraphEditorComponent {
                         if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node))
                             add_link = false;
                         if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
-                            this.editing.addLink(this.leftClickSelectedNode, node);
+                            const ref = this.dialogService.open(DialogAddLinkComponent, {
+                                data: {
+                                    source: this.leftClickSelectedNode,
+                                    target: node
+                                },
+                                header: 'Add a link',
+                            });
+                            ref.onClose.subscribe((data) => {
+                                if (data) {
+                                    this.editing.addLink(this.leftClickSelectedNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                }
+                            });
                             this.leftClickSelectedNode = null;
                         }
                         else {
@@ -274,22 +348,22 @@ export class GraphEditorComponent {
     }
 
     bindDoubleClickCell() {
-        this.paper.on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
             evt.preventDefault();
             evt.stopPropagation();
             console.log("Double click cell");
         });
     }
 
-    bindClickDeleteNode() {
+    /*bindClickDeleteNode() {
         // delete a node event
-        this.paper.on("node:service:delete", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("node:service:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
             this.editing.deleteService(node);
         })
 
-        this.paper.on("node:communicationpattern:delete", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("node:communicationpattern:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
             this.confirmationService.confirm({
@@ -307,7 +381,7 @@ export class GraphEditorComponent {
 
         })
 
-        this.paper.on("node:datastore:delete", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("node:datastore:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var node = cellView.model;
             this.editing.deleteDatastore(node);
@@ -315,19 +389,17 @@ export class GraphEditorComponent {
     }
 
     bindMouseOverNode() {
-        this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
-            if(this.permissions.writePermissions.isAllowed(cell)) {
-                if (cell.isElement()) {
-                    cell.showIcons();
-                } else if (this.graph.getGraph().isTeamGroup(cell)) {
-                    cell.showIcons();
-                }
+            if (cell.isElement()) {
+                cell.showIcons();
+            } else if (this.graph.getGraph().isTeamGroup(cell)) {
+                cell.showIcons();
             }
         })
 
-        this.paper.on("cell:mouseleave", (cellView, evt, x, y, ) => {
+        this.navigation.getPaper().on("cell:mouseleave", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
             if (cell.isElement()) {
@@ -335,39 +407,38 @@ export class GraphEditorComponent {
 
             }
         })
-
-    }
+    }*/
 
     bindClickOnSmells() {
-        this.paper.on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var model = cellview.model;
             var smell: SmellObject = model.getSmell("EndpointBasedServiceInterationSmell");
             this._openDialogSmellComponent(model, smell);
         })
 
-        this.paper.on("smell:NoApiGateway:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("smell:NoApiGateway:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var model = cellview.model;
             var smell: SmellObject = model.getSmell("NoAPiGatewaySmell");
             this._openDialogSmellComponent(model, smell);
         })
 
-        this.paper.on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var model = cellview.model;
             var smell: SmellObject = model.getSmell("SharedPersistencySmell");
             this._openDialogSmellComponent(model, smell);
         })
 
-        this.paper.on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var model: joint.shapes.microtosca.Node = cellview.model;
             var smell: SmellObject = model.getSmell("WobblyServiceInteractonSmell");
             this._openDialogSmellComponent(model, smell);
         })
 
-        this.paper.on("smell:SingleLayerTeam:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("smell:SingleLayerTeam:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var model = cellview.model;
             var smell: SmellObject = model.getSmell("SingleLayerTeamSmell");
@@ -395,7 +466,7 @@ export class GraphEditorComponent {
 
     bindTeamEmbedNodes() {
         // First, unembed the cell that has just been grabbed by the user.
-        // this.paper.on('cell:pointerdown', (cellView, evt, x, y) => {
+        // this.navigation.getPaper().on('cell:pointerdown', (cellView, evt, x, y) => {
 
         //     var cell = cellView.model;
 
@@ -417,14 +488,14 @@ export class GraphEditorComponent {
 
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
-        this.paper.on('cell:pointerup', (cellView, evt, x, y) => {
+        this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
             var cell = cellView.model;
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                 !this.graph.getGraph().isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
                 !this.graph.getGraph().isGroup(cell)) {
 
-                var cellViewsBelow = this.paper.findViewsFromPoint(cell.getBBox().center());
+                var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
 
                 if (cellViewsBelow.length) {
                     // Note that the findViewsFromPoint() returns the view for the `cell` itself.
@@ -443,7 +514,7 @@ export class GraphEditorComponent {
                                     team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+                                    if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team);
                                     }
                                 }
@@ -456,7 +527,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.graph.getGraph().getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+                            if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team);
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })
@@ -471,7 +542,7 @@ export class GraphEditorComponent {
     }
 
     bindTeamMaximize() {
-        this.paper.on("team:maximize:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("team:maximize:pointerdown", (cellview, evt, x, y) => {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
@@ -480,7 +551,7 @@ export class GraphEditorComponent {
     }
 
     bindTeamMinimize() {
-        this.paper.on("team:minimize:pointerdown", (cellview, evt, x, y) => {
+        this.navigation.getPaper().on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
             this.graph.getGraph().minimizeTeam(team);
@@ -588,7 +659,7 @@ export class GraphEditorComponent {
 
     // bindCreateLink() {
     //     // Create a new link by dragging
-    //     this.paper.on('blank:pointerdown', function (evt, x, y) {
+    //     this.navigation.getPaper().on('blank:pointerdown', function (evt, x, y) {
     //         var link = new joint.shapes.standard.Link();
     //         link.set('source', { x: x, y: y });
     //         link.set('target', { x: x, y: y });
@@ -596,11 +667,11 @@ export class GraphEditorComponent {
     //         evt.data = { link: link, x: x, y: y };
     //     })
 
-    //     this.paper.on('blank:pointermove', function (evt, x, y) {
+    //     this.navigation.getPaper().on('blank:pointermove', function (evt, x, y) {
     //         evt.data.link.set('target', { x: x, y: y });
     //     });
 
-    //     this.paper.on('blank:pointerup', function (evt) {
+    //     this.navigation.getPaper().on('blank:pointerup', function (evt) {
     //         var target = evt.data.link.get('target');
     //         if (evt.data.x === target.x && evt.data.y === target.y) {
     //             // remove zero-length links
@@ -609,9 +680,10 @@ export class GraphEditorComponent {
     //     });
     // }
 
-    bindMouseEnterLink() {
-        this.paper.on('link:mouseenter', (linkView) => {
-            if(this.permissions.writePermissions.isAllowed(linkView.model)) {
+    /*bindMouseEnterLink() {
+        this.navigation.getPaper().on('link:mouseenter', (linkView) => {
+            let link = linkView.model;
+            if(this.permissions.writePermissions.isAllowed(link)) {
                 var tools = [
                     // new joint.linkTools.SourceArrowhead(),
                     // new joint.linkTools.TargetArrowhead(),
@@ -645,12 +717,9 @@ export class GraphEditorComponent {
                             }
                         }],
                         distance: -30,
-                        action: function () {
-                            var link = this.model;
-                            var source = link.source();
-                            var target = link.target();
-                            link.source(target);
-                            link.target(source);
+                        action: () => {
+                            console.log("Reversing link");
+                            this.editing.reverseLink(link);
                         }
                     }),
                     // button remove a link
@@ -690,11 +759,11 @@ export class GraphEditorComponent {
             }
         });
 
-        this.paper.on('link:mouseleave', function (linkView) {
+        this.navigation.getPaper().on('link:mouseleave', function (linkView) {
             if (!linkView.hasTools('onhover')) return;
             linkView.removeTools();
         });
-    }
+    }*/
 
     adjustVertices = (graph, cell) => {
 
@@ -811,28 +880,28 @@ export class GraphEditorComponent {
 
     bindDragNavigation() {
         let movingStatus = { isMoving: false, x: undefined, y: undefined };
-        this.paper.on("blank:pointerdown", (evt, x, y) => {
+        this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
             console.log("pointerdown on blank, start dragging paper");
             if(!movingStatus.isMoving) {
                 movingStatus.isMoving = true;
-                let paperPoint = this.paper.localToPaperPoint(x, y);
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
                 movingStatus.x = paperPoint.x;
                 movingStatus.y = paperPoint.y;
             }
         });
 
-        this.paper.on("blank:pointermove", (evt, x, y) => {
+        this.navigation.getPaper().on("blank:pointermove", (evt, x, y) => {
             if(movingStatus.isMoving) {
-                let paperPoint = this.paper.localToPaperPoint(x, y);
-                let dx = this.paper.options.origin.x + paperPoint.x - movingStatus.x;
-                let dy = this.paper.options.origin.y + paperPoint.y - movingStatus.y;
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
+                let dx = this.navigation.getPaper().options.origin.x + paperPoint.x - movingStatus.x;
+                let dy = this.navigation.getPaper().options.origin.y + paperPoint.y - movingStatus.y;
                 this.navigation.move(dx, dy);
                 movingStatus.x = paperPoint.x;
                 movingStatus.y = paperPoint.y;
             }
         });
 
-        this.paper.on("blank:pointerup", () => {
+        this.navigation.getPaper().on("blank:pointerup", () => {
             if(movingStatus.isMoving) {
                 console.log("pointerup on blank, no more dragging paper")
                 movingStatus.isMoving = false;
@@ -842,13 +911,13 @@ export class GraphEditorComponent {
 
     bindWheelZoom() {
         let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
-        this.paper.on("blank:mousewheel", function(evt, x, y, delta) {
+        this.navigation.getPaper().on("blank:mousewheel", function(evt, x, y, delta) {
             console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
             evt.preventDefault();
             wheelAction(x, y, evt, delta);
         });
 
-        this.paper.on("cell:mousewheel", function(cellView, evt, x, y, delta) {
+        this.navigation.getPaper().on("cell:mousewheel", function(cellView, evt, x, y, delta) {
             evt.preventDefault();
             wheelAction(x, y, evt, delta);
         });
@@ -901,7 +970,7 @@ export class GraphEditorComponent {
         let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
 
         this.applyDirectedGraphLayout();
-        this.paper.scaleContentToFit();
+        this.navigation.getPaper().scaleContentToFit();
 
     }*/
 

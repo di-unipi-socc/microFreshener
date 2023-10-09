@@ -23,18 +23,26 @@ export class TeamsService {
     this.visualization.hideTeams();
   }
 
-  addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-    this.editing.addMemberToTeam(member, team);
-  }
-
-  removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-    this.editing.removeMemberFromTeam(member, team);
+  areVisible(): boolean {
+    return this.visualization.areTeamsVisible();
   }
 
   // POV: admin
 
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     this.editing.addTeam(name, selectedNodes);
+  }
+
+  removeTeam(team: joint.shapes.microtosca.SquadGroup) {
+    this.editing.removeTeam(team);
+  }
+
+  addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+    this.editing.addMemberToTeam(member, team);
+  }
+
+  removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+    this.editing.removeMemberFromTeam(member, team);
   }
 
   // POV: team member

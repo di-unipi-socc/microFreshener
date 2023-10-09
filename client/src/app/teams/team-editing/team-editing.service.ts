@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Command } from 'src/app/commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
-import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from 'src/app/commands/team-commands';
+import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveTeamGroupCommand } from 'src/app/commands/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
 
@@ -26,13 +26,17 @@ export class TeamEditingService {
       commandToExecute = new AddTeamGroupCommand(this.graphService.getGraph(), name);
     } else {
       // Add a new team and add its nodes atomically
-      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.invoker, this.graphService.getGraph(), name, selectedNodes);
+      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.graphService.getGraph(), name, selectedNodes);
       commandToExecute = createTeamThenMoveSelectedMembersIntoIt;
     }
     this.invoker.executeCommand(commandToExecute);
   }
 
-  private buildCreateTeamThenAddNodesCommand(invoker: GraphInvoker, graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
+  removeTeam(team: joint.shapes.microtosca.SquadGroup) {
+    this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.getGraph(), team));
+  }
+
+  private buildCreateTeamThenAddNodesCommand(graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
     let buildMoveNodeCommand = this.buildMoveNodeCommand;
     return new class implements Command {
       private newTeamCommand: Command;

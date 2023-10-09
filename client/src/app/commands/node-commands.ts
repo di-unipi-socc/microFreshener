@@ -4,31 +4,46 @@ import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand implements Command {
+export abstract class NodeCommand {
     
-    abstract execute(node?): joint.shapes.microtosca.Node;
-    abstract unexecute(node?): joint.shapes.microtosca.Node;
+    abstract execute();
+    abstract unexecute();
 
     protected node: joint.shapes.microtosca.Node;
 
+    setNode(node: joint.shapes.microtosca.Node) {
+        this.node = node;
+    }
+
+    getNode() {
+        return this.node;
+    }
+
+    constructor(node?: joint.shapes.microtosca.Node) {
+        this.node = node;
+    }
+
     then(next: NodeCommand): NodeCommand {
-        let myExecute = (node?) => this.execute(node);
-        let myUnexecute = (node?) => this.unexecute(node);
+        let action = () => {this.execute()};
+        let revert = () => {this.unexecute()};
+        let getNode = () => { return this.getNode() };
         return new class extends NodeCommand {
-            execute(node) {
-                node = myExecute(node);
-                return next.execute(node);
+            execute() {
+                action();
+                let node = getNode();
+                next.setNode(node);
+                next.execute();
             }
-            unexecute(node: joint.shapes.microtosca.Node) {
-                node = next.unexecute(node);
-                return myUnexecute(node);
+            unexecute() {
+                next.unexecute();
+                revert();
             }
         };
     }
 }
 
 
-abstract class GenerateNodeCommand extends NodeCommand {
+abstract class NodeGeneratorCommand extends NodeCommand {
 
     name: string;
     position?: g.Point;
@@ -41,18 +56,16 @@ abstract class GenerateNodeCommand extends NodeCommand {
 
     protected abstract generateNode(): joint.shapes.microtosca.Node;
 
-    execute(): joint.shapes.microtosca.Node {
+    execute() {
         this.node = this.generateNode();
-        return this.node;
     }
 
     unexecute() {
         this.node.remove();
-        return this.node;
     }
 }
 
-export class AddServiceCommand extends GenerateNodeCommand implements Command {
+export class AddServiceCommand extends NodeGeneratorCommand implements Command {
 
     constructor(
         private graph: Graph,
@@ -67,7 +80,7 @@ export class AddServiceCommand extends GenerateNodeCommand implements Command {
     }
 }
 
-export class AddDatastoreCommand extends GenerateNodeCommand implements Command {
+export class AddDatastoreCommand extends NodeGeneratorCommand implements Command {
 
     constructor(
         private graph: Graph,
@@ -82,7 +95,7 @@ export class AddDatastoreCommand extends GenerateNodeCommand implements Command 
     }
 }
 
-export class AddMessageBrokerCommand extends GenerateNodeCommand implements Command {
+export class AddMessageBrokerCommand extends NodeGeneratorCommand implements Command {
 
     constructor(
         private graph: Graph,
@@ -97,7 +110,7 @@ export class AddMessageBrokerCommand extends GenerateNodeCommand implements Comm
     }
 }
 
-export class AddMessageRouterCommand extends GenerateNodeCommand implements Command {
+export class AddMessageRouterCommand extends NodeGeneratorCommand implements Command {
 
     constructor(
         private graph: Graph,

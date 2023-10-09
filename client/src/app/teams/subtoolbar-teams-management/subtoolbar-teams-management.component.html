@@ -1,5 +1,17 @@
+<!-- Show Teams -->
+<p-toggleButton
+    onIcon="pi pi-users" offIcon="pi pi-users"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Show team"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="showTeamToggled"
+    (onChange)="toggleShowTeam()"
+></p-toggleButton>
+
+<!-- Add Team -->
 <p-multiSelect
-    *ngIf="addTeamToggled"
+    *ngIf="tools.enabledActions[ADD_TEAM_LABEL]"
     defaultLabel="Nodes in new team"
     styleClass="add-node-input"
     [showToggleAll]="false"
@@ -20,6 +32,6 @@
     pTooltip="New team"
     showDelay="1000"
     tooltipPosition="bottom"
-    [(ngModel)]="addTeamToggled"
-    (onChange)="toggleAddTeam($event)"
+    [(ngModel)]="tools.enabledActions[ADD_TEAM_LABEL]"
+    (onChange)="toggleAddTeam()"
 ></p-toggleButton>

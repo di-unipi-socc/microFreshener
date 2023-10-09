@@ -18,7 +18,7 @@ export class AddTeamGroupCommand implements Command {
     }
 
     unexecute() {
-        var team = this.graph.getGroup(this.team_name);
+        let team = this.graph.getGroup(this.team_name);
         team.remove();
     }
 
@@ -26,50 +26,66 @@ export class AddTeamGroupCommand implements Command {
 
 export class AddMemberToTeamGroupCommand extends NodeCommand {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
+    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
         super();
+        this.node = node;
     }
 
-    execute(node?) {
-        if(!node) {
-            node = this.member;
-        }
-        this.team.addMember(node);
-        this.member = node;
+    execute() {
+        this.team.addMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
     }
 
-    unexecute(node?: joint.shapes.microtosca.Node) {
-        if(!node)
-            node = this.member;
-        this.team.removeMember(node);
+    unexecute() {
+        this.team.removeMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
     }
+
 }
 
 export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, private member?: joint.shapes.microtosca.Node) {
+    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
         super();
+        this.node = node;
     }
 
-    execute(node?) {
-        if(!node) {
-            node = this.member;
-        }
-        this.team.removeMember(node);
-        this.member = node;
+    execute() {
+        this.team.removeMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
     }
 
-    unexecute(node?: joint.shapes.microtosca.Node) {
-        if(!node)
-            node = this.member;
-        this.team.addMember(node);
+    unexecute() {
+        this.team.addMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-        return node;
+    }
+
+    setTeam(team: joint.shapes.microtosca.SquadGroup) {
+        this.team = team;
+    }
+}
+
+export class RemoveTeamGroupCommand implements Command {
+
+    removeMemberCommands: RemoveMemberFromTeamGroupCommand[];
+
+    constructor(
+        private graph: Graph,
+        private team: joint.shapes.microtosca.SquadGroup
+    ) {}
+
+    execute() {
+        this.removeMemberCommands = [];
+        this.team.getMembers().map((member) => new RemoveMemberFromTeamGroupCommand(this.team, member))
+        .forEach((command) => {
+            this.removeMemberCommands.push(command);
+            command.execute();
+        });
+        this.team = this.team.remove();
+    }
+
+    unexecute() {
+        this.graph.addCell(this.team);
+        this.removeMemberCommands.forEach((command) => command.unexecute());
     }
 }
