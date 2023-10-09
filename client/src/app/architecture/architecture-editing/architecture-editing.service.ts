@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
 import { GraphEditorComponent } from '../../editor/graph-editor.component';
-import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { GraphInvoker } from '../../commands/invoker';
 import { SessionService } from '../../core/session/session.service';
 import { GraphService } from '../../graph/graph.service';
 import { DialogAddNodeComponent } from '../dialog-add-node/dialog-add-node.component';
-import { UserRole } from '../../core/user-role';
 
 import { g } from 'jointjs';
 import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
 import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { Command } from 'src/app/commands/icommand';
 import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
 
 @Injectable({
@@ -45,7 +43,7 @@ export class ArchitectureEditingService {
     ref.onClose.subscribe((data) => {
         // Create the AddNodeCommand
         if(data) {
-          let addNodeCommand: Command;
+          let addNodeCommand: NodeCommand;
           let message: string;
           switch (data.nodeType) {
             case ToolSelectionService.SERVICE:
@@ -73,9 +71,23 @@ export class ArchitectureEditingService {
           }
 
           // If a team has been specified, atomically add the node into it
-          if(team) {
-            let createNodeAndAddToTeam = new AddMemberToTeamGroupCommand();
-            addNodeCommand = addNodeCommand.then(addToTeam);
+          let command;
+          if(!team) {
+            command = addNodeCommand;
+          } else {
+            command = new class Command {
+              node;
+              addMemberCmd;
+              execute() {
+                this.node = addNodeCommand.execute();
+                this.addMemberCmd = new AddMemberToTeamGroupCommand(team, this.node);
+                this.addMemberCmd.execute();
+              }
+              unexecute() {
+                this.addMemberCmd.unexecute();
+                addNodeCommand.unexecute();
+              }
+            };
           }
         }
     });

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Command } from 'src/app/commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
-import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from 'src/app/commands/team-commands';
+import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveTeamGroupCommand } from 'src/app/commands/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
 
@@ -33,7 +33,7 @@ export class TeamEditingService {
   }
 
   removeTeam(team: joint.shapes.microtosca.SquadGroup) {
-    this.invoker.executeCommand(new RemoveMemberFromTeamGroupCommand(team));
+    this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.getGraph(), team));
   }
 
   private buildCreateTeamThenAddNodesCommand(graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {

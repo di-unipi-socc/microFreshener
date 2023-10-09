@@ -110,7 +110,7 @@ export class GraphEditorComponent {
         //this.bindMouseOverNode();
 
         this.bindClickOnSmells();
-        this.bindClickDeleteNode();
+        //this.bindClickDeleteNode();
 
         // this.bindTeamToCoverChildren();
         this.bindTeamMinimize();
@@ -205,7 +205,6 @@ export class GraphEditorComponent {
             this.contextMenuItems = [];
             if(graph.isNode(cell)) {
                 this.contextMenuItems = this.getNodeContextMenu(cell);
-                console.log("this cm items are now", this.contextMenuItems)
             } else if(graph.isTeamGroup(cell)) {
                 this.contextMenuItems = this.getTeamContextMenu(cell);
             } else if(graph.isInteractionLink(cell)) {
@@ -257,7 +256,7 @@ export class GraphEditorComponent {
                 teamContextMenuItems.push({separator: true});
             
                 teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
-                this.teams.removeTeam(rightClickedTeam);
+                    this.teams.removeTeam(rightClickedTeam);
             }});
         }
         return teamContextMenuItems;
@@ -338,7 +337,7 @@ export class GraphEditorComponent {
         });
     }
 
-    bindClickDeleteNode() {
+    /*bindClickDeleteNode() {
         // delete a node event
         this.paper.on("node:service:delete", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
@@ -371,7 +370,7 @@ export class GraphEditorComponent {
         })
     }
 
-    /*bindMouseOverNode() {
+    bindMouseOverNode() {
         this.paper.on("cell:mouseenter", (cellView, evt, x, y, ) => {
             evt.stopPropagation();
             var cell = cellView.model;
