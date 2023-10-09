@@ -6,7 +6,6 @@ import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { Graph } from 'src/app/graph/model/graph';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -43,9 +42,8 @@ export class SubtoolbarTeamsComponent {
     this.selectedNodes = [];
   }
 
-  toggleAddTeam(event) {
-    let checked = event.checked;
-    if(checked) {
+  toggleAddTeam() {
+    if(this.addTeamToggled) {
       // Toggle on
       this.updateNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
