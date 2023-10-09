@@ -23,6 +23,10 @@ export class TeamsService {
     this.visualization.hideTeams();
   }
 
+  areVisible(): boolean {
+    return this.visualization.areTeamsVisible();
+  }
+
   // POV: admin
 
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {

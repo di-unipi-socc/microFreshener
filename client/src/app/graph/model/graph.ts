@@ -667,6 +667,7 @@ export class Graph extends joint.dia.Graph {
             }
         }
 
+        this.getTeamGroups().forEach((team) => team.fitEmbeds({padding: Graph.TEAM_PADDING}));
     }
 
 

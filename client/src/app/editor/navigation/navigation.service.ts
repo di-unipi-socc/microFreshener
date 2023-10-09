@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
+import { GraphService } from 'src/app/graph/graph.service';
+import * as joint from 'jointjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +11,42 @@ export class EditorNavigationService {
 
   private readonly FIT_CONTENT_PADDING = 150;
 
-  constructor() { }
+  constructor(
+    private graphService: GraphService
+  ) {}
 
   // Paper
 
-  setPaper(paper: joint.dia.Paper) {
-    this.paper = paper;
+  initPaper(element): joint.dia.Paper {
+    this.paper = new joint.dia.Paper({
+      el: element,
+      model: this.graphService.getGraph(),
+      preventContextMenu: true,
+      width: '100%',
+      height: '100%',
+      background: { color: 'light' },
+      multiLinks: true,
+      clickThreshold: 1,
+      // restrictTranslate: true,
+      gridSize: 1,
+      defaultLink: new joint.shapes.microtosca.RunTimeLink(),
+      linkPinning: false, // do not allow link without a target node
+      validateMagnet: function (cellView, magnet) {
+          //return false;
+          return magnet.getAttribute('magnet') !== 'false';
+      },
+      validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+          var sourceId = cellViewS.model.id;
+          var targetId = cellViewT.model.id;
+          if (sourceId && targetId && sourceId === targetId) // avoid self loop
+              return false;
+          else
+              return true;
+          // return sourceId === targetId;
+          // return (end === 'target' ? cellViewT : cellViewS) instanceof joint.dia.ElementView;
+      },
+    });
+    return this.paper;
   }
 
   getPaper() {
@@ -42,7 +74,7 @@ export class EditorNavigationService {
   }
 
   zoomIn() {
-    let canvas = document.getElementById('jointjsgraph');
+    let canvas = document.getElementsByTagName('app-graph-editor')[0];
     let offsetX = canvas.clientWidth/2;
     let offsetY = canvas.clientHeight/2;
     let origin = this.paper.options.origin;
@@ -53,7 +85,7 @@ export class EditorNavigationService {
   }
 
   zoomOut() {
-    let canvas = document.getElementById('jointjsgraph');
+    let canvas = document.getElementsByTagName('app-graph-editor')[0];
     let offsetX = canvas.clientWidth/2;
     let offsetY = canvas.clientHeight/2;
     let origin = this.paper.options.origin;

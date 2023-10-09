@@ -7,16 +7,26 @@ import { Graph } from 'src/app/graph/model/graph';
 })
 export class TeamVisualizationService {
 
+  visibleTeams: boolean;
+
   constructor(
     private graphService: GraphService
-  ) {}
+  ) {
+    this.visibleTeams = false;
+  }
 
   showTeams() {
     this.graphService.getGraph().showAllTeamBoxes();
+    this.visibleTeams = true;
   }
 
   hideTeams() {
     this.graphService.getGraph().hideAllTeamBoxes();
+    this.visibleTeams = false;
+  }
+
+  areTeamsVisible(): boolean {
+    return this.visibleTeams;
   }
 
   showTeamDependencies(teamName) {
