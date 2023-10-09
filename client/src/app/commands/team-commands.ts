@@ -1,6 +1,5 @@
 import { Command } from './icommand';
 import { Graph } from "../graph/model/graph";
-import { shapes } from 'jointjs';
 import { NodeCommand } from './node-commands';
 
 
@@ -28,7 +27,8 @@ export class AddTeamGroupCommand implements Command {
 export class AddMemberToTeamGroupCommand extends NodeCommand {
 
     constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
-        super(node);
+        super();
+        this.node = node;
     }
 
     execute() {
@@ -46,7 +46,7 @@ export class AddMemberToTeamGroupCommand extends NodeCommand {
 export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
 
     constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
-        super(node);
+        super();
         this.node = node;
     }
 

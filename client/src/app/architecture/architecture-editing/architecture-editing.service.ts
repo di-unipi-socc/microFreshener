@@ -24,73 +24,49 @@ export class ArchitectureEditingService {
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
     private navigation: EditorNavigationService,
-    private session: SessionService,
     private dialogService: DialogService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService
   ) { }
 
-  addNode(nodeType: string, position?: g.Point, team?: joint.shapes.microtosca.Group) {
-    // Ask for node required data
-    const ref = this.dialogService.open(DialogAddNodeComponent, {
-        header: 'Add Node',
-        data: {
-            clickPosition: position,
-            group: team,
-            nodeType: nodeType
+  addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.Group) {
+    let addNodeCommand: NodeCommand;
+    let message: string;
+    switch (nodeType) {
+      case ToolSelectionService.SERVICE:
+        addNodeCommand = new AddServiceCommand(this.graphService.getGraph(), name, position);
+        message = `Service ${name} added correctly`;
+        break;
+      case ToolSelectionService.DATASTORE:
+        addNodeCommand = new AddDatastoreCommand(this.graphService.getGraph(), name, position);
+        message = `Datastore  ${name}  added correctly`;
+        break;
+      case ToolSelectionService.COMMUNICATION_PATTERN:
+        if(communicationPatternType === ToolSelectionService.MESSAGE_BROKER){
+          addNodeCommand = new AddMessageBrokerCommand(this.graphService.getGraph(), name, position);
+          message += `Message Broker ${name} added correctly`;
         }
-    });
-    ref.onClose.subscribe((data) => {
-        // Create the AddNodeCommand
-        if(data) {
-          let addNodeCommand: NodeCommand;
-          let message: string;
-          switch (data.nodeType) {
-            case ToolSelectionService.SERVICE:
-              addNodeCommand = new AddServiceCommand(this.graphService.getGraph(), data.name, data.position);
-              message = `Service ${data.name} added correctly`;
-              break;
-            case ToolSelectionService.DATASTORE:
-              addNodeCommand = new AddDatastoreCommand(this.graphService.getGraph(), data.name, data.position);
-              message = `Datastore  ${data.name}  added correctly`;
-              break;
-            case ToolSelectionService.COMMUNICATION_PATTERN:
-              if(data.communicationPatternType === ToolSelectionService.MESSAGE_BROKER){
-                addNodeCommand = new AddMessageBrokerCommand(this.graphService.getGraph(), data.name, data.position);
-                message += `Message Broker ${data.name} added correctly`;
-              }
-              else if(data.communicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
-                addNodeCommand = new AddMessageRouterCommand(this.graphService.getGraph(), data.name, data.position);
-                message += `Message Router ${data.name} added correctly`;
-              }
-              else
-                this.messageService.add({ severity: 'error', summary: `Node type ${data.nodeType} not recognized`});
-              break;
-            default:
-              this.messageService.add({ severity: 'error', summary: `Type of node '${data.nodeType}' not found `});
-          }
+        else if(communicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
+          addNodeCommand = new AddMessageRouterCommand(this.graphService.getGraph(), name, position);
+          message += `Message Router ${name} added correctly`;
+        }
+        else
+          this.messageService.add({ severity: 'error', summary: `Node type ${nodeType} not recognized`});
+        break;
+      default:
+        this.messageService.add({ severity: 'error', summary: `Type of node '${nodeType}' not found `});
+    }
 
-          // If a team has been specified, atomically add the node into it
-          let command;
-          if(!team) {
-            command = addNodeCommand;
-          } else {
-            command = new class Command {
-              node;
-              addMemberCmd;
-              execute() {
-                this.node = addNodeCommand.execute();
-                this.addMemberCmd = new AddMemberToTeamGroupCommand(team, this.node);
-                this.addMemberCmd.execute();
-              }
-              unexecute() {
-                this.addMemberCmd.unexecute();
-                addNodeCommand.unexecute();
-              }
-            };
-          }
-        }
-    });
+    // If a team has been specified, atomically add the node into it
+    let command;
+    if(!team) {
+      command = addNodeCommand;
+    } else {
+      let addToTeamCommand = new AddMemberToTeamGroupCommand(team);
+      command = addNodeCommand.then(addToTeamCommand);
+    }
+
+    this.graphInvoker.executeCommand(command);
   }
 
   deleteNode(node) {

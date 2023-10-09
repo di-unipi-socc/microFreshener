@@ -20,8 +20,8 @@ import { ArchitectureEditingService } from '../architecture/architecture-editing
 import { TeamsService } from '../teams/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
-import { UserRole } from '../core/user-role';
 import { SessionService } from '../core/session/session.service';
+import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -50,8 +50,7 @@ export class GraphEditorComponent {
         private permissions: EditorPermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
-        private messageService: MessageService,
-        private confirmationService: ConfirmationService
+        private messageService: MessageService
     ) {
         this.contextMenuItems = [];
     }
@@ -180,6 +179,23 @@ export class GraphEditorComponent {
         this.leftClickSelectedNode = null;
     }
 
+    openAddNodeDialog(nodeType, position, team?) {
+    // Ask for node required data
+    const ref = this.dialogService.open(DialogAddNodeComponent, {
+        header: 'Add Node',
+        data: {
+            clickPosition: position,
+            nodeType: nodeType
+        }
+    });
+    ref.onClose.subscribe((data) => {
+        // Create the AddNodeCommand
+        if(data) {
+            this.editing.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+        }
+    });
+    }
+
     bindSingleClickBlank() {
         this.paper.on("blank:pointerclick", (evt) => {
             
@@ -187,7 +203,7 @@ export class GraphEditorComponent {
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                this.editing.addNode(this.toolSelection.getSelected(), position);
+                this.openAddNodeDialog(this.toolSelection.getSelected(), position);
             } else {
                 if (this.leftClickSelectedNode) {
                     this.unhighlight();
@@ -273,12 +289,12 @@ export class GraphEditorComponent {
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.paper.clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
-                    if(this.session.getRole() == UserRole.TEAM) {
+                    if(this.session.isTeam()) {
                         team = this.graph.getGraph().findGroupByName(this.session.getName())
                      } else {
                         team = cellView.model;
                      }
-                    this.editing.addNode(this.toolSelection.getSelected(), position, team);
+                     this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
                 }
             } else {
                 // team group cannot be clicked (both as source and target)

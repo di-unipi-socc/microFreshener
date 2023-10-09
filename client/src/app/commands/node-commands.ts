@@ -15,6 +15,10 @@ export abstract class NodeCommand {
         this.node = node;
     }
 
+    getNode() {
+        return this.node;
+    }
+
     constructor(node?: joint.shapes.microtosca.Node) {
         this.node = node;
     }
@@ -22,11 +26,12 @@ export abstract class NodeCommand {
     then(next: NodeCommand): NodeCommand {
         let action = () => {this.execute()};
         let revert = () => {this.unexecute()};
-        next.setNode(this.node);
-        
+        let getNode = () => { return this.getNode() };
         return new class extends NodeCommand {
             execute() {
                 action();
+                let node = getNode();
+                next.setNode(node);
                 next.execute();
             }
             unexecute() {
@@ -42,7 +47,6 @@ abstract class NodeGeneratorCommand extends NodeCommand {
 
     name: string;
     position?: g.Point;
-    node: joint.shapes.microtosca.Node;
 
     constructor(name: string, position?: g.Point) {
         super();
