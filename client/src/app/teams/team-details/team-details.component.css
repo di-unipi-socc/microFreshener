@@ -1,4 +1,4 @@
-h2 {
+h1 {
     font-weight: normal;
     display: inline;
 }
@@ -14,5 +14,5 @@ p-tag {
 }
 
 .node-quantity-number {
-    font-size: 3em;
+    font-size: 2em;
 }
