@@ -71,6 +71,9 @@ import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
 import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
 import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
+import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
+import { TeamDetailComponent } from './teams/team-details/team-details.component';
+import { TeamsModule } from './teams/teams.module';
 
 @NgModule({
   declarations: [
@@ -96,11 +99,14 @@ import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/si
     EditorPageComponent,
     SubtoolbarFromTeamNavigationComponent,
     SidebarIncomingTeamsComponent,
+    SidebarTeamDetailsComponent,
+    TeamDetailComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    TeamsModule,
     FormsModule,
     AccordionModule,
     DynamicDialogModule,

@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import * as joint from 'jointjs';
 import { TeamEditingService } from './team-editing/team-editing.service';
 import { TeamVisualizationService } from './team-visualization/team-visualization.service';
-import { TeamsAnalyticsService } from './teams-analytics/teams-analytics.service';
+import { TeamsAnalyticsService } from './team-analytics/teams-analytics.service';
+import { TeamDetails } from './team-details/team-details';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn:'root'
 })
 export class TeamsService {
 
@@ -55,8 +56,16 @@ export class TeamsService {
     this.visualization.hideTeamDependencies(teamName);
   }
 
+  getTeamInteractions(team: joint.shapes.microtosca.SquadGroup): {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]} {
+    return this.analytics.getTeamInteractions(team);
+  }
+
   getIngoingRequestSenderGroups(teamName): Map<joint.shapes.microtosca.Group, joint.shapes.microtosca.Node[]> {
     return this.analytics.getIngoingRequestSenderGroups(teamName);
+  }
+
+  getTeamDetails(team: joint.shapes.microtosca.SquadGroup): TeamDetails {
+    return this.analytics.getTeamDetails(team);
   }
 
 }

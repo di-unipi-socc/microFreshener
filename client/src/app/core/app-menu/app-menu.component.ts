@@ -17,8 +17,6 @@ import { SidebarEvent } from './sidebar-event';
 })
 export class AppMenuComponent implements OnInit {
 
-    sidebarVisible2
-
     modelName: string; // name of the model
     hrefDownload = environment.serverUrl + '/api/export';
 
@@ -39,9 +37,7 @@ export class AppMenuComponent implements OnInit {
         private confirmationService: ConfirmationService
         ) {
             this.renaming = false;
-            this.sidebarStatus = {
-                viewIncomingTeams: false
-            };
+            this.sidebarStatus = {};
     }
 
     ngOnInit() {

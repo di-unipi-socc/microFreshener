@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
-import { Graph } from 'src/app/graph/model/graph';
+import { TeamsService } from '../teams.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: TeamsService
 })
 export class TeamVisualizationService {
 

@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
 import { GraphEditorComponent } from '../../editor/graph-editor.component';
 import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogService } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
 import { GraphInvoker } from '../../commands/invoker';
 import { GraphService } from '../../graph/graph.service';
 
 import { g } from 'jointjs';
 import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
-import { DialogAddLinkComponent } from '../dialog-add-link/dialog-add-link.component';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
 import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
 
 @Injectable({
-  providedIn: GraphEditorComponent
+  providedIn: 'root'
 })
 export class ArchitectureEditingService {
 
@@ -22,9 +20,7 @@ export class ArchitectureEditingService {
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
     private navigation: EditorNavigationService,
-    private dialogService: DialogService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
   ) { }
 
   addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.Group) {

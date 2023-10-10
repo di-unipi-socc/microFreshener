@@ -142,7 +142,7 @@ export class Graph extends joint.dia.Graph {
     getOutgoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
         return this.getFrontierOfATeam(team)
                           .map((fnode) => this.getIngoingLinks(fnode) // Map frontier nodes to their ingoing links
-                                    .filter(link => link.getSourceElement().isEmbeddedIn(team))) // filter by the interesting ones
+                                              .filter(link => link.getSourceElement().isEmbeddedIn(team))) // filter by the interesting ones
                           // put everything in one (iterable) array
                           .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
     }
@@ -150,7 +150,7 @@ export class Graph extends joint.dia.Graph {
     getIngoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
         return this.getFrontierOfATeam(team)
                           .map((fnode) => this.getOutgoingLinks(fnode) // Map frontier nodes to their ingoing links
-                                    .filter(link => link.getTargetElement().isEmbeddedIn(team))) // filter by the interesting ones
+                                              .filter(link => link.getTargetElement().isEmbeddedIn(team))) // filter by the interesting ones
                           // put everything in one (iterable) array
                           .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
     }

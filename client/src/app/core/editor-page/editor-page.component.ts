@@ -7,13 +7,12 @@ import { Component } from '@angular/core';
 })
 export class EditorPageComponent {
 
-  sidebar: {
-    viewIncomingTeams: boolean
-  };
+  sidebar;
 
   constructor() {
     this.sidebar = {
-      viewIncomingTeams: false
+      viewIncomingTeams: false,
+      viewTeamsInfo: false
     };
   }
 

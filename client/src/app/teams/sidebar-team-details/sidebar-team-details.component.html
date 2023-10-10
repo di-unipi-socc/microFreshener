@@ -1,5 +1,5 @@
 <p-sidebar [visible]="true" position="right" [modal]="false" [showCloseIcon]="false" [closeOnEscape]="false">
-    <p-card>
-        <app-team-detail></app-team-detail>
+    <p-card *ngFor="let team of teams">
+        <app-team-details [team]="team"></app-team-details>
     </p-card>
 </p-sidebar>
