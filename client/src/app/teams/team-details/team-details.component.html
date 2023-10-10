@@ -1,1 +1,10 @@
-<h2>{{ team.getName() }}</h2>>
+<h2>{{ team.getName() }}</h2><p-button icon="pi pi-fw pi-map-marker" styleClass="p-button-text"></p-button>
+
+<h3>Owned services</h3>
+<p-button class="nodes" *ngFor="let service of services" label="{{service.getName()}}" icon="pi pi-circle-fill" styleClass="p-button-text"></p-button>
+
+
+<h3>Other owned nodes</h3>
+<p-button *ngFor="let n of datastores" label="{{n.getName()}}" icon="pi pi-database" styleClass="p-button-text"></p-button><p-button *ngFor="let n of communicationPatterns" label="{{n.getName()}}" icon="pi pi-stop" styleClass="p-button-text"></p-button>
+
+<p><span class="node-quantity-number">{{nodesQuantity}}</span> total owned nodes</p>

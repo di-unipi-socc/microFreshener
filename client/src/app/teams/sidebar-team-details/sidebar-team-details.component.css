@@ -1,0 +1,13 @@
+::ng-deep .p-sidebar .p-sidebar-header {
+    display: none;
+}
+
+::ng-deep .p-sidebar-right {
+    min-width: 40vw;
+}
+
+::ng-deep .p-card {
+    margin: 1em 0;
+    background-color: rgb(229,231,233, 0.4);
+    padding: 0.5em;
+}

@@ -23,7 +23,7 @@ export class SidebarIncomingTeamsComponent {
   constructor(
     private session: SessionService,
     private teams: TeamsService,
-    private gs: GraphService
+    private graphService: GraphService
   ) {}
 
   ngOnInit() {
@@ -31,12 +31,12 @@ export class SidebarIncomingTeamsComponent {
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
     this.graphEventsListener = () => { this.updateIngoingRequestGroups() };
-    this.gs.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
   ngOnDestroy() {
     if(this.graphEventsListener)
-      this.gs.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
+      this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
   updateIngoingRequestGroups() {

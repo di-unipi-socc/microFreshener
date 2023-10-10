@@ -10,16 +10,31 @@ export class SidebarTeamDetailsComponent {
 
   teams: joint.shapes.microtosca.SquadGroup[];
 
+  private readonly GRAPH_EVENTS: string = "add remove";
+  private graphEventsListener: () => void;
+
   constructor(
     private graphService: GraphService
   ) {}
 
   ngOnInit() {
+    // Get the groups and relative interacting nodes
     this.updateTeamsInfo();
+    // Refresh at every graph update
+    this.graphEventsListener = () => { this.updateTeamsInfo() };
+    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+  }
+
+  ngOnDestroy() {
+    if(this.graphEventsListener)
+      this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
   updateTeamsInfo() {
-    this.teams = this.graphService.getGraph().getTeamGroups();
+    this.teams = [];
+    this.graphService.getGraph().getTeamGroups().forEach(team => {
+      this.teams.push(team);
+    });
   }
 
 }
