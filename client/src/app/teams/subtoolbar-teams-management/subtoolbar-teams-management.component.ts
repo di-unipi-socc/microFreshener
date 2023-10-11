@@ -6,7 +6,6 @@ import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -31,7 +30,7 @@ export class SubtoolbarTeamsComponent {
   showTeamToggled: boolean;
 
   // Show Teams Info
-  @Output() viewTeamsInfo: EventEmitter<SidebarEvent> = new EventEmitter();
+  @Output() viewTeamsInfo: EventEmitter<{}> = new EventEmitter();
   showTeamsInfoToggled: boolean;
 
   constructor(
@@ -136,7 +135,7 @@ export class SubtoolbarTeamsComponent {
   }
 
   toggleTeamsInfo() {
-    let sidebarEvent: SidebarEvent = {
+    let sidebarEvent = {
       name: 'viewTeamsInfo',
       visible: this.showTeamsInfoToggled
     }

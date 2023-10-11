@@ -8,7 +8,6 @@ import { GraphService } from "../../graph/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { SessionService } from '../session/session.service';
-import { SidebarEvent } from './sidebar-event';
 
 @Component({
     selector: 'app-menu',
@@ -26,7 +25,7 @@ export class AppMenuComponent implements OnInit {
     
     sessionMenuItems: MenuItem[];
 
-    @Output() onSidebarChange: EventEmitter<SidebarEvent> = new EventEmitter();
+    @Output() onSidebarChange: EventEmitter<{}> = new EventEmitter();
     sidebarStatus;
 
     constructor(
@@ -143,8 +142,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     sidebarChange(event) {
-        this.sidebarStatus[event.name] = event.visible;
-        this.onSidebarChange.emit(this.sidebarStatus);
+        this.onSidebarChange.emit(event);
     }
 
     editName() {

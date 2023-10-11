@@ -10,7 +10,7 @@
         <!-- Team name -->
         <h1 class="details-title">{{ info.team.getName() }}</h1>
         <!-- 'More info' button -->
-        <p-button *ngIf="!teamSelected" icon="pi pi-fw pi-info-circle" styleClass="p-button-text" (click)="more(info.team,true)" pTooltip="More info" showDelay="1000" tooltipPosition="bottom"></p-button>
+        <p-button *ngIf="!teamSelected" icon="pi pi-fw pi-info-circle" styleClass="p-button-text" (click)="more(info.team)" pTooltip="More info" showDelay="1000" tooltipPosition="bottom"></p-button>
         <!-- 'No services' warning -->
         <p-tag *ngIf="info.services.length==0" severity="warning" value="Team with no services" icon="pi pi-exclamation-triangle"></p-tag>
         <!-- Edge tag -->

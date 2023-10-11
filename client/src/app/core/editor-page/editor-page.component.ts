@@ -10,6 +10,11 @@ export class EditorPageComponent {
 
   sidebar;
 
+  viewTeamsInfoConfig: {
+    list: boolean;
+    selectedTeam: joint.shapes.microtosca.SquadGroup
+  }
+
   selectedTeam;
 
   constructor() {
@@ -17,19 +22,26 @@ export class EditorPageComponent {
       viewIncomingTeams: false,
       viewTeamsInfo: false
     };
+
+    this.viewTeamsInfoConfig = {
+      list: false,
+      selectedTeam: null
+    };
   }
 
-  sidebarChange(sidebarUpdate) {
-    for(let name in sidebarUpdate) {
-      this.sidebar[name] = sidebarUpdate[name];
+  onSidebarChange(sidebarUpdate) {
+    this.sidebar[sidebarUpdate.name] = sidebarUpdate.visible;
+    if(sidebarUpdate.name == "viewTeamsInfo" && sidebarUpdate.visible) {
+        this.viewTeamsInfoConfig.list = true;
     }
   }
 
   onContextMenuAction(action: ContextMenuAction) {
     switch(action.label) {
       case "team-details":
-        this.selectedTeam = <joint.shapes.microtosca.SquadGroup> action.target;
         this.sidebar.viewTeamsInfo = true;
+        this.viewTeamsInfoConfig.list = false;
+        this.viewTeamsInfoConfig.selectedTeam = <joint.shapes.microtosca.SquadGroup> action.target;
         break;
     }
   }

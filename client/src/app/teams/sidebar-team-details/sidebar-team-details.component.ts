@@ -14,9 +14,11 @@ export class SidebarTeamDetailsComponent {
 
   teamsInfo;
 
+  @Input() list: boolean;
+
   teamSelected: boolean;
-  selectedFromList: boolean;
   @Input() selectedTeam: joint.shapes.microtosca.SquadGroup;
+  @Output() selectedTeamChange: EventEmitter<joint.shapes.microtosca.SquadGroup> = new EventEmitter<joint.shapes.microtosca.SquadGroup>();
   selectedTeamInfo;
 
   private readonly GRAPH_EVENTS: string = "add remove";
@@ -35,30 +37,48 @@ export class SidebarTeamDetailsComponent {
   ) {}
 
   ngOnChanges(change: SimpleChanges) {
-    if(change.visible?.currentValue) {
-      console.log("input visible selectedTeam", this.visible, this.selectedTeam);
-      // Get the groups and relative interacting nodes
-      this.updateTeamsInfo();
-      // Set data for change view on team selection
-      this.teamSelected = false;
-      // Refresh teams at every graph update
-      this.graphEventsListener = () => {
-        this.updateTeamsInfo();
-        if(this.teamSelected)
-          this.more(this.selectedTeam);
-        };
-      this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
-      // Set chart styling
-      this.documentStyle = getComputedStyle(document.documentElement);
-      this.doughnutCutout = '25%';
+    console.log("change is", change);
 
-      // If selectedTeam has been received as input
-      if(this.selectedTeam)
-        this.more(this.selectedTeam);
+    // Sidebar opening
+    if(!change.visible?.previousValue && change.visible?.currentValue) {
+      this.onSidebarOpen();
+    }
+
+    // Sidebar closing
+    if(change.visible?.previousValue && !change.visible?.currentValue) {
+      this.onSidebarClose();
+    }
+
+    // From team detail to team list
+    console.log("change list is", change.list);
+    if(!change.list?.previousValue && change.list?.currentValue) {
+      this.less();
     }
   }
 
-  ngOnDestroy() {
+  onSidebarOpen() {
+    console.log("input visible selectedTeam", this.visible, this.selectedTeam);
+    // Get the groups and relative interacting nodes
+    this.updateTeamsInfo();
+    // Set data for change view on team selection
+    this.teamSelected = false;
+    // Refresh teams at every graph update
+    this.graphEventsListener = () => {
+      this.updateTeamsInfo();
+      if(this.teamSelected)
+        this.more(this.selectedTeam);
+      };
+    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+    // Set chart styling
+    this.documentStyle = getComputedStyle(document.documentElement);
+    this.doughnutCutout = '25%';
+
+    // If selectedTeam has been received as input
+    if(this.selectedTeam)
+      this.more(this.selectedTeam);
+  }
+
+  onSidebarClose() {
     this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
   }
 
@@ -81,9 +101,9 @@ export class SidebarTeamDetailsComponent {
     }
   }
 
-  more(selectedTeam, selectedFromList?: boolean) {
+  more(selectedTeam) {
     this.selectedTeam = selectedTeam;
-    this.selectedFromList = selectedFromList;
+    this.selectedTeamChange.emit(selectedTeam);
     this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
@@ -91,14 +111,18 @@ export class SidebarTeamDetailsComponent {
   }
 
   less() {
-    console.log("selectedFromList is", this.selectedFromList);
-    if (this.selectedFromList) {
-      this.teamSelected = false;
-      this.updateTeamsInfo();
-    } else {
-      this.visible = false;
-      this.visibleChange.emit(false);
+    console.log("selectedFromList is", this.list);
+    this.teamSelected = false;
+    this.selectedTeamChange.emit(undefined);
+    this.updateTeamsInfo();
+    if (!this.list) {
+      this.closeSidebar();
     }
+  }
+
+  closeSidebar() {
+    this.visible = false;
+    this.visibleChange.emit(false);
   }
 
   updateCharts() {
