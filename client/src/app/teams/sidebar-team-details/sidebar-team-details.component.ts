@@ -37,7 +37,6 @@ export class SidebarTeamDetailsComponent {
   ) {}
 
   ngOnChanges(change: SimpleChanges) {
-    console.log("change is", change);
 
     // Sidebar opening
     if(!change.visible?.previousValue && change.visible?.currentValue) {
@@ -50,14 +49,12 @@ export class SidebarTeamDetailsComponent {
     }
 
     // From team detail to team list
-    console.log("change list is", change.list);
     if(!change.list?.previousValue && change.list?.currentValue) {
       this.less();
     }
   }
 
   onSidebarOpen() {
-    console.log("input visible selectedTeam", this.visible, this.selectedTeam);
     // Get the groups and relative interacting nodes
     this.updateTeamsInfo();
     // Set data for change view on team selection
@@ -111,7 +108,6 @@ export class SidebarTeamDetailsComponent {
   }
 
   less() {
-    console.log("selectedFromList is", this.list);
     this.teamSelected = false;
     this.selectedTeamChange.emit(undefined);
     this.updateTeamsInfo();
@@ -129,9 +125,7 @@ export class SidebarTeamDetailsComponent {
     this.charts = {
       serviceVsNonService: this.getServiceVsNonServiceChart(),
       teamInteractions: this.getTeamInteractionsChart(),
-      /*edge: this.getEdgeChart()*/
     };
-    console.log("charts is", this.charts);
   }
 
   getServiceVsNonServiceChart() {
@@ -162,11 +156,9 @@ export class SidebarTeamDetailsComponent {
   }
 
   getTeamInteractionsChart() {
-    console.log("interactions ingoing outgoing", this.selectedTeamInfo.teamInteractions.ingoing, this.selectedTeamInfo.teamInteractions.outgoing)
     let ingoingMap: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = new Map(this.selectedTeamInfo.teamInteractions.ingoing);
     let outgoingMap: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = new Map(this.selectedTeamInfo.teamInteractions.outgoing);
     let teams = new Set<joint.shapes.microtosca.SquadGroup>(Array.from(ingoingMap.keys()).concat(Array.from(outgoingMap.keys())));
-    console.log("teams are", teams);
     let labels = [];
     let outgoingInteractionsData = [];
     let ingoingInteractionsData = [];
