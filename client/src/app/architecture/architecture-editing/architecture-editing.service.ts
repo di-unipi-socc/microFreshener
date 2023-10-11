@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { GraphEditorComponent } from '../../editor/graph-editor.component';
 import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
 import { MessageService } from 'primeng/api';
 import { GraphInvoker } from '../../commands/invoker';

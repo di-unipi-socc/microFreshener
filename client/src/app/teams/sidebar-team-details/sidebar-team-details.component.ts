@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
 
@@ -9,9 +9,14 @@ import { TeamsService } from '../teams.service';
 })
 export class SidebarTeamDetailsComponent {
 
+  @Input() visible: boolean;
+  @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   teamsInfo;
+
   teamSelected: boolean;
-  @Input() selectedTeamName: string;
+  selectedFromList: boolean;
+  @Input() selectedTeam: joint.shapes.microtosca.SquadGroup;
   selectedTeamInfo;
 
   private readonly GRAPH_EVENTS: string = "add remove";
@@ -29,24 +34,28 @@ export class SidebarTeamDetailsComponent {
     private teamService: TeamsService
   ) {}
 
-  ngOnInit() {
-    // If selectedTeamName has been received as input
-    if(this.selectedTeamName)
-      this.teamSelected = true;
-    // Get the groups and relative interacting nodes
-    this.updateTeamsInfo();
-    // Set data for change view on team selection
-    this.teamSelected = false;
-    // Refresh teams at every graph update
-    this.graphEventsListener = () => {
+  ngOnChanges(change: SimpleChanges) {
+    if(change.visible?.currentValue) {
+      console.log("input visible selectedTeam", this.visible, this.selectedTeam);
+      // Get the groups and relative interacting nodes
       this.updateTeamsInfo();
-      if(this.teamSelected)
-        this.more(this.selectedTeamName);
-      };
-    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
-    // Set chart styling
-    this.documentStyle = getComputedStyle(document.documentElement);
-    this.doughnutCutout = '25%';
+      // Set data for change view on team selection
+      this.teamSelected = false;
+      // Refresh teams at every graph update
+      this.graphEventsListener = () => {
+        this.updateTeamsInfo();
+        if(this.teamSelected)
+          this.more(this.selectedTeam);
+        };
+      this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+      // Set chart styling
+      this.documentStyle = getComputedStyle(document.documentElement);
+      this.doughnutCutout = '25%';
+
+      // If selectedTeam has been received as input
+      if(this.selectedTeam)
+        this.more(this.selectedTeam);
+    }
   }
 
   ngOnDestroy() {
@@ -72,17 +81,24 @@ export class SidebarTeamDetailsComponent {
     }
   }
 
-  more(selectedTeamName) {
-    this.selectedTeamName = selectedTeamName;
-    this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeamName);
+  more(selectedTeam, selectedFromList?: boolean) {
+    this.selectedTeam = selectedTeam;
+    this.selectedFromList = selectedFromList;
+    this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
     this.teamSelected = true;
   }
 
   less() {
-    this.teamSelected = false;
-    this.updateTeamsInfo();
+    console.log("selectedFromList is", this.selectedFromList);
+    if (this.selectedFromList) {
+      this.teamSelected = false;
+      this.updateTeamsInfo();
+    } else {
+      this.visible = false;
+      this.visibleChange.emit(false);
+    }
   }
 
   updateCharts() {
@@ -130,6 +146,7 @@ export class SidebarTeamDetailsComponent {
     let labels = [];
     let outgoingInteractionsData = [];
     let ingoingInteractionsData = [];
+    let selectedTeamName = this.selectedTeam.getName();
     teams.forEach((t) => {
       let labelOutgoing: string;
       let labelIngoing: string;
@@ -137,7 +154,7 @@ export class SidebarTeamDetailsComponent {
       let outgoing = outgoingMap.get(t);
       if(outgoing) {
         outgoingInteractionsData.push(outgoing.length);
-        labelOutgoing = this.selectedTeamName + " ➡ " + otherName;
+        labelOutgoing = selectedTeamName + " ➡ " + otherName;
       } else {
         outgoingInteractionsData.push(0);
         labelOutgoing = "";
@@ -145,7 +162,7 @@ export class SidebarTeamDetailsComponent {
       let ingoing = ingoingMap.get(t);
       if(ingoing) {
         ingoingInteractionsData.push(ingoing.length);
-        labelIngoing = this.selectedTeamName + " ⬅ " + otherName;
+        labelIngoing = selectedTeamName + " ⬅ " + otherName;
       } else {
         ingoingInteractionsData.push(0);
         labelOutgoing = "";
@@ -158,13 +175,13 @@ export class SidebarTeamDetailsComponent {
         labels: labels,
         datasets: [
             {
-                label: 'Interactions from ' + this.selectedTeamName,
+                label: 'Interactions from ' + selectedTeamName,
                 backgroundColor: this.documentStyle.getPropertyValue('--pink-500'),
                 borderColor: this.documentStyle.getPropertyValue('--pink-500'),
                 data: outgoingInteractionsData
             },
             {
-                label: 'Interactions towards ' + this.selectedTeamName,
+                label: 'Interactions towards ' + selectedTeamName,
                 backgroundColor: this.documentStyle.getPropertyValue('--blue-500'),
                 borderColor: this.documentStyle.getPropertyValue('--blue-500'),
                 data: ingoingInteractionsData

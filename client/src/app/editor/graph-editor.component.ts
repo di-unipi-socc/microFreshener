@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
@@ -23,6 +23,7 @@ import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
+import { ContextMenuAction } from './context-menu-action';
 
 @Component({
     selector: 'app-graph-editor',
@@ -34,11 +35,11 @@ export class GraphEditorComponent {
     
     @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
 
-    leftClickSelectedNode: joint.shapes.microtosca.Node;
-    rightClickSelectedNode: joint.shapes.microtosca.Node;
+    leftClickSelectedCell: joint.dia.Cell;
 
     @ViewChild('contextMenu') contextMenu;
     contextMenuItems;
+    @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
     
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
@@ -131,8 +132,8 @@ export class GraphEditorComponent {
             var YPSILON_KEY = 89;
 
 
-            if (e.which == DELETE_KEY && this.leftClickSelectedNode) {
-                this.openDeleteNodeDialog(this.leftClickSelectedNode);
+            if (e.which == DELETE_KEY && this.leftClickSelectedCell) {
+                this.openDeleteNodeDialog(this.leftClickSelectedCell);
             }
             if (e.keyCode == ZETA_KEY && e.ctrlKey) {
                 this.graphInvoker.undo();
@@ -149,8 +150,8 @@ export class GraphEditorComponent {
     }
 
     unhighlight() {
-        this.navigation.getPaper().findViewByModel(this.leftClickSelectedNode).unhighlight();
-        this.leftClickSelectedNode = null;
+        this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
+        this.leftClickSelectedCell = null;
     }
 
     openAddNodeDialog(nodeType, position, team?) {
@@ -194,7 +195,7 @@ export class GraphEditorComponent {
             if (this.toolSelection.isAddNodeEnabled()) {
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position);
             } else {
-                if (this.leftClickSelectedNode) {
+                if (this.leftClickSelectedCell) {
                     this.unhighlight();
                 }
             }
@@ -262,6 +263,9 @@ export class GraphEditorComponent {
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
         if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+            teamContextMenuItems.push({label: "Details", icon: "pi pi-info-circle", command: () => {
+                this.contextMenuAction.emit(new ContextMenuAction("team-details", rightClickedTeam));
+            }});
             teamContextMenuItems.push({label: "Delete team", icon: "pi pi-trash", command: () => {
                 this.teams.removeTeam(rightClickedTeam);
             }});
@@ -292,7 +296,7 @@ export class GraphEditorComponent {
                 console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
                 if(this.toolSelection.isAddLinkEnabled()) {
                     // selecting target node
-                    if(this.leftClickSelectedNode == null || node.id == this.leftClickSelectedNode.id) {
+                    if(this.leftClickSelectedCell == null || node.id == this.leftClickSelectedCell.id) {
                         // selecting source node
                         var can_select_source_node = true;
                         // message broker cannot be source for a link
@@ -305,41 +309,41 @@ export class GraphEditorComponent {
                         }
                         if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
                             cellView.highlight();
-                            this.leftClickSelectedNode = node;
+                            this.leftClickSelectedCell = node;
                         }
                         else {
                             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
                         }
-                    } else if(this.leftClickSelectedNode !== null && node.id !== this.leftClickSelectedNode.id) {
+                    } else if(this.leftClickSelectedCell !== null && node.id !== this.leftClickSelectedCell.id) {
                         var add_link = true;
                         // disable link from <any> to datastore
                         if (this.graph.getGraph().isEdgeGroup(node)) {
                             add_link = false;
                         }
                         // disable link from edge to datastore
-                        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node)) {
+                        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node)) {
                             add_link = false;
                         }
                         // disable link from communication pattern to Datastore
-                        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedNode) && this.graph.getGraph().isDatastore(node))
+                        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
                             add_link = false;
-                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedNode, node)) {
+                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedCell, node)) {
                             const ref = this.dialogService.open(DialogAddLinkComponent, {
                                 data: {
-                                    source: this.leftClickSelectedNode,
+                                    source: this.leftClickSelectedCell,
                                     target: node
                                 },
                                 header: 'Add a link',
                             });
                             ref.onClose.subscribe((data) => {
                                 if (data) {
-                                    this.editing.addLink(this.leftClickSelectedNode, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                                    this.leftClickSelectedNode = null;
+                                    this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                                    this.leftClickSelectedCell = null;
                                 }
                             });
                         }
                         else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link from [${this.leftClickSelectedNode.getName()}] to [${node.getName()}] cannot be created` });
+                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link cannot be created` });
                         }
                     }
                 }

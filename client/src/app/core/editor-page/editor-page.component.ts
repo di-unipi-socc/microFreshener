@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ContextMenuAction } from 'src/app/editor/context-menu-action';
 
 @Component({
   selector: 'app-editor-page',
@@ -8,6 +9,8 @@ import { Component } from '@angular/core';
 export class EditorPageComponent {
 
   sidebar;
+
+  selectedTeam;
 
   constructor() {
     this.sidebar = {
@@ -19,6 +22,15 @@ export class EditorPageComponent {
   sidebarChange(sidebarUpdate) {
     for(let name in sidebarUpdate) {
       this.sidebar[name] = sidebarUpdate[name];
+    }
+  }
+
+  onContextMenuAction(action: ContextMenuAction) {
+    switch(action.label) {
+      case "team-details":
+        this.selectedTeam = <joint.shapes.microtosca.SquadGroup> action.target;
+        this.sidebar.viewTeamsInfo = true;
+        break;
     }
   }
 
