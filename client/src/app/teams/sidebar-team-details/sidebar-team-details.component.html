@@ -1,6 +1,12 @@
 <p-sidebar [visible]="true" position="right" [modal]="false" [showCloseIcon]="false">
 
     <p-card *ngFor="let info of teamsInfo" class="team-details-card" [class.team-details-card-large] = "teamSelected === true">
+        <ng-template pTemplate="header">
+            <div class="team-details-card-header">
+            <!-- 'Less info' button -->
+                <p-button *ngIf="teamSelected" icon="pi pi-times" styleClass="p-button-secondary p-button-text" (click)="less()"></p-button>
+            </div>
+        </ng-template>
         <!-- Team name -->
         <h1 class="details-title">{{ info.team.getName() }}</h1>
         <!-- 'More info' button -->

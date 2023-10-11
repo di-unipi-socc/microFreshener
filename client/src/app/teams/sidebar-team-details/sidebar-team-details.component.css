@@ -6,6 +6,11 @@
     background-color: rgb(229,231,233, 0.4);
 }
 
+.team-details-card-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .team-details-card {
     margin: 1em 0;
     padding: 0.5em;

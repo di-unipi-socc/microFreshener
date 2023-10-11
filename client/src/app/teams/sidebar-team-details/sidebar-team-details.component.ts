@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
 
@@ -11,7 +11,7 @@ export class SidebarTeamDetailsComponent {
 
   teamsInfo;
   teamSelected: boolean;
-  selectedTeamName: string;
+  @Input() selectedTeamName: string;
   selectedTeamInfo;
 
   private readonly GRAPH_EVENTS: string = "add remove";
@@ -30,6 +30,9 @@ export class SidebarTeamDetailsComponent {
   ) {}
 
   ngOnInit() {
+    // If selectedTeamName has been received as input
+    if(this.selectedTeamName)
+      this.teamSelected = true;
     // Get the groups and relative interacting nodes
     this.updateTeamsInfo();
     // Set data for change view on team selection
@@ -75,6 +78,11 @@ export class SidebarTeamDetailsComponent {
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
     this.teamSelected = true;
+  }
+
+  less() {
+    this.teamSelected = false;
+    this.updateTeamsInfo();
   }
 
   updateCharts() {

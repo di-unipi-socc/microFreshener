@@ -24,6 +24,9 @@ export class SubtoolbarTeamsComponent {
   private graphListener;
   private paperListener;
 
+  // Show Add Teams form
+  addTeamToggled: boolean;
+
   // Show/Hide teams
   showTeamToggled: boolean;
 
@@ -39,7 +42,6 @@ export class SubtoolbarTeamsComponent {
     private navigation: EditorNavigationService,
     private messageService: MessageService
   ) {
-    this.ADD_TEAM_LABEL = ToolSelectionService.ADD_TEAM;
     this.GRAPH_EVENTS_LABELS = 'change';
     this.graphListener = (cellView, evt, x, y) => {this.updateNodeList()};
     this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
@@ -48,12 +50,24 @@ export class SubtoolbarTeamsComponent {
     this.selectedNodes = [];
   }
 
+  toggleShowTeam() {
+    if(this.showTeamToggled) {
+      this.teams.showTeams();
+    } else {
+      this.teams.hideTeams();
+    }
+  }
+
   toggleAddTeam() {
-    if(this.tools.enabledActions[ToolSelectionService.ADD_TEAM]) {
+    if(this.addTeamToggled) {
       // Toggle on
       this.updateNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
+      this.showTeamToggled = true;
+      // Show teams if not already shown
+      this.showTeamToggled = true;
+      this.toggleShowTeam();
     } else {
       // Toggle off
       this.gs.getGraph().off(this.GRAPH_EVENTS_LABELS, this.graphListener);
@@ -75,14 +89,6 @@ export class SubtoolbarTeamsComponent {
           }
         });
       }
-    }
-  }
-
-  toggleShowTeam() {
-    if(this.showTeamToggled) {
-      this.teams.showTeams();
-    } else {
-      this.teams.hideTeams();
     }
   }
 
@@ -135,6 +141,12 @@ export class SubtoolbarTeamsComponent {
       visible: this.showTeamsInfoToggled
     }
     this.viewTeamsInfo.emit(sidebarEvent);
+
+    // Show teams if not already shown
+    if(this.showTeamsInfoToggled) {
+      this.showTeamToggled = true;
+      this.toggleShowTeam();
+    }
   }
 
   ngOnDestroy() {
