@@ -3,7 +3,6 @@ import * as joint from 'jointjs';
 import { TeamEditingService } from './team-editing/team-editing.service';
 import { TeamVisualizationService } from './team-visualization/team-visualization.service';
 import { TeamsAnalyticsService } from './team-analytics/teams-analytics.service';
-import { TeamDetails } from './team-details/team-details';
 
 @Injectable({
   providedIn:'root'
@@ -64,7 +63,14 @@ export class TeamsService {
     return this.analytics.getIngoingRequestSenderGroups(teamName);
   }
 
-  getTeamDetails(team: joint.shapes.microtosca.SquadGroup): TeamDetails {
+  getTeamDetails(team: joint.shapes.microtosca.SquadGroup): {
+    team: joint.shapes.microtosca.SquadGroup,
+    services: joint.shapes.microtosca.Service[],
+    datastores: joint.shapes.microtosca.Datastore[],
+    communicationPatterns: joint.shapes.microtosca.CommunicationPattern[],
+    teamInteractions: {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]},
+    edge: joint.shapes.microtosca.Node[]
+  } {
     return this.analytics.getTeamDetails(team);
   }
 

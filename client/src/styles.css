@@ -45,6 +45,9 @@ app-root {
 
 p-sidebar .p-sidebar-right {
     top: initial;
+    width: unset;
+    max-width: 50vw;
+    min-width: unset;
     box-shadow: none;
     border-top: none;
     border-bottom: none;

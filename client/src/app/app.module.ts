@@ -60,6 +60,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { ChartModule } from 'primeng/chart';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
@@ -72,7 +73,6 @@ import { EditorPageComponent } from './core/editor-page/editor-page.component';
 import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
 import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
 import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
-import { TeamDetailComponent } from './teams/team-details/team-details.component';
 import { TeamsModule } from './teams/teams.module';
 
 @NgModule({
@@ -100,7 +100,6 @@ import { TeamsModule } from './teams/teams.module';
     SubtoolbarFromTeamNavigationComponent,
     SidebarIncomingTeamsComponent,
     SidebarTeamDetailsComponent,
-    TeamDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -145,7 +144,8 @@ import { TeamsModule } from './teams/teams.module';
     AvatarModule,
     TagModule,
     MultiSelectModule,
-    ContextMenuModule
+    ContextMenuModule,
+    ChartModule
   ],
   providers: [
     DialogService,

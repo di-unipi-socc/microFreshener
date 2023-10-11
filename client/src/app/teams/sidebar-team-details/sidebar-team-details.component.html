@@ -1,5 +1,26 @@
 <p-sidebar [visible]="true" position="right" [modal]="false" [showCloseIcon]="false">
-    <p-card *ngFor="let team of teams" class="team-details-card">
-        <app-team-details [team]="team"></app-team-details>
+
+    <p-card *ngFor="let info of teamsInfo" class="team-details-card" [class.team-details-card-large] = "teamSelected === true">
+        <!-- Team name -->
+        <h1 class="details-title">{{ info.team.getName() }}</h1>
+        <!-- 'More info' button -->
+        <p-button *ngIf="!teamSelected" icon="pi pi-fw pi-info-circle" styleClass="p-button-text" (click)="more(info.team.getName())" pTooltip="More info" showDelay="1000" tooltipPosition="bottom"></p-button>
+        <!-- 'No services' warning -->
+        <p-tag *ngIf="info.services.length==0" severity="warning" value="Team with no services" icon="pi pi-exclamation-triangle"></p-tag>
+        <!-- Edge tag -->
+        <p-tag *ngIf="info.edge.length>0" severity="success" value="Edge" icon="pi pi-users"></p-tag>
+
+        <!-- Ownership details -->
+        <h3 *ngIf="info.services.length!=0">Owned services</h3>
+        <p-button class="nodes" *ngFor="let service of info.services" label="{{service.getName()}}" icon="pi pi-circle-fill" styleClass="p-button-text"></p-button>
+        <h3 *ngIf="info.nodesQuantity-info.services.length>0">Other owned nodes</h3>
+        <p-button *ngFor="let n of info.datastores" label="{{n.getName()}}" icon="pi pi-database" styleClass="p-button-text"></p-button><p-button *ngFor="let n of info.communicationPatterns" label="{{n.getName()}}" icon="pi pi-stop" styleClass="p-button-text"></p-button>
+        <div *ngIf="teamSelected">
+            <p><span class="node-quantity-number">{{info.nodesQuantity}}</span> total owned nodes</p>
+            <br/>
+            <h1 *ngIf="info.services.length!=0">Who interacts with {{info.team.getName()}}?</h1>
+            <p-chart type="bar" [data]="charts.teamInteractions.data" [options]="charts.teamInteractions.options"></p-chart>
+        </div>
     </p-card>
+
 </p-sidebar>
