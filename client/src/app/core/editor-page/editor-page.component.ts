@@ -35,7 +35,8 @@ export class EditorPageComponent {
       if(sidebarUpdate.visible) {
         this.viewTeamsInfoConfig.list = true;
       } else {
-        this.viewTeamsInfoConfig.selectedTeam = null;
+        console.log("selecting team", this.viewTeamsInfoConfig.selectedTeam)
+        this.viewTeamsInfoConfig.selectedTeam = undefined;
         this.viewTeamsInfoConfig.list = false;
       }
     }
@@ -44,8 +45,10 @@ export class EditorPageComponent {
   onContextMenuAction(action: ContextMenuAction) {
     switch(action.label) {
       case "team-details":
-        this.sidebar.viewTeamsInfo = true;
-        this.viewTeamsInfoConfig.list = false;
+        if(!this.sidebar.viewTeamsInfo) {
+          this.sidebar.viewTeamsInfo = true;
+          this.viewTeamsInfoConfig.list = false;
+        }
         this.viewTeamsInfoConfig.selectedTeam = <joint.shapes.microtosca.SquadGroup> action.target;
         break;
     }

@@ -40,6 +40,8 @@ export class SidebarTeamDetailsComponent {
 
   ngOnChanges(change: SimpleChanges) {
 
+    console.log("sidebar, change is:", change);
+
     // Sidebar opening
     if(!change.visible?.previousValue && change.visible?.currentValue) {
       this.onSidebarOpen();
@@ -53,6 +55,11 @@ export class SidebarTeamDetailsComponent {
     // From team detail to team list
     if(!change.list?.previousValue && change.list?.currentValue) {
       this.less();
+    }
+
+    // If a team has been selected outside the sidebar, open the team details
+    if(change.selectedTeam?.currentValue && change.selectedTeam?.currentValue !== change.selectedTeam?.previousValue) {
+      this.more(change.selectedTeam.currentValue);
     }
   }
 
