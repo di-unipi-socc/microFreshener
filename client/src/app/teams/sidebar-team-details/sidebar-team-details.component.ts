@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
+import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 
 @Component({
   selector: 'app-sidebar-team-details',
@@ -33,7 +34,8 @@ export class SidebarTeamDetailsComponent {
   
   constructor(
     private graphService: GraphService,
-    private teamService: TeamsService
+    private teamService: TeamsService,
+    private navigation: EditorNavigationService
   ) {}
 
   ngOnChanges(change: SimpleChanges) {
@@ -98,15 +100,18 @@ export class SidebarTeamDetailsComponent {
     }
   }
 
+  // From list to single team details
   more(selectedTeam) {
     this.selectedTeam = selectedTeam;
     this.selectedTeamChange.emit(selectedTeam);
     this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
+    this.navigation.moveTo(selectedTeam);
     this.teamSelected = true;
   }
 
+  // From single team details to list (or sidebar close)
   less() {
     this.teamSelected = false;
     this.selectedTeamChange.emit(undefined);
@@ -114,6 +119,10 @@ export class SidebarTeamDetailsComponent {
     if (!this.list) {
       this.closeSidebar();
     }
+  }
+
+  focus(e: joint.dia.Element) {
+    this.navigation.moveTo(e);
   }
 
   closeSidebar() {

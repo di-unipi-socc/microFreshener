@@ -31,8 +31,13 @@ export class EditorPageComponent {
 
   onSidebarChange(sidebarUpdate) {
     this.sidebar[sidebarUpdate.name] = sidebarUpdate.visible;
-    if(sidebarUpdate.name == "viewTeamsInfo" && sidebarUpdate.visible) {
+    if(sidebarUpdate.name == "viewTeamsInfo") {
+      if(sidebarUpdate.visible) {
         this.viewTeamsInfoConfig.list = true;
+      } else {
+        this.viewTeamsInfoConfig.selectedTeam = null;
+        this.viewTeamsInfoConfig.list = false;
+      }
     }
   }
 

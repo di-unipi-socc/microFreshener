@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
 
@@ -100,6 +100,17 @@ export class EditorNavigationService {
       padding = this.FIT_CONTENT_PADDING;
     }
     this.paper.scaleContentToFit({padding: padding});
+  }
+
+  moveTo(e: joint.dia.Element) {
+    let ecx = e.position().x+e.size().width/2;
+    let ecy = e.position().y+e.size().height/2;
+    let canvas = document.getElementsByTagName('app-graph-editor')[0];
+    let offsetX = canvas.clientWidth/4;
+    let offsetY = canvas.clientHeight/2;
+    let dx = offsetX-ecx;
+    let dy = offsetY-ecy;
+    this.move(dx, dy);
   }
 
 }

@@ -18,9 +18,9 @@
 
         <!-- Ownership details -->
         <h3 *ngIf="info.services.length!=0">Owned services</h3>
-        <p-button class="nodes" *ngFor="let service of info.services" label="{{service.getName()}}" icon="pi pi-circle-fill" styleClass="p-button-text"></p-button>
+        <p-button class="nodes" *ngFor="let service of info.services" (click)="focus(service)" label="{{service.getName()}}" icon="pi pi-circle-fill" styleClass="p-button-text"></p-button>
         <h3 *ngIf="info.nodesQuantity-info.services.length>0">Other owned nodes</h3>
-        <p-button *ngFor="let n of info.datastores" label="{{n.getName()}}" icon="pi pi-database" styleClass="p-button-text"></p-button><p-button *ngFor="let n of info.communicationPatterns" label="{{n.getName()}}" icon="pi pi-stop" styleClass="p-button-text"></p-button>
+        <p-button *ngFor="let n of info.datastores" (click)="focus(n)" label="{{n.getName()}}" icon="pi pi-database" styleClass="p-button-text"></p-button><p-button *ngFor="let n of info.communicationPatterns" (click)="focus(n)" label="{{n.getName()}}" icon="pi pi-stop" styleClass="p-button-text"></p-button>
         <div *ngIf="teamSelected">
             <p><span class="node-quantity-number">{{info.nodesQuantity}}</span> total owned nodes</p>
             <br/>
