@@ -42,7 +42,7 @@ export class SubtoolbarTeamsComponent {
     private messageService: MessageService
   ) {
     this.GRAPH_EVENTS_LABELS = 'change';
-    this.graphListener = (cellView, evt, x, y) => {this.updateNodeList()};
+    this.graphListener = (cellView, evt, x, y) => {this.updateAddTeamNodeList()};
     this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
     this.paperListener = (cellView, evt, x, y) => {this.nodeClicked(cellView)};
     this.nodeList = [];
@@ -60,7 +60,7 @@ export class SubtoolbarTeamsComponent {
   toggleAddTeam() {
     if(this.addTeamToggled) {
       // Toggle on
-      this.updateNodeList();
+      this.updateAddTeamNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
       this.showTeamToggled = true;
@@ -91,9 +91,10 @@ export class SubtoolbarTeamsComponent {
     }
   }
 
-  private updateNodeList() {
+  private updateAddTeamNodeList() {
     let graph = this.gs.getGraph();
     let nodeList: joint.shapes.microtosca.Node[] = graph.getNodes();
+    // Group nodes by squad
     let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodeList
       .map(node => [graph.getTeamOfNode(node), node])
       .reduce((map, [team, node]) => {
@@ -102,13 +103,25 @@ export class SubtoolbarTeamsComponent {
         else array.push(node);
         return map;
       }, new Map());
-    this.nodeList = Array.from(nodesGroupedBySquads.keys()).map((team) => {
+    //  Make the SelectItemGroup elements for the menu out of the grouped nodes
+    let NO_TEAM_LABEL: string  = "Nodes owned by no one";
+    this.nodeList = Array.from(nodesGroupedBySquads
+      .keys()).map((team) => {
       let items = nodesGroupedBySquads.get(team);
       return {
-        label: team ? team.getName() : undefined,
+        label: team ? team.getName() : NO_TEAM_LABEL,
         value: team,
         items: (items ? items.map(node => ({ label: node.getName(), value: node })) : undefined)
       };
+    });
+    // Put unassigned nodes in the beginning of the list
+    this.nodeList.sort((tA, tB) => {
+      if(tA.label === NO_TEAM_LABEL)
+        return -1;
+      else if(tB.label === NO_TEAM_LABEL)
+        return 1;
+      else
+        return 0;
     });
   }
 
