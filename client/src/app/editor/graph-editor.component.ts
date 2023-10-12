@@ -193,7 +193,8 @@ export class GraphEditorComponent {
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                this.openAddNodeDialog(this.toolSelection.getSelected(), position);
+                let team = this.session.isTeam ? this.graph.getGraph().findGroupByName(this.session.getName()) : undefined;
+                this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
             } else {
                 if (this.leftClickSelectedCell) {
                     this.unhighlight();
