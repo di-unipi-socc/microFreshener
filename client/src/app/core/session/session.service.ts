@@ -55,18 +55,18 @@ export class SessionService {
   }
 
   getRole(): UserRole {
-    //return this.role;
-    return UserRole.ADMIN;
+    return this.role;
+    //return UserRole.ADMIN;
   }
 
   isAdmin(): boolean {
-    //return this.role == UserRole.ADMIN;
-    return true;
+    return this.role == UserRole.ADMIN;
+    //return true;
   }
 
   isTeam(): boolean {
-    //return this.role == UserRole.TEAM;
-    return false;
+    return this.role == UserRole.TEAM;
+    //return false;
   }
 
   isDocumentReady(): boolean {

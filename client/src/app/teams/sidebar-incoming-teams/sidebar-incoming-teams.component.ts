@@ -43,8 +43,10 @@ export class SidebarIncomingTeamsComponent {
     // Defined for team members only
     if(this.session.getRole() == UserRole.TEAM) {
       let teamName = this.session.getName();
+      let team = this.graphService.getGraph().findGroupByName(teamName);
       // Get the groups that use the team's nodes and sort (edge first, then by number of recipients descending)
-      let groupsMap = this.teams.getIngoingRequestSenderGroups(teamName);
+      let groupsMap = this.teams.getTeamInteractions(team).ingoing.map(([g, ls]) => [g, ls.map((l: joint.shapes.microtosca.RunTimeLink) => <joint.shapes.microtosca.Node> l.getTargetElement())]);
+      console.log(this.teams.getTeamInteractions(team).ingoing);
       this.groups = Array.from(groupsMap,
         ([group, recipients]: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]]) =>
         ({ group: group, recipients: recipients}));

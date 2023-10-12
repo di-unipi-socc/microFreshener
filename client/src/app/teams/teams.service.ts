@@ -59,10 +59,6 @@ export class TeamsService {
     return this.analytics.getTeamInteractions(team);
   }
 
-  getIngoingRequestSenderGroups(teamName): Map<joint.shapes.microtosca.Group, joint.shapes.microtosca.Node[]> {
-    return this.analytics.getIngoingRequestSenderGroups(teamName);
-  }
-
   getTeamDetails(team: joint.shapes.microtosca.SquadGroup): {
     team: joint.shapes.microtosca.SquadGroup,
     services: joint.shapes.microtosca.Service[],
