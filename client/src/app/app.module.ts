@@ -74,6 +74,7 @@ import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-t
 import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
 import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
 import { TeamsModule } from './teams/teams.module';
+import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/sidebar-teams-relations.component';
 
 @NgModule({
   declarations: [
@@ -84,8 +85,6 @@ import { TeamsModule } from './teams/teams.module';
     DialogAnalysisComponent,
     DialogSmellComponent,
     DialogAddNodeComponent,
-    DialogAddNodeComponent,
-    DialogAddTeamComponent,
     DialogAddLinkComponent,
     DialogRefineComponent,
     DialogImportComponent,
@@ -94,12 +93,8 @@ import { TeamsModule } from './teams/teams.module';
     SubtoolbarNavigationComponent,
     SubtoolbarViewComponent,
     SubtoolbarRefactoringComponent,
-    SubtoolbarTeamsComponent,
     LoginPageComponent,
     EditorPageComponent,
-    SubtoolbarFromTeamNavigationComponent,
-    SidebarIncomingTeamsComponent,
-    SidebarTeamDetailsComponent,
   ],
   imports: [
     BrowserModule,

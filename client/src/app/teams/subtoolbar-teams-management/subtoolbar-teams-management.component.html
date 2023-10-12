@@ -45,3 +45,13 @@
     [(ngModel)]="showTeamsInfoToggled"
     (onChange)="toggleTeamsInfo()">
 </p-toggleButton>
+
+<!-- Team details list -->
+<p-toggleButton
+    onIcon="pi pi-fw pi-comments"
+    offIcon="pi pi-fw pi-comments"
+    pTooltip="Show teams relations" showDelay="1000" tooltipPosition="bottom"
+    styleClass="p-button-text p-button-lg"
+    [(ngModel)]="showTeamsRelationsToggled"
+    (onChange)="toggleTeamsRelations()">
+</p-toggleButton>
