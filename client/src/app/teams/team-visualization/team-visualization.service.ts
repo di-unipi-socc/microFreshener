@@ -29,9 +29,8 @@ export class TeamVisualizationService {
     return this.visibleTeams;
   }
 
-  showTeamDependencies(teamName) {
+  showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
     let graph = this.graphService.getGraph();
-    let team = graph.findGroupByName(teamName);
     graph.showTeamBox(team);
     this.graphService.getGraph().getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
@@ -39,9 +38,8 @@ export class TeamVisualizationService {
         });
   }
 
-  hideTeamDependencies(teamName) {
+  hideTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
     let graph = this.graphService.getGraph();
-    let team = graph.findGroupByName(teamName);
     graph.hideTeamBox(team);
     graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {

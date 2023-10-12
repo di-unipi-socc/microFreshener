@@ -47,12 +47,12 @@ export class TeamsService {
 
   // POV: team member
 
-  showTeamDependencies(teamName: string) {
-    this.visualization.showTeamDependencies(teamName);
+  showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
+    this.visualization.showTeamDependencies(team);
   }
 
-  hideTeamDependencies(teamName: string) {
-    this.visualization.hideTeamDependencies(teamName);
+  hideTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
+    this.visualization.hideTeamDependencies(team);
   }
 
   getTeamInteractions(team: joint.shapes.microtosca.SquadGroup): {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]} {

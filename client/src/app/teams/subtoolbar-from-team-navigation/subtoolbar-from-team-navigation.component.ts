@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { SessionService } from 'src/app/core/session/session.service';
 import { TeamsService } from '../teams.service';
+import { GraphService } from 'src/app/graph/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-from-team-navigation',
@@ -19,7 +20,8 @@ export class SubtoolbarFromTeamNavigationComponent {
  
   constructor(
     private session: SessionService,
-    private teams: TeamsService
+    private teams: TeamsService,
+    private graphService: GraphService
   ) {
     this.showDependencies = false;
     this.showIncomingTeams = false;
@@ -27,10 +29,12 @@ export class SubtoolbarFromTeamNavigationComponent {
 
   toggleViewDependencies() {
     let teamName = this.session.getName();
+    let graph = this.graphService.getGraph();
+    let team = graph.findGroupByName(teamName);
     if(this.showDependencies) {
-      this.teams.showTeamDependencies(teamName);
+      this.teams.showTeamDependencies(team);
     } else {
-      this.teams.hideTeamDependencies(teamName);
+      this.teams.hideTeamDependencies(team);
     }
   }
 
