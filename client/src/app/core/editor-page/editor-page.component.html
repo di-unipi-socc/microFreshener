@@ -1,9 +1,16 @@
 <div class="editor-page-content">
 
-    <app-menu (onSidebarChange)="sidebarChange($event)"></app-menu>
+    <app-menu (onSidebarChange)="onSidebarChange($event)"></app-menu>
 
-    <app-graph-editor></app-graph-editor>
+    <app-graph-editor (contextMenuAction)="onContextMenuAction($event)"></app-graph-editor>
+
     <app-sidebar-incoming-teams *ngIf="sidebar.viewIncomingTeams" class="sidebar"></app-sidebar-incoming-teams>
+    <app-sidebar-team-details
+        [(visible)]="sidebar.viewTeamsInfo"
+        [(selectedTeam)]="viewTeamsInfoConfig.selectedTeam"
+        [list]="viewTeamsInfoConfig.list"
+        class="sidebar">
+    </app-sidebar-team-details>
 
 </div>
 

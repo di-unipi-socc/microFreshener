@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import * as joint from 'jointjs';
 import { TeamEditingService } from './team-editing/team-editing.service';
 import { TeamVisualizationService } from './team-visualization/team-visualization.service';
-import { TeamsAnalyticsService } from './teams-analytics/teams-analytics.service';
+import { TeamsAnalyticsService } from './team-analytics/teams-analytics.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn:'root'
 })
 export class TeamsService {
 
@@ -47,16 +47,27 @@ export class TeamsService {
 
   // POV: team member
 
-  showTeamDependencies(teamName: string) {
-    this.visualization.showTeamDependencies(teamName);
+  showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
+    this.visualization.showTeamDependencies(team);
   }
 
-  hideTeamDependencies(teamName: string) {
-    this.visualization.hideTeamDependencies(teamName);
+  hideTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
+    this.visualization.hideTeamDependencies(team);
   }
 
-  getIngoingRequestSenderGroups(teamName): Map<joint.shapes.microtosca.Group, joint.shapes.microtosca.Node[]> {
-    return this.analytics.getIngoingRequestSenderGroups(teamName);
+  getTeamInteractions(team: joint.shapes.microtosca.SquadGroup): {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]} {
+    return this.analytics.getTeamInteractions(team);
+  }
+
+  getTeamDetails(team: joint.shapes.microtosca.SquadGroup): {
+    team: joint.shapes.microtosca.SquadGroup,
+    services: joint.shapes.microtosca.Service[],
+    datastores: joint.shapes.microtosca.Datastore[],
+    communicationPatterns: joint.shapes.microtosca.CommunicationPattern[],
+    teamInteractions: {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]},
+    edge: joint.shapes.microtosca.Node[]
+  } {
+    return this.analytics.getTeamDetails(team);
   }
 
 }

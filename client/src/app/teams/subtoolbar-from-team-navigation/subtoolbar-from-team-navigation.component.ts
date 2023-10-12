@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { SidebarEvent } from 'src/app/core/app-menu/sidebar-event';
 import { SessionService } from 'src/app/core/session/session.service';
-import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
+import { GraphService } from 'src/app/graph/graph.service';
 
 @Component({
   selector: 'app-subtoolbar-from-team-navigation',
@@ -17,11 +16,12 @@ export class SubtoolbarFromTeamNavigationComponent {
   public static readonly EVENT_NAME: string = 'insideTeamView';
 
   //Declare the property
-  @Output() viewIncomingTeams: EventEmitter<SidebarEvent> = new EventEmitter();
+  @Output() viewIncomingTeams: EventEmitter<{}> = new EventEmitter();
  
   constructor(
     private session: SessionService,
-    private teams: TeamsService
+    private teams: TeamsService,
+    private graphService: GraphService
   ) {
     this.showDependencies = false;
     this.showIncomingTeams = false;
@@ -29,15 +29,17 @@ export class SubtoolbarFromTeamNavigationComponent {
 
   toggleViewDependencies() {
     let teamName = this.session.getName();
+    let graph = this.graphService.getGraph();
+    let team = graph.findGroupByName(teamName);
     if(this.showDependencies) {
-      this.teams.showTeamDependencies(teamName);
+      this.teams.showTeamDependencies(team);
     } else {
-      this.teams.hideTeamDependencies(teamName);
+      this.teams.hideTeamDependencies(team);
     }
   }
 
   toggleViewIncomingTeams() {
-    let sidebarEvent: SidebarEvent = {
+    let sidebarEvent = {
       name: 'viewIncomingTeams',
       visible: this.showIncomingTeams
     }

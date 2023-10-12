@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { EventEmitter, Component, Output } from '@angular/core';
 import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -14,16 +14,24 @@ import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selecti
 })
 export class SubtoolbarTeamsComponent {
 
+  // Add team
   public readonly ADD_TEAM_LABEL: string;
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
-
-  showTeamToggled: boolean;
-  
   private readonly GRAPH_EVENTS_LABELS: string;
   private readonly PAPER_EVENTS_LABELS: string;
   private graphListener;
   private paperListener;
+
+  // Show Add Teams form
+  addTeamToggled: boolean;
+
+  // Show/Hide teams
+  showTeamToggled: boolean;
+
+  // Show Teams Info
+  @Output() viewTeamsInfo: EventEmitter<{}> = new EventEmitter();
+  showTeamsInfoToggled: boolean;
 
   constructor(
     public tools: ToolSelectionService,
@@ -33,7 +41,6 @@ export class SubtoolbarTeamsComponent {
     private navigation: EditorNavigationService,
     private messageService: MessageService
   ) {
-    this.ADD_TEAM_LABEL = ToolSelectionService.ADD_TEAM;
     this.GRAPH_EVENTS_LABELS = 'change';
     this.graphListener = (cellView, evt, x, y) => {this.updateNodeList()};
     this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
@@ -42,12 +49,24 @@ export class SubtoolbarTeamsComponent {
     this.selectedNodes = [];
   }
 
+  toggleShowTeam() {
+    if(this.showTeamToggled) {
+      this.teams.showTeams();
+    } else {
+      this.teams.hideTeams();
+    }
+  }
+
   toggleAddTeam() {
-    if(this.tools.enabledActions[ToolSelectionService.ADD_TEAM]) {
+    if(this.addTeamToggled) {
       // Toggle on
       this.updateNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
+      this.showTeamToggled = true;
+      // Show teams if not already shown
+      this.showTeamToggled = true;
+      this.toggleShowTeam();
     } else {
       // Toggle off
       this.gs.getGraph().off(this.GRAPH_EVENTS_LABELS, this.graphListener);
@@ -72,15 +91,7 @@ export class SubtoolbarTeamsComponent {
     }
   }
 
-  toggleShowTeam() {
-    if(this.showTeamToggled) {
-      this.teams.showTeams();
-    } else {
-      this.teams.hideTeams();
-    }
-  }
-
-  updateNodeList() {
+  private updateNodeList() {
     let graph = this.gs.getGraph();
     let nodeList: joint.shapes.microtosca.Node[] = graph.getNodes();
     let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodeList
@@ -101,7 +112,7 @@ export class SubtoolbarTeamsComponent {
     });
   }
 
-  nodeClicked(cellView: joint.dia.CellView) {
+  private nodeClicked(cellView: joint.dia.CellView) {
     // priority gently left to addLink when clicking an element
     if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
       let graph = this.gs.getGraph();
@@ -120,6 +131,20 @@ export class SubtoolbarTeamsComponent {
         this.selectedNodes = this.selectedNodes.concat(team.getMembers());
         this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
       }
+    }
+  }
+
+  toggleTeamsInfo() {
+    let sidebarEvent = {
+      name: 'viewTeamsInfo',
+      visible: this.showTeamsInfoToggled
+    }
+    this.viewTeamsInfo.emit(sidebarEvent);
+
+    // Show teams if not already shown
+    if(this.showTeamsInfoToggled) {
+      this.showTeamToggled = true;
+      this.toggleShowTeam();
     }
   }
 

@@ -10,6 +10,7 @@
 app-menu {
     width: 100%;
     margin: 0;
+    z-index: 1;
 }
 
 app-graph-editor {
@@ -19,17 +20,6 @@ app-graph-editor {
     min-height: 50vh;
     margin: 0;
     padding: 0;
-}
-
-.sidebar {
-    flex-grow: 1;
-    height: 100%;
-    border-left: 5px solid #f4f4f4;
-    background-color: #f4f4f4;
-    padding: 5px;
-    margin: 0;
-    padding-left: 1em;
-    padding-right: 1em;
 }
 
 :host {
