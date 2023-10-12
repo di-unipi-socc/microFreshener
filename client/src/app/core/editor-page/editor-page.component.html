@@ -4,13 +4,22 @@
 
     <app-graph-editor (contextMenuAction)="onContextMenuAction($event)"></app-graph-editor>
 
-    <app-sidebar-incoming-teams *ngIf="sidebar.viewIncomingTeams" class="sidebar"></app-sidebar-incoming-teams>
+    <app-sidebar-incoming-teams
+        *ngIf="sidebar.viewIncomingTeams"
+        class="sidebar">
+    </app-sidebar-incoming-teams>
+
     <app-sidebar-team-details
         [(visible)]="sidebar.viewTeamsInfo"
         [(selectedTeam)]="viewTeamsInfoConfig.selectedTeam"
         [list]="viewTeamsInfoConfig.list"
         class="sidebar">
     </app-sidebar-team-details>
+
+    <app-sidebar-teams-relations
+        [(visible)]="sidebar.viewTeamsRelations"
+        class="sidebar">
+    </app-sidebar-teams-relations>
 
 </div>
 

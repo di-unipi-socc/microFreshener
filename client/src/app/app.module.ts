@@ -67,14 +67,9 @@ import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-ad
 import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
-import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
-import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
-import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
-import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
 import { TeamsModule } from './teams/teams.module';
-import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/sidebar-teams-relations.component';
 
 @NgModule({
   declarations: [
@@ -139,8 +134,7 @@ import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/
     AvatarModule,
     TagModule,
     MultiSelectModule,
-    ContextMenuModule,
-    ChartModule
+    ContextMenuModule
   ],
   providers: [
     DialogService,

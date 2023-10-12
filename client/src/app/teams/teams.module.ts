@@ -21,6 +21,7 @@ import { MultiSelectModule } from "primeng/multiselect";
 import { StyleClassModule } from "primeng/styleclass";
 import { ToggleButtonModule } from "primeng/togglebutton";
 import { SubtoolbarTeamsComponent } from "./subtoolbar-teams-management/subtoolbar-teams-management.component";
+import { TooltipModule } from "primeng/tooltip";
 
 @NgModule({
     declarations: [
@@ -51,7 +52,8 @@ import { SubtoolbarTeamsComponent } from "./subtoolbar-teams-management/subtoolb
         ToggleButtonModule,
         StyleClassModule,
         MultiSelectModule,
-        InputTextModule
+        InputTextModule,
+        TooltipModule
     ],
     providers: [
         TeamsService,

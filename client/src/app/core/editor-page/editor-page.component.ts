@@ -20,7 +20,8 @@ export class EditorPageComponent {
   constructor() {
     this.sidebar = {
       viewIncomingTeams: false,
-      viewTeamsInfo: false
+      viewTeamsInfo: false,
+      viewTeamsRelations: false
     };
 
     this.viewTeamsInfoConfig = {
@@ -31,14 +32,17 @@ export class EditorPageComponent {
 
   onSidebarChange(sidebarUpdate) {
     this.sidebar[sidebarUpdate.name] = sidebarUpdate.visible;
-    if(sidebarUpdate.name == "viewTeamsInfo") {
-      if(sidebarUpdate.visible) {
-        this.viewTeamsInfoConfig.list = true;
-      } else {
-        console.log("selecting team", this.viewTeamsInfoConfig.selectedTeam)
-        this.viewTeamsInfoConfig.selectedTeam = undefined;
-        this.viewTeamsInfoConfig.list = false;
-      }
+
+    switch(sidebarUpdate.name) {
+      case "viewTeamsInfo":
+          if(sidebarUpdate.visible) {
+            this.viewTeamsInfoConfig.list = true;
+          } else {
+            console.log("selecting team", this.viewTeamsInfoConfig.selectedTeam)
+            this.viewTeamsInfoConfig.selectedTeam = undefined;
+            this.viewTeamsInfoConfig.list = false;
+          }
+        break;
     }
   }
 

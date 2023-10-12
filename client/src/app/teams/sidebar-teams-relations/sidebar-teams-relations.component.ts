@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar-teams-relations',
@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./sidebar-teams-relations.component.css']
 })
 export class SidebarTeamsRelationsComponent {
+
+  @Input() visible: boolean;
 
 }
