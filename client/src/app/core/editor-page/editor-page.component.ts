@@ -25,7 +25,7 @@ export class EditorPageComponent {
 
     this.viewTeamsInfoConfig = {
       list: false,
-      selectedTeam: null
+      selectedTeam: undefined
     };
   }
 
