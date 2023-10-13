@@ -1,5 +1,7 @@
 import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import * as d3 from 'd3';
+import { TeamsService } from '../teams.service';
+import * as joint from 'jointjs';
 
 @Component({
   selector: 'app-sidebar-teams-relations',
@@ -12,6 +14,8 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
+  constructor(private teamsService: TeamsService) {}
+
   ngOnChanges(change: SimpleChanges) {
     if(change.visible.previousValue === false && change.visible.currentValue === true) {
       this.createChordDiagram();
@@ -23,18 +27,10 @@ export class SidebarTeamsRelationsComponent {
 
   private createChordDiagram() {
     // Data for the chord diagram
-    //let data: [string, string, number] = this.interactionsToMatrix();
-    let data: [string, string, number][] = [
-      //['source', 'target', 'value'],
-      ['teamA','b',1],
-      ['b','c',2],
-      ['c','b',1],
-      ['d','teamA',1],
-      ['d','b',3]
-    ];
+    let teams = this.teamsService.getTeams();
+    let data: [string, string, number][] = this.teamInteractionsToMatrix(teams);
     
     // create the svg area
-    console.log("teamRelationsContainer", this.teamRelationsContainer.nativeElement.offsetWidth);
     let width = 650;
     let height = width;
     let widthRadiusRatio = 1.1;
@@ -42,7 +38,7 @@ export class SidebarTeamsRelationsComponent {
     let outerRadius = innerRadius + 20;
     let d3any: any = d3;
     // Compute a dense matrix from the weighted links in data.
-    let names = ['teamA','b','c','d'];
+    let names = teams.map((t) => t.getName());
     let index = new Map(names.map((name, i) => [name, i]));
     let matrix = Array.from(index, () => new Array(names.length).fill(0));
     data.forEach( ([source, target, value]) => { matrix[index.get(source)][index.get(target)] += value });
@@ -97,7 +93,7 @@ export class SidebarTeamsRelationsComponent {
         .attr("fill", d => colors[d.target.index])
         .style("mix-blend-mode", "multiply")
       .append("title")
-        .text(d => `${d.source.value} interactions of ${names[d.source.index]} with ${names[d.target.index]}`);
+        .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${names[d.source.index]} with nodes owned by ${names[d.target.index]}`);
 
     let g = svg.append("g")
       .selectAll()
@@ -118,7 +114,22 @@ export class SidebarTeamsRelationsComponent {
         .text(d => names[d.index]);
 
     g.append("title")
-        //.text(d => `${names[d.index]} owes ${formatValue(d3any.sum(matrix[d.index]))} is owed ${formatValue(d3any.sum(matrix, row => row[d.index]))}`);
-        .text(d => `${names[d.index]}`);
+        .text(d => `Interactions involving nodes in ${names[d.index]}`);
   }
+
+  private teamInteractionsToMatrix(teams: joint.shapes.microtosca.SquadGroup[]): [string, string, number][] {
+    let matrix: [string, string, number][] = []
+    
+    teams.map((s) => this.teamsService.getTeamInteractions(s)
+                                      .outgoing
+                                      .forEach(teamInteraction => { 
+                                        matrix.push([
+                                          s.getName(),
+                                          teamInteraction[0].getName(),
+                                          teamInteraction[1].length
+                                        ]);
+                                      }));
+    return matrix;
+  }
+
 }
