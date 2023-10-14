@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular
 import * as d3 from 'd3';
 import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
+import { GraphService } from 'src/app/graph/graph.service';
 
 @Component({
   selector: 'app-sidebar-teams-relations',
@@ -14,7 +15,18 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
-  constructor(private teamsService: TeamsService) {}
+  private readonly OPACITY_ARC = 0.5;
+  private readonly OPACITY_RIBBON = 0.2;
+  private readonly OPACITY_HIGHLIGHT = 1;
+
+  private names;
+  private colors;
+  private index;
+
+  constructor(
+    private graphService: GraphService,
+    private teamsService: TeamsService
+  ) {}
 
   ngOnChanges(change: SimpleChanges) {
     if(change.visible.previousValue === false && change.visible.currentValue === true) {
@@ -38,10 +50,10 @@ export class SidebarTeamsRelationsComponent {
     let outerRadius = innerRadius + 20;
     let d3any: any = d3;
     // Compute a dense matrix from the weighted links in data.
-    let names = teams.map((t) => t.getName());
-    let index = new Map(names.map((name, i) => [name, i]));
-    let matrix = Array.from(index, () => new Array(names.length).fill(0));
-    data.forEach( ([source, target, value]) => { matrix[index.get(source)][index.get(target)] += value });
+    this.names = teams.map((t) => t.getName());
+    this.index = new Map(this.names.map((name, i) => [name, i]));
+    let matrix = Array.from(this.index, () => new Array(this.names.length).fill(0));
+    data.forEach( ([source, target, value]) => { matrix[this.index.get(source)][this.index.get(target)] += value });
 
     let chord = d3any.chordDirected()
         .padAngle(12 / innerRadius)
@@ -55,9 +67,8 @@ export class SidebarTeamsRelationsComponent {
     let ribbon = d3any.ribbonArrow()
         .radius(innerRadius - 20)
         .padAngle(1 / innerRadius);
-    console.log("how much padangle", 1 / innerRadius);
 
-    let colors = d3any.schemeCategory10;
+    this.colors = d3any.schemeCategory10;
 
     let svg: any = d3any.select(this.teamRelations.nativeElement)
               .append("svg")
@@ -70,7 +81,6 @@ export class SidebarTeamsRelationsComponent {
 
     let textCount = 0;
     let getUid = () => {
-      console.log("textCount is", textCount);
       textCount++;
       return {
         id: "M-text-" + textCount,
@@ -82,18 +92,26 @@ export class SidebarTeamsRelationsComponent {
     svg.append("path")
         .attr("id", textId.id)
         .attr("fill", "none")
-        .attr("d", d3any.arc()({outerRadius, startAngle: 0, endAngle: 2 * Math.PI}));
+        .attr("d", d3any.arc()({outerRadius, startAngle: 0, endAngle: 2 * Math.PI}))
 
     svg.append("g")
-        .attr("fill-opacity", 0.2)
       .selectAll()
       .data(chords)
       .join("path")
         .attr("d", ribbon)
-        .attr("fill", d => colors[d.target.index])
+        .attr("fill", d => this.colors[d.target.index])
+        .attr("fill-opacity", this.OPACITY_RIBBON)
         .style("mix-blend-mode", "multiply")
+        .attr("id", d => `ribbon-${d.source.index}-${d.target.index}`)
+        .on("mouseover", (event) => {
+          let ribbonId = event.target.id;
+          this.mouseOverRibbon(ribbonId);
+        }).on("mouseout", (event) => {
+          let ribbonId = event.target.id;
+          this.mouseOutRibbon(ribbonId);
+        })
       .append("title")
-        .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${names[d.source.index]} with nodes owned by ${names[d.target.index]}`);
+        .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${this.names[d.source.index]} with nodes owned by ${this.names[d.target.index]}`)
 
     let g = svg.append("g")
       .selectAll()
@@ -102,19 +120,20 @@ export class SidebarTeamsRelationsComponent {
 
     g.append("path")
         .attr("d", arc)
-        .attr("fill", d => colors[d.index])
-        .attr("fill-opacity", 0.5)
+        .attr("fill", d => this.colors[d.index])
+        .attr("fill-opacity", this.OPACITY_ARC)
         .attr("stroke", "#fff")
+        .attr("id", d => `arc-${d.index}`)
 
     g.append("text")
         .attr("dy", -3)
         .append("textPath")
         .attr("xlink:href", textId.href)
         .attr("startOffset", d => d.startAngle * outerRadius)
-        .text(d => names[d.index]);
+        .text(d => this.names[d.index]);
 
     g.append("title")
-        .text(d => `Interactions involving nodes in ${names[d.index]}`);
+        .text(d => `Interactions involving nodes in ${this.names[d.index]}`);
   }
 
   private teamInteractionsToMatrix(teams: joint.shapes.microtosca.SquadGroup[]): [string, string, number][] {
@@ -131,5 +150,59 @@ export class SidebarTeamsRelationsComponent {
                                       }));
     return matrix;
   }
+
+  private getArcsIndicesFromRibbon(ribbonId: string) {
+    let indices = ribbonId.replace("ribbon-", "").split("-");
+    return {source: indices[0], target: indices[1]};
+  }
+
+  private mouseOverRibbon(ribbonId) {
+    let indices = this.getArcsIndicesFromRibbon(ribbonId);
+    let sourceIndex = indices.source;
+    let targetIndex = indices.target;
+    this.changeRibbonOpacity(ribbonId, this.OPACITY_HIGHLIGHT, sourceIndex, this.OPACITY_HIGHLIGHT, targetIndex, this.OPACITY_HIGHLIGHT);
+    this.colorRibbonLink(sourceIndex, targetIndex);
+  }
+
+  private changeRibbonOpacity(ribbonId, ribbonOpacity, sourceIndex, sourceOpacity, targetIndex, targetOpacity) {
+    d3.select("#" + ribbonId).style("fill-opacity", `${ribbonOpacity}`);
+    d3.select("#arc-" + sourceIndex).style("fill-opacity", `${sourceOpacity}`);
+    d3.select("#arc-" + targetIndex).style("fill-opacity", `${targetOpacity}`);
+  }
+
+  private mouseOutRibbon(ribbonId) {
+    let indices = this.getArcsIndicesFromRibbon(ribbonId);
+    let sourceIndex = indices.source;
+    let targetIndex = indices.target;
+    this.changeRibbonOpacity(ribbonId, this.OPACITY_RIBBON, sourceIndex, this.OPACITY_ARC, targetIndex, this.OPACITY_ARC);
+    this.restoreLinkColor();
+  }
+
+
+  private colorRibbonLink(sourceIndex: string, targetIndex: string) {
+    let sourceTeamName = this.names[sourceIndex];
+    console.log("teamname", sourceTeamName);
+    let sourceTeam = this.graphService.getGraph().findGroupByName(sourceTeamName);
+    let targetTeamName = this.names[targetIndex];
+    let targetTeam = this.graphService.getGraph().findGroupByName(targetTeamName);
+    let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;
+    let ribbonTeamInteraction = outgoingLinks.filter(([g, ls]) => g == targetTeam);
+    console.log("ti, color", ribbonTeamInteraction, this.colors[targetIndex])
+    ribbonTeamInteraction.map(([g, ls]) => ls.forEach((l) => this.colorLink(l, this.colors[targetIndex])));
+  }
+
+  private restoreLinkColor() {
+    this.graphService.getGraph().getLinks().forEach((link) => {
+      this.resetLinkColor(link);
+    });
+  }
+
+  private resetLinkColor(link) {
+    link.attr("line/stroke", "black");
+  }
+
+  private colorLink(link, color: string) {
+    link.attr("line/stroke", color);
+  };
 
 }
