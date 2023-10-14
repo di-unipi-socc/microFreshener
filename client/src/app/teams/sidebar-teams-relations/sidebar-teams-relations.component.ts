@@ -161,7 +161,7 @@ export class SidebarTeamsRelationsComponent {
     let sourceIndex = indices.source;
     let targetIndex = indices.target;
     this.changeRibbonOpacity(ribbonId, this.OPACITY_HIGHLIGHT, sourceIndex, this.OPACITY_HIGHLIGHT, targetIndex, this.OPACITY_HIGHLIGHT);
-    this.colorRibbonLink(sourceIndex, targetIndex);
+    this.colorRibbonSubgraph(sourceIndex, targetIndex);
   }
 
   private changeRibbonOpacity(ribbonId, ribbonOpacity, sourceIndex, sourceOpacity, targetIndex, targetOpacity) {
@@ -179,22 +179,29 @@ export class SidebarTeamsRelationsComponent {
   }
 
 
-  private colorRibbonLink(sourceIndex: string, targetIndex: string) {
+  private colorRibbonSubgraph(sourceIndex: string, targetIndex: string) {
+    // Get graph references
     let sourceTeamName = this.names[sourceIndex];
-    console.log("teamname", sourceTeamName);
     let sourceTeam = this.graphService.getGraph().findGroupByName(sourceTeamName);
     let targetTeamName = this.names[targetIndex];
     let targetTeam = this.graphService.getGraph().findGroupByName(targetTeamName);
+    // Color links
     let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;
     let ribbonTeamInteraction = outgoingLinks.filter(([g, ls]) => g == targetTeam);
     console.log("ti, color", ribbonTeamInteraction, this.colors[targetIndex])
     ribbonTeamInteraction.map(([g, ls]) => ls.forEach((l) => this.colorLink(l, this.colors[targetIndex])));
+    // Color teams
+    sourceTeam.attr("body/fill", this.colors[sourceIndex]);
+    targetTeam.attr("body/fill", this.colors[targetIndex]);
   }
 
   private restoreLinkColor() {
     this.graphService.getGraph().getLinks().forEach((link) => {
       this.resetLinkColor(link);
     });
+    this.teamsService.getTeams().forEach((t) => {
+      t.attr("body/fill", "#E5E7E9");
+    })
   }
 
   private resetLinkColor(link) {
