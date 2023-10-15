@@ -103,6 +103,8 @@ export class SidebarTeamsRelationsComponent {
         .attr("fill-opacity", this.OPACITY_RIBBON)
         .style("mix-blend-mode", "multiply")
         .attr("id", d => `ribbon-${d.source.index}-${d.target.index}`)
+        .attr("class", d => `ribbon-source-${d.source.index}`)
+        .attr("class", d => `ribbon-target-${d.target.index}`)
         .on("mouseover", (event) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
@@ -156,6 +158,11 @@ export class SidebarTeamsRelationsComponent {
     return {source: indices[0], target: indices[1]};
   }
 
+  private mouseOverArc(teamId) {
+    d3.selectAll(`.ribbon-source-${teamId}`);
+    //d3.selectAll(`.ribbon-target-teamId`);
+  }
+
   private mouseOverRibbon(ribbonId) {
     let indices = this.getArcsIndicesFromRibbon(ribbonId);
     let sourceIndex = indices.source;
@@ -177,7 +184,6 @@ export class SidebarTeamsRelationsComponent {
     this.changeRibbonOpacity(ribbonId, this.OPACITY_RIBBON, sourceIndex, this.OPACITY_ARC, targetIndex, this.OPACITY_ARC);
     this.restoreLinkColor();
   }
-
 
   private colorRibbonSubgraph(sourceIndex: string, targetIndex: string) {
     // Get graph references
