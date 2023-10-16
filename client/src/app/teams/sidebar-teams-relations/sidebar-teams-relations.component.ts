@@ -15,6 +15,10 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
+  private svg;
+  private width;
+  private height;
+
   private readonly OPACITY_ARC = 0.5;
   private readonly OPACITY_RIBBON = 0.2;
   private readonly OPACITY_HIGHLIGHT = 1;
@@ -25,32 +29,72 @@ export class SidebarTeamsRelationsComponent {
   private colors;
   private index;
 
+  private graphListener;
+
   constructor(
     private graphService: GraphService,
     private teamsService: TeamsService
   ) {}
 
-  ngOnChanges(change: SimpleChanges) {
-    if(change.visible.previousValue === false && change.visible.currentValue === true) {
-      this.createChordDiagram();
-    }
-    if(change.visible.previousValue === true && change.visible.currentValue === false) {
-      d3.select(this.teamRelations.nativeElement).select("svg").remove();
+  ngAfterViewInit() {
+    // create the svg area
+    this.width = 650;
+    this.height = this.width;
+    let d3any: any = d3;
+    this.svg = d3any.select(this.teamRelations.nativeElement)
+    .append("svg")
+    .attr("width", this.width)
+    .attr("height", this.height)
+    .attr("viewBox", [-this.width / 2 -20, -this.height / 2 -20, this.width+20, this.height+20])
+    .attr("style", "width: 100%; height: auto; font: 10px;");
+    // Create listener for graph changes
+    this.graphListener = () => {
+      this.cleanChordDiagram();
+      this.updateChordDiagram();
     }
   }
 
-  private createChordDiagram() {
-    // Data for the chord diagram
+  ngOnChanges(change: SimpleChanges) {
+    if(change.visible.previousValue === false && change.visible.currentValue === true) {
+      this.onSidebarOpen();
+    }
+    if(change.visible.previousValue === true && change.visible.currentValue === false) {
+      this.onSidebarClose();
+    }
+  }
+
+  private onSidebarOpen() {
+    this.graphService.getGraph().on("change", this.graphListener);
+    this.updateChordDiagram();
+  }
+
+  private onSidebarClose() {
+    this.cleanChordDiagram();
+    this.graphService.getGraph().off(this.graphListener);    
+  }
+
+  private cleanChordDiagram() {
+    d3.select(this.teamRelations.nativeElement).selectAll("svg > *").remove();
+    //this.restoreGraphColor();
+  }
+
+  private updateChordDiagram() {
     let teams = this.teamsService.getTeams();
+    if(teams.length > 1) {
+      this.createChordDiagram(teams);
+    }
+  }
+
+  private createChordDiagram(teams: joint.shapes.microtosca.SquadGroup[]) {
+
+    let d3any: any = d3;
+    let widthRadiusRatio = 1.1;
+    let innerRadius = Math.min(this.width/widthRadiusRatio, this.height/widthRadiusRatio) * 0.5 - 20;
+    let outerRadius = innerRadius + 20;
+
+    // Data for the chord diagram
     let data: [string, string, number][] = this.teamInteractionsToMatrix(teams);
     
-    // create the svg area
-    let width = 650;
-    let height = width;
-    let widthRadiusRatio = 1.1;
-    let innerRadius = Math.min(width/widthRadiusRatio, height/widthRadiusRatio) * 0.5 - 20;
-    let outerRadius = innerRadius + 20;
-    let d3any: any = d3;
     // Compute a dense matrix from the weighted links in data.
     this.names = teams.map((t) => t.getName());
     this.index = new Map(this.names.map((name, i) => [name, i]));
@@ -72,13 +116,6 @@ export class SidebarTeamsRelationsComponent {
 
     this.colors = d3any.schemeCategory10;
 
-    let svg: any = d3any.select(this.teamRelations.nativeElement)
-              .append("svg")
-              .attr("width", width)
-              .attr("height", height)
-              .attr("viewBox", [-width / 2 -20, -height / 2 -20, width+20, height+20])
-              .attr("style", "width: 100%; height: auto; font: 10px;");
-
     let chords = chord(matrix);
 
     let textCount = 0;
@@ -91,12 +128,12 @@ export class SidebarTeamsRelationsComponent {
     }
     let textId = getUid();
 
-    svg.append("path")
+    this.svg.append("path")
         .attr("id", textId.id)
         .attr("fill", "none")
         .attr("d", d3any.arc()({outerRadius, startAngle: 0, endAngle: 2 * Math.PI}))
 
-    svg.append("g")
+    this.svg.append("g")
       .selectAll()
       .data(chords)
       .join("path")
@@ -117,7 +154,7 @@ export class SidebarTeamsRelationsComponent {
       .append("title")
         .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${this.names[d.source.index]} with nodes owned by ${this.names[d.target.index]}`)
 
-    let g = svg.append("g")
+    let g = this.svg.append("g")
       .selectAll()
       .data(chords.groups)
       .join("g");
@@ -154,6 +191,7 @@ export class SidebarTeamsRelationsComponent {
     teams.map((s) => this.teamsService.getTeamInteractions(s)
                                       .outgoing
                                       .forEach(teamInteraction => { 
+                                        console.log("ti", teamInteraction);
                                         matrix.push([
                                           s.getName(),
                                           teamInteraction[0].getName(),
@@ -166,7 +204,6 @@ export class SidebarTeamsRelationsComponent {
   private mouseOverArc(arcId) {
     // Equivalent to overing all ribbons
     let arcIndex = arcId.replace("arc-", "");
-    console.log("arc index", arcIndex);
     d3.selectAll(`.ribbon-source-${arcIndex}`)
       .each((data, i, nodes: any[]) => {
         for(let ribbon of Array.from(nodes)) {
