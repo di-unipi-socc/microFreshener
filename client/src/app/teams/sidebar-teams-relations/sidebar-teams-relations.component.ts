@@ -51,7 +51,11 @@ export class SidebarTeamsRelationsComponent {
     this.graphListener = () => {
       if(this.visible) {
         this.cleanChordDiagram();
-        this.updateChordDiagram();
+        if(this.graphService.getGraph().getTeamGroups().length > 1) {
+          this.updateChordDiagram();
+        } else {
+          this.visible = false;
+        }
       }
     }
     this.graphService.getGraph().on("add remove change", this.graphListener);
