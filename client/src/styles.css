@@ -33,7 +33,7 @@ body, body p, h1, h2, h3, h4, h5, div {
 }
 
 h1, h2, h3, h4, h5 {
-    font-weight: lighter;
+    font-weight: 200;
 }
 
 app-root {

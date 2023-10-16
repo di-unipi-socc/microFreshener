@@ -15,6 +15,8 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
+  fewTeams: boolean;
+
   private svg;
   private width;
   private height;
@@ -53,8 +55,9 @@ export class SidebarTeamsRelationsComponent {
         this.cleanChordDiagram();
         if(this.graphService.getGraph().getTeamGroups().length > 1) {
           this.updateChordDiagram();
+          this.fewTeams = false;
         } else {
-          this.visible = false;
+          this.fewTeams = true;
         }
       }
     }
@@ -88,6 +91,9 @@ export class SidebarTeamsRelationsComponent {
     let teams = this.teamsService.getTeams();
     if(teams.length > 1) {
       this.createChordDiagram(teams);
+      this.fewTeams = false;
+    } else {
+      this.fewTeams = true;
     }
   }
 
