@@ -49,9 +49,12 @@ export class SidebarTeamsRelationsComponent {
     .attr("style", "width: 100%; height: auto; font: 10px;");
     // Create listener for graph changes
     this.graphListener = () => {
-      this.cleanChordDiagram();
-      this.updateChordDiagram();
+      if(this.visible) {
+        this.cleanChordDiagram();
+        this.updateChordDiagram();
+      }
     }
+    this.graphService.getGraph().on("add remove change", this.graphListener);
   }
 
   ngOnChanges(change: SimpleChanges) {
@@ -59,18 +62,17 @@ export class SidebarTeamsRelationsComponent {
       this.onSidebarOpen();
     }
     if(change.visible.previousValue === true && change.visible.currentValue === false) {
-      this.onSidebarClose();
+      //this.onSidebarClose();
     }
   }
 
-  private onSidebarOpen() {
-    this.graphService.getGraph().on("change", this.graphListener);
-    this.updateChordDiagram();
+  ngOnDestroy() {
+    this.graphService.getGraph().off(this.graphListener);
   }
 
-  private onSidebarClose() {
+  private onSidebarOpen() {
     this.cleanChordDiagram();
-    this.graphService.getGraph().off(this.graphListener);    
+    this.updateChordDiagram();
   }
 
   private cleanChordDiagram() {
@@ -190,8 +192,7 @@ export class SidebarTeamsRelationsComponent {
     
     teams.map((s) => this.teamsService.getTeamInteractions(s)
                                       .outgoing
-                                      .forEach(teamInteraction => { 
-                                        console.log("ti", teamInteraction);
+                                      .forEach(teamInteraction => {
                                         matrix.push([
                                           s.getName(),
                                           teamInteraction[0].getName(),
