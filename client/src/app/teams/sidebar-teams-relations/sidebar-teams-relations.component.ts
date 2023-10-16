@@ -18,6 +18,8 @@ export class SidebarTeamsRelationsComponent {
   private readonly OPACITY_ARC = 0.5;
   private readonly OPACITY_RIBBON = 0.2;
   private readonly OPACITY_HIGHLIGHT = 1;
+  private readonly LINK_COLOR = "black";
+  private readonly TEAM_COLOR = "#E5E7E9";
 
   private names;
   private colors;
@@ -103,12 +105,12 @@ export class SidebarTeamsRelationsComponent {
         .attr("fill-opacity", this.OPACITY_RIBBON)
         .style("mix-blend-mode", "multiply")
         .attr("id", d => `ribbon-${d.source.index}-${d.target.index}`)
-        .attr("class", d => `ribbon-source-${d.source.index}`)
-        .attr("class", d => `ribbon-target-${d.target.index}`)
+        .attr("class", d => `ribbon-source-${d.source.index} ribbon-target-${d.target.index}`)
         .on("mouseover", (event) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
-        }).on("mouseout", (event) => {
+        })
+        .on("mouseout", (event) => {
           let ribbonId = event.target.id;
           this.mouseOutRibbon(ribbonId);
         })
@@ -126,6 +128,14 @@ export class SidebarTeamsRelationsComponent {
         .attr("fill-opacity", this.OPACITY_ARC)
         .attr("stroke", "#fff")
         .attr("id", d => `arc-${d.index}`)
+        .on("mouseover", (event) => {
+          let arcId = event.target.id;
+          this.mouseOverArc(arcId);
+        })
+        .on("mouseout", (event) => {
+          let arcId = event.target.id;
+          this.mouseOutArc(arcId);
+        })
 
     g.append("text")
         .attr("dy", -3)
@@ -153,39 +163,68 @@ export class SidebarTeamsRelationsComponent {
     return matrix;
   }
 
-  private getArcsIndicesFromRibbon(ribbonId: string) {
-    let indices = ribbonId.replace("ribbon-", "").split("-");
-    return {source: indices[0], target: indices[1]};
+  private mouseOverArc(arcId) {
+    // Equivalent to overing all ribbons
+    let arcIndex = arcId.replace("arc-", "");
+    console.log("arc index", arcIndex);
+    d3.selectAll(`.ribbon-source-${arcIndex}`)
+      .each((data, i, nodes: any[]) => {
+        for(let ribbon of Array.from(nodes)) {
+          let ribbonId = ribbon.id;
+          this.mouseOverRibbon(ribbonId)
+        }
+      });
+      d3.selectAll(`.ribbon-target-${arcIndex}`)
+      .each((data, i, nodes: any[]) => {
+        for(let ribbon of Array.from(nodes)) {
+          let ribbonId = ribbon.id;
+          this.mouseOverRibbon(ribbonId)
+        }
+      });
   }
 
-  private mouseOverArc(teamId) {
-    d3.selectAll(`.ribbon-source-${teamId}`);
-    //d3.selectAll(`.ribbon-target-teamId`);
+  private mouseOutArc(arcId) {
+    // Equivalent to outing all ribbons
+    let arcIndex = arcId.replace("arc-", "");
+    d3.selectAll(`.ribbon-source-${arcIndex}`)
+      .each((data, i, nodes: any[]) => {
+        for(let ribbon of Array.from(nodes)) {
+          let ribbonId = ribbon.id;
+          this.mouseOutRibbon(ribbonId)
+        }
+      });
+    d3.selectAll(`.ribbon-target-${arcIndex}`)
+      .each((data, i, nodes: any[]) => {
+        for(let ribbon of Array.from(nodes)) {
+          let ribbonId = ribbon.id;
+          this.mouseOutRibbon(ribbonId)
+        }
+      });
   }
 
   private mouseOverRibbon(ribbonId) {
-    let indices = this.getArcsIndicesFromRibbon(ribbonId);
-    let sourceIndex = indices.source;
-    let targetIndex = indices.target;
-    this.changeRibbonOpacity(ribbonId, this.OPACITY_HIGHLIGHT, sourceIndex, this.OPACITY_HIGHLIGHT, targetIndex, this.OPACITY_HIGHLIGHT);
-    this.colorRibbonSubgraph(sourceIndex, targetIndex);
-  }
-
-  private changeRibbonOpacity(ribbonId, ribbonOpacity, sourceIndex, sourceOpacity, targetIndex, targetOpacity) {
-    d3.select("#" + ribbonId).style("fill-opacity", `${ribbonOpacity}`);
-    d3.select("#arc-" + sourceIndex).style("fill-opacity", `${sourceOpacity}`);
-    d3.select("#arc-" + targetIndex).style("fill-opacity", `${targetOpacity}`);
+    this.ribbonOverChange(ribbonId, true);
   }
 
   private mouseOutRibbon(ribbonId) {
-    let indices = this.getArcsIndicesFromRibbon(ribbonId);
-    let sourceIndex = indices.source;
-    let targetIndex = indices.target;
-    this.changeRibbonOpacity(ribbonId, this.OPACITY_RIBBON, sourceIndex, this.OPACITY_ARC, targetIndex, this.OPACITY_ARC);
-    this.restoreLinkColor();
+    this.ribbonOverChange(ribbonId, false);
   }
 
-  private colorRibbonSubgraph(sourceIndex: string, targetIndex: string) {
+  private ribbonOverChange(ribbonId, over) {
+    d3.select("#" + ribbonId).style("fill-opacity", `${over ? this.OPACITY_HIGHLIGHT : this.OPACITY_RIBBON}`);
+    let indices = ribbonId.replace("ribbon-", "").split("-");
+    let sourceIndex = indices[0];
+    d3.select(`#arc-${sourceIndex}`).style("fill-opacity", `${over ? this.OPACITY_HIGHLIGHT : this.OPACITY_ARC}`);
+    let targetIndex = indices[1];
+    d3.select(`#arc-${targetIndex}`).style("fill-opacity", `${over ? this.OPACITY_HIGHLIGHT : this.OPACITY_ARC}`);
+
+    if(over)
+      this.highlightRibbonSubgraph(sourceIndex, targetIndex);
+    else // mouseout
+      this.restoreGraphColor();
+  }
+
+  private highlightRibbonSubgraph(sourceIndex: string, targetIndex: string) {
     // Get graph references
     let sourceTeamName = this.names[sourceIndex];
     let sourceTeam = this.graphService.getGraph().findGroupByName(sourceTeamName);
@@ -194,28 +233,19 @@ export class SidebarTeamsRelationsComponent {
     // Color links
     let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;
     let ribbonTeamInteraction = outgoingLinks.filter(([g, ls]) => g == targetTeam);
-    console.log("ti, color", ribbonTeamInteraction, this.colors[targetIndex])
-    ribbonTeamInteraction.map(([g, ls]) => ls.forEach((l) => this.colorLink(l, this.colors[targetIndex])));
+    ribbonTeamInteraction.map(([g, ls]) => ls.forEach((l) => l.attr("line/stroke", this.colors[targetIndex])));
     // Color teams
     sourceTeam.attr("body/fill", this.colors[sourceIndex]);
     targetTeam.attr("body/fill", this.colors[targetIndex]);
   }
 
-  private restoreLinkColor() {
+  private restoreGraphColor() {
     this.graphService.getGraph().getLinks().forEach((link) => {
-      this.resetLinkColor(link);
+      link.attr("line/stroke", this.LINK_COLOR);
     });
     this.teamsService.getTeams().forEach((t) => {
-      t.attr("body/fill", "#E5E7E9");
+      t.attr("body/fill", this.TEAM_COLOR);
     })
   }
-
-  private resetLinkColor(link) {
-    link.attr("line/stroke", "black");
-  }
-
-  private colorLink(link, color: string) {
-    link.attr("line/stroke", color);
-  };
 
 }
