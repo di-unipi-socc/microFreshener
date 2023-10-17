@@ -80,11 +80,13 @@ export class TeamsAnalyticsService {
     let ingoingLinks: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = 
       this.getTeamIngoingLinks(team)
           .map((link) => [graph.getTeamOfNode(<joint.shapes.microtosca.Node> link.getSourceElement()), link])
+          .filter(([g, l]) => g && graph.isTeamGroup(g))
           .reduce(groupingByTeam, new Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]>());
 
     let outgoingLinks: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = 
       this.getTeamOutgoingLinks(team)
           .map((link) => [graph.getTeamOfNode(<joint.shapes.microtosca.Node> link.getTargetElement()), link])
+          .filter(([g, l]) => g && graph.isTeamGroup(g))
           .reduce(groupingByTeam, new Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]>());
 
     return { ingoing: Array.from(ingoingLinks), outgoing: Array.from(outgoingLinks) };

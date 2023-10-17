@@ -1,10 +1,17 @@
+<!-- show the messages in a toast-->
+<p-toast [style]="{marginTop: '100px'}"  position="top-right"></p-toast>
+
 <div class="editor-page-content">
 
     <app-menu (onSidebarChange)="onSidebarChange($event)"></app-menu>
 
     <app-graph-editor (contextMenuAction)="onContextMenuAction($event)"></app-graph-editor>
 
-    <app-sidebar-incoming-teams *ngIf="sidebar.viewIncomingTeams" class="sidebar"></app-sidebar-incoming-teams>
+    <app-sidebar-incoming-teams
+        *ngIf="sidebar.viewIncomingTeams"
+        class="sidebar">
+    </app-sidebar-incoming-teams>
+
     <app-sidebar-team-details
         [(visible)]="sidebar.viewTeamsInfo"
         [(selectedTeam)]="viewTeamsInfoConfig.selectedTeam"
@@ -12,7 +19,9 @@
         class="sidebar">
     </app-sidebar-team-details>
 
-</div>
+    <app-sidebar-teams-relations
+        [(visible)]="sidebar.viewTeamsRelations"
+        class="sidebar">
+    </app-sidebar-teams-relations>
 
-<!-- show the messages in a toast-->
-<p-toast [style]="{marginTop: '100px'}"  position="top-right"></p-toast>
+</div>

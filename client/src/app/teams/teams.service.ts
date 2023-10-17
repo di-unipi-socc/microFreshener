@@ -27,6 +27,10 @@ export class TeamsService {
     return this.visualization.areTeamsVisible();
   }
 
+  getTeams(): joint.shapes.microtosca.SquadGroup[] {
+    return this.editing.getTeams();
+  }
+
   // POV: admin
 
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {

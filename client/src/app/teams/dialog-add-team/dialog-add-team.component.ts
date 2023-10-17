@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { GraphService } from "../../graph/graph.service";
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import * as joint from 'jointjs';
 import '../../graph/model/microtosca';
 

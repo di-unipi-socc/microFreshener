@@ -18,7 +18,9 @@ export class TeamEditingService {
     private messageService: MessageService
   ) { }
 
-  // Team editing
+  getTeams(): joint.shapes.microtosca.SquadGroup[] {
+    return this.graphService.getGraph().getTeamGroups();
+  }
 
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     let commandToExecute;

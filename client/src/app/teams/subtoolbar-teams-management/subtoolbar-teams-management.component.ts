@@ -23,15 +23,18 @@ export class SubtoolbarTeamsComponent {
   private graphListener;
   private paperListener;
 
-  // Show Add Teams form
-  addTeamToggled: boolean;
-
   // Show/Hide teams
   showTeamToggled: boolean;
+
+  // Show Add Teams form
+  addTeamToggled: boolean;
 
   // Show Teams Info
   @Output() viewTeamsInfo: EventEmitter<{}> = new EventEmitter();
   showTeamsInfoToggled: boolean;
+
+  // Show Teams Relations
+  showTeamsRelationsToggled: boolean;
 
   constructor(
     public tools: ToolSelectionService,
@@ -44,12 +47,15 @@ export class SubtoolbarTeamsComponent {
     this.GRAPH_EVENTS_LABELS = 'change';
     this.graphListener = (cellView, evt, x, y) => {this.updateAddTeamNodeList()};
     this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
-    this.paperListener = (cellView, evt, x, y) => {this.nodeClicked(cellView)};
+    this.paperListener = (cellView, evt, x, y) => {this.nodeToBeAddedClicked(cellView)};
     this.nodeList = [];
     this.selectedNodes = [];
   }
 
-  toggleShowTeam() {
+  toggleShowTeam(show?: boolean) {
+    if(show) {
+      this.showTeamToggled = true;
+    }
     if(this.showTeamToggled) {
       this.teams.showTeams();
     } else {
@@ -63,10 +69,8 @@ export class SubtoolbarTeamsComponent {
       this.updateAddTeamNodeList();
       this.gs.getGraph().on(this.GRAPH_EVENTS_LABELS, this.graphListener);
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
-      this.showTeamToggled = true;
-      // Show teams if not already shown
-      this.showTeamToggled = true;
-      this.toggleShowTeam();
+      // Show teams on 'add team' toggle
+      this.toggleShowTeam(true);
     } else {
       // Toggle off
       this.gs.getGraph().off(this.GRAPH_EVENTS_LABELS, this.graphListener);
@@ -125,7 +129,7 @@ export class SubtoolbarTeamsComponent {
     });
   }
 
-  private nodeClicked(cellView: joint.dia.CellView) {
+  private nodeToBeAddedClicked(cellView: joint.dia.CellView) {
     // priority gently left to addLink when clicking an element
     if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
       let graph = this.gs.getGraph();
@@ -148,17 +152,54 @@ export class SubtoolbarTeamsComponent {
   }
 
   toggleTeamsInfo() {
+    // Show teams when toggle "Team info"
+    if(this.showTeamsInfoToggled) {
+      this.toggleShowTeam();
+      this.openTeamsInfoSidebar();
+    } else {
+      this.closeTeamsInfoSidebar();
+    }
+  }
+
+  openTeamsInfoSidebar() {
     let sidebarEvent = {
       name: 'viewTeamsInfo',
-      visible: this.showTeamsInfoToggled
+      visible: true
     }
     this.viewTeamsInfo.emit(sidebarEvent);
+  }
 
-    // Show teams if not already shown
-    if(this.showTeamsInfoToggled) {
-      this.showTeamToggled = true;
-      this.toggleShowTeam();
+  closeTeamsInfoSidebar() {
+    let sidebarEvent = {
+      name: 'viewTeamsInfo',
+      visible: false
     }
+    this.viewTeamsInfo.emit(sidebarEvent);
+  }
+
+  toggleTeamsRelations() {
+    if(this.showTeamsRelationsToggled) {
+      this.toggleShowTeam(true);
+      this.openTeamRelationsSidebar();
+    } else {
+      this.closeTeamRealtionsSidebar();
+    }
+  }
+
+  openTeamRelationsSidebar() {
+    let sidebarEvent = {
+      name: 'viewTeamsRelations',
+      visible: true
+    }
+    this.viewTeamsInfo.emit(sidebarEvent);
+  }
+
+  closeTeamRealtionsSidebar() {
+    let sidebarEvent = {
+      name: 'viewTeamsRelations',
+      visible: false
+    }
+    this.viewTeamsInfo.emit(sidebarEvent);
   }
 
   ngOnDestroy() {

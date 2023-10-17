@@ -1,0 +1,7 @@
+<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
+    <h2 *ngIf="fewTeams">Available data is not sufficient for this chart.<br>Please add more teams.</h2>
+    <h1 *ngIf="!fewTeams">Derived Team-Team interactions</h1>
+    <div #teamRelationsContainer style="display: flex; width: 100%; justify-content: center; margin-top: 2em;">
+        <div #teamRelations style="width: 100%; max-width: 700px"></div>
+    </div>
+</p-sidebar>

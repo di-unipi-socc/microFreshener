@@ -448,6 +448,14 @@ export class Graph extends joint.dia.Graph {
         //super.getCells().forEach(cell => cell.set("hidden", true));
     }
 
+    showRunTimeLink(link: joint.shapes.microtosca.RunTimeLink) {
+        link.attr("./visibility", "visible");
+    }
+
+    hideRunTimeLink(link: joint.shapes.microtosca.RunTimeLink) {
+        link.attr("./visibility", "hidden");
+    }
+
     getInternalLinksOfTeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
         var links = [];
         team.getMembers().forEach(node => {
