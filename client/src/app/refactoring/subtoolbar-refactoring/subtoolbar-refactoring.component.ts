@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser/analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
@@ -15,23 +14,6 @@ import { UserRole } from 'src/app/core/user-role';
 })
 export class SubtoolbarRefactoringComponent {
 
-    menuitems: MenuItem[] = [
-        {
-            icon: "pi pi-fw pi-search",
-            label: 'Analyse',
-            command: () => {
-                this.analyse();
-            }
-        },
-        {
-            icon: "pi pi-fw pi-refresh",
-            label: 'Refine',
-            command: () => {
-                this.refine()
-            }
-        }
-    ];
-
     constructor(
         private dialogService: DialogService,
         private as: AnalyserService,
@@ -39,16 +21,6 @@ export class SubtoolbarRefactoringComponent {
         private messageService: MessageService,
         private gs: GraphService
     ) {}
-
-    refine() {
-    const ref = this.dialogService.open(DialogRefineComponent, {
-        header: 'Refine the model',
-        width: '70%'
-    });
-    ref.onClose.subscribe((data) => {
-
-    });
-    }
 
     analyse() {
         const ref = this.dialogService.open(DialogAnalysisComponent, {

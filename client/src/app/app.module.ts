@@ -64,7 +64,7 @@ import { ChartModule } from 'primeng/chart';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
-import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
+import { DialogRefineComponent } from './refine/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';

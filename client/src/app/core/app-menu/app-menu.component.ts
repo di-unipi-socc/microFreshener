@@ -8,6 +8,7 @@ import { GraphService } from "../../graph/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { SessionService } from '../session/session.service';
+import { RefineService } from 'src/app/refine/refine.service';
 
 @Component({
     selector: 'app-menu',
@@ -32,6 +33,7 @@ export class AppMenuComponent implements OnInit {
         private gs: GraphService,
         public dialogService: DialogService,
         public session: SessionService,
+        private refineService: RefineService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
         ) {
@@ -80,6 +82,13 @@ export class AppMenuComponent implements OnInit {
                 label: 'Export',
                 url: this.hrefDownload,
                 icon: 'pi pi-fw pi-upload',
+            },
+            {
+                label: 'Refine',
+                icon: 'pi pi-fw pi-pencil',
+                command: () => {
+                    this.refineService.refine();
+                }
             },
             { separator: true },
             {
