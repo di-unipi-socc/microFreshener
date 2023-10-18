@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 export class SubtoolbarRefactoringComponent {
 
     monitorToggled: boolean;
+    smellsNumber: number;
 
     private invokerSubscription: Subscription;
     private options;
@@ -39,6 +40,7 @@ export class SubtoolbarRefactoringComponent {
             this.startMonitoring();
         } else {
             this.stopMonitoring();
+            this.smellsNumber = 0;
         }
     }
 
@@ -62,8 +64,8 @@ export class SubtoolbarRefactoringComponent {
                                 this.as.runRemoteAnalysis(this.options.smells, this.options.team)
                                     .subscribe(data => {
                                         this.as.showSmells();
-                                        var num = this.as.getNumSmells()
-                                        this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${num} smells` });
+                                        this.smellsNumber = this.as.getNumSmells()
+                                        this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
                                     });
                             });
                 };
@@ -78,6 +80,7 @@ export class SubtoolbarRefactoringComponent {
     stopMonitoring() {
         console.log("stopMonitoring");
         this.invokerSubscription.unsubscribe();
+        this.as.clearSmells();
     }
 
 }

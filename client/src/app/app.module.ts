@@ -59,7 +59,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ContextMenuModule } from 'primeng/contextmenu';
-import { ChartModule } from 'primeng/chart';
+import { BadgeModule } from 'primeng/badge';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
@@ -132,7 +132,8 @@ import { TeamsModule } from './teams/teams.module';
     AvatarModule,
     TagModule,
     MultiSelectModule,
-    ContextMenuModule
+    ContextMenuModule,
+    BadgeModule
   ],
   providers: [
     DialogService,
