@@ -80,12 +80,12 @@ declare module 'jointjs' {
     }
 }
 
-joint.dia.Element.define('microtosca.Node', {
+joint.dia.Element.define('microtosca.Root', {
         attrs: {
             SmellsFound: {
                 fill: ICON_COLOR_SMELLS_FOUND,
                 event: 'smell:SmellsFound:pointerdown',
-                visibility: "visible", //hidden
+                visibility: "hidden", // visible or hidden
                 ref: 'body',
                 refX: '70%',
                 refY: '70%',
@@ -95,16 +95,59 @@ joint.dia.Element.define('microtosca.Node', {
                 magnet: false
 
             },
+        },
+        smells: new Map<string, SmellObject>(),                  // list of smells that affects a single node
+        hiddenSmells: new Map<string, SmellObject>(),            // list of smell ignored (once)
+        alwaysIgnoredSmells: new Map<string, SmellObject>()       // list of smell ignored (always)
+    }, {
+        markup: [
+        {
+            tagName:"polygon",
+            selector :"SmellsFound"
+        }]
+    }, {
+        ignoreOnce(smell: SmellObject) {
+            this.attributes.hiddenSmells.set(smell.getName(), smell);
+        },
+        ignoreAlways(smell: SmellObject) {
+            this.attributes.alwaysIgnoredSmells.set(smell.getName(), smell);
+        },
+        undoIgnoreAlways(smell: SmellObject) {
+            this.attributes.alwaysIgnoredSmells.delete(smell.getName());
+        },
+        getIgnoreAlwaysSmells() {
+            return this.attributes.ignoreAlwaysSmells;
+        },
+        getName() {
+            return this.attr('label/text');
+        },
+        setName(text) {
+            return this.attr('label/text', text || '');
+        },
+        getSmells() {
+            return this.attributes.smells;
+        },
+        getSmell(name: string) {
+            return this.attributes.smells.get(name);
+        },
+        showSmellsIcon() {
+            this.attr('SmellsFound/visibility', 'visible');
+        },
+        hideSmellsIcon() {
+            this.attr('SmellsFound/visibility', 'hidden');
+        },
+        resetSmells() {
+            this.attributes.smells.clear();
+            this.attributes.hiddenSmells.clear();
+            this.attributes.alwaysIgnoredSmells.clear();
+            this.hideSmells()
+        },
+        addSmell(smell: SmellObject) {
+            this.attributes.smells.set(smell.getName(), smell);
         }
-    }, {
-            markup: [
-            {
-                tagName:"polygon",
-                selector :"SmellsFound"
-            }]
-    }, {
-        
     });
+
+joint.shapes.microtosca.Root.define('microtosca.Node', {}, {}, {});
 
 joint.shapes.microtosca.Node.define('microtosca.Service', {
     size: { width: 75, height: 75 },
@@ -336,7 +379,7 @@ joint.shapes.microtosca.Node.define('microtosca.Service', {
     });
 
 
-joint.dia.Element.define('microtosca.Compute', {
+joint.shapes.microtosca.Node.define('microtosca.Compute', {
     size: { width: 75, height: 75 },
     attrs: {
         body: {
