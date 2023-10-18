@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 import { Graph } from './model/graph';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -19,8 +19,6 @@ const httpOptions = {
 export class GraphService {
 
   private graph: Graph;
-
-  private readonly GRAPH_CHANGE_EVENTS: string = 'add remove change:embeds';
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -38,14 +36,6 @@ export class GraphService {
   
   getGraph(): Graph {
     return this.graph;
-  }
-
-  onGraphChange(listener) {
-    this.graph.on(this.GRAPH_CHANGE_EVENTS, listener);
-  }
-
-  offGraphChange(listener) {
-    this.graph.off(this.GRAPH_CHANGE_EVENTS, listener);
   }
 
   // Logging

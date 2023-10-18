@@ -6,6 +6,8 @@ import { MessageService } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
+import { GraphInvoker } from 'src/app/commands/invoker';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-subtoolbar-refactoring',
@@ -14,42 +16,68 @@ import { UserRole } from 'src/app/core/user-role';
 })
 export class SubtoolbarRefactoringComponent {
 
+    monitorToggled: boolean;
+
+    private invokerSubscription: Subscription;
+    private options;
+
     constructor(
         private dialogService: DialogService,
         private as: AnalyserService,
+        private commands: GraphInvoker,
         private session: SessionService,
         private messageService: MessageService,
         private gs: GraphService
     ) {}
 
-    analyse() {
+    ngOnInit() {
+        this.options = {};
+    }
+
+    monitor() {
+        if(this.monitorToggled) {
+            this.startMonitoring();
+        } else {
+            this.stopMonitoring();
+        }
+    }
+
+    startMonitoring() {
         const ref = this.dialogService.open(DialogAnalysisComponent, {
             header: 'Check the principles to analyse',
             width: '70%'
         });
         ref.onClose.subscribe((data) => {
-            if (data.selected_smells) {
-                var smells = data.selected_smells;
-                
-                let team;
+            if (data?.selected_smells) {
+                this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
                     let teamName = this.session.getName();
-                    team = this.gs.getGraph().findGroupByName(teamName);
+                    this.options.team = this.gs.getGraph().findGroupByName(teamName);
                 }
 
-                this.gs.uploadGraph(team)
-                    .subscribe(data => {
-                        console.log("uploadGraph response", data);
-                        this.as.runRemoteAnalysis(smells, team)
+                let analyseGraph = () => {
+                    this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
-                                this.as.showSmells();
-                                var num = this.as.getNumSmells()
-                                this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${num} smells` });
+                                console.log("uploadGraph response", data);
+                                this.as.runRemoteAnalysis(this.options.smells, this.options.team)
+                                    .subscribe(data => {
+                                        this.as.showSmells();
+                                        var num = this.as.getNumSmells()
+                                        this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${num} smells` });
+                                    });
                             });
-                    });
+                };
+                this.invokerSubscription = this.commands.subscribe(analyseGraph);
+                analyseGraph();
+            } else {
+                this.monitorToggled = false;
             }
-
         });
+    }
+
+    stopMonitoring() {
+        console.log("stopMonitoring");
+        this.invokerSubscription.unsubscribe();
     }
 
 }

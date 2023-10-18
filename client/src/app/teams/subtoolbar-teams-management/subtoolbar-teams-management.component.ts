@@ -6,6 +6,7 @@ import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
+import { GraphInvoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -19,8 +20,8 @@ export class SubtoolbarTeamsComponent {
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
   private readonly PAPER_EVENTS_LABELS: string;
-  private graphListener;
   private paperListener;
+  private invokerSubscription;
 
   // Show/Hide teams
   showTeamToggled: boolean;
@@ -40,10 +41,10 @@ export class SubtoolbarTeamsComponent {
     private teams: TeamsService,
     private dialogService: DialogService,
     private gs: GraphService,
+    private commands: GraphInvoker,
     private navigation: EditorNavigationService,
     private messageService: MessageService
   ) {
-    this.graphListener = (cellView, evt, x, y) => {this.updateAddTeamNodeList()};
     this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
     this.paperListener = (cellView, evt, x, y) => {this.nodeToBeAddedClicked(cellView)};
     this.nodeList = [];
@@ -65,13 +66,13 @@ export class SubtoolbarTeamsComponent {
     if(this.addTeamToggled) {
       // Toggle on
       this.updateAddTeamNodeList();
-      this.gs.onGraphChange(this.graphListener);
+      this.invokerSubscription = this.commands.subscribe((cellView, evt, x, y) => {this.updateAddTeamNodeList()});
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
       // Show teams on 'add team' toggle
       this.toggleShowTeam(true);
     } else {
       // Toggle off
-      this.gs.offGraphChange(this.graphListener);
+      this.invokerSubscription.unsubscribe();
       this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
       if(this.selectedNodes.length > 0) {
         const ref = this.dialogService.open(DialogAddTeamComponent, {
@@ -201,7 +202,7 @@ export class SubtoolbarTeamsComponent {
   }
 
   ngOnDestroy() {
-    this.gs.offGraphChange(this.graphListener);
+    this.invokerSubscription.unsubscribe();
     this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
   }
 

@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
+import { Subscription } from 'rxjs';
+import { GraphInvoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-sidebar-team-details',
@@ -22,7 +24,7 @@ export class SidebarTeamDetailsComponent {
   @Output() selectedTeamChange: EventEmitter<joint.shapes.microtosca.SquadGroup> = new EventEmitter<joint.shapes.microtosca.SquadGroup>();
   selectedTeamInfo;
 
-  private graphEventsListener: () => void;
+  private invokerSubscription: Subscription;
 
   public charts: {
     serviceVsNonService: {},
@@ -34,6 +36,7 @@ export class SidebarTeamDetailsComponent {
   constructor(
     private graphService: GraphService,
     private teamService: TeamsService,
+    private commands: GraphInvoker,
     private navigation: EditorNavigationService
   ) {}
 
@@ -68,13 +71,12 @@ export class SidebarTeamDetailsComponent {
     // Set data for change view on team selection
     this.teamSelected = false;
     // Refresh teams at every graph update
-    this.graphEventsListener = () => {
+    this.invokerSubscription = this.commands.subscribe(() => {
       console.log("change");
       this.updateTeamsInfo();
       if(this.teamSelected)
         this.more(this.selectedTeam);
-      };
-    this.graphService.onGraphChange(this.graphEventsListener);
+      });
     // Set chart styling
     this.documentStyle = getComputedStyle(document.documentElement);
     this.doughnutCutout = '25%';
@@ -85,7 +87,7 @@ export class SidebarTeamDetailsComponent {
   }
 
   onSidebarClose() {
-    this.graphService.offGraphChange(this.graphEventsListener);
+    this.invokerSubscription.unsubscribe();
   }
 
   updateTeamsInfo() {
