@@ -17,7 +17,6 @@ import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './architecture/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
 import { SubtoolbarNavigationComponent } from './editor/subtoolbar-navigation/subtoolbar-navigation.component';
-import { SubtoolbarViewComponent } from './editor/subtoolbar-view/subtoolbar-view.component';
 
 
 // Import primeNG modules
@@ -86,7 +85,6 @@ import { TeamsModule } from './teams/teams.module';
     SubtoolbarArchitectureComponent,
     SubtoolbarUndoComponent,
     SubtoolbarNavigationComponent,
-    SubtoolbarViewComponent,
     SubtoolbarRefactoringComponent,
     LoginPageComponent,
     EditorPageComponent,

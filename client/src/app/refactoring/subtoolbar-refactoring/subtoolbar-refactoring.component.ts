@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser/analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';

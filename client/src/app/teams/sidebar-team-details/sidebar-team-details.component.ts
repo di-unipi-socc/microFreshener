@@ -22,7 +22,6 @@ export class SidebarTeamDetailsComponent {
   @Output() selectedTeamChange: EventEmitter<joint.shapes.microtosca.SquadGroup> = new EventEmitter<joint.shapes.microtosca.SquadGroup>();
   selectedTeamInfo;
 
-  private readonly GRAPH_EVENTS: string = "add remove";
   private graphEventsListener: () => void;
 
   public charts: {
@@ -70,11 +69,12 @@ export class SidebarTeamDetailsComponent {
     this.teamSelected = false;
     // Refresh teams at every graph update
     this.graphEventsListener = () => {
+      console.log("change");
       this.updateTeamsInfo();
       if(this.teamSelected)
         this.more(this.selectedTeam);
       };
-    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.graphService.onGraphChange(this.graphEventsListener);
     // Set chart styling
     this.documentStyle = getComputedStyle(document.documentElement);
     this.doughnutCutout = '25%';
@@ -85,7 +85,7 @@ export class SidebarTeamDetailsComponent {
   }
 
   onSidebarClose() {
-    this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.graphService.offGraphChange(this.graphEventsListener);
   }
 
   updateTeamsInfo() {

@@ -20,6 +20,8 @@ export class GraphService {
 
   private graph: Graph;
 
+  private readonly GRAPH_CHANGE_EVENTS: string = 'add remove change:embeds';
+
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
 
@@ -38,13 +40,13 @@ export class GraphService {
     return this.graph;
   }
 
-  /*getTeam(team_name: string): Observable<string> {
-    let url = `${this.teamUrl}${team_name}`;  
-    console.log(url)
-    return this.http.get<string>(url).pipe(
-      tap(_ => this.log(`fetched team ${team_name}`)),
-    );
-  }*/
+  onGraphChange(listener) {
+    this.graph.on(this.GRAPH_CHANGE_EVENTS, listener);
+  }
+
+  offGraphChange(listener) {
+    this.graph.off(this.GRAPH_CHANGE_EVENTS, listener);
+  }
 
   // Logging
 

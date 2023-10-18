@@ -17,7 +17,6 @@ export class SidebarIncomingTeamsComponent {
     recipients: joint.shapes.microtosca.Node[]
   }>;
 
-  private readonly GRAPH_EVENTS: string = "add remove";
   private graphEventsListener: () => void;
 
   constructor(
@@ -31,12 +30,12 @@ export class SidebarIncomingTeamsComponent {
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
     this.graphEventsListener = () => { this.updateIngoingRequestGroups() };
-    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.graphService.onGraphChange(this.graphEventsListener);
   }
 
   ngOnDestroy() {
     if(this.graphEventsListener)
-      this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
+      this.graphService.offGraphChange(this.graphEventsListener);
   }
 
   updateIngoingRequestGroups() {
