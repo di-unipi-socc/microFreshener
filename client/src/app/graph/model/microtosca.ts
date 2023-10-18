@@ -4,6 +4,7 @@ import { selector } from 'd3';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
+let ICON_COLOR_SMELLS_FOUND = "#ffba01";
 let ICON_COLOR_SHARED_PERSISTENCY = "#1B6879";
 let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "#48A9A6"; //"#00ff00";
 let ICON_COLOR_WOBBLY_SERVICE_INTERACTION = "#48A9A6";//'#0800ee';
@@ -79,7 +80,33 @@ declare module 'jointjs' {
     }
 }
 
-joint.dia.Element.define('microtosca.Service', {
+joint.dia.Element.define('microtosca.Node', {
+        attrs: {
+            SmellsFound: {
+                fill: ICON_COLOR_SMELLS_FOUND,
+                event: 'smell:SmellsFound:pointerdown',
+                visibility: "visible", //hidden
+                ref: 'body',
+                refX: '70%',
+                refY: '70%',
+                stroke:"white",
+                strokeWidth: "1",
+                points:"10.083689495921135,-0.014947996474802494 13.261116787791252,6.423906326293945 20.367001339793205,7.4567060470581055 15.225153729319572,12.468356132507324 16.438929364085197,19.545604705810547 10.083689495921135,16.204376220703125 3.7280669659376144,19.545604705810547 4.941843792796135,12.468356132507324 -0.20000223815441132,7.4567060470581055 6.905877396464348,6.423906326293945 ",
+                magnet: false
+
+            },
+        }
+    }, {
+            markup: [
+            {
+                tagName:"polygon",
+                selector :"SmellsFound"
+            }]
+    }, {
+        
+    });
+
+joint.shapes.microtosca.Node.define('microtosca.Service', {
     size: { width: 75, height: 75 },
     attrs: {
         body: {
@@ -224,6 +251,10 @@ joint.dia.Element.define('microtosca.Service', {
         },{
             tagName:"polygon",
             selector :"EndpointBasedServiceInteraction"
+        },
+        {
+            tagName:"polygon",
+            selector :"SmellsFound"
         }
         ],
         ignoreOnce(smell: SmellObject) {
