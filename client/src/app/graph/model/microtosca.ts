@@ -4,11 +4,6 @@ import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObje
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SMELLS_FOUND = "#ffba01";
-let ICON_COLOR_SHARED_PERSISTENCY = "#1B6879";
-let ICON_COLOR_ENDPOINT_SERVICE_INTERACTION = "#48A9A6"; //"#00ff00";
-let ICON_COLOR_WOBBLY_SERVICE_INTERACTION = "#48A9A6";//'#0800ee';
-let ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "#48A9A6";//'#0800ee';
-let ICON_COLOR_NO_API_GATEWAY = "#48A9A6";//'#EFF142';
 let ICON_COLOR_SINGLE_LAYER_TEAM = "black";//'#c61aff';
 
 
@@ -107,7 +102,7 @@ class MicrotoscaElementConfiguration {
         return this;
     }
 
-    buidSmells() {
+    buildSmells() {
         // Define visual element for smells
         this.buildSmellGraphics();
         // Add smell management functions
@@ -239,12 +234,10 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
             tagName: 'text',
             selector: 'label'
         }]
-    },
-    {}
-).buildName().buidSmells().build());
+    }).buildName().buildSmells().build());
 
 
-joint.dia.Element.define('microtosca.Compute', {
+joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration.builder({
     size: { width: 75, height: 75 },
     attrs: {
         body: {
@@ -268,20 +261,7 @@ joint.dia.Element.define('microtosca.Compute', {
             fill: 'black',
             text: '',
         },
-        button: {
-            ref: 'body',
-            refX: '80%',
-            refY: '0%',
-            event: 'node:service:delete',
-            visibility: "hidden",
-        },
-        icon: {
-            visibility: "hidden",
-            ref: "button",
-            refX: '50%',
-            refY: '50%',
-        },
-        MultipleServicesInOneContainer: { // MultipleServicesInOneContainer
+        /*MultipleServicesInOneContainer: { // MultipleServicesInOneContainer
             fill: ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER,
             event: 'smell:MultipleServicesInOneContainer:pointerdown',
             stroke:"white",
@@ -292,10 +272,8 @@ joint.dia.Element.define('microtosca.Compute', {
             refY: '40%',
             d: "M20.15243413209694,2.0800748598753587 L20.15243413209694,13.479177718203825 C20.15243413209694,14.41943099033625 19.365550607512933,15.206314514920258 18.425297335380503,15.206314514920258 L8.407903914425187,15.206314514920258 L4.953630320992318,19.006015467696415 L4.953630320992318,15.206314514920258 L1.8447840869027365,15.206314514920258 C0.9045308147703093,15.206314514920258 0.11764729018630199,14.41943099033625 0.11764729018630199,13.479177718203825 L0.11764729018630199,2.0800748598753587 C0.11764729018630199,1.1398215877429332 0.9045308147703093,0.3529380631589255 1.8447840869027365,0.3529380631589255 L18.425297335380503,0.3529380631589255 C19.365550607512933,0.3529380631589255 20.15243413209694,1.1398215877429332 20.15243413209694,2.0800748598753587 z",
             magnet: false
-        },
+        },*/
     },
-    smells: [],            // list of smells that affects a single node
-    ignoreAlwaysSmells: []       // list of smell ignored (always)
 }, {
         markup: [{
             tagName: 'circle',
@@ -303,98 +281,16 @@ joint.dia.Element.define('microtosca.Compute', {
         }, {
             tagName: 'text',
             selector: 'label'
-        }, {
+        }, /*{
             tagName: 'path',
             selector: 'MultipleServicesInOneContainer'
-        },
-        {
-            tagName: "path",
-            selector: "delete"
-        },
-        {
-            tagName: 'circle',
-            selector: 'button',
-            attributes: {
-                'r': 7,
-                'fill': '#FF1D00',
-                'cursor': 'pointer'
-            }
-        }, {
-            tagName: 'path',
-            selector: 'icon',
-            attributes: {
-                'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                'fill': 'none',
-                'stroke': '#FFFFFF',
-                'stroke-width': 2,
-                'pointer-events': 'none'
-            }
-        },{
-            tagName: 'circle',
-            selector:"endpoint_backgound"
-        }
+        },*/
         ],
-        ignoreOnce(smell: SmellObject) {
-            this.hideSmell(smell);
-        },
-        addIgnoreAlwaysSmell(smell: SmellObject) {
-            this.hideSmell(smell);
-            this.attributes.ignoreAlwaysSmells.push(smell);
-        },
-        undoIgnoreAlways(smell: SmellObject) {
-            this.showSmell(smell);
-            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
-                return sm.getName() != smell.getName();
-            });
-        },
-        getIgnoreAlwaysSmells() {
-            return this.attributes.ignoreAlwaysSmells;
-        },
-        getName: function () {
-            return this.attr('label/text');
-        },
-        setName: function (text) {
-            return this.attr('label/text', text || '');
-        },
-        getSmells: function () {
-            return this.attributes.smells;
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.name;
-            });
-        },
-        showIcons: function () {
-            this.attr('icon/visibility', 'visible');
-            this.attr('button/visibility', 'visible');
-
-        },
-        hideIcons: function () {
-            this.attr('icon/visibility', 'hidden');
-            this.attr('button/visibility', 'hidden');
-        },
-        resetSmells: function () {
-            this.attributes.smells = [];
-            this.attr('MultipleServicesInOneContainer/visibility', 'hidden');
-        },
-        hideSmell(smell: SmellObject) {
-            if (smell instanceof MultipleServicesInOneContainerSmellObject)
-                this.attr("MultipleServicesInOneContainer/visibility", 'hidden')
-        },
-        showSmell(smell: SmellObject) {
-            if (smell instanceof MultipleServicesInOneContainerSmellObject)
-                this.attr("MultipleServicesInOneContainer/visibility", 'visible')
-        },
-        addSmell: function (smell: SmellObject) {
-            this.attributes.smells.push(smell);
-
-            if (smell instanceof MultipleServicesInOneContainerSmellObject)
-                this.attr("MultipleServicesInOneContainer/visibility", 'visible')
-        }
-    });
+    }).buildName().buildSmells().build());
 
 
-joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
+joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaElementConfiguration.builder(
+{
     size: {
         width: 20,
         height: 20
@@ -425,33 +321,6 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
             fontSize: NODE_LABEL_FONT_SIZE,
             fill: '#333333'
         },
-        button: {
-            ref: 'body',
-            refX: '80%',
-            refY: '0%',
-            event: 'node:datastore:delete',
-            visibility: "hidden",
-        },
-        icon: {
-            visibility: "hidden",
-            ref: "button",
-            refX: '50%',
-            refY: '50%',
-        },
-        sp: { // SharedPersitency
-            fill: ICON_COLOR_SHARED_PERSISTENCY,
-            strokeWidth: ".5",
-            stroke:"white",
-            d: "M9.91997319102718,0 C4.4419384554171515,0 0.0010000000443565072,4.441269098833944 0.0010000000443565072,9.919105448367283 S4.4419384554171515,19.838607668887942 9.91997319102718,19.838607668887942 S19.83947541154784,15.397206312669539 19.83947541154784,9.919105448367283 S15.398007926637208,0 9.91997319102718,0 zM8.81681434725255,9.919105448367283 C8.81681434725255,10.126286641122702 8.779054863989433,10.32321788658253 8.713058429144267,10.507716937903188 L11.481734515414267,11.839681056792323 C11.800408683268836,11.490852205281044 12.257490203960016,11.271304947078685 12.767011777589287,11.271304947078685 C13.729382635607042,11.271304947078685 14.509701203916634,12.051359000619358 14.509701203916634,13.013663729944883 C14.509701203916634,13.976166845347096 13.729184249530352,14.75655154234892 12.76661500543591,14.75655154234892 C11.804244147418157,14.75655154234892 11.023528806955186,13.976166845347096 11.023528806955186,13.013663729944883 C11.023528806955186,12.921414204284554 11.033117467328482,12.831346925467802 11.046872235312243,12.74319737872571 L8.09964868002225,11.325662732091438 C7.811525967977768,11.536481002919487 7.457539078472578,11.662191646848006 7.073331376618449,11.662191646848006 C6.110828261216235,11.662191646848006 5.330443564214414,10.882137593307332 5.330443564214414,9.918973190982824 C5.330443564214414,8.956800719041757 6.110828261216235,8.176614408116624 7.073331376618449,8.176614408116624 C7.457539078472578,8.176614408116624 7.811658225362228,8.302325052045145 8.09984706609894,8.512944936796506 L11.047269007465621,7.09574093362338 C11.033381982097401,7.007393000804599 11.023925579108564,6.917722494141225 11.023925579108564,6.825274582404208 C11.023925579108564,5.862573080925305 11.804442533494845,5.082386770000173 12.767011777589287,5.082386770000173 C13.729382635607042,5.082386770000173 14.509899589993324,5.862573080925305 14.509899589993324,6.825274582404208 C14.509899589993324,7.78777769780642 13.729382635607042,8.568162394808244 12.767011777589287,8.568162394808244 C12.257820847421163,8.568162394808244 11.800408683268836,8.348086107068045 11.481734515414267,7.999587899017914 L8.713058429144267,9.331022988369215 C8.779120992681664,9.515257524920953 8.81681434725255,9.712651671226388 8.81681434725255,9.919105448367283 z",
-            event: 'smell:SharedPersistency:pointerdown',
-            visibility: "hidden",
-            ref: 'body',
-            refX: '50%',
-            refY: '50%',
-            magnet: false
-         },
-        smells: [], // list of smells that affects a single node
-        ignoreAlwaysSmells: []
     }
 }, {
         markup: [{
@@ -463,91 +332,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
         }, {
             tagName: 'text',
             selector: 'label'
-        }, {
-            tagName: 'path',
-            selector: 'sp'
-        }, {
-            tagName: "path",
-            selector: "delete"
-        }, {
-            tagName: 'circle',
-            selector: 'button',
-            attributes: {
-                'r': 7,
-                'fill': '#FF1D00',
-                'cursor': 'pointer'
-            }
-        }, {
-            tagName: 'path',
-            selector: 'icon',
-            attributes: {
-                'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                'fill': 'none',
-                'stroke': '#FFFFFF',
-                'stroke-width': 2,
-                'pointer-events': 'none'
-            }
         }],
-        getName: function () {
-            return this.attr('label/text');
-        },
-        setName: function (text) {
-            return this.attr('label/text', text || '');
-        },
-        getSmells: function () {
-            return this.attributes.smells;
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.getName();
-            });
-        },
-        ignoreOnce(smell: SmellObject) {
-            this.hideSmell(smell);
-        },
-        resetSmells: function () {
-            this.attributes.smells = [];
-            this.attr('sp/visibility', 'hidden');
-        },
-        addSmell: function (smell: SmellObject) {
-            this.attributes.smells.push(smell);
-            if (smell instanceof SharedPersistencySmellObject) {
-                this.attr('sp/visibility', 'visible');
-            }
-            this.set('z', 123)
-        },
-        showSmell(smell: SmellObject) {
-            if (smell instanceof SharedPersistencySmellObject) {
-                this.attr('sp/visibility', 'visible');
-            }
-        },
-        hideSmell(smell: SmellObject) {
-            if (smell instanceof SharedPersistencySmellObject) {
-                this.attr('sp/visibility', 'hidden');
-            }
-        },
-        addIgnoreAlwaysSmell(smell: SmellObject) {
-            this.hideSmell(smell);
-            this.attributes.ignoreAlwaysSmells.push(smell);
-        },
-        undoIgnoreAlways(smell: SmellObject) {
-            this.showSmell(smell);
-            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
-                return sm.getName() != smell.getName();
-            });
-        },
-        getIgnoreAlwaysSmells() {
-            return this.attributes.ignoreAlwaysSmells;
-        },
-        showIcons: function () {
-            this.attr('icon/visibility', 'visible');
-            this.attr('button/visibility', 'visible');
-
-        },
-        hideIcons: function () {
-            this.attr('icon/visibility', 'hidden');
-            this.attr('button/visibility', 'hidden');
-        },
         topRy: function (t, opt) {
             // getter
             if (t === undefined) return this.attr('body/lateralArea');
@@ -562,12 +347,10 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', {
 
             return this.attr({ body: bodyAttrs, top: topAttrs }, opt);
         }
+    }).buildName().buildSmells().build());
 
-    }, {
-
-    });
-
-joint.dia.Element.define('microtosca.CommunicationPattern', {
+joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElementConfiguration.builder(
+{
     size: { width: 50, height: 50 },
     attrs: {
         body: {
@@ -586,19 +369,6 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             fill: 'black',
             text: ''
         },
-        button: {
-            ref: 'body',
-            refX: '80%',
-            refY: '0%',
-            event: 'node:communicationpattern:delete',
-            visibility: "hidden",
-        },
-        icon: {
-            visibility: "hidden",
-            ref: "button",
-            refX: '50%',
-            refY: '50%',
-        },
         type: {
             textVerticalAnchor: 'middle',
             textAnchor: 'middle',
@@ -608,21 +378,10 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
             // refY2: 18,
             fontSize: COMMUNICATION_PATTERN_TYPE_FONT_SIZE,
             fill: '#333333',
-            text: ''
-        },
-        NoApiGateway: {
-            fill: ICON_COLOR_NO_API_GATEWAY,
-            event: 'smell:NoApiGateway:pointerdown',
-            d: "M15.608,6.262h-2.338v0.935h2.338c0.516,0,0.934,0.418,0.934,0.935v8.879c0,0.517-0.418,0.935-0.934,0.935H4.392c-0.516,0-0.935-0.418-0.935-0.935V8.131c0-0.516,0.419-0.935,0.935-0.935h2.336V6.262H4.392c-1.032,0-1.869,0.837-1.869,1.869v8.879c0,1.031,0.837,1.869,1.869,1.869h11.216c1.031,0,1.869-0.838,1.869-1.869V8.131C17.478,7.099,16.64,6.262,15.608,6.262z M9.513,11.973c0.017,0.082,0.047,0.162,0.109,0.226c0.104,0.106,0.243,0.143,0.378,0.126c0.135,0.017,0.274-0.02,0.377-0.126c0.064-0.065,0.097-0.147,0.115-0.231l1.708-1.751c0.178-0.183,0.178-0.479,0-0.662c-0.178-0.182-0.467-0.182-0.645,0l-1.101,1.129V1.588c0-0.258-0.204-0.467-0.456-0.467c-0.252,0-0.456,0.209-0.456,0.467v9.094L8.443,9.553c-0.178-0.182-0.467-0.182-0.645,0c-0.178,0.184-0.178,0.479,0,0.662L9.513,11.973z",
-            visibility: "hidden",
-            ref: 'body',
-            refX: '50%',
-            refY: '50%',
-            refWidth: '100%',
-            refHeight: '100%',
+            text: '',
+            cursor: "default"
         }
-    },
-    smells: [] // list of smells that affects a single node
+    }
 }, {
         markup: [{
             tagName: 'rect',
@@ -633,87 +392,20 @@ joint.dia.Element.define('microtosca.CommunicationPattern', {
         }, {
             tagName: 'text',
             selector: 'type'
-        }, {
-            tagName: "path",
-            selector: "delete"
-        }, {
-            tagName: 'path',
-            selector: 'NoApiGateway'
-        }, {
-            tagName: 'circle',
-            selector: 'button',
-            attributes: {
-                'r': 7,
-                'fill': '#FF1D00',
-                'cursor': 'pointer'
-            }
-        }, {
-            tagName: 'path',
-            selector: 'icon',
-            attributes: {
-                'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                'fill': 'none',
-                'stroke': '#FFFFFF',
-                'stroke-width': 2,
-                'pointer-events': 'none'
-            }
         }],
-        getName: function () {
-            return this.attr('label/text');
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.name;
-            });
-        },
-        getSmells: function () {
-            return this.attributes.smells;
-        },
-        setName: function (text) {
-            return this.attr('label/text', text || '');
-        },
         setType: function (text) {
             return this.attr('type/text', `${text}` || '');
         },
         getType: function () {
             return this.attr('type/text');
         },
-        ignoreOnce(smell: SmellObject) {
-            this.hideSmell(smell);
-        },
-        resetSmells: function () {
-            this.attributes.smells = [];
-        },
-        addSmell: function (smell: SmellObject) {
-            this.attributes.smells.push(smell);
-            if (smell instanceof NoApiGatewaySmellObject)
-                this.attr('NoApiGateway/visibility', 'visible');
-        },
-        hideSmell: function (smell: SmellObject) {
-            if (smell instanceof NoApiGatewaySmellObject) {
-                this.attr('NoApiGateway/visibility', 'hidden');
-            }
-        },
-        showIcons: function () {
-            this.attr('icon/visibility', 'visible');
-            this.attr('button/visibility', 'visible');
-
-        },
-        hideIcons: function () {
-            this.attr('icon/visibility', 'hidden');
-            this.attr('button/visibility', 'hidden');
-        },
-        getIgnoreAlwaysSmells: function () {
-            return [];
-        }
-    });
+    }
+).buildName().buildSmells().build());
 
 joint.dia.Element.define('microtosca.Group', {
 }, {
         markup: [],
-        
-
-    }
+}
 );
 
 joint.dia.Element.define('microtosca.EdgeGroup', {
