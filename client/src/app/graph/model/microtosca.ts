@@ -1,10 +1,9 @@
 import * as joint from 'jointjs';
-import { SmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, SingleLayerTeamSmellObject, MultipleServicesInOneContainerSmellObject } from '../../refactoring/analyser/smell';
+import { SmellObject } from '../../refactoring/analyser/smell';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
 let ICON_COLOR_SMELLS_FOUND = "#ffba01";
-let ICON_COLOR_SINGLE_LAYER_TEAM = "black";//'#c61aff';
 
 
 // extend joint.shapes namespace
@@ -402,13 +401,13 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
     }
 ).buildName().buildSmells().build());
 
-joint.dia.Element.define('microtosca.Group', {
+joint.dia.Element.define('microtosca.Group', ...MicrotoscaElementConfiguration.builder({
 }, {
         markup: [],
 }
-);
+).build());
 
-joint.dia.Element.define('microtosca.EdgeGroup', {
+joint.dia.Element.define('microtosca.EdgeGroup', ...MicrotoscaElementConfiguration.builder({
     size: {
         width: 75,
         height: 75
@@ -432,8 +431,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
             text: name != undefined ? name : '',
         },
     },
-    groupName: '', // groupName of the group. each nodes connected to this node are considered memeber of the EdgeGroup
-    smells: [] // list of smells that affects a single node
+    groupName: '', // groupName of the group. each nodes connected to this node is considered memeber of the EdgeGroup
 }, {
         markup: [{
             tagName: 'path',
@@ -453,33 +451,10 @@ joint.dia.Element.define('microtosca.EdgeGroup', {
         },
         getExternalUserName: function () {
             return this.attr('label/text');
-        },
-        addSmell: function (smell: SmellObject) {
-            this.attributes.smells.push(smell);
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.name;
-            });
-        },
-        getSmells: function (): SmellObject[] {
-            return this.attributes.smells;
-        },
-        resetSmells: function (): void {
-            this.attributes.smells = [];
-        },
-        showIcons: function () {
-            // this.attr('delete/visibility', 'visible')
-        },
-        hideIcons: function () {
-            // this.attr('delete/visibility', 'hidden')
-        },
-        getIgnoreAlwaysSmells: function () {
-            return [];
         }
-    });
+    }).buildSmells().build());
 
-joint.dia.Element.define('microtosca.SquadGroup', {
+joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfiguration.builder({
     position: { x: 20, y: 20 },
     size: {
         width: 200,
@@ -534,22 +509,8 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             xAlignment: 'center',
             d: "M18.25859511712037,0.0909130039541598 L2.1152406294586434,0.0909130039541598 C1.0868779036821152,0.0909130039541598 0.25254588088229035,0.9252450267539847 0.25254588088229035,1.953607752530513 L0.25254588088229035,15.613369242090437 C0.25254588088229035,16.641731967866964 1.0868779036821152,17.47606399066679 2.1152406294586434,17.47606399066679 L18.25859511712037,17.47606399066679 C19.286957842896904,17.47606399066679 20.121289865696724,16.641731967866964 20.121289865696724,15.613369242090437 L20.121289865696724,1.953607752530513 C20.121289865696724,0.9252450267539847 19.286957842896904,0.0909130039541598 18.25859511712037,0.0909130039541598 zM17.637696867594926,6.299895499208672 L2.7361388789840935,6.299895499208672 L2.7361388789840935,3.0401796892000528 C2.7361388789840935,2.784059161270804 2.945692038198934,2.5745060020559642 3.2018125661281824,2.5745060020559642 L17.17202318045083,2.5745060020559642 C17.428143708380077,2.5745060020559642 17.637696867594926,2.784059161270804 17.637696867594926,3.0401796892000528 L17.637696867594926,6.299895499208672 z"
         },
-        singleLayerTeam: {
-            fill: ICON_COLOR_SINGLE_LAYER_TEAM,
-            event: 'smell:SingleLayerTeam:pointerdown',
-            d: "M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z",
-            visibility: "hidden",
-            ref: 'body',
-            refX: '0%',
-            refY: '100%',
-            refWidth: '1%',
-            refHeight: '1%',
-            height: "1000",
-            width: "1000",
-        },
     },
-    smells: [], // list of smells that affects a single node
-    isMaximed: true
+    //isMaximed: true
 }, {
         markup: [{
             tagName: 'rect',
@@ -557,56 +518,19 @@ joint.dia.Element.define('microtosca.SquadGroup', {
         }, {
             tagName: 'text',
             selector: 'label'
-        }, {
+        }/*, {
             tagName: 'rect',
             selector: 'minimize'
         }, {
             tagName: 'path',
             selector: 'maximize'
-        }, {
-            tagName: 'path',
-            selector: 'singleLayerTeam'
-        }],
-        setMinimize: function(){
+        }*/],
+        /*setMinimize: function(){
             return this.isMaximed = false; 
         },
         setMaximize: function(){
             return this.isMaximed = true;
-        },
-        getName: function () {
-            return this.attr('label/text');
-        },
-        setName: function (text) {
-            return this.attr('label/text', text || '');
-        },
-        showIcons: function () {
-            if(this.isMaximed){
-                this.attr('minimize/visibility', "visible");
-            }else
-                this.attr('maximize/visibility', 'visible');
-        },
-        hideIcons: function () {
-            this.attr('minimize/visibility', "hidden");
-            this.attr('maximize/visibility', 'hidden')
-        },
-        addSmell: function (smell: SmellObject) {
-            this.attributes.smells.push(smell);
-            if (smell instanceof SingleLayerTeamSmellObject)
-                this.attr('singleLayerTeam/visibility', 'visible');
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.name;
-            });
-        },
-        resetSmells: function () {
-            this.attributes.smells = [];
-            this.attr('singleLayerTeam/visibility', 'hidden');
-        },
-        getIgnoreAlwaysSmells: function () {
-            return [];
-        },
-
+        },*/
         addMember: function(node:joint.shapes.microtosca.Node){
             this.embed(node);
             this.toBack();
@@ -624,12 +548,11 @@ joint.dia.Element.define('microtosca.SquadGroup', {
             });
             return members;
         },
-
-    });
+}).buildName().buildSmells().build());
 
 
 // joint.dia.Link
-joint.shapes.standard.Link.define('microtosca.RunTimeLink', {
+joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElementConfiguration.builder({
     // joint.dia.Link.define('microtosca.RunTimeLink', {
     smooth: true,
     attrs: {
@@ -768,10 +691,10 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', {
             this.removeLabel(0);
         }
 
-    });
+    }).build());
 
 // MicroTosca DeployemntTime Link
-joint.dia.Link.define('microtosca.DeploymentTimeLink', {
+joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfiguration.builder({
     attrs: {
         line: {
             connection: true,
@@ -816,11 +739,11 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', {
             return this.timeout;
         },
     }
-);
+).build());
 
 
 // demonstrate creating a custom dummy view for the app.CustomRect
-namespace CustomViews {
+/*namespace CustomViews {
 
     export class MyLinkView extends joint.dia.LinkView {
 
@@ -869,4 +792,4 @@ namespace CustomViews {
         }
     }
 }
-(<any>Object).assign(joint.shapes.microtosca, CustomViews)
+(<any>Object).assign(joint.shapes.microtosca, CustomViews)*/
