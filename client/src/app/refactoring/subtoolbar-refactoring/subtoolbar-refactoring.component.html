@@ -1,2 +1,2 @@
 <p-toggleButton onIcon="pi pi-verified" offIcon="pi pi-verified" pTooltip="Monitor architectural smells" showDelay="1000" tooltipPosition="bottom" (click)="monitor()" [(ngModel)]="monitorToggled"></p-toggleButton>
-<p-badge *ngIf="monitorToggled && smellsNumber > 0" [value]="smellsNumber" severity="warning" style="margin-left: -20px; position: absolute" size="small"></p-badge>
+<p-badge *ngIf="monitorToggled && smellsNumber > 0" [value]="smellsNumber" severity="warning" style="margin-left: -20px; position: absolute;" size="small"></p-badge>
