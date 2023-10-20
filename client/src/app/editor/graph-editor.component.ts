@@ -40,9 +40,6 @@ export class GraphEditorComponent {
     @ViewChild('contextMenu') contextMenu;
     contextMenuItems;
     @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
-    
-    @ViewChild('smellsMenu') smellsMenu;
-    smellsMenuItems;
 
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
@@ -199,32 +196,67 @@ export class GraphEditorComponent {
     bindSingleRightClickCell(){
         this.navigation.getPaper().on('cell:contextmenu', (cellView, evt, x, y) => {
             console.log("right click cell");
-
             let cell = cellView.model;
             let graph = this.graph.getGraph();
             this.contextMenuItems = [];
+            
+            // Add element-specific context menu items
             if(graph.isNode(cell)) {
-                this.contextMenuItems = this.getNodeContextMenu(cell);
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+                this.contextMenuItems = this.contextMenuItems.concat(this.getNodeContextMenu(cell));
             } else if(graph.isTeamGroup(cell)) {
-                this.contextMenuItems = this.getTeamContextMenu(cell);
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+                this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(graph.isInteractionLink(cell)) {
-                this.contextMenuItems = this.getInteractionLinkContextMenu(cell);
+                this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
             }
+
             // Avoid showing an empty context menu if no valid option is available
+            //.concat(smellsMenuItems).concat(elementMenuItems);
             if(this.contextMenuItems.length == 0)
                 this.contextMenu.hide();
         });
+        
         this.navigation.getPaper().on('blank:contextmenu', (evt, x, y) => {
             this.contextMenu.hide();
         });
     }
 
+    getSmellsMenuItem(cell) {
+        if(cell.hasSmells()) {
+            let smellsMenuItems = [];
+            cell.getSmells().forEach((smell: SmellObject) => {
+                smellsMenuItems.push({
+                    label: smell.getName(),
+                    icon: "pi pi-tag",
+                    command: () => {
+                        this._openDialogSmellComponent(cell, smell);
+                }});
+            });
+        
+            let smellsMenu = {
+                label: "Smells",
+                icon: "pi pi-exclamation-triangle",
+                items: smellsMenuItems
+            }
+            return smellsMenu;
+        }
+    }
+
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
-            nodeContextMenuItems.push({label: "Delete node", icon: "pi pi-trash", command: () => {
-                this.openDeleteNodeDialog(rightClickedNode);
-            }});
+            nodeContextMenuItems.push(
+                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+            );
         }
         return nodeContextMenuItems;
     }
