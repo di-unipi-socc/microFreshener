@@ -16,6 +16,7 @@ declare module 'jointjs' {
                 addSmell(smell: SmellObject): void;
                 getSmell(name: string): SmellObject;
                 getSmells(): SmellObject[];
+                hasSmells(): boolean;
                 hideSmell(smell: SmellObject): void;
                 showSmell(smell: SmellObject): void;
                 resetSmells(): void
@@ -119,16 +120,31 @@ class MicrotoscaElementConfiguration {
         }
         this.defaultAttributes.attrs = {
             ...this.defaultAttributes.attrs,
-            SmellsFound: {
+            SmellsFoundTriangle: {
                 fill: ICON_COLOR_SMELLS_FOUND,
-                event: 'SmellsFound:pointerdown',
                 visibility: "hidden",
-                ref: 'body',
-                refX: '70%',
-                refY: '70%',
-                stroke:"white",
-                strokeWidth: "1",
-                points:"10.083689495921135,-0.014947996474802494 13.261116787791252,6.423906326293945 20.367001339793205,7.4567060470581055 15.225153729319572,12.468356132507324 16.438929364085197,19.545604705810547 10.083689495921135,16.204376220703125 3.7280669659376144,19.545604705810547 4.941843792796135,12.468356132507324 -0.20000223815441132,7.4567060470581055 6.905877396464348,6.423906326293945 ",
+                ref: 'text',
+                refX: '100%',
+                refY: '0%',
+                stroke: ICON_COLOR_SMELLS_FOUND,
+                strokeWidth: 0,
+                d: "M 20,18.75 H 4 C 3.7334394,18.749191 3.4867871,18.608789 3.35,18.38 3.2200186,18.146895 3.2200186,17.863105 3.35,17.63 l 8,-14 c 0.308525,-0.4651184 0.991475,-0.4651184 1.3,0 l 8,14 c 0.129981,0.233105 0.129981,0.516895 0,0.75 -0.136787,0.228789 -0.383439,0.369191 -0.65,0.37 z",
+                refCx: '50%',
+                refCy: '50%',
+                refR: '50%',
+                magnet: false
+            },
+            SmellsFoundExclamation: {
+                fill: "black",
+                visibility: "hidden",
+                ref: 'text',
+                refX: '100%',
+                refY: '0%',
+                strokeWidth: 0,
+                d: "M12,13.25a.76.76,0,0,1-.75-.75V9a.75.75,0,0,1,1.5,0v3.5A.76.76,0,0,1,12,13.25Z M12,16.25a.76.76,0,0,1-.75-.75V15a.75.75,0,0,1,1.5,0v.5A.76.76,0,0,1,12,16.25Z",
+                refCx: '50%',
+                refCy: '50%',
+                refR: '50%',
                 magnet: false
             }
         }
@@ -139,10 +155,13 @@ class MicrotoscaElementConfiguration {
                 markup: []
             }
         }
-        this.prototypeProperties.markup.push({
-            tagName:"polygon",
-            selector :"SmellsFound"
-        });
+        this.prototypeProperties.markup = this.prototypeProperties.markup.concat([{
+            tagName:"path",
+            selector :"SmellsFoundTriangle"
+        }, {
+            tagName:"path",
+            selector :"SmellsFoundExclamation"
+        }]);
     }
 
     private buildSmellLogic() {
@@ -167,6 +186,9 @@ class MicrotoscaElementConfiguration {
                     return name === smell.getName();
                 });
             },
+            hasSmells: function ():  boolean {
+                return this.attributes.smells.length > 0;
+            },
             ignoreOnce: function (smell: SmellObject): SmellObject {
                 let smells: SmellObject[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
@@ -177,10 +199,12 @@ class MicrotoscaElementConfiguration {
                 this.hideSmells();
             },
             showSmells: function () {
-                this.attr('SmellsFound/visibility', 'visible');
+                this.attr('SmellsFoundTriangle/visibility', 'visible');
+                this.attr('SmellsFoundExclamation/visibility', 'visible');
             },
             hideSmells: function() {
-                this.attr('SmellsFound/visibility', 'hidden');
+                this.attr('SmellsFoundTriangle/visibility', 'hidden');
+                this.attr('SmellsFoundExclamation/visibility', 'hidden');
             },
             ignoreAlways: function(smell: SmellObject) {
                 let ignoredSmell: SmellObject = this.ignoreOnce(smell);
