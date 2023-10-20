@@ -147,63 +147,57 @@ class MicrotoscaElementConfiguration {
         }
         this.prototypeProperties.markup.push({
             tagName:"polygon",
-            selector :"EndpointBasedServiceInteraction"
-        }
-        ],
-        ignoreOnce(smell: SmellObject) {
-            this.hideSmell(smell);
-        },
-        addIgnoreAlwaysSmell(smell: SmellObject) {
-            this.hideSmell(smell);
-            this.attributes.ignoreAlwaysSmells.push(smell);
-        },
-        undoIgnoreAlways(smell: SmellObject) {
-            this.showSmell(smell);
-            this.attributes.ignoreAlwaysSmells = this.attributes.ignoreAlwaysSmells.filter(function (sm) {
-                return sm.getName() != smell.getName();
-            });
-        },
-        getIgnoreAlwaysSmells() {
-            return this.attributes.ignoreAlwaysSmells;
-        },
-        getName: function () {
-            return this.attr('label/text');
-        },
-        setName: function (text) {
-            return this.attr('label/text', text || '');
-        },
-        getSmells: function () {
-            return this.attributes.smells;
-        },
-        getSmell: function (name: string) {
-            return this.attributes.smells.find(smell => {
-                return name === smell.name;
-            });
-        },
-        showIcons: function () {
-            this.attr('icon/visibility', 'visible');
-            this.attr('button/visibility', 'visible');
+            selector :"SmellsFound"
+        });
+    }
 
-        },
-        hideIcons: function () {
-            this.attr('icon/visibility', 'hidden');
-            this.attr('button/visibility', 'hidden');
-        },
-        resetSmells: function () {
-            this.attributes.smells = [];
-            this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
-            this.attr('wsi/visibility', 'hidden');
-            this.attr('NoApiGateway/visibility', 'hidden');
-        },
-        hideSmell(smell: SmellObject) {
-            if (smell instanceof EndpointBasedServiceInteractionSmellObject) {
-                this.attr('EndpointBasedServiceInteraction/visibility', 'hidden');
-            }
-            else if (smell instanceof WobblyServiceInteractionSmellObject) {
-                this.attr('wsi/visibility', 'hidden');
-            }
-            else if (smell instanceof NoApiGatewaySmellObject) {
-                this.attr('NoApiGateway/visibility', 'hidden');
+    private buildSmellLogic() {
+        this.defaultAttributes = {
+            ...this.defaultAttributes,
+            smells: [],
+            alwaysIgnoredSmells: new Set<string>()
+        }
+        this.prototypeProperties = {
+            ...this.prototypeProperties,
+            addSmell: function (smell: SmellObject) {
+                if(!this.attributes.alwaysIgnoredSmells.has(smell.getName())) {
+                    this.attributes.smells.push(smell);
+                    this.showSmells();
+                }
+            },
+            getSmells: function (): SmellObject[] {
+                return this.attributes.smells;
+            },
+            getSmell: function (name: string): SmellObject {
+                return this.attributes.smells.find(smell => {
+                    return name === smell.getName();
+                });
+            },
+            ignoreOnce: function (smell: SmellObject): SmellObject {
+                let smells: SmellObject[] = this.attributes.smells;
+                let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
+                return smells.splice(smellIndex, 1)[0];
+            },
+            resetSmells: function () {
+                this.attributes.smells = [];
+                this.hideSmells();
+            },
+            showSmells: function () {
+                this.attr('SmellsFound/visibility', 'visible');
+            },
+            hideSmells: function() {
+                this.attr('SmellsFound/visibility', 'hidden');
+            },
+            ignoreAlways: function(smell: SmellObject) {
+                let ignoredSmell: SmellObject = this.ignoreOnce(smell);
+                this.attributes.ignoreAlwaysSmells.add(ignoredSmell.getName());
+            },
+            undoIgnoreAlways: function(smell: SmellObject) {
+                this.addSmell(smell);
+                this.attributes.alwaysIgnoredSmells.delete(smell.getName());
+            },
+            getIgnoreAlwaysSmells: function() {
+                return this.attributes.ignoreAlwaysSmells;
             }
         }
     }
@@ -250,7 +244,7 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
 ).buildName().buidSmells().build());
 
 
-joint.shapes.microtosca.Node.define('microtosca.Compute', {
+joint.dia.Element.define('microtosca.Compute', {
     size: { width: 75, height: 75 },
     attrs: {
         body: {
