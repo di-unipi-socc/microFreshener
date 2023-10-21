@@ -10,7 +10,7 @@ import { AGroup } from "./group";
 import { GraphService } from '../../graph/graph.service';
 import { Principle } from '../../graph/model/principles';
 import { Smell } from '../../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject as SingleLayerTeamsSmellObject } from './smell';
 
 import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
 import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
@@ -165,7 +165,6 @@ export class AnalyserService {
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
-            if(teamRestriction && teamRestriction.getName() == agroup.name)
             this.analysedgroups.push(agroup);
           });
           return true;
@@ -185,8 +184,8 @@ export class AnalyserService {
         case SMELL_NAMES.SMELL_NO_API_GATEWAY:
           smell = new NoApiGatewaySmellObject(group);
           break;
-        case SMELL_NAMES.SMELL_CROSS_TEAM_DATA_MANAGEMENT:
-          smell = new SingleLayerTeamSmellObject(group)
+        case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
+          smell = new SingleLayerTeamsSmellObject(group);
           break;
         default:
           break;
@@ -197,9 +196,10 @@ export class AnalyserService {
         smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
         smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
       });
-      smellJson['links'].forEach((causa_link) => {
-        var source = this.gs.getGraph().findNodeByName(causa_link['source']);
-        var target = this.gs.getGraph().findNodeByName(causa_link['target']);
+      
+      smellJson['links'].forEach((link_cause) => {
+        var source = this.gs.getGraph().findNodeByName(link_cause['source']);
+        var target = this.gs.getGraph().findNodeByName(link_cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         console.log("source/target", source.getName(), target.getName());
         smell.addLinkBasedCause(link);
@@ -228,6 +228,7 @@ export class AnalyserService {
       });
       agroup.addSmell(smell);
     });
+    console.log("agroup is", agroup);
     return agroup;
   }
 

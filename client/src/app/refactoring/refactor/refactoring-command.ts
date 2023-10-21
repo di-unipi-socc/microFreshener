@@ -1,5 +1,5 @@
 import { Graph } from "../../graph/model/graph";
-import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamSmellObject } from '../../refactoring/analyser/smell';
+import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamsSmellObject } from '../../refactoring/analyser/smell';
 import { Command } from "../../commands/icommand";
 import * as joint from 'jointjs';
 
@@ -471,13 +471,13 @@ export class AddDataManagerCommand extends RefactoringCommand {
 
 export class MoveDatastoreIntoTeamCommand extends RefactoringCommand {
 
-    smell: SingleLayerTeamSmellObject;
+    smell: SingleLayerTeamsSmellObject;
     graph: Graph;
     team: joint.shapes.microtosca.SquadGroup
 
     squadOfDatastore: joint.shapes.microtosca.SquadGroup;
 
-    constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
+    constructor(graph: Graph, smell: SingleLayerTeamsSmellObject) {
         super();
         this.graph = graph;
         this.smell = smell;
@@ -512,11 +512,11 @@ export class MoveDatastoreIntoTeamCommand extends RefactoringCommand {
 }
 
 export class MoveServiceIntoTeamCommand extends RefactoringCommand {
-    smell: SingleLayerTeamSmellObject;
+    smell: SingleLayerTeamsSmellObject;
     graph: Graph;
     team: joint.shapes.microtosca.SquadGroup
 
-    constructor(graph: Graph, smell: SingleLayerTeamSmellObject) {
+    constructor(graph: Graph, smell: SingleLayerTeamsSmellObject) {
         super();
         this.graph = graph;
         this.smell = smell;
