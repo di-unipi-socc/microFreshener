@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 import { Graph } from './model/graph';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -37,14 +37,6 @@ export class GraphService {
   getGraph(): Graph {
     return this.graph;
   }
-
-  /*getTeam(team_name: string): Observable<string> {
-    let url = `${this.teamUrl}${team_name}`;  
-    console.log(url)
-    return this.http.get<string>(url).pipe(
-      tap(_ => this.log(`fetched team ${team_name}`)),
-    );
-  }*/
 
   // Logging
 

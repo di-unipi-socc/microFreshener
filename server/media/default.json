@@ -1,1 +1,102 @@
-{"name": "micro.tosca", "nodes": [{"name": "order", "type": "service"}, {"name": "rabbitmq", "type": "messagebroker"}, {"name": "shipping", "type": "service"}, {"name": "order_db", "type": "datastore"}, {"name": "gateway", "type": "messagerouter"}], "links": [{"id": "aadc7bd8-c3c4-4932-ad9a-8cbc609f5117", "target": "order_db", "source": "order", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "bb232725-0f13-40b5-9b6f-dbc781591d18", "target": "rabbitmq", "source": "order", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "e2124c53-1b50-4550-9a47-4e86ebf2eea2", "target": "shipping", "source": "order", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "eeef1456-b857-4a03-864a-dc1be041c835", "target": "rabbitmq", "source": "shipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "578dcdee-bb63-4702-a745-482b7cff3f3f", "target": "order_db", "source": "shipping", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}, {"id": "3e9da51f-20b3-46a3-8135-c789a9a6586d", "target": "shipping", "source": "gateway", "timeout": false, "circuit_breaker": false, "dynamic_discovery": false, "type": "interaction"}], "groups": [{"name": "edgenodes", "type": "edgegroup", "members": ["order", "shipping", "gateway"]}, {"name": "team1", "type": "squadgroup", "members": ["shipping", "rabbitmq"]}, {"name": "team2", "type": "squadgroup", "members": ["order", "order_db"]}]}
+{
+    "name": "micro.tosca",
+    "nodes": [
+        {
+            "name": "order",
+            "type": "service"
+        },
+        {
+            "name": "rabbitmq",
+            "type": "messagebroker"
+        },
+        {
+            "name": "shipping",
+            "type": "service"
+        },
+        {
+            "name": "order_db",
+            "type": "datastore"
+        },
+        {
+            "name": "gateway",
+            "type": "messagerouter"
+        }
+    ],
+    "links": [
+        {
+            "source": "order",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "order",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "rabbitmq",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "shipping",
+            "target": "order_db",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        },
+        {
+            "source": "gateway",
+            "target": "shipping",
+            "timeout": false,
+            "dynamic_discovery": false,
+            "circuit_breaker": false,
+            "type": "interaction"
+        }
+    ],
+    "groups": [
+        {
+            "name": "edgenodes",
+            "type": "edgegroup",
+            "members": [
+                "order",
+                "shipping",
+                "gateway"
+            ]
+        },
+        {
+            "name": "team1",
+            "type": "squadgroup",
+            "members": [
+                "shipping",
+                "rabbitmq"
+            ]
+        },
+        {
+            "name": "team2",
+            "type": "squadgroup",
+            "members": [
+                "order",
+                "order_db"
+            ]
+        }
+    ]
+}

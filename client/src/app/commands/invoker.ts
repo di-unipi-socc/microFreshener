@@ -2,6 +2,7 @@ import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
 import { AnalyserService } from '../refactoring/analyser/analyser.service';
 import { RefactoringCommand } from '../refactoring/refactor/refactoring-command';
+import { Observable, Subject } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,10 @@ export class GraphInvoker {
     undoStack: Command[];
     redoStack: Command[];
 
+    // This Observable will be used to subscribe to the "do" events.
+    private invokeSubject: Subject<void> = new Subject<void>();
+    private observableInvocation: Observable<void> = this.invokeSubject.asObservable();
+
     constructor(private as: AnalyserService) {
         this.undoStack = [];
         this.redoStack = [];
@@ -17,10 +22,12 @@ export class GraphInvoker {
 
     executeCommand(command: Command) {
         command.execute();
-        // clera the smell after executing a refactoringcommnad
+        // clear the smell after executing a refactoringcommand
         if (command instanceof RefactoringCommand)
             this.as.clearSmells()
         this.undoStack.push(command);
+
+        this.invokeSubject.next();
     }
 
     undo() {
@@ -30,6 +37,8 @@ export class GraphInvoker {
         let command = this.undoStack.pop()
         command.unexecute();
         this.redoStack.push(command);
+
+        this.invokeSubject.next();
     }
 
     redo() {
@@ -39,6 +48,12 @@ export class GraphInvoker {
         let command = this.redoStack.pop()
         command.execute();
         this.undoStack.push(command);
+
+        this.invokeSubject.next();
+    }
+
+    subscribe(observer) {
+        return this.observableInvocation.subscribe(observer);
     }
 
 }

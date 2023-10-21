@@ -17,7 +17,6 @@ import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './architecture/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
 import { SubtoolbarNavigationComponent } from './editor/subtoolbar-navigation/subtoolbar-navigation.component';
-import { SubtoolbarViewComponent } from './editor/subtoolbar-view/subtoolbar-view.component';
 
 
 // Import primeNG modules
@@ -60,11 +59,11 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ContextMenuModule } from 'primeng/contextmenu';
-import { ChartModule } from 'primeng/chart';
+import { BadgeModule } from 'primeng/badge';
 
 // Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
-import { DialogRefineComponent } from './refactoring/dialog-refine/dialog-refine.component';
+import { DialogRefineComponent } from './refine/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
@@ -86,7 +85,6 @@ import { TeamsModule } from './teams/teams.module';
     SubtoolbarArchitectureComponent,
     SubtoolbarUndoComponent,
     SubtoolbarNavigationComponent,
-    SubtoolbarViewComponent,
     SubtoolbarRefactoringComponent,
     LoginPageComponent,
     EditorPageComponent,
@@ -134,7 +132,8 @@ import { TeamsModule } from './teams/teams.module';
     AvatarModule,
     TagModule,
     MultiSelectModule,
-    ContextMenuModule
+    ContextMenuModule,
+    BadgeModule
   ],
   providers: [
     DialogService,

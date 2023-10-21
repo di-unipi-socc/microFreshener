@@ -4,6 +4,8 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
+import { GraphInvoker } from 'src/app/commands/invoker';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-incoming-teams',
@@ -17,12 +19,12 @@ export class SidebarIncomingTeamsComponent {
     recipients: joint.shapes.microtosca.Node[]
   }>;
 
-  private readonly GRAPH_EVENTS: string = "add remove";
-  private graphEventsListener: () => void;
+  invokerSubscription: Subscription;
 
   constructor(
     private session: SessionService,
     private teams: TeamsService,
+    private commands: GraphInvoker,
     private graphService: GraphService
   ) {}
 
@@ -30,13 +32,11 @@ export class SidebarIncomingTeamsComponent {
     // Get the groups and relative interacting nodes
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
-    this.graphEventsListener = () => { this.updateIngoingRequestGroups() };
-    this.graphService.getGraph().on(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.invokerSubscription = this.commands.subscribe(this.updateIngoingRequestGroups);
   }
 
   ngOnDestroy() {
-    if(this.graphEventsListener)
-      this.graphService.getGraph().off(this.GRAPH_EVENTS, this.graphEventsListener);
+    this.invokerSubscription.unsubscribe();
   }
 
   updateIngoingRequestGroups() {

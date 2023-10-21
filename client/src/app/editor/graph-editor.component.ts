@@ -40,7 +40,7 @@ export class GraphEditorComponent {
     @ViewChild('contextMenu') contextMenu;
     contextMenuItems;
     @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
-    
+
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
         private toolSelection: ToolSelectionService, // Editor tool selection
@@ -80,20 +80,10 @@ export class GraphEditorComponent {
 
         this.bindSingleRightClickCell();
 
-        //this.bindMouseEnterLink();
-        //this.bindMouseOverNode();
-
-        this.bindClickOnSmells();
-        //this.bindClickDeleteNode();
-
-        // this.bindTeamToCoverChildren();
         this.bindTeamMinimize();
         this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
         this.bindChangeTeamEvents();
-
-        //graph eventts
-       //  this.bindGraphEvents();
 
        this.bindDragNavigation();
        this.bindWheelZoom();
@@ -206,32 +196,67 @@ export class GraphEditorComponent {
     bindSingleRightClickCell(){
         this.navigation.getPaper().on('cell:contextmenu', (cellView, evt, x, y) => {
             console.log("right click cell");
-
             let cell = cellView.model;
             let graph = this.graph.getGraph();
             this.contextMenuItems = [];
+            
+            // Add element-specific context menu items
             if(graph.isNode(cell)) {
-                this.contextMenuItems = this.getNodeContextMenu(cell);
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+                this.contextMenuItems = this.contextMenuItems.concat(this.getNodeContextMenu(cell));
             } else if(graph.isTeamGroup(cell)) {
-                this.contextMenuItems = this.getTeamContextMenu(cell);
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+                this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(graph.isInteractionLink(cell)) {
-                this.contextMenuItems = this.getInteractionLinkContextMenu(cell);
+                this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
             }
+
             // Avoid showing an empty context menu if no valid option is available
+            //.concat(smellsMenuItems).concat(elementMenuItems);
             if(this.contextMenuItems.length == 0)
                 this.contextMenu.hide();
         });
+        
         this.navigation.getPaper().on('blank:contextmenu', (evt, x, y) => {
             this.contextMenu.hide();
         });
     }
 
+    getSmellsMenuItem(cell) {
+        if(cell.hasSmells()) {
+            let smellsMenuItems = [];
+            cell.getSmells().forEach((smell: SmellObject) => {
+                smellsMenuItems.push({
+                    label: smell.getName(),
+                    icon: "pi pi-tag",
+                    command: () => {
+                        this._openDialogSmellComponent(cell, smell);
+                }});
+            });
+        
+            let smellsMenu = {
+                label: "Smells",
+                icon: "pi pi-exclamation-triangle",
+                items: smellsMenuItems
+            }
+            return smellsMenu;
+        }
+    }
+
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
-            nodeContextMenuItems.push({label: "Delete node", icon: "pi pi-trash", command: () => {
-                this.openDeleteNodeDialog(rightClickedNode);
-            }});
+            nodeContextMenuItems.push(
+                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+            );
         }
         return nodeContextMenuItems;
     }
@@ -279,9 +304,10 @@ export class GraphEditorComponent {
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
-            var node = cellView.model;
-            // click on group
-            if (this.graph.getGraph().isTeamGroup(node)) {
+            let element = cellView.model;
+            let graph = this.graph.getGraph();
+            // team clicked
+            if (graph.isTeamGroup(element)) {
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
@@ -292,64 +318,73 @@ export class GraphEditorComponent {
                      }
                      this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
                 }
-            } else {
-                // team group cannot be clicked (both as source and target)
+            }
+            // node clicked
+            if (graph.isNode(element)) {
                 console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
-                if(this.toolSelection.isAddLinkEnabled()) {
-                    // selecting target node
-                    if(this.leftClickSelectedCell == null || node.id == this.leftClickSelectedCell.id) {
-                        // selecting source node
-                        var can_select_source_node = true;
-                        // message broker cannot be source for a link
-                        if (this.graph.getGraph().isMessageBroker(node)) {
-                            can_select_source_node = false;
-                        }
-                        // message broker cannot be source for a link
-                        if (this.graph.getGraph().isDatastore(node)) {
-                            can_select_source_node = false;
-                        }
-                        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
-                            cellView.highlight();
-                            this.leftClickSelectedCell = node;
-                        }
-                        else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
-                        }
-                    } else if(this.leftClickSelectedCell !== null && node.id !== this.leftClickSelectedCell.id) {
-                        var add_link = true;
-                        // disable link from <any> to datastore
-                        if (this.graph.getGraph().isEdgeGroup(node)) {
-                            add_link = false;
-                        }
-                        // disable link from edge to datastore
-                        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node)) {
-                            add_link = false;
-                        }
-                        // disable link from communication pattern to Datastore
-                        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
-                            add_link = false;
-                        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedCell, node)) {
-                            const ref = this.dialogService.open(DialogAddLinkComponent, {
-                                data: {
-                                    source: this.leftClickSelectedCell,
-                                    target: node
-                                },
-                                header: 'Add a link',
-                            });
-                            ref.onClose.subscribe((data) => {
-                                if (data) {
-                                    this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                                    this.leftClickSelectedCell = null;
-                                }
-                            });
-                        }
-                        else {
-                            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link cannot be created` });
-                        }
-                    }
+                console.log("hasSmells?", element.hasSmells());
+                console.log("contextmenu", this.contextMenu);
+                if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
+                    this.highlight(cellView);
+                } else if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                    this.linkWithHighlighted(element);
                 }
             }
         });
+    }
+
+    private highlight(cellView) {
+        let node = cellView.model;
+        // selecting source node
+        let can_select_source_node = true;
+        // message broker cannot be source for a link
+        if (this.graph.getGraph().isMessageBroker(node)) {
+            can_select_source_node = false;
+        }
+        // message broker cannot be source for a link
+        if (this.graph.getGraph().isDatastore(node)) {
+            can_select_source_node = false;
+        }
+        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
+            cellView.highlight();
+            this.leftClickSelectedCell = node;
+        }
+        else {
+            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
+        }
+    }
+
+    private linkWithHighlighted(node) {
+        let add_link = true;
+        // disable link from <any> to datastore
+        if (this.graph.getGraph().isEdgeGroup(node)) {
+            add_link = false;
+        }
+        // disable link from edge to datastore
+        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node)) {
+            add_link = false;
+        }
+        // disable link from communication pattern to Datastore
+        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
+            add_link = false;
+        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedCell, node)) {
+            const ref = this.dialogService.open(DialogAddLinkComponent, {
+                data: {
+                    source: this.leftClickSelectedCell,
+                    target: node
+                },
+                header: 'Add a link',
+            });
+            ref.onClose.subscribe((data) => {
+                if (data) {
+                    this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                    this.leftClickSelectedCell = null;
+                }
+            });
+        }
+        else {
+            this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link cannot be created` });
+        }
     }
 
     bindDoubleClickCell() {
@@ -358,97 +393,6 @@ export class GraphEditorComponent {
             evt.stopPropagation();
             console.log("Double click cell");
         });
-    }
-
-    /*bindClickDeleteNode() {
-        // delete a node event
-        this.navigation.getPaper().on("node:service:delete", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var node = cellView.model;
-            this.editing.deleteService(node);
-        })
-
-        this.navigation.getPaper().on("node:communicationpattern:delete", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var node = cellView.model;
-            this.confirmationService.confirm({
-                message: 'Do you want to delete this communication pattern?',
-                header: 'Node Deletion Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.editing.removeCommunicationPattern(node);
-                },
-                reject: () => {
-                    node.hideIcons();
-                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Communication pattern ${node.getName()} not deleted` });
-                }
-            });
-
-        })
-
-        this.navigation.getPaper().on("node:datastore:delete", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var node = cellView.model;
-            this.editing.deleteDatastore(node);
-        })
-    }
-
-    bindMouseOverNode() {
-        this.navigation.getPaper().on("cell:mouseenter", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var cell = cellView.model;
-            if (cell.isElement()) {
-                cell.showIcons();
-            } else if (this.graph.getGraph().isTeamGroup(cell)) {
-                cell.showIcons();
-            }
-        })
-
-        this.navigation.getPaper().on("cell:mouseleave", (cellView, evt, x, y, ) => {
-            evt.stopPropagation();
-            var cell = cellView.model;
-            if (cell.isElement()) {
-                cell.hideIcons()
-
-            }
-        })
-    }*/
-
-    bindClickOnSmells() {
-        this.navigation.getPaper().on("smell:EndpointBasedServiceInteraction:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation();
-            var model = cellview.model;
-            var smell: SmellObject = model.getSmell("EndpointBasedServiceInterationSmell");
-            this._openDialogSmellComponent(model, smell);
-        })
-
-        this.navigation.getPaper().on("smell:NoApiGateway:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation();
-            var model = cellview.model;
-            var smell: SmellObject = model.getSmell("NoAPiGatewaySmell");
-            this._openDialogSmellComponent(model, smell);
-        })
-
-        this.navigation.getPaper().on("smell:SharedPersistency:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation();
-            var model = cellview.model;
-            var smell: SmellObject = model.getSmell("SharedPersistencySmell");
-            this._openDialogSmellComponent(model, smell);
-        })
-
-        this.navigation.getPaper().on("smell:WobblyServiceInteractionSmell:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation();
-            var model: joint.shapes.microtosca.Node = cellview.model;
-            var smell: SmellObject = model.getSmell("WobblyServiceInteractonSmell");
-            this._openDialogSmellComponent(model, smell);
-        })
-
-        this.navigation.getPaper().on("smell:SingleLayerTeam:pointerdown", (cellview, evt, x, y) => {
-            evt.stopPropagation();
-            var model = cellview.model;
-            var smell: SmellObject = model.getSmell("SingleLayerTeamSmell");
-            this._openDialogSmellComponent(model, smell);
-        })
     }
 
     _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: SmellObject) {
@@ -470,27 +414,6 @@ export class GraphEditorComponent {
 
 
     bindTeamEmbedNodes() {
-        // First, unembed the cell that has just been grabbed by the user.
-        // this.navigation.getPaper().on('cell:pointerdown', (cellView, evt, x, y) => {
-
-        //     var cell = cellView.model;
-
-        //     if (!cell.get('embeds') || cell.get('embeds').length === 0) {
-        //         // Show the dragged element above all the other cells (except when the
-        //         // element is a parent).
-        //         cell.toFront();
-        //     }
-
-        //     if (cell.get('parent')) {
-        //         //unembed cell from the parent
-        //         // var member = <joint.shapes.microtosca.Node>cell;
-        //         // var team = this.gs.getGraph().getTeamOfNode(member);
-        //         // var command = new RemoveMemberFromTeamGroupCommand(this.gs.getGraph(), team.getName(), member.getName());
-        //         // this.graphInvoker.executeCommand(command);
-        //         // this.messageService.add({ severity: 'success', summary: 'Member removed from to team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
-        //     }
-        // });
-
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
         this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
@@ -662,114 +585,6 @@ export class GraphEditorComponent {
         });
     }
 
-    // bindCreateLink() {
-    //     // Create a new link by dragging
-    //     this.navigation.getPaper().on('blank:pointerdown', function (evt, x, y) {
-    //         var link = new joint.shapes.standard.Link();
-    //         link.set('source', { x: x, y: y });
-    //         link.set('target', { x: x, y: y });
-    //         link.addTo(this.model);
-    //         evt.data = { link: link, x: x, y: y };
-    //     })
-
-    //     this.navigation.getPaper().on('blank:pointermove', function (evt, x, y) {
-    //         evt.data.link.set('target', { x: x, y: y });
-    //     });
-
-    //     this.navigation.getPaper().on('blank:pointerup', function (evt) {
-    //         var target = evt.data.link.get('target');
-    //         if (evt.data.x === target.x && evt.data.y === target.y) {
-    //             // remove zero-length links
-    //             evt.data.link.remove();
-    //         }
-    //     });
-    // }
-
-    /*bindMouseEnterLink() {
-        this.navigation.getPaper().on('link:mouseenter', (linkView) => {
-            let link = linkView.model;
-            if(this.permissions.writePermissions.isAllowed(link)) {
-                var tools = [
-                    // new joint.linkTools.SourceArrowhead(),
-                    // new joint.linkTools.TargetArrowhead(),
-                    new joint.linkTools.Vertices({
-                        snapRadius: 0,
-                        redundancyRemoval: false,
-                        vertexAdding: false
-                    }),
-                    new joint.linkTools.TargetAnchor(),
-                    // new joint.linkTools.Remove(),
-                    new joint.linkTools.Button({
-                        markup: [{
-                            tagName: 'circle',
-                            selector: 'button',
-                            attributes: {
-                                'r': 7,
-                                'stroke': '#fe854f',
-                                'stroke-width': 3,
-                                'fill': 'white',
-                                'cursor': 'pointer'
-                            }
-                        }, {
-                            tagName: 'path',
-                            selector: 'icon',
-                            attributes: {
-                                'd': 'M -2 4 2 4 M 0 3 0 0 M -2 -1 1 -1 M -1 -4 1 -4',
-                                'fill': 'none',
-                                'stroke': '#FFFFFF',
-                                'stroke-width': 2,
-                                'pointer-events': 'none'
-                            }
-                        }],
-                        distance: -30,
-                        action: () => {
-                            console.log("Reversing link");
-                            this.editing.reverseLink(link);
-                        }
-                    }),
-                    // button remove a link
-                    new joint.linkTools.Button({
-                        markup: [{
-                            tagName: 'circle',
-                            selector: 'button',
-                            attributes: {
-                                'r': 7,
-                                'fill': '#FF1D00',
-                                'cursor': 'pointer'
-                            }
-                        }, {
-                            tagName: 'path',
-                            selector: 'icon',
-                            attributes: {
-                                'd': 'M -3 -3 3 3 M -3 3 3 -3',
-                                'fill': 'none',
-                                'stroke': '#FFFFFF',
-                                'stroke-width': 2,
-                                'pointer-events': 'none'
-                            }
-                        }],
-                        distance: 60,
-                        offset: 0,
-                        action: () => {
-                            console.log("Deleting link");
-                            this.editing.removeLink(linkView.model);
-                        }
-                    })
-                ];
-
-                linkView.addTools(new joint.dia.ToolsView({
-                    name: 'onhover',
-                    tools: tools
-                }));
-            }
-        });
-
-        this.navigation.getPaper().on('link:mouseleave', function (linkView) {
-            if (!linkView.hasTools('onhover')) return;
-            linkView.removeTools();
-        });
-    }*/
-
     adjustVertices = (graph, cell) => {
 
         // if `cell` is a view, find its model
@@ -927,56 +742,5 @@ export class GraphEditorComponent {
             wheelAction(x, y, evt, delta);
         });
     }
-
-    /*createSampleGraph() {
-        //  nodes
-        var s = this.gs.getGraph().addService("shipping");
-        var catalogue = this.gs.getGraph().addService("catalogue");
-
-        var odb = this.gs.getGraph().addDatastore("order_db");
-        var o = this.gs.getGraph().addService("order");
-        var cp = this.gs.getGraph().addMessageBroker("rabbitmq");
-        var gw = this.gs.getGraph().addMessageRouter("Api gateway");
-
-        // shipping interactions
-        this.gs.getGraph().addRunTimeInteraction(s, odb);
-        this.gs.getGraph().addRunTimeInteraction(s, cp);
-        this.gs.getGraph().addRunTimeInteraction(s, catalogue);
-
-        // this.gs.getGraph().addDeploymentTimeInteraction(s, odb);
-
-        // order interactions
-        this.gs.getGraph().addRunTimeInteraction(o, s, true, true, true);
-        this.gs.getGraph().addRunTimeInteraction(o, odb);
-        this.gs.getGraph().addRunTimeInteraction(o, cp);
-        // this.gs.getGraph().addDeploymentTimeInteraction(o, s);
-        // this.gs.getGraph().addDeploymentTimeInteraction(o, odb);
-
-        // catalogue interactions
-        this.gs.getGraph().addRunTimeInteraction(catalogue, o);
-
-        // squads
-        var s1 = this.gs.getGraph().addTeamGroup("team-primo");
-        s1.addMember(s);
-        s1.addMember(o);
-        s1.addMember(odb);
-
-        var t2 = this.gs.getGraph().addTeamGroup("team-secondo");
-        t2.addMember(gw);
-        t2.addMember(cp);
-        t2.addMember(catalogue);
-
-        // this.gs.getGraph().showOnlyTeam(s1);
-
-        // gateway interaction
-        this.gs.getGraph().addRunTimeInteraction(gw, s);
-
-        // add EdgeGroup 
-        let edge = this.gs.getGraph().addEdgeGroup("edgenodes", [o, gw, catalogue]);
-
-        this.applyDirectedGraphLayout();
-        this.navigation.getPaper().scaleContentToFit();
-
-    }*/
 
 }

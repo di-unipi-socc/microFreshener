@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { DialogRefineComponent } from '../dialog-refine/dialog-refine.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser/analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
+import { GraphInvoker } from 'src/app/commands/invoker';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-subtoolbar-refactoring',
@@ -15,69 +16,71 @@ import { UserRole } from 'src/app/core/user-role';
 })
 export class SubtoolbarRefactoringComponent {
 
-    menuitems: MenuItem[] = [
-        {
-            icon: "pi pi-fw pi-search",
-            label: 'Analyse',
-            command: () => {
-                this.analyse();
-            }
-        },
-        {
-            icon: "pi pi-fw pi-refresh",
-            label: 'Refine',
-            command: () => {
-                this.refine()
-            }
-        }
-    ];
+    monitorToggled: boolean;
+    smellsNumber: number;
+
+    private invokerSubscription: Subscription;
+    private options;
 
     constructor(
         private dialogService: DialogService,
         private as: AnalyserService,
+        private commands: GraphInvoker,
         private session: SessionService,
         private messageService: MessageService,
         private gs: GraphService
     ) {}
 
-    refine() {
-    const ref = this.dialogService.open(DialogRefineComponent, {
-        header: 'Refine the model',
-        width: '70%'
-    });
-    ref.onClose.subscribe((data) => {
-
-    });
+    ngOnInit() {
+        this.options = {};
     }
 
-    analyse() {
+    monitor() {
+        if(this.monitorToggled) {
+            this.startMonitoring();
+        } else {
+            this.stopMonitoring();
+            this.smellsNumber = 0;
+        }
+    }
+
+    startMonitoring() {
         const ref = this.dialogService.open(DialogAnalysisComponent, {
             header: 'Check the principles to analyse',
             width: '70%'
         });
         ref.onClose.subscribe((data) => {
-            if (data.selected_smells) {
-                var smells = data.selected_smells;
-                
-                let team;
+            if (data?.selected_smells) {
+                this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
                     let teamName = this.session.getName();
-                    team = this.gs.getGraph().findGroupByName(teamName);
+                    this.options.team = this.gs.getGraph().findGroupByName(teamName);
                 }
 
-                this.gs.uploadGraph(team)
-                    .subscribe(data => {
-                        console.log("uploadGraph response", data);
-                        this.as.runRemoteAnalysis(smells, team)
+                let analyseGraph = () => {
+                    this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
-                                this.as.showSmells();
-                                var num = this.as.getNumSmells()
-                                this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${num} smells` });
+                                console.log("uploadGraph response", data);
+                                this.as.runRemoteAnalysis(this.options.smells, this.options.team)
+                                    .subscribe(data => {
+                                        this.as.showSmells();
+                                        this.smellsNumber = this.as.getNumSmells()
+                                        this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
+                                    });
                             });
-                    });
+                };
+                this.invokerSubscription = this.commands.subscribe(analyseGraph);
+                analyseGraph();
+            } else {
+                this.monitorToggled = false;
             }
-
         });
+    }
+
+    stopMonitoring() {
+        console.log("stopMonitoring");
+        this.invokerSubscription.unsubscribe();
+        this.as.clearSmells();
     }
 
 }

@@ -238,6 +238,7 @@ export class Graph extends joint.dia.Graph {
 
     addCommunicationPattern(name: string, type: string, position?: g.Point, team?: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.CommunicationPattern {
         let cp = new joint.shapes.microtosca.CommunicationPattern();
+        console.log(cp);
         cp.setName(name);
         cp.setType(type);
         if(position) {

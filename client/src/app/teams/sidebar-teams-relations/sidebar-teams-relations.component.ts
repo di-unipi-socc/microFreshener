@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
 import { GraphService } from 'src/app/graph/graph.service';
+import { GraphInvoker } from 'src/app/commands/invoker';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-teams-relations',
@@ -31,11 +33,12 @@ export class SidebarTeamsRelationsComponent {
   private colors;
   private index;
 
-  private graphListener;
+  private invokerSubscription: Subscription;
 
   constructor(
     private graphService: GraphService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private commands: GraphInvoker
   ) {}
 
   ngAfterViewInit() {
@@ -50,7 +53,7 @@ export class SidebarTeamsRelationsComponent {
     .attr("viewBox", [-this.width / 2 -20, -this.height / 2 -20, this.width+20, this.height+20])
     .attr("style", "width: 100%; height: auto; font: 10px;");
     // Create listener for graph changes
-    this.graphListener = () => {
+    this.invokerSubscription = this.commands.subscribe(() => {
       if(this.visible) {
         this.cleanChordDiagram();
         if(this.graphService.getGraph().getTeamGroups().length > 1) {
@@ -60,8 +63,7 @@ export class SidebarTeamsRelationsComponent {
           this.fewTeams = true;
         }
       }
-    }
-    this.graphService.getGraph().on("add remove change", this.graphListener);
+    });
   }
 
   ngOnChanges(change: SimpleChanges) {
@@ -74,7 +76,7 @@ export class SidebarTeamsRelationsComponent {
   }
 
   ngOnDestroy() {
-    this.graphService.getGraph().off(this.graphListener);
+    this.invokerSubscription.unsubscribe();
   }
 
   private onSidebarOpen() {

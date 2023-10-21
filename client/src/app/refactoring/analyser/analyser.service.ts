@@ -18,7 +18,6 @@ import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, Endp
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
 import { REFACTORING_NAMES } from "./costants";
-import { SessionService } from 'src/app/core/session/session.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
