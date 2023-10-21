@@ -47,6 +47,10 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.Group[]>this.getElements().filter(node => this.isGroup(node));
     }
 
+    findTeamByName(name: string): joint.shapes.microtosca.SquadGroup {
+        return this.getTeamGroups().find(team => name === team.getName());
+    }
+
     findNodeByName(name: string): joint.shapes.microtosca.Node {
         return this.getNodes().find(node => name === node.getName());
     }
@@ -406,11 +410,13 @@ export class Graph extends joint.dia.Graph {
     }
 
     hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
-        team.attr("./visibility", "hidden");
+        //team.attr("./visibility", "hidden");
+        team.hide();
     }
 
     showTeamBox(team: joint.shapes.microtosca.SquadGroup) {
-        team.attr("./visibility", "visible");
+        //team.attr("./visibility", "visible");
+        team.show();
         team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     }
 

@@ -22,7 +22,7 @@ export class ArchitectureEditingService {
     private messageService: MessageService,
   ) { }
 
-  addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.Group) {
+  addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
     let addNodeCommand: NodeCommand;
     let message: string;
     switch (nodeType) {

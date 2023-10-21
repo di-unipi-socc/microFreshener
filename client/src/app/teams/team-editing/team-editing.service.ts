@@ -48,7 +48,7 @@ export class TeamEditingService {
         // Create the new team
         this.newTeamCommand = new AddTeamGroupCommand(graph, newTeamName);
         this.newTeamCommand.execute();
-        let newTeam = graph.findGroupByName(newTeamName);
+        let newTeam = graph.findTeamByName(newTeamName);
         // Move nodes into it
         this.addOrMoveMembersToNewTeamCommands =
               selectedNodes

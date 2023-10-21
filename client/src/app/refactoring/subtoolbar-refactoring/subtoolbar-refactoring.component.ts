@@ -54,7 +54,7 @@ export class SubtoolbarRefactoringComponent {
                 this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
                     let teamName = this.session.getName();
-                    this.options.team = this.gs.getGraph().findGroupByName(teamName);
+                    this.options.team = this.gs.getGraph().findTeamByName(teamName);
                 }
 
                 let analyseGraph = () => {

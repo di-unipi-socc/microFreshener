@@ -57,6 +57,8 @@ declare module 'jointjs' {
             class SquadGroup extends Group {
                 setMinimize():boolean;
                 setMaximize():boolean;
+                show(): void;
+                hide(): void;
             }
             class RunTimeLink extends joint.dia.Link {
                 setTimedout(boolean): void;
@@ -102,11 +104,30 @@ class MicrotoscaElementConfiguration {
         return this;
     }
 
-    buildSmells() {
+    buildVisibility() {
+        this.prototypeProperties = {
+            ...this.prototypeProperties,
+            hide: function () {
+                this.attr('./visibility', 'hidden');
+                this.visibility = 'hidden';
+                if(this.hideSmells)
+                    this.hideSmells();
+            },
+            show: function () {
+                this.attr('./visibility', 'visible');
+                this.visibility = 'visible';
+                if(this.showSmells)
+                    this.showSmells();
+            },
+        }
+        return this;
+    }
+
+    buildSmells(custom?) {
         // Define visual element for smells
         this.buildSmellGraphics();
         // Add smell management functions
-        this.buildSmellLogic();
+        this.buildSmellLogic(custom);
 
         return this;
     }
@@ -164,11 +185,21 @@ class MicrotoscaElementConfiguration {
         }]);
     }
 
-    private buildSmellLogic() {
+    private buildSmellLogic(custom?) {
         this.defaultAttributes = {
             ...this.defaultAttributes,
             smells: [],
             alwaysIgnoredSmells: new Set<string>()
+        }
+        if(custom?.showSmells) {
+            this.prototypeProperties.showSmells = custom.showSmells;
+        } else {
+            this.prototypeProperties.showSmells = function () {
+                if(this.hasSmells() && (!this.visibility || this.visibility === 'visible')) {
+                    this.attr('SmellsFoundTriangle/visibility', 'visible');
+                    this.attr('SmellsFoundExclamation/visibility', 'visible');
+                }
+            }
         }
         this.prototypeProperties = {
             ...this.prototypeProperties,
@@ -197,10 +228,6 @@ class MicrotoscaElementConfiguration {
             resetSmells: function () {
                 this.attributes.smells = [];
                 this.hideSmells();
-            },
-            showSmells: function () {
-                this.attr('SmellsFoundTriangle/visibility', 'visible');
-                this.attr('SmellsFoundExclamation/visibility', 'visible');
             },
             hideSmells: function() {
                 this.attr('SmellsFoundTriangle/visibility', 'hidden');
@@ -476,7 +503,10 @@ joint.dia.Element.define('microtosca.EdgeGroup', ...MicrotoscaElementConfigurati
         getExternalUserName: function () {
             return this.attr('label/text');
         }
-    }).buildSmells().build());
+    }).buildSmells({
+        // This override hides the smells icon, since it is shown in the involved nodes instead
+        showSmells: function() {}
+    }).build());
 
 joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfiguration.builder({
     position: { x: 20, y: 20 },
@@ -572,7 +602,8 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
             });
             return members;
         },
-}).buildName().buildSmells().build());
+        // TODO implement show e hide
+}).buildName().buildSmells().buildVisibility().build());
 
 
 // joint.dia.Link

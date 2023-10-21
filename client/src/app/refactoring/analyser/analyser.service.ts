@@ -75,6 +75,7 @@ export class AnalyserService {
       node.resetSmells();
     });
     this.gs.getGraph().getGroups().forEach(group => {
+      console.log("group is", group);
       group.resetSmells();
     });
   }
@@ -182,10 +183,10 @@ export class AnalyserService {
       let smell: GroupSmellObject;
       switch (smellJson.name) {
         case SMELL_NAMES.SMELL_NO_API_GATEWAY:
-          smell = new NoApiGatewaySmellObject(group);
+          smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
           break;
         case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
-          smell = new SingleLayerTeamsSmellObject(group);
+          smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
           break;
         default:
           break;

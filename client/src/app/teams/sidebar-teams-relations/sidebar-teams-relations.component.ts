@@ -277,9 +277,9 @@ export class SidebarTeamsRelationsComponent {
   private highlightRibbonSubgraph(sourceIndex: string, targetIndex: string) {
     // Get graph references
     let sourceTeamName = this.names[sourceIndex];
-    let sourceTeam = this.graphService.getGraph().findGroupByName(sourceTeamName);
+    let sourceTeam = this.graphService.getGraph().findTeamByName(sourceTeamName);
     let targetTeamName = this.names[targetIndex];
-    let targetTeam = this.graphService.getGraph().findGroupByName(targetTeamName);
+    let targetTeam = this.graphService.getGraph().findTeamByName(targetTeamName);
     // Color links
     let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;
     let ribbonTeamInteraction = outgoingLinks.filter(([g, ls]) => g == targetTeam);
