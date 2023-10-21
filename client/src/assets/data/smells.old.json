@@ -36,11 +36,11 @@
             "name": "Shared Persistency",
             "description": ""
         },
-        // {
-        //     "id": 7,
-        //     "principle": "Decentralization",
-        //     "name": "Single Layer Team",
-        //     "description": ""
-        // }
+        {
+            "id": 7,
+            "principle": "Decentralization",
+            "name": "Single Layer Team",
+            "description": ""
+        }
     ]
 }

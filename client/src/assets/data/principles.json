@@ -46,7 +46,12 @@
                     "id": 6,
                     "name": "Shared Persistency",
                     "description": ""
-                }
+                },
+                {
+                    "id": 7,
+                    "name": "Single Layer Teams",
+                    "description": ""
+               }
             ]
         }
     ]

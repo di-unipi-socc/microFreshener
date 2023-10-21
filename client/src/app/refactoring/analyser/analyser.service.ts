@@ -151,6 +151,7 @@ export class AnalyserService {
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
+          console.log("analysis response", response);
           // reset analysed node array
           this.analysednodes = [];
           // TODO: saved the analysed node ?? in order to have the history of the analysis.

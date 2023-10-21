@@ -29,6 +29,12 @@
             "principle": "Decentralization",
             "name": "Shared Persistency",
             "description": ""
+        },
+        {
+             "id": 7,
+             "principle": "Decentralization",
+             "name": "Single Layer Teams",
+             "description": ""
         }
     ]
 }
