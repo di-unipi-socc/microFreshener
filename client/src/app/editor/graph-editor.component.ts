@@ -5,7 +5,7 @@ import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph/graph.service";
-import { SmellObject } from '../refactoring/analyser/smell';
+import { SmellObject } from '../refactoring/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';
@@ -183,7 +183,7 @@ export class GraphEditorComponent {
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.graph.getGraph().findGroupByName(this.session.getName()) : undefined;
+                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getName()) : undefined;
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
             } else {
                 if (this.leftClickSelectedCell) {
@@ -312,7 +312,7 @@ export class GraphEditorComponent {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
-                        team = this.graph.getGraph().findGroupByName(this.session.getName())
+                        team = this.graph.getGraph().findTeamByName(this.session.getName())
                      } else {
                         team = cellView.model;
                      }
@@ -474,7 +474,7 @@ export class GraphEditorComponent {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.graph.getGraph().maximizeTeam(team);
+            //this.graph.getGraph().maximizeTeam(team);
         })
     }
 
@@ -482,7 +482,7 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.graph.getGraph().minimizeTeam(team);
+            //this.graph.getGraph().minimizeTeam(team);
         })
     }
 

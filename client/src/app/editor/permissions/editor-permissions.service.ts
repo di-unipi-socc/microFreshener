@@ -32,7 +32,7 @@ export class EditorPermissionsService {
             break;
         case UserRole.TEAM:
             console.warn("TEAM privileges have been set.");
-            let team = this.gs.getGraph().findGroupByName(teamName);
+            let team = this.gs.getGraph().findTeamByName(teamName);
             if(!team) {
               // The team doesn't exist in the graph, so block everything
               this.writePermissions.isAllowed = this.DENY_ALL;

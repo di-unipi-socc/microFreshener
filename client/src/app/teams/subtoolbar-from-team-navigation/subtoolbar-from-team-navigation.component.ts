@@ -30,7 +30,7 @@ export class SubtoolbarFromTeamNavigationComponent {
   toggleViewDependencies() {
     let teamName = this.session.getName();
     let graph = this.graphService.getGraph();
-    let team = graph.findGroupByName(teamName);
+    let team = graph.findTeamByName(teamName);
     if(this.showDependencies) {
       this.teams.showTeamDependencies(team);
     } else {

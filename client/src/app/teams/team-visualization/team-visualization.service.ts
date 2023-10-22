@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
-import { TeamsAnalyticsService } from '../team-analytics/teams-analytics.service';
 import * as joint from 'jointjs';
 
 @Injectable({
@@ -12,8 +11,7 @@ export class TeamVisualizationService {
   visibleTeams: boolean;
 
   constructor(
-    private graphService: GraphService,
-    private analytics: TeamsAnalyticsService
+    private graphService: GraphService
   ) {
     this.visibleTeams = false;
   }

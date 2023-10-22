@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
 
 import { ANode } from "./node";
 import { AGroup } from "./group";
 
-import { GraphService } from '../../graph/graph.service';
-import { Principle } from '../../graph/model/principles';
-import { Smell } from '../../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './smell';
+import { GraphService } from '../graph/graph.service';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
-import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
-import { CommunicationPattern } from "../../graph/model/communicationpattern";
+import { Principle } from '../graph/model/principles';
+import { Smell } from '../graph/model/smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
 import { SMELL_NAMES } from "./costants";
-import { REFACTORING_NAMES } from "./costants";
+
+import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, Refactoring } from "./refactoring-command";
+import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
+import { CommunicationPattern } from "../graph/model/communicationpattern";
+import { RefactoringFactoryService } from './refactoring-factory.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -35,7 +35,7 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService) { }
+  constructor(private http: HttpClient, private gs: GraphService, private refactoringFactory: RefactoringFactoryService) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -75,6 +75,7 @@ export class AnalyserService {
       node.resetSmells();
     });
     this.gs.getGraph().getGroups().forEach(group => {
+      console.log("group is", group);
       group.resetSmells();
     });
   }
@@ -110,7 +111,10 @@ export class AnalyserService {
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
-  runRemoteAnalysis(smells: Smell[] = null, teamRestriction?: joint.shapes.microtosca.SquadGroup): Observable<Boolean> {
+  runRemoteAnalysis(smells: Smell[] = null): Observable<Boolean> {
+
+    this.clearSmells();
+
     let smells_ids: number[] = []; 
     // if(smells)
     smells_ids = smells.map(smell => smell.id);
@@ -165,7 +169,6 @@ export class AnalyserService {
           this.analysedgroups = [];
           response['groups'].forEach((group) => {
             let agroup = this.buildAnalysedGroupFromJson(group);
-            if(teamRestriction && teamRestriction.getName() == agroup.name)
             this.analysedgroups.push(agroup);
           });
           return true;
@@ -183,10 +186,10 @@ export class AnalyserService {
       let smell: GroupSmellObject;
       switch (smellJson.name) {
         case SMELL_NAMES.SMELL_NO_API_GATEWAY:
-          smell = new NoApiGatewaySmellObject(group);
+          smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
           break;
-        case SMELL_NAMES.SMELL_CROSS_TEAM_DATA_MANAGEMENT:
-          smell = new SingleLayerTeamSmellObject(group)
+        case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
+          smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
           break;
         default:
           break;
@@ -194,40 +197,27 @@ export class AnalyserService {
       smellJson['nodes'].forEach((node_name) => {
         let node = this.gs.getGraph().findNodeByName(node_name);
         smell.addNodeBasedCause(node);
-        smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
-        smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
       });
-      smellJson['links'].forEach((causa_link) => {
-        var source = this.gs.getGraph().findNodeByName(causa_link['source']);
-        var target = this.gs.getGraph().findNodeByName(causa_link['target']);
+      
+      smellJson['links'].forEach((link_cause) => {
+        var source = this.gs.getGraph().findNodeByName(link_cause['source']);
+        var target = this.gs.getGraph().findNodeByName(link_cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         console.log("source/target", source.getName(), target.getName());
         smell.addLinkBasedCause(link);
       });
+
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring;
-        switch (refactoringName) {
-          case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
-            refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
-            refactoring = new MoveDatastoreIntoTeamRefactoring(new MoveDatastoreIntoTeamCommand(this.gs.getGraph(), smell))
-            break;
-          case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
-            refactoring = new MoveserviceIntoTeamRefactoring(new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_TEAM_DATA_MANAGER:
-            refactoring = new AddDataManagerIntoTeamRefactoring(new AddDataManagerIntoTeamCommand(this.gs.getGraph(), smell));
-            break;
-          default:
-            break;
-        }
-        if (refactoring)
+        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);;
+        if (refactoring) {
           smell.addRefactoring(refactoring);
+        }
       });
+      this.addIgnoreOptions(group, smell);
       agroup.addSmell(smell);
     });
+    console.log("agroup is", agroup);
     return agroup;
   }
 
@@ -261,51 +251,27 @@ export class AnalyserService {
         smell.addNodeBasedCause(this.gs.getGraph().findNodeByName(anode.name))
       });
 
-      let node = this.gs.getGraph().findRootByName(anode.name);
-      smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
-
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring;
+        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);
 
-        switch (refactoringName) {
-          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-            refactoring = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-            refactoring = new AddMessageBrokerRefactoring(new AddMessageBrokerCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-            refactoring = new AddServiceDiscoveryRefactoring(new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-            refactoring = new AddCircuitBreakerRefactoring(new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
-            refactoring = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-            refactoring = new MergeServicesRefactoring(new MergeServicesCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
-            refactoring = new SplitDatastoreRefactoring(new SplitDatastoreCommand(this.gs.getGraph(), smell));
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-            refactoring = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
-          default:
-            break;
-        }
-        if (refactoring)
+        if (refactoring) {
           smell.addRefactoring(refactoring);
+        }
       });
+      let node = this.gs.getGraph().findRootByName(anode.name);
+      this.addIgnoreOptions(node, smell);
       anode.addSmell(smell);
     });
     return anode;
   }
 
+  addIgnoreOptions(element, smell) {
+    smell.addRefactoring(new IgnoreOnceRefactoring(element, smell));
+    smell.addRefactoring(new IgnoreAlwaysRefactoring(element, smell));
+  }
+
   /** Log a AnalyserService message with the MessageService */
   private log(message: string) {
-    // this.add(`HeroService: ${message}`);
   }
 }

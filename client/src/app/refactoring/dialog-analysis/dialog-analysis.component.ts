@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { AnalyserService } from '../../refactoring/analyser/analyser.service';
+import { AnalyserService } from '../analyser.service';
 import { GraphService } from "../../graph/graph.service";
 import { MessageService } from 'primeng/api';
 import { Smell } from "../../graph/model/smell";

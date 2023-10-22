@@ -15,7 +15,8 @@ idna==2.8
 itypes==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
-microfreshener-core==1.4.0
+../../microFreshener-core
+#microfreshener-core @ git+https://github.com/Agomik/microFreshener-core.git@master
 nested-lookup==0.2.19
 openapi-codec==1.3.2
 pbr==5.4.2

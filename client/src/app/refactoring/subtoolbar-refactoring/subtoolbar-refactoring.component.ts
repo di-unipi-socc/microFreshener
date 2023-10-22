@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { AnalyserService } from '../analyser/analyser.service';
+import { AnalyserService } from '../analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
 import { MessageService } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';
@@ -54,14 +54,14 @@ export class SubtoolbarRefactoringComponent {
                 this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
                     let teamName = this.session.getName();
-                    this.options.team = this.gs.getGraph().findGroupByName(teamName);
+                    this.options.team = this.gs.getGraph().findTeamByName(teamName);
                 }
 
                 let analyseGraph = () => {
                     this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
                                 console.log("uploadGraph response", data);
-                                this.as.runRemoteAnalysis(this.options.smells, this.options.team)
+                                this.as.runRemoteAnalysis(this.options.smells)
                                     .subscribe(data => {
                                         this.as.showSmells();
                                         this.smellsNumber = this.as.getNumSmells()

@@ -1,5 +1,5 @@
-import { Refactoring } from "../refactor/refactoring";
 import * as joint from 'jointjs';
+import { Refactoring } from './refactoring-command';
 
 export class SmellObject {
 
@@ -162,10 +162,10 @@ export class WobblyServiceInteractionSmellObject extends SmellObject {
     }
 }
 
-export class SingleLayerTeamSmellObject extends GroupSmellObject {
+export class SingleLayerTeamsSmellObject extends GroupSmellObject {
 
     constructor(group:joint.shapes.microtosca.SquadGroup) {
-        super("SingleLayerTeamSmell", group);
+        super("SingleLayerTeamsSmell", group);
     }
 }
 
