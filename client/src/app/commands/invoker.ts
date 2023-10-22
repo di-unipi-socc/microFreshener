@@ -1,7 +1,6 @@
 import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
 import { AnalyserService } from '../refactoring/analyser.service';
-import { Refactoring } from '../refactoring/refactoring-command';
 import { Observable, Subject } from "rxjs";
 
 @Injectable({
@@ -22,11 +21,7 @@ export class GraphInvoker {
 
     executeCommand(command: Command) {
         command.execute();
-        // clear the smell after executing a refactoringcommand
-        if (command instanceof RefactoringCommand)
-            this.as.clearSmells()
         this.undoStack.push(command);
-
         this.invokeSubject.next();
     }
 

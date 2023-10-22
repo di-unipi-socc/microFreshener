@@ -23,7 +23,7 @@ export class ArchitectureEditingService {
   ) { }
 
   addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
-    let addNodeCommand: NodeCommand;
+    let addNodeCommand;
     let message: string;
     switch (nodeType) {
       case ToolSelectionService.SERVICE:

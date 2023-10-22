@@ -111,7 +111,10 @@ export class AnalyserService {
       .then(res => (<Smell[]>res.data).find(smell => smell.id == id))//smell.id === id))
   }
 
-  runRemoteAnalysis(smells: Smell[] = null, teamRestriction?: joint.shapes.microtosca.SquadGroup): Observable<Boolean> {
+  runRemoteAnalysis(smells: Smell[] = null): Observable<Boolean> {
+
+    this.clearSmells();
+
     let smells_ids: number[] = []; 
     // if(smells)
     smells_ids = smells.map(smell => smell.id);
