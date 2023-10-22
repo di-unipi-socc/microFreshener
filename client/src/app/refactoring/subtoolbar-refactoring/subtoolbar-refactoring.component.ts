@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { AnalyserService } from '../analyser/analyser.service';
+import { AnalyserService } from '../analyser.service';
 import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.component';
 import { MessageService } from 'primeng/api';
 import { GraphService } from '../../graph/graph.service';

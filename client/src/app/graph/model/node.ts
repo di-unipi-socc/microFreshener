@@ -1,4 +1,4 @@
-import { SmellObject, EndpointBasedServiceInteractionSmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from '../../refactoring/analyser/smell';
+/*import { SmellObject, EndpointBasedServiceInteractionSmellObject, WobblyServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from '../../refactoring/analyser/smell';
 import * as joint from 'jointjs';
 
 export class Node extends joint.dia.Element {
@@ -199,4 +199,4 @@ export class Compute extends Node {
     defaults(): Backbone.ObjectHash {
         return joint.util.deepSupplement({}, super.defaults())
     }
-}
+}*/

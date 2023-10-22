@@ -1,7 +1,7 @@
 import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
-import { AnalyserService } from '../refactoring/analyser/analyser.service';
-import { Refactoring } from '../refactoring/refactor/refactoring-command';
+import { AnalyserService } from '../refactoring/analyser.service';
+import { Refactoring } from '../refactoring/refactoring-command';
 import { Observable, Subject } from "rxjs";
 
 @Injectable({

@@ -5,7 +5,7 @@ import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph/graph.service";
-import { SmellObject } from '../refactoring/analyser/smell';
+import { SmellObject } from '../refactoring/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';

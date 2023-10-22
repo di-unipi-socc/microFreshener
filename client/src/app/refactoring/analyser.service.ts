@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
 
 import { ANode } from "./node";
 import { AGroup } from "./group";
 
-import { GraphService } from '../../graph/graph.service';
-import { Principle } from '../../graph/model/principles';
-import { Smell } from '../../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
+import { GraphService } from '../graph/graph.service';
 
-import { AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddCircuitBreakerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, MergeServicesRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveServiceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring, Refactoring as Refactoring } from "../refactor/refactoring-command";
-import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
-import { CommunicationPattern } from "../../graph/model/communicationpattern";
+import { Principle } from '../graph/model/principles';
+import { Smell } from '../graph/model/smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
 import { SMELL_NAMES } from "./costants";
-import { REFACTORING_NAMES } from "./costants";
+
+import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, Refactoring } from "./refactoring-command";
+import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
+import { CommunicationPattern } from "../graph/model/communicationpattern";
+import { RefactoringFactoryService } from './refactoring-factory.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -34,7 +35,7 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService, private refactoringFactory: RefactoringFactory) { }
+  constructor(private http: HttpClient, private gs: GraphService, private refactoringFactory: RefactoringFactoryService) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -205,23 +206,7 @@ export class AnalyserService {
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring;
-        switch (refactoringName) {
-          case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
-            refactoring = new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
-            refactoring = new MoveDatastoreIntoTeamRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
-            refactoring = new MoveServiceIntoTeamRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_TEAM_DATA_MANAGER:
-            refactoring = new AddDataManagerIntoTeamRefactoring(this.gs.getGraph(), smell);
-            break;
-          default:
-            break;
-        }
+        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);;
         if (refactoring) {
           smell.addRefactoring(refactoring);
         }
@@ -265,35 +250,8 @@ export class AnalyserService {
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring;
+        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);
 
-        switch (refactoringName) {
-          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-            refactoring = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-            refactoring = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-            refactoring = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-            refactoring = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
-            refactoring = new UseTimeoutRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-            refactoring = new MergeServicesRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
-            refactoring = new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
-            break;
-          case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-            refactoring = new AddDataManagerRefactoring(this.gs.getGraph(), smell);
-          default:
-            break;
-        }
         if (refactoring) {
           smell.addRefactoring(refactoring);
         }

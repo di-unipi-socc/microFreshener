@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject } from '../../refactoring/analyser/smell';
+import { SmellObject } from '../../refactoring/smell';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
@@ -17,15 +17,11 @@ declare module 'jointjs' {
                 getSmell(name: string): SmellObject;
                 getSmells(): SmellObject[];
                 hasSmells(): boolean;
-                hideSmell(smell: SmellObject): void;
-                showSmell(smell: SmellObject): void;
+                removeSmell(smell: SmellObject): void;
                 resetSmells(): void
-                showIcons(): void;
-                hideIcons(): void;
-                ignoreOnce(smell: SmellObject): void;
-                addIgnoreAlwaysSmell(smell: SmellObject): void;
-                getIgnoreAlwaysSmells(): SmellObject[];
+                ignoreAlways(smell: SmellObject): void;
                 undoIgnoreAlways(smell: SmellObject): void;
+                getIgnoreAlwaysSmells(): SmellObject[];
             }
             class Node extends Root {
 
@@ -47,16 +43,12 @@ declare module 'jointjs' {
                 removeMember(node:joint.shapes.microtosca.Node): void
                 getMembers(): joint.shapes.microtosca.Root[]
                 getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
-                setMinimize():boolean;
-                setMaximize():boolean;
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
                 getExternalUserName(): string;
             }
             class SquadGroup extends Group {
-                setMinimize():boolean;
-                setMaximize():boolean;
                 show(): void;
                 hide(): void;
             }
@@ -220,7 +212,7 @@ class MicrotoscaElementConfiguration {
             hasSmells: function ():  boolean {
                 return this.attributes.smells.length > 0;
             },
-            ignoreOnce: function (smell: SmellObject): SmellObject {
+            remove: function (smell: SmellObject): SmellObject {
                 let smells: SmellObject[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
                 return smells.splice(smellIndex, 1)[0];
