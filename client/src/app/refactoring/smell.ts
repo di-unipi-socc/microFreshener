@@ -1,5 +1,5 @@
-import { Refactoring } from "../refactor/refactoring";
 import * as joint from 'jointjs';
+import { Refactoring } from './refactoring-command';
 
 export class SmellObject {
 

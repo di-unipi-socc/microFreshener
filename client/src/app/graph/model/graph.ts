@@ -374,7 +374,7 @@ export class Graph extends joint.dia.Graph {
         //team.set("hidden", false);
     }
 
-    maximizeTeam(team: joint.shapes.microtosca.SquadGroup) {
+    /*maximizeTeam(team: joint.shapes.microtosca.SquadGroup) {
         var links = this.getInternalLinksOfTeam(team);
         links.forEach(link =>   link.attr("./visibility", "visible"))
         team.getMembers().forEach(node => {
@@ -407,7 +407,7 @@ export class Graph extends joint.dia.Graph {
         team.resize(10, 10);
         team.position(teamPos.x, teamPos.y);
         team.fitEmbeds({ padding: Graph.TEAM_PADDING })
-    }
+    }*/
 
     hideTeamBox(team: joint.shapes.microtosca.SquadGroup) {
         //team.attr("./visibility", "hidden");
@@ -432,7 +432,7 @@ export class Graph extends joint.dia.Graph {
         }
     }
 
-    minimizeAllTeams() {
+    /*minimizeAllTeams() {
         this.getTeamGroups().forEach(team => {
             this.minimizeTeam(team);
         })
@@ -443,7 +443,7 @@ export class Graph extends joint.dia.Graph {
         this.getTeamGroups().forEach(team => {
             this.maximizeTeam(team);
         })
-    }
+    }*/
 
     showGraph() {
         super.getCells().forEach(cell => cell.attr("./visibility","visible"));

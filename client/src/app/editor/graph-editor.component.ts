@@ -474,7 +474,7 @@ export class GraphEditorComponent {
             console.log("maximize");
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.graph.getGraph().maximizeTeam(team);
+            //this.graph.getGraph().maximizeTeam(team);
         })
     }
 
@@ -482,7 +482,7 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("team:minimize:pointerdown", (cellview, evt, x, y) => {
             evt.stopPropagation();
             var team = <joint.shapes.microtosca.SquadGroup>cellview.model;
-            this.graph.getGraph().minimizeTeam(team);
+            //this.graph.getGraph().minimizeTeam(team);
         })
     }
 

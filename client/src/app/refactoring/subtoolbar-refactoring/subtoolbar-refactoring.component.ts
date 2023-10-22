@@ -61,7 +61,7 @@ export class SubtoolbarRefactoringComponent {
                     this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
                                 console.log("uploadGraph response", data);
-                                this.as.runRemoteAnalysis(this.options.smells, this.options.team)
+                                this.as.runRemoteAnalysis(this.options.smells)
                                     .subscribe(data => {
                                         this.as.showSmells();
                                         this.smellsNumber = this.as.getNumSmells()

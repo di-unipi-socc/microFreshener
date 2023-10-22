@@ -24,7 +24,7 @@ export class AddTeamGroupCommand implements Command {
 
 }
 
-export class AddMemberToTeamGroupCommand extends NodeCommand {
+export class AddMemberToTeamGroupCommand extends NodeCommand<joint.shapes.microtosca.Node> {
 
     constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
         super();
@@ -43,7 +43,7 @@ export class AddMemberToTeamGroupCommand extends NodeCommand {
 
 }
 
-export class RemoveMemberFromTeamGroupCommand extends NodeCommand {
+export class RemoveMemberFromTeamGroupCommand extends NodeCommand<joint.shapes.microtosca.Node> {
 
     constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
         super();

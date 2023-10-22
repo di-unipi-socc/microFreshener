@@ -6,10 +6,11 @@ import { AddMessageRouterCommand } from "src/app/commands/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "src/app/commands/link-commands";
 
 export interface Refactoring extends Command {
+    getName(): string;
     getDescription(): string;
 }
 
-abstract class RefactoringCommand implements Command {
+abstract class RefactoringCommand implements Refactoring {
     
     refactoring: Command[];
 
@@ -24,10 +25,11 @@ abstract class RefactoringCommand implements Command {
         this.refactoring.forEach(command => command.unexecute());
     }
 
+    abstract getName(): string;
     abstract getDescription(): string;
 }
 
-export class IgnoreOnceRefactoring implements Refactoring {
+export class IgnoreOnceRefactoring implements Refactoring, Command {
 
     smell: SmellObject;
     element: joint.shapes.microtosca.Root;
@@ -43,6 +45,10 @@ export class IgnoreOnceRefactoring implements Refactoring {
 
     unexecute() {
         this.element.addSmell(this.smell);
+    }
+
+    getName() {
+        return "Ignore once";
     }
 
     getDescription() {
@@ -67,6 +73,14 @@ export class IgnoreAlwaysRefactoring implements Refactoring {
 
     unexecute() {
         this.element.undoIgnoreAlways(this.smell);
+    }
+
+    getName() {
+        return "Ignore always";
+    }
+
+    getCommand() {
+        return this;
     }
 
     getDescription() {
@@ -102,6 +116,10 @@ export class AddApiGatewayRefactoring extends RefactoringCommand {
             this.commands.push(new RemoveLinkCommand(this.graph, linkToRemove));
         });
         return this.commands;
+    }
+
+    getName() {
+        return "Add Api Gateway";
     }
 
     getDescription() {
@@ -154,6 +172,10 @@ export class AddMessageRouterRefactoring implements Refactoring {
         };
     }
 
+    getName() {
+        return "Add message router";
+    }
+
     getDescription() {
         return "Add message router between two services";
     }
@@ -199,6 +221,10 @@ export class AddMessageBrokerRefactoring implements Refactoring {
         };
     }
 
+    getName() {
+        return "Add message broker";
+    }
+
     getDescription() {
         return "Add message broker between two services";
     }
@@ -222,6 +248,10 @@ export class AddServiceDiscoveryRefactoring implements Refactoring {
         this.links.forEach(link => {
             link.setDynamicDiscovery(false);
         })
+    }
+
+    getName() {
+        return "Add service discovery";
     }
 
     getDescription() {
@@ -254,6 +284,10 @@ export class AddCircuitBreakerRefactoring implements Refactoring {
         })
     }
 
+    getName() {
+        return "Add circuit breaker";
+    }
+
     getDescription() {
         return "Add circuit breaker between two services";
     }
@@ -279,6 +313,10 @@ export class UseTimeoutRefactoring implements Refactoring {
         this.links.forEach(link => {
             link.setTimedout(false);
         });
+    }
+
+    getName() {
+        return "Use timeout";
     }
 
     getDescription() {
@@ -317,6 +355,10 @@ export class MergeServicesRefactoring implements Refactoring {
         this._restoreServicesAccesingDB();
         this._restoreLinks();
         this.mergedService.remove();
+    }
+
+    getName() {
+        return "Merge services";
     }
 
     getDescription() {
@@ -410,6 +452,10 @@ export class SplitDatastoreRefactoring implements Refactoring {
         this.splittedDatastore.forEach(db => db.remove())
     }
 
+    getName() {
+        return "Split datastore";
+    }
+
     getDescription() {
         return "Split database";
     }
@@ -443,6 +489,10 @@ export class AddDataManagerRefactoring implements Refactoring {
             link.target(this.sharedDB);
         });
         this.databaseManager.remove();
+    }
+
+    getName() {
+        return "Add data manager";
     }
 
     getDescription() {
@@ -487,6 +537,10 @@ export class MoveDatastoreIntoTeamRefactoring implements Refactoring {
         })
     }
 
+    getName() {
+        return "Move datastore into team";
+    }
+
     getDescription() {
         return "Move the database into the team";
     }
@@ -528,6 +582,10 @@ export class MoveServiceIntoTeamRefactoring implements Refactoring {
         })
     }
 
+    getName() {
+        return "Move service into team";
+    }
+
     getDescription() {
         return "Move the service into team";
     }
@@ -566,6 +624,10 @@ export class AddDataManagerIntoTeamRefactoring implements Refactoring {
     unexecute() {
         this.graph.getIngoingLinks(this.databaseManager).forEach(link => link.target(this.database));
         this.databaseManager.remove();
+    }
+
+    getName() {
+        return "Add data manager into team";
     }
 
     getDescription() {
