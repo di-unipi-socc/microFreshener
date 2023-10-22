@@ -2,39 +2,30 @@ import { Graph } from "../../graph/model/graph";
 import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamsSmellObject } from '../../refactoring/analyser/smell';
 import { Command } from "../../commands/icommand";
 import * as joint from 'jointjs';
+import { AddMessageRouterCommand } from "src/app/commands/node-commands";
+import { AddLinkCommand, RemoveLinkCommand } from "src/app/commands/link-commands";
 
-export abstract class RefactoringCommand implements Command {
-    abstract execute();
-    abstract unexecute();
-    abstract getDescription(): string;
-
-    protected team: joint.shapes.microtosca.SquadGroup;
-    setTeam(team: joint.shapes.microtosca.SquadGroup) {
-        this.team = team;
-    }
-    addToTeamIfAny(node: joint.shapes.microtosca.Node) {
-        if(this.team)
-            this.team.addMember(node);
-    }
+export abstract class Refactoring implements Command {
+    
+    getDescription(): string;
 }
 
-export class IgnoreOnceCommand extends RefactoringCommand {
+export class IgnoreOnceRefactoring implements Refactoring {
 
     smell: SmellObject;
-    node: joint.shapes.microtosca.Root;
+    element: joint.shapes.microtosca.Root;
 
-    constructor(node: joint.shapes.microtosca.Root, smell: SmellObject) {
-        super();
+    constructor(element: joint.shapes.microtosca.Root, smell: SmellObject) {
         this.smell = smell;
-        this.node = node;
+        this.element = element;
     }
 
     execute() {
-        this.node.ignoreOnce(this.smell);
+        this.element.ignoreOnce(this.smell);
     }
 
     unexecute() {
-        this.node.showSmell(this.smell);
+        this.element.showSmell(this.smell);
     }
 
     getDescription() {
@@ -43,23 +34,22 @@ export class IgnoreOnceCommand extends RefactoringCommand {
 
 }
 
-export class IgnoreAlwaysCommand extends RefactoringCommand {
+export class IgnoreAlwaysRefactoring implements Refactoring {
 
     smell: SmellObject;
-    node: joint.shapes.microtosca.Root;
+    element: joint.shapes.microtosca.Root;
 
-    constructor(node: joint.shapes.microtosca.Root, smell: SmellObject) {
-        super();
+    constructor(element: joint.shapes.microtosca.Root, smell: SmellObject) {
         this.smell = smell;
-        this.node = node;
+        this.element = element;
     }
 
     execute() {
-        this.node.addIgnoreAlwaysSmell(this.smell);
+        this.element.addIgnoreAlwaysSmell(this.smell);
     }
 
     unexecute() {
-        this.node.showSmell(this.smell);
+        this.element.showSmell(this.smell);
     }
 
     getDescription() {
@@ -68,28 +58,30 @@ export class IgnoreAlwaysCommand extends RefactoringCommand {
 
 }
 
-export class AddApiGatewayCommand extends RefactoringCommand {
+export class AddApiGatewayRefactoring implements Refactoring {
 
     smell: GroupSmellObject;
     team: joint.shapes.microtosca.SquadGroup;
 
-    apiGateways: joint.shapes.microtosca.CommunicationPattern[];
+    commands: Command[];
 
     constructor(private graph: Graph, smell: NoApiGatewaySmellObject) {
-        super();
         this.smell = smell;
-        this.apiGateways = []
+        this.commands = [];
     }
 
     execute() {
-        let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup()
+        let edgeGroup = <joint.shapes.microtosca.EdgeGroup>this.smell.getGroup();
         this.smell.getNodeBasedCauses().forEach(node => {
-            let gw = this.graph.addMessageRouter("API Gateway " + node.getName());
-            super.addToTeamIfAny(gw);
-            this.graph.addRunTimeInteraction(gw, node);
-            this.graph.addRunTimeInteraction(edgeGroup, gw);
-            this.apiGateways.push(gw);
-            this.graph.getLinkFromSourceToTarget(edgeGroup, node).remove();
+            let gatewayName = "API Gateway " + node.getName();
+            let addGatewayCommand = new AddMessageRouterCommand(this.graph, gatewayName);
+            addGatewayCommand.execute();
+            let addEdgeGatewayLinkCommand = new AddLinkCommand(this.graph, edgeGroup.getName(), gatewayName);
+            addEdgeGatewayLinkCommand.execute();
+            let addGatewayNodeLink = new AddLinkCommand(this.graph, gatewayName, node.getName());
+            addGatewayNodeLink.execute();
+            let linkToRemove = this.graph.getLinkFromSourceToTarget(edgeGroup, node);
+            new RemoveLinkCommand(this.graph, linkToRemove);
         });
     }
 
@@ -113,7 +105,7 @@ export class AddApiGatewayCommand extends RefactoringCommand {
     }
 
 }
-export class AddMessageRouterCommand extends RefactoringCommand {
+export class AddMessageRouterRefactoring implements Refactoring {
 
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
@@ -123,7 +115,6 @@ export class AddMessageRouterCommand extends RefactoringCommand {
     addedSourceTargetRouters: [string, string, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
         this.addedSourceTargetRouters = [];
@@ -162,7 +153,7 @@ export class AddMessageRouterCommand extends RefactoringCommand {
 
 }
 
-export class AddMessageBrokerCommand extends RefactoringCommand {
+export class AddMessageBrokerRefactoring implements Refactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
     team: joint.shapes.microtosca.SquadGroup;
@@ -170,7 +161,6 @@ export class AddMessageBrokerCommand extends RefactoringCommand {
     addedSourceTargetbrokers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         // For wobbly service interaction, adding message broker is disable whe the target node is a communication pattern
         this.links = smell.getLinkBasedCauses().filter((link) => !(link.getTargetElement() instanceof joint.shapes.microtosca.CommunicationPattern))
 
@@ -209,11 +199,10 @@ export class AddMessageBrokerCommand extends RefactoringCommand {
 
 }
 
-export class AddServiceDiscoveryCommand extends RefactoringCommand {
+export class AddServiceDiscoveryRefactoring implements Refactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.links = smell.getLinkBasedCauses();
     }
 
@@ -235,14 +224,13 @@ export class AddServiceDiscoveryCommand extends RefactoringCommand {
 
 }
 
-export class AddCircuitBreakerCommand extends RefactoringCommand {
+export class AddCircuitBreakerRefactoring implements Refactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
 
     addedSourceTargetCircutBeakers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
         this.addedSourceTargetCircutBeakers = [];
@@ -266,12 +254,11 @@ export class AddCircuitBreakerCommand extends RefactoringCommand {
 
 }
 
-export class UseTimeoutCommand extends RefactoringCommand {
+export class UseTimeoutRefactoring implements Refactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
     }
@@ -293,7 +280,7 @@ export class UseTimeoutCommand extends RefactoringCommand {
     }
 }
 
-export class MergeServicesCommand extends RefactoringCommand {
+export class MergeServicesRefactoring implements Refactoring {
 
     smell: SmellObject;
     graph: Graph;
@@ -305,7 +292,6 @@ export class MergeServicesCommand extends RefactoringCommand {
 
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.smell = smell;
         this.graph = graph;
         this.sharedDatastore = <joint.shapes.microtosca.Datastore>smell.getNodeBasedCauses()[0];
@@ -382,7 +368,7 @@ export class MergeServicesCommand extends RefactoringCommand {
     }
 }
 
-export class SplitDatastoreCommand extends RefactoringCommand {
+export class SplitDatastoreRefactoring implements Refactoring {
 
     graph: Graph;
     smell: SmellObject;
@@ -392,7 +378,6 @@ export class SplitDatastoreCommand extends RefactoringCommand {
 
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.smell = smell;
         this.graph = graph;
         this.sharedDatastore = <joint.shapes.microtosca.Datastore>smell.getNodeBasedCauses()[0];
@@ -426,7 +411,7 @@ export class SplitDatastoreCommand extends RefactoringCommand {
         return "Split database";
     }
 }
-export class AddDataManagerCommand extends RefactoringCommand {
+export class AddDataManagerRefactoring implements Refactoring {
 
     graph: Graph;
     smell: SmellObject;
@@ -435,7 +420,6 @@ export class AddDataManagerCommand extends RefactoringCommand {
     databaseManager: joint.shapes.microtosca.Service;
 
     constructor(graph: Graph, smell: SmellObject) {
-        super();
         this.smell = smell;
         this.graph = graph;
         this.sharedDB = <joint.shapes.microtosca.Datastore>this.smell.getNodeBasedCauses()[0];
@@ -465,7 +449,7 @@ export class AddDataManagerCommand extends RefactoringCommand {
 
 }
 
-export class MoveDatastoreIntoTeamCommand extends RefactoringCommand {
+export class MoveDatastoreIntoTeamRefactoring implements Refactoring {
 
     smell: SingleLayerTeamsSmellObject;
     graph: Graph;
@@ -474,7 +458,6 @@ export class MoveDatastoreIntoTeamCommand extends RefactoringCommand {
     squadOfDatastore: joint.shapes.microtosca.SquadGroup;
 
     constructor(graph: Graph, smell: SingleLayerTeamsSmellObject) {
-        super();
         this.graph = graph;
         this.smell = smell;
         this.team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
@@ -507,13 +490,12 @@ export class MoveDatastoreIntoTeamCommand extends RefactoringCommand {
     }
 }
 
-export class MoveServiceIntoTeamCommand extends RefactoringCommand {
+export class MoveServiceIntoTeamRefactoring implements Refactoring {
     smell: SingleLayerTeamsSmellObject;
     graph: Graph;
     team: joint.shapes.microtosca.SquadGroup
 
     constructor(graph: Graph, smell: SingleLayerTeamsSmellObject) {
-        super();
         this.graph = graph;
         this.smell = smell;
         this.team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
@@ -549,7 +531,7 @@ export class MoveServiceIntoTeamCommand extends RefactoringCommand {
     }
 }
 
-export class AddDataManagerIntoTeamCommand extends RefactoringCommand {
+export class AddDataManagerIntoTeamRefactoring implements Refactoring {
 
     graph: Graph;
     smell: SmellObject;
@@ -560,7 +542,6 @@ export class AddDataManagerIntoTeamCommand extends RefactoringCommand {
 
 
     constructor(graph: Graph, smell: GroupSmellObject) {
-        super();
         this.smell = smell;
         this.graph = graph;
     }

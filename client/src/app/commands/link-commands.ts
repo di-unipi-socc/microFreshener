@@ -14,7 +14,7 @@ export class AddLinkCommand implements Command {
     cb: boolean = false; // circuit breaker
     dd: boolean = false;  // dyamic discovery
 
-    constructor(graph: Graph, source_name: string, target_name: string, timeout, circuit_breaker, dynamic_discovery) {
+    constructor(graph: Graph, source_name: string, target_name: string, timeout?, circuit_breaker?, dynamic_discovery?) {
         this.graph = graph;
         this.source_name = source_name;
         this.target_name = target_name;

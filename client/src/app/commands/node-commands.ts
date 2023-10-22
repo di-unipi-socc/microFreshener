@@ -4,30 +4,30 @@ import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand {
+export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implements Command {
     
     abstract execute();
     abstract unexecute();
 
-    protected node: joint.shapes.microtosca.Node;
+    protected node: T;
 
-    setNode(node: joint.shapes.microtosca.Node) {
+    setNode(node: T) {
         this.node = node;
     }
 
-    getNode() {
+    getNode(): T {
         return this.node;
     }
 
-    constructor(node?: joint.shapes.microtosca.Node) {
+    constructor(node?: T) {
         this.node = node;
     }
 
-    then(next: NodeCommand): NodeCommand {
+    then(next: NodeCommand<T>): NodeCommand<T> {
         let action = () => {this.execute()};
         let revert = () => {this.unexecute()};
         let getNode = () => { return this.getNode() };
-        return new class extends NodeCommand {
+        return new class extends NodeCommand<T> {
             execute() {
                 action();
                 let node = getNode();
@@ -43,7 +43,7 @@ export abstract class NodeCommand {
 }
 
 
-abstract class NodeGeneratorCommand extends NodeCommand {
+abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends NodeCommand<T> {
 
     name: string;
     position?: g.Point;
@@ -54,7 +54,7 @@ abstract class NodeGeneratorCommand extends NodeCommand {
         this.position = position;
     }
 
-    protected abstract generateNode(): joint.shapes.microtosca.Node;
+    protected abstract generateNode(): T;
 
     execute() {
         this.node = this.generateNode();
@@ -65,7 +65,7 @@ abstract class NodeGeneratorCommand extends NodeCommand {
     }
 }
 
-export class AddServiceCommand extends NodeGeneratorCommand implements Command {
+export class AddServiceCommand extends NodeGeneratorCommand<joint.shapes.microtosca.Service> {
 
     constructor(
         private graph: Graph,
@@ -80,7 +80,7 @@ export class AddServiceCommand extends NodeGeneratorCommand implements Command {
     }
 }
 
-export class AddDatastoreCommand extends NodeGeneratorCommand implements Command {
+export class AddDatastoreCommand extends NodeGeneratorCommand<joint.shapes.microtosca.Datastore> {
 
     constructor(
         private graph: Graph,
@@ -95,7 +95,7 @@ export class AddDatastoreCommand extends NodeGeneratorCommand implements Command
     }
 }
 
-export class AddMessageBrokerCommand extends NodeGeneratorCommand implements Command {
+export class AddMessageBrokerCommand extends NodeGeneratorCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     constructor(
         private graph: Graph,
@@ -110,7 +110,7 @@ export class AddMessageBrokerCommand extends NodeGeneratorCommand implements Com
     }
 }
 
-export class AddMessageRouterCommand extends NodeGeneratorCommand implements Command {
+export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     constructor(
         private graph: Graph,

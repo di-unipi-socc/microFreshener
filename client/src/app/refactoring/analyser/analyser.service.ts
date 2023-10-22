@@ -12,8 +12,7 @@ import { Principle } from '../../graph/model/principles';
 import { Smell } from '../../graph/model/smell';
 import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
 
-import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
-import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
+import { AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddCircuitBreakerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, MergeServicesRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveServiceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring, Refactoring as Refactoring } from "../refactor/refactoring-command";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
 import { CommunicationPattern } from "../../graph/model/communicationpattern";
 import { SMELL_NAMES } from "./costants";
@@ -35,7 +34,7 @@ export class AnalyserService {
   analysednodes: ANode[] = [];   // list of analysed node;
   analysedgroups: AGroup[] = []; // list of analysed groups;
 
-  constructor(private http: HttpClient, private gs: GraphService) { }
+  constructor(private http: HttpClient, private gs: GraphService, private refactoringFactory: RefactoringFactory) { }
 
   getNumSmells(){
     var num_smells = 0;
@@ -209,16 +208,16 @@ export class AnalyserService {
         let refactoring: Refactoring;
         switch (refactoringName) {
           case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
-            refactoring = new AddApiGatewayRefactoring(new AddApiGatewayCommand(this.gs.getGraph(), smell));
+            refactoring = new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
-            refactoring = new MoveDatastoreIntoTeamRefactoring(new MoveDatastoreIntoTeamCommand(this.gs.getGraph(), smell))
+            refactoring = new MoveDatastoreIntoTeamRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
-            refactoring = new MoveserviceIntoTeamRefactoring(new MoveServiceIntoTeamCommand(this.gs.getGraph(), smell))
+            refactoring = new MoveServiceIntoTeamRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_TEAM_DATA_MANAGER:
-            refactoring = new AddDataManagerIntoTeamRefactoring(new AddDataManagerIntoTeamCommand(this.gs.getGraph(), smell));
+            refactoring = new AddDataManagerIntoTeamRefactoring(this.gs.getGraph(), smell);
             break;
           default:
             break;
@@ -270,28 +269,28 @@ export class AnalyserService {
 
         switch (refactoringName) {
           case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-            refactoring = new AddMessageRouterRefactoring(new AddMessageRouterCommand(this.gs.getGraph(), smell));
+            refactoring = new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-            refactoring = new AddMessageBrokerRefactoring(new AddMessageBrokerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-            refactoring = new AddServiceDiscoveryRefactoring(new AddServiceDiscoveryCommand(this.gs.getGraph(), smell));
+            refactoring = new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-            refactoring = new AddCircuitBreakerRefactoring(new AddCircuitBreakerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
-            refactoring = new UseTimeoutRefactoring(new UseTimeoutCommand(this.gs.getGraph(), smell));
+            refactoring = new UseTimeoutRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-            refactoring = new MergeServicesRefactoring(new MergeServicesCommand(this.gs.getGraph(), smell));
+            refactoring = new MergeServicesRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
-            refactoring = new SplitDatastoreRefactoring(new SplitDatastoreCommand(this.gs.getGraph(), smell));
+            refactoring = new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
             break;
           case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-            refactoring = new AddDataManagerRefactoring(new AddDataManagerCommand(this.gs.getGraph(), smell));
+            refactoring = new AddDataManagerRefactoring(this.gs.getGraph(), smell);
           default:
             break;
         }
@@ -307,8 +306,8 @@ export class AnalyserService {
   }
 
   addIgnoreOptions(element, smell) {
-    smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(element, smell)));
-    smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(element, smell)));
+    smell.addRefactoring(new IgnoreOnceRefactoring(element, smell));
+    smell.addRefactoring(new IgnoreAlwaysRefactoring(element, smell));
   }
 
   /** Log a AnalyserService message with the MessageService */
