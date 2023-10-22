@@ -10,7 +10,7 @@ import { AGroup } from "./group";
 import { GraphService } from '../../graph/graph.service';
 import { Principle } from '../../graph/model/principles';
 import { Smell } from '../../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject as SingleLayerTeamsSmellObject } from './smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
 
 import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "../refactor/refactoring";
 import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "../refactor/refactoring-command";
@@ -194,8 +194,6 @@ export class AnalyserService {
       smellJson['nodes'].forEach((node_name) => {
         let node = this.gs.getGraph().findNodeByName(node_name);
         smell.addNodeBasedCause(node);
-        smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
-        smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
       });
       
       smellJson['links'].forEach((link_cause) => {
@@ -205,6 +203,7 @@ export class AnalyserService {
         console.log("source/target", source.getName(), target.getName());
         smell.addLinkBasedCause(link);
       });
+
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         let refactoring: Refactoring;
@@ -224,9 +223,11 @@ export class AnalyserService {
           default:
             break;
         }
-        if (refactoring)
+        if (refactoring) {
           smell.addRefactoring(refactoring);
+        }
       });
+      this.addIgnoreOptions(group, smell);
       agroup.addSmell(smell);
     });
     console.log("agroup is", agroup);
@@ -263,10 +264,6 @@ export class AnalyserService {
         smell.addNodeBasedCause(this.gs.getGraph().findNodeByName(anode.name))
       });
 
-      let node = this.gs.getGraph().findRootByName(anode.name);
-      smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(node, smell)));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(node, smell)));
-
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         let refactoring: Refactoring;
@@ -298,16 +295,23 @@ export class AnalyserService {
           default:
             break;
         }
-        if (refactoring)
+        if (refactoring) {
           smell.addRefactoring(refactoring);
+        }
       });
+      let node = this.gs.getGraph().findRootByName(anode.name);
+      this.addIgnoreOptions(node, smell);
       anode.addSmell(smell);
     });
     return anode;
   }
 
+  addIgnoreOptions(element, smell) {
+    smell.addRefactoring(new IgnoreOnceRefactoring(new IgnoreOnceCommand(element, smell)));
+    smell.addRefactoring(new IgnoreAlwaysRefactoring(new IgnoreAlwaysCommand(element, smell)));
+  }
+
   /** Log a AnalyserService message with the MessageService */
   private log(message: string) {
-    // this.add(`HeroService: ${message}`);
   }
 }

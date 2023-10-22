@@ -18,10 +18,6 @@ export abstract class RefactoringCommand implements Command {
     }
 }
 
-export interface TeamAwareCommand extends Command {
-    setTeam(team: joint.shapes.microtosca.SquadGroup): TeamAwareCommand;
-}
-
 export class IgnoreOnceCommand extends RefactoringCommand {
 
     smell: SmellObject;
