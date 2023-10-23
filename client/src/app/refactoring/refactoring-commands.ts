@@ -1,6 +1,6 @@
 import { Graph } from "../graph/model/graph";
 import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamsSmellObject } from './smell';
-import { Command } from "../commands/icommand";
+import { Command, Sequentiable } from "../commands/icommand";
 import * as joint from 'jointjs';
 import { AddDatastoreCommand, AddMessageRouterCommand } from "../architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "../architecture/link-commands";
@@ -604,13 +604,13 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 
     getRefactoringImplementation(): Command[] {
         let cmds: Command[] = [];
-        this.smell.getLinkBasedCauses().forEach(link => {
+        cmds = this.smell.getLinkBasedCauses().map(link => {
             let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
-            cmds.push(new RemoveLinkCommand(this.graph, link));
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
             let newDatabaseName = `${service.getName()}'s ${databaseName}`;
-            cmds.push(new AddDatastoreCommand(this.graph, newDatabaseName).then(new AddMemberToTeamGroupCommand(this.team)));
-            cmds.push(new AddLinkCommand(this.graph, service.getName(), newDatabaseName));
+            return Sequentiable.of(new RemoveLinkCommand(this.graph, link))
+                .then(new AddDatastoreCommand(this.graph, newDatabaseName).then(new AddMemberToTeamGroupCommand(this.team)))
+                .then(new AddLinkCommand(this.graph, service.getName(), newDatabaseName));
         });
         
         return cmds;
@@ -618,11 +618,11 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 
 
     getName() {
-        return "Add data manager into team";
+        return "Split datastores";
     }
 
     getDescription() {
-        return "Add Data manger accessgin the shared  database";
+        return "Split datastores basing on services.";
     }
 
 }

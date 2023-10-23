@@ -1,15 +1,14 @@
-import { SequentiableCommand } from '../commands/icommand';
+import { Command } from '../commands/icommand';
 import { Graph } from "../graph/model/graph";
 import { NodeCommand } from '../architecture/node-commands';
 
 
-export class AddTeamGroupCommand extends SequentiableCommand {
+export class AddTeamGroupCommand implements Command {
 
     graph: Graph;
     team_name: string;
 
     constructor(graph: Graph, team_name: string) {
-        super();
         this.graph = graph;
         this.team_name = team_name;
     }
@@ -63,16 +62,14 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand<joint.shapes.m
     
 }
 
-export class RemoveTeamGroupCommand extends SequentiableCommand {
+export class RemoveTeamGroupCommand implements Command {
 
     removeMemberCommands: RemoveMemberFromTeamGroupCommand[];
 
     constructor(
         private graph: Graph,
         private team: joint.shapes.microtosca.SquadGroup
-    ) {
-        super();
-    }
+    ) {}
 
     execute() {
         this.removeMemberCommands = [];

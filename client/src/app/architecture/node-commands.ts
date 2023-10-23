@@ -1,10 +1,10 @@
-import { SequentiableCommand } from '../commands/icommand';
+import { Command, Sequentiable } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extends SequentiableCommand {
+export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implements Command {
     
     abstract execute();
     abstract unexecute();
@@ -20,28 +20,32 @@ export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extend
     }
 
     constructor(node?: T) {
-        super();
         this.node = node;
     }
 
-    then(next: NodeCommand<joint.shapes.microtosca.Node>): NodeCommand<joint.shapes.microtosca.Node> {
+    then<U extends Command>(next: U): Sequentiable<U> {
         let action = () => {this.execute()};
         let revert = () => {this.unexecute()};
         let getNode = () => { return this.getNode() };
-        return new class extends NodeCommand<joint.shapes.microtosca.Node> {
-            execute() {
-                action();
-                let node = getNode();
-                if(next.setNode)
-                    next.setNode(node);
-                next.execute();
-            }
-            unexecute() {
-                next.unexecute();
-                revert();
-            }
-        };
-    }
+
+        let newCommand = Sequentiable.of(next);
+
+        newCommand.execute = () => {
+            action();
+            let node = getNode();
+            console.debug("next", next);
+            console.debug("next instanceof NodeCommand?", next instanceof NodeCommand);
+            if(next instanceof NodeCommand)
+                next.setNode(node);
+            next.execute();
+        }
+        newCommand.unexecute = () => {
+            next.unexecute();
+            revert();
+        }
+        return newCommand;
+    };
+
 }
 
 
@@ -127,7 +131,7 @@ export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.m
     }
 }
 
-export class RemoveNodeCommand extends SequentiableCommand {
+export class RemoveNodeCommand extends NodeCommand<joint.shapes.microtosca.Node> {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
@@ -170,7 +174,7 @@ export class RemoveNodeCommand extends SequentiableCommand {
     }
 }
 
-export class RemoveServiceCommand extends SequentiableCommand {
+export class RemoveServiceCommand extends NodeCommand<joint.shapes.microtosca.Service> {
 
     graph: Graph;
     node_name: string;
@@ -224,7 +228,7 @@ export class RemoveServiceCommand extends SequentiableCommand {
     }
 }
 
-export class RemoveDatastoreCommand extends SequentiableCommand {
+export class RemoveDatastoreCommand extends NodeCommand<joint.shapes.microtosca.Datastore> {
 
     graph: Graph;
     node_name: string;
@@ -267,7 +271,7 @@ export class RemoveDatastoreCommand extends SequentiableCommand {
     }
 }
 
-export class RemoveCommunicationPatternCommand extends SequentiableCommand {
+export class RemoveCommunicationPatternCommand extends NodeCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     graph: Graph;
     node_name: string;
