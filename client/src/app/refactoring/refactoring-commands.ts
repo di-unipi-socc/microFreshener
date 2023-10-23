@@ -2,7 +2,7 @@ import { Graph } from "../graph/model/graph";
 import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamsSmellObject } from './smell';
 import { Command } from "../commands/icommand";
 import * as joint from 'jointjs';
-import { AddMessageRouterCommand } from "../architecture/node-commands";
+import { AddDatastoreCommand, AddMessageRouterCommand } from "../architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "../architecture/link-commands";
 import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "../teams/team-commands";
 
@@ -23,7 +23,7 @@ abstract class RefactoringCommand implements Refactoring {
     }
 
     unexecute() {
-        this.refactoring.forEach(command => command.unexecute());
+        this.refactoring.slice().reverse().forEach(command => command.unexecute());
     }
 
     abstract getName(): string;
@@ -589,40 +589,33 @@ export class ChangeServiceOwnershipRefactoring extends RefactoringCommand {
     }
 }
 
-export class AddTeamDataManagerRefactoring implements Refactoring {
+export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 
-    graph: Graph;
-    smell: GroupSmellObject;
+    team: joint.shapes.microtosca.SquadGroup;
 
-    squadOfDatastore: joint.shapes.microtosca.SquadGroup;
-    databaseManager: joint.shapes.microtosca.Service;
-    database: joint.shapes.microtosca.Datastore;
+    constructor(
+        private graph: Graph,
+        private smell: GroupSmellObject,
 
-
-    constructor(graph: Graph, smell: GroupSmellObject) {
-        this.smell = smell;
-        this.graph = graph;
+    ) {
+        super();
+        this.team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
     }
 
-    execute() {
-        this.databaseManager = this.graph.addService("DB manager");
-
+    getRefactoringImplementation(): Command[] {
+        let cmds: Command[] = [];
         this.smell.getLinkBasedCauses().forEach(link => {
-            this.database = <joint.shapes.microtosca.Datastore>link.getTargetElement();
-            this.squadOfDatastore = <joint.shapes.microtosca.SquadGroup>this.database.getParentCell();
-            link.target(this.databaseManager);
-            this.squadOfDatastore.embed(this.databaseManager);
-            this.squadOfDatastore.fitEmbeds();
-            this.graph.getIngoingLinks(this.database).forEach(link => link.target(this.databaseManager));
-            this.graph.addRunTimeInteraction(this.databaseManager, this.database);
+            let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
+            cmds.push(new RemoveLinkCommand(this.graph, link));
+            let service = <joint.shapes.microtosca.Service> link.getSourceElement();
+            let newDatabaseName = `${service.getName()}'s ${databaseName}`;
+            cmds.push(new AddDatastoreCommand(this.graph, newDatabaseName).then(new AddMemberToTeamGroupCommand(this.team)));
+            cmds.push(new AddLinkCommand(this.graph, service.getName(), newDatabaseName));
         });
-        // TODO change the target node to database manager to all incoming link to database.
+        
+        return cmds;
     }
 
-    unexecute() {
-        this.graph.getIngoingLinks(this.databaseManager).forEach(link => link.target(this.database));
-        this.databaseManager.remove();
-    }
 
     getName() {
         return "Add data manager into team";

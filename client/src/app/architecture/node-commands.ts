@@ -1,10 +1,10 @@
-import { Command } from '../commands/icommand';
+import { SequentiableCommand } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implements Command {
+export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extends SequentiableCommand {
     
     abstract execute();
     abstract unexecute();
@@ -20,18 +20,20 @@ export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implem
     }
 
     constructor(node?: T) {
+        super();
         this.node = node;
     }
 
-    then(next: NodeCommand<T>): NodeCommand<T> {
+    then(next: NodeCommand<joint.shapes.microtosca.Node>): NodeCommand<joint.shapes.microtosca.Node> {
         let action = () => {this.execute()};
         let revert = () => {this.unexecute()};
         let getNode = () => { return this.getNode() };
-        return new class extends NodeCommand<T> {
+        return new class extends NodeCommand<joint.shapes.microtosca.Node> {
             execute() {
                 action();
                 let node = getNode();
-                next.setNode(node);
+                if(next.setNode)
+                    next.setNode(node);
                 next.execute();
             }
             unexecute() {
@@ -125,7 +127,7 @@ export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.m
     }
 }
 
-export class RemoveNodeCommand implements Command {
+export class RemoveNodeCommand extends SequentiableCommand {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
@@ -136,6 +138,7 @@ export class RemoveNodeCommand implements Command {
     outcomingNodes: joint.shapes.microtosca.Root[];
 
     constructor(graph: Graph, node: joint.shapes.microtosca.Root) {
+        super();
         this.graph = graph;
         this.node = node;
         // TODO get the team of the node in order to restore in into the team when redo
@@ -167,7 +170,7 @@ export class RemoveNodeCommand implements Command {
     }
 }
 
-export class RemoveServiceCommand implements Command {
+export class RemoveServiceCommand extends SequentiableCommand {
 
     graph: Graph;
     node_name: string;
@@ -178,6 +181,7 @@ export class RemoveServiceCommand implements Command {
     outcoming_links = new Map();
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       
@@ -220,7 +224,7 @@ export class RemoveServiceCommand implements Command {
     }
 }
 
-export class RemoveDatastoreCommand implements Command {
+export class RemoveDatastoreCommand extends SequentiableCommand {
 
     graph: Graph;
     node_name: string;
@@ -230,6 +234,7 @@ export class RemoveDatastoreCommand implements Command {
     incoming_links = new Map();
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       
@@ -262,7 +267,7 @@ export class RemoveDatastoreCommand implements Command {
     }
 }
 
-export class RemoveCommunicationPatternCommand implements Command {
+export class RemoveCommunicationPatternCommand extends SequentiableCommand {
 
     graph: Graph;
     node_name: string;
@@ -274,6 +279,7 @@ export class RemoveCommunicationPatternCommand implements Command {
 
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       
