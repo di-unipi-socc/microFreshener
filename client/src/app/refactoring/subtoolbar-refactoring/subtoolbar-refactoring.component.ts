@@ -58,6 +58,7 @@ export class SubtoolbarRefactoringComponent {
                 }
 
                 let analyseGraph = () => {
+                    console.debug("analysing...")
                     this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
                                 console.log("uploadGraph response", data);

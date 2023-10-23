@@ -14,7 +14,7 @@ export class GraphInvoker {
     private invokeSubject: Subject<void> = new Subject<void>();
     private observableInvocation: Observable<void> = this.invokeSubject.asObservable();
 
-    constructor(private as: AnalyserService) {
+    constructor() {
         this.undoStack = [];
         this.redoStack = [];
     }
@@ -43,7 +43,7 @@ export class GraphInvoker {
         let command = this.redoStack.pop()
         command.execute();
         this.undoStack.push(command);
-
+        
         this.invokeSubject.next();
     }
 

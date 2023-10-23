@@ -8,10 +8,12 @@ export class Sequentiable<T extends Command> implements Command {
     private constructor(private command: T) {}
 
     execute() {
+        console.debug("executing", this.command);
         this.command.execute();
     }
     
     unexecute() {
+        console.debug("unexecuting", this.command);
         this.command.unexecute();
     }
 

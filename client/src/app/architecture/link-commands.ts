@@ -45,6 +45,7 @@ export class RemoveLinkCommand implements Command {
     t: boolean;
     cb:boolean;
     sd:boolean;
+    removedLink: joint.shapes.microtosca.RunTimeLink;
 
     constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
         this.graph = graph;
@@ -59,12 +60,10 @@ export class RemoveLinkCommand implements Command {
     }
 
     execute() {
-        this.link.remove();
+        this.removedLink = this.link.remove();
     }
 
     unexecute() {
-        var source = this.graph.getNode(this.source_name);
-        var target = this.graph.getNode(this.target_name);
-        this.graph.addRunTimeInteraction(source, target, this.t, this.cb, this.sd);
+        this.removedLink.addTo(this.graph);
     }
 }

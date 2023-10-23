@@ -27,7 +27,7 @@ export class DialogAnalysisComponent implements OnInit {
   containerOrchestrators: Orchestrator[] = [];
   selectedOrchestrator: Orchestrator;
 
-  constructor(private gs: GraphService, private as: AnalyserService, private messageService: MessageService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) { //public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
+  constructor(private as: AnalyserService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
 
     this.containerOrchestrators = [
       { id: 1, name: 'Custom', img: "general.jpeg", resolvedSmells: [] },
