@@ -1,53 +1,12 @@
-import { Command, Sequentiable } from '../commands/icommand';
+import { Command, ElementCommand, Sequentiable } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implements Command {
-    
-    abstract execute();
-    abstract unexecute();
 
-    protected node: T;
 
-    setNode(node: T) {
-        this.node = node;
-    }
-
-    getNode(): T {
-        return this.node;
-    }
-
-    constructor(node?: T) {
-        this.node = node;
-    }
-
-    then<U extends Command>(next: U): Sequentiable<U> {
-        let action = () => {this.execute()};
-        let revert = () => {this.unexecute()};
-        let getNode = () => { return this.getNode() };
-
-        let newCommand = Sequentiable.of(next);
-
-        newCommand.execute = () => {
-            action();
-            let node = getNode();
-            console.debug("next", next);
-            console.debug("next instanceof NodeCommand?", next instanceof NodeCommand);
-            if(next instanceof NodeCommand)
-                next.setNode(node);
-            next.execute();
-        }
-        newCommand.unexecute = () => {
-            next.unexecute();
-            revert();
-        }
-        return newCommand;
-    };
-
-}
-
+export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {}
 
 abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends NodeCommand<T> {
 
@@ -63,11 +22,11 @@ abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> exte
     protected abstract generateNode(): T;
 
     execute() {
-        this.node = this.generateNode();
+        this.set(this.generateNode());
     }
 
     unexecute() {
-        this.node.remove();
+        this.get().remove();
     }
 }
 

@@ -607,7 +607,7 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
     }
 
     getDescription() {
-        return "Split datastores basing on services.";
+        return "Replace the interactions to external datastores with an internal datastore split.";
     }
 
 }
