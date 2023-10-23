@@ -14,10 +14,11 @@ export enum REFACTORING_NAMES {
     REFACTORING_ADD_CIRCUIT_BREAKER = 'Add-circuit-breaker',
     REFACTORING_USE_TIMEOUT = "Use-timeout",
     REFACTORING_MERGE_SERVICES = "Merge-service",
-    REFACTORING_SPLIT_DATABASE = "Split-database",
+    REFACTORING_SPLIT_DATASTORE = "Split-Datastore",
     REFACTORING_ADD_DATA_MANAGER = "Add-data-manager",
     REFACTORING_ADD_API_GATEWAY = "Add-api-gateway",
     REFACTORING_ADD_TEAM_DATA_MANAGER = "Add-data-team-data-manager",
-    REFACTORING_CHANGE_DATABASE_OWENRSHIP = "Change-database-ownership",
-    REFACTORING_CHANGE_SERVICE_OWENRSHIP = "Change-service-ownership"
+    REFACTORING_CHANGE_DATASTORE_OWENRSHIP = "Change-Datastore-ownership",
+    REFACTORING_CHANGE_SERVICE_OWENRSHIP = "Change-service-ownership",
+    REFACTORING_MERGE_TEAMS = "Merge-teams"
 }

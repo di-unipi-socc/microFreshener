@@ -1,4 +1,4 @@
-import { Command } from './icommand';
+import { Command } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { Graph } from "../graph/model/graph";
 

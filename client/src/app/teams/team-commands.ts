@@ -1,6 +1,6 @@
-import { Command } from './icommand';
+import { Command } from '../commands/icommand';
 import { Graph } from "../graph/model/graph";
-import { NodeCommand } from './node-commands';
+import { NodeCommand } from '../architecture/node-commands';
 
 
 export class AddTeamGroupCommand implements Command {
@@ -59,10 +59,7 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand<joint.shapes.m
         this.team.addMember(this.node);
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     }
-
-    setTeam(team: joint.shapes.microtosca.SquadGroup) {
-        this.team = team;
-    }
+    
 }
 
 export class RemoveTeamGroupCommand implements Command {

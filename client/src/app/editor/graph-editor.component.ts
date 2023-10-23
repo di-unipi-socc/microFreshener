@@ -320,7 +320,7 @@ export class GraphEditorComponent {
                 }
             }
             // node clicked
-            if (graph.isNode(element)) {
+            else {
                 console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
                 console.log("hasSmells?", element.hasSmells());
                 console.log("contextmenu", this.contextMenu);

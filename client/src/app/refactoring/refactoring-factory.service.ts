@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { GroupSmellObject, SmellObject } from './smell';
-import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerIntoTeamRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, MergeServicesRefactoring, MoveDatastoreIntoTeamRefactoring, MoveServiceIntoTeamRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring } from './refactoring-command';
 import { REFACTORING_NAMES } from './costants';
 import { GraphService } from '../graph/graph.service';
+import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, AddTeamDataManagerRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring } from './refactoring-commands';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +43,7 @@ export class RefactoringFactoryService {
       case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
         return new MergeServicesRefactoring(this.gs.getGraph(), smell);
       
-      case REFACTORING_NAMES.REFACTORING_SPLIT_DATABASE:
+      case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
         return new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
@@ -58,14 +58,14 @@ export class RefactoringFactoryService {
       case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
         return new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
 
-      case REFACTORING_NAMES.REFACTORING_CHANGE_DATABASE_OWENRSHIP:
-        return new MoveDatastoreIntoTeamRefactoring(this.gs.getGraph(), smell);
+      case REFACTORING_NAMES.REFACTORING_CHANGE_DATASTORE_OWENRSHIP:
+        return new ChangeDatastoreOwnershipRefactoring(this.gs.getGraph(), smell);
 
-        case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
-        return new MoveServiceIntoTeamRefactoring(this.gs.getGraph(), smell);
+      case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
+        return new ChangeServiceOwnershipRefactoring(this.gs.getGraph(), smell);
 
       case REFACTORING_NAMES.REFACTORING_ADD_TEAM_DATA_MANAGER:
-        return new AddDataManagerIntoTeamRefactoring(this.gs.getGraph(), smell);
+        return new AddTeamDataManagerRefactoring(this.gs.getGraph(), smell);
 
     }
   }

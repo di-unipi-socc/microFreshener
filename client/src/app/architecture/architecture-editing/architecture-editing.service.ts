@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../../commands/node-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../node-commands';
 import { MessageService } from 'primeng/api';
 import { GraphInvoker } from '../../commands/invoker';
 import { GraphService } from '../../graph/graph.service';
 
 import { g } from 'jointjs';
-import { AddLinkCommand, RemoveLinkCommand } from '../../commands/link-commands';
+import { AddLinkCommand, RemoveLinkCommand } from '../link-commands';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { AddMemberToTeamGroupCommand } from 'src/app/commands/team-commands';
+import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 
 @Injectable({
   providedIn: 'root'
