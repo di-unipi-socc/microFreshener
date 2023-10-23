@@ -5,7 +5,11 @@
     "types": [],
     "paths": {      
       "yfiles/*": ["../../../../lib/es6-modules/yfiles/*"]
-    }
+    },
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
   },
   "include": [
     "**/*.ts",
