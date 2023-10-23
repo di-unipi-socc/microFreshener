@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GroupSmellObject, SmellObject } from './smell';
 import { REFACTORING_NAMES } from './costants';
 import { GraphService } from '../graph/graph.service';
-import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, SplitTeamsSharedDatastoreRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring } from './refactoring-commands';
+import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, SplitTeamsSharedDatastoreRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring, MergeTeamsRefactoring } from './refactoring-commands';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +66,9 @@ export class RefactoringFactoryService {
 
       case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
         return new SplitTeamsSharedDatastoreRefactoring(this.gs.getGraph(), smell);
+
+      case REFACTORING_NAMES.REFACTORING_MERGE_TEAMS:
+        return new MergeTeamsRefactoring(this.gs.getGraph(), smell);
 
     }
   }

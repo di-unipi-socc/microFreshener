@@ -3,6 +3,36 @@ export interface Command {
     unexecute: () => void
 }
 
+export abstract class CompositeCommand implements Command {
+
+    private commands: Command[];
+
+    abstract getCommandsImplementation(...any): Command[];
+
+    constructor(...any) {
+        this.commands = this.getCommandsImplementation(...any);
+        console.debug("commands have been set in composite", this.commands);
+    }
+
+    execute() {
+        console.debug("executing commands", this.commands);
+        this.commands.forEach(command => command.execute());
+    }
+
+    unexecute() {
+        this.commands.slice().reverse().forEach(command => command.unexecute());
+    }
+
+    static of(commands: Command[]): CompositeCommand {
+        return new class extends CompositeCommand {
+            getCommandsImplementation(...any: any[]): Command[] {
+                return commands;
+            }
+        }
+    }
+
+}
+
 export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> implements Command {
     
     abstract execute();
@@ -18,8 +48,8 @@ export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> imp
         return this.element;
     }
 
-    constructor(node?: T) {
-        this.element = node;
+    constructor(element?: T) {
+        this.element = element;
     }
 
     then<U extends Command>(next: U): Sequentiable<U> {

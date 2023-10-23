@@ -1,36 +1,29 @@
 import { Graph } from "../graph/model/graph";
 import { SmellObject, GroupSmellObject, NoApiGatewaySmellObject, SingleLayerTeamsSmellObject } from './smell';
-import { Command, Sequentiable } from "../commands/icommand";
+import { Command, Sequentiable, CompositeCommand } from "../commands/icommand";
 import * as joint from 'jointjs';
 import { AddDatastoreCommand, AddMessageRouterCommand } from "../architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "../architecture/link-commands";
-import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "../teams/team-commands";
+import { AddMemberToTeamGroupCommand, MergeTeamsCommand, RemoveMemberFromTeamGroupCommand } from "../teams/team-commands";
 
 export interface Refactoring extends Command {
     getName(): string;
     getDescription(): string;
 }
 
-abstract class RefactoringCommand implements Refactoring {
+abstract class RefactoringCommand extends CompositeCommand {
     
-    refactoring: Command[];
+    abstract getRefactoringImplementation(graph: Graph, smell: SmellObject);
 
-    abstract getRefactoringImplementation(graph: Graph, smell: SmellObject): Command[];
+    getCommandsImplementation(graph, smell): Command[] {
+        console.debug("returning refactoring impl in get commandsimpl")
+        return this.getRefactoringImplementation(graph, smell);
+    }
 
     constructor(graph, smell) {
-        this.refactoring = this.getRefactoringImplementation(graph, smell);
+        super(graph, smell);
     }
 
-    execute() {
-        this.refactoring.forEach(command => command.execute());
-    }
-
-    unexecute() {
-        this.refactoring.slice().reverse().forEach(command => command.unexecute());
-    }
-
-    abstract getName(): string;
-    abstract getDescription(): string;
 }
 
 export class IgnoreOnceRefactoring implements Refactoring, Command {
@@ -612,4 +605,24 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 
 }
 
+export class MergeTeamsRefactoring extends RefactoringCommand {
 
+    getRefactoringImplementation(graph: Graph, smell: GroupSmellObject): Command[] {
+        console.debug("refactoring implementation of merge teams");
+        let otherTeams = smell.getLinkBasedCauses()
+                              .map((link) => link.getTargetElement())
+                              .map((el) => graph.getTeamOfNode(<joint.shapes.microtosca.Node> el));
+        console.debug("otherTeams is", otherTeams);
+        let thisTeam = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
+        let name = "Merged " + thisTeam.getName();
+        console.debug("returning refactoring impl...");
+        return [new MergeTeamsCommand(graph, name, thisTeam, ...otherTeams)];
+    }
+    getName(): string {
+        return "Merge teams";
+    }
+    getDescription(): string {
+        return "Merge the teams owning the services and the datastores.";
+    }
+
+}

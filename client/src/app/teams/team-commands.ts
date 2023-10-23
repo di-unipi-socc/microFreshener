@@ -1,4 +1,4 @@
-import { Command, ElementCommand, Sequentiable } from '../commands/icommand';
+import { Command, CompositeCommand, ElementCommand, Sequentiable } from '../commands/icommand';
 import { Graph } from "../graph/model/graph";
 import { NodeCommand } from '../architecture/node-commands';
 
@@ -16,7 +16,8 @@ export class AddTeamGroupCommand extends TeamCommand {
     }
 
     execute() {
-        this.set(this.graph.addTeamGroup(this.team_name));
+        let team = this.graph.addTeamGroup(this.team_name);
+        this.set(team);
     }
 
     unexecute() {
@@ -90,49 +91,40 @@ export class RemoveTeamGroupCommand implements Command {
     }
 }
 
-export class MergeTeamsCommand implements Command {
+export class AddManyMembersToTeamGroupCommand extends TeamCommand {
 
-    newTeamName: string;
-    team: joint.shapes.microtosca.SquadGroup;
-    teams: joint.shapes.microtosca.SquadGroup[];
+    command: Command;
 
-    command;
-
-    constructor(private graph: Graph, newTeamName: string, team: joint.shapes.microtosca.SquadGroup, ...teams: joint.shapes.microtosca.SquadGroup[]) {
-        this.newTeamName = newTeamName;
-        this.team = team;
-        this.teams = teams;
-        this.command = this.getCommandImplementation()
-    }
-
-    getCommandImplementation() {
-        let removeTeamsCommand = this.teams.map((team) => Sequentiable.of(new RemoveTeamGroupCommand(this.graph, team)))
-                                            .reduce(((cmd, current) => cmd.then(current)), Sequentiable.of(new RemoveTeamGroupCommand(this.graph, this.team)));
-        let members = this.teams.flatMap((t) => t.getMembers());
-        let createTeamThenAddMembers = new AddTeamGroupCommand(this.graph, this.newTeamName).then(new class extends TeamCommand {
-            addMemberCmds: Command[];
-            execute() {
-                let team = this.get();
-                this.addMemberCmds = members.map((n) => new AddMemberToTeamGroupCommand(team, n));
-                this.addMemberCmds.forEach((cmd) => {
-                    cmd.execute();
-                });
-            }
-            unexecute() {
-                this.addMemberCmds.forEach((cmd) => {
-                    cmd.unexecute();
-                })
-            }
-        });
-        return removeTeamsCommand.then(createTeamThenAddMembers);
+    constructor(private members: joint.shapes.microtosca.Node[], team?: joint.shapes.microtosca.SquadGroup) {
+        super(team);
     }
 
     execute() {
+        let team = this.get();
+        console.log("adding members to team", this.members, team);
+        this.command = CompositeCommand.of(this.members.map((n) => new AddMemberToTeamGroupCommand(team, n)));
         this.command.execute();
     }
-
     unexecute() {
         this.command.unexecute();
     }
 
+}
+
+export class MergeTeamsCommand extends CompositeCommand {
+
+    command;
+
+    constructor(graph: Graph, newTeamName: string, ...teams: joint.shapes.microtosca.SquadGroup[]) {
+        super(graph, newTeamName, teams);
+    }
+
+    getCommandsImplementation(graph, newTeamName, teams): Command[] {
+        let cmds = [];
+        teams.forEach((team) => cmds.push(new RemoveTeamGroupCommand(graph, team)));
+        let members: joint.shapes.microtosca.Node[] = teams.flatMap((t) => <joint.shapes.microtosca.Node> t.getMembers());
+        console.log("members joining are ", members.map((n) => n.getName()))
+        cmds.push(new AddTeamGroupCommand(graph, newTeamName).then(new AddManyMembersToTeamGroupCommand(members)));
+        return cmds;
+    }
 }
