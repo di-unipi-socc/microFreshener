@@ -212,7 +212,7 @@ class MicrotoscaElementConfiguration {
             hasSmells: function ():  boolean {
                 return this.attributes.smells.length > 0;
             },
-            remove: function (smell: SmellObject): SmellObject {
+            removeSmell: function (smell: SmellObject): SmellObject {
                 let smells: SmellObject[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
                 return smells.splice(smellIndex, 1)[0];

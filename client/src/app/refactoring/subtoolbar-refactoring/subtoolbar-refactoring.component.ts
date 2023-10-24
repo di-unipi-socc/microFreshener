@@ -58,6 +58,7 @@ export class SubtoolbarRefactoringComponent {
                 }
 
                 let analyseGraph = () => {
+                    console.debug("analysing...")
                     this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
                                 console.log("uploadGraph response", data);
@@ -65,12 +66,13 @@ export class SubtoolbarRefactoringComponent {
                                     .subscribe(data => {
                                         this.as.showSmells();
                                         this.smellsNumber = this.as.getNumSmells()
-                                        this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
+                                        //this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
                                     });
                             });
                 };
                 this.invokerSubscription = this.commands.subscribe(analyseGraph);
                 analyseGraph();
+                this.messageService.add({ severity: 'success', summary: "Smells analysis started", detail: `Smells analysis is now active.` });
             } else {
                 this.monitorToggled = false;
             }
@@ -81,6 +83,7 @@ export class SubtoolbarRefactoringComponent {
         console.log("stopMonitoring");
         this.invokerSubscription.unsubscribe();
         this.as.clearSmells();
+        this.messageService.add({ severity: 'success', summary: "Smells analysis stopped", detail: `Smells analysis is not active anymore.` });
     }
 
 }

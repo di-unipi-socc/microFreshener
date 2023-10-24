@@ -1,47 +1,12 @@
-import { Command } from './icommand';
+import { Command, ElementCommand, Sequentiable } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> implements Command {
-    
-    abstract execute();
-    abstract unexecute();
 
-    protected node: T;
 
-    setNode(node: T) {
-        this.node = node;
-    }
-
-    getNode(): T {
-        return this.node;
-    }
-
-    constructor(node?: T) {
-        this.node = node;
-    }
-
-    then(next: NodeCommand<T>): NodeCommand<T> {
-        let action = () => {this.execute()};
-        let revert = () => {this.unexecute()};
-        let getNode = () => { return this.getNode() };
-        return new class extends NodeCommand<T> {
-            execute() {
-                action();
-                let node = getNode();
-                next.setNode(node);
-                next.execute();
-            }
-            unexecute() {
-                next.unexecute();
-                revert();
-            }
-        };
-    }
-}
-
+export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {}
 
 abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends NodeCommand<T> {
 
@@ -57,11 +22,11 @@ abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> exte
     protected abstract generateNode(): T;
 
     execute() {
-        this.node = this.generateNode();
+        this.set(this.generateNode());
     }
 
     unexecute() {
-        this.node.remove();
+        this.get().remove();
     }
 }
 
@@ -125,7 +90,7 @@ export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.m
     }
 }
 
-export class RemoveNodeCommand implements Command {
+export class RemoveNodeCommand extends NodeCommand<joint.shapes.microtosca.Node> {
 
     graph: Graph;
     node: joint.shapes.microtosca.Root;
@@ -136,6 +101,7 @@ export class RemoveNodeCommand implements Command {
     outcomingNodes: joint.shapes.microtosca.Root[];
 
     constructor(graph: Graph, node: joint.shapes.microtosca.Root) {
+        super();
         this.graph = graph;
         this.node = node;
         // TODO get the team of the node in order to restore in into the team when redo
@@ -167,7 +133,7 @@ export class RemoveNodeCommand implements Command {
     }
 }
 
-export class RemoveServiceCommand implements Command {
+export class RemoveServiceCommand extends NodeCommand<joint.shapes.microtosca.Service> {
 
     graph: Graph;
     node_name: string;
@@ -178,6 +144,7 @@ export class RemoveServiceCommand implements Command {
     outcoming_links = new Map();
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       
@@ -220,7 +187,7 @@ export class RemoveServiceCommand implements Command {
     }
 }
 
-export class RemoveDatastoreCommand implements Command {
+export class RemoveDatastoreCommand extends NodeCommand<joint.shapes.microtosca.Datastore> {
 
     graph: Graph;
     node_name: string;
@@ -230,6 +197,7 @@ export class RemoveDatastoreCommand implements Command {
     incoming_links = new Map();
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       
@@ -262,7 +230,7 @@ export class RemoveDatastoreCommand implements Command {
     }
 }
 
-export class RemoveCommunicationPatternCommand implements Command {
+export class RemoveCommunicationPatternCommand extends NodeCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     graph: Graph;
     node_name: string;
@@ -274,6 +242,7 @@ export class RemoveCommunicationPatternCommand implements Command {
 
 
     constructor(graph: Graph, node_name: string) {
+        super();
         this.graph = graph;
         this.node_name = node_name;
       

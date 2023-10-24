@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { Refactoring } from './refactoring-command';
+import { Refactoring } from './refactoring-commands';
 
 export class SmellObject {
 
@@ -48,7 +48,7 @@ export class SmellObject {
             let source = <joint.shapes.microtosca.Root>link.getSourceElement();
             let target = <joint.shapes.microtosca.Root>link.getTargetElement();
 
-            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
+            descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
         })
         return descr;
     }
@@ -109,7 +109,7 @@ export class GroupSmellObject {
             let source = <joint.shapes.microtosca.Root>link.getSourceElement();
             let target = <joint.shapes.microtosca.Root>link.getTargetElement();
 
-            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
+            descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
         })
         return descr;
     }
@@ -144,7 +144,7 @@ export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
             let source = <joint.shapes.microtosca.Root>link.getSourceElement();
             let target = <joint.shapes.microtosca.Root>link.getTargetElement();
 
-            descr += `Interaction from  ${source.getName()} to ${target.getName()} \n`;
+            descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
         })
         return descr;
     }
@@ -152,25 +152,31 @@ export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
 
 export class SharedPersistencySmellObject extends SmellObject {
     constructor() {
-        super("SharedPersistencySmell");
+        super("Shared persistency");
     }
 }
 export class WobblyServiceInteractionSmellObject extends SmellObject {
 
     constructor() {
-        super("WobblyServiceInteractonSmell");
+        super("Wobbly service interaction");
     }
 }
 
 export class SingleLayerTeamsSmellObject extends GroupSmellObject {
 
     constructor(group:joint.shapes.microtosca.SquadGroup) {
-        super("SingleLayerTeamsSmell", group);
+        super("Single-layer teams", group);
+    }
+
+    getDescription(): string {
+        let services = new Set<joint.shapes.microtosca.Root>();
+        this.getLinkBasedCauses().forEach(link => { services.add(<joint.shapes.microtosca.Root>link.getSourceElement()) });
+        return `${this.group.getName()} may lack some skills since there are services that access data owned by other teams: ${Array.from(services).map((service) => service.getName()).join(", ")}.`;
     }
 }
 
 export class MultipleServicesInOneContainerSmellObject extends SmellObject {
     constructor() {
-        super("MultipleServicesInOneContainerSmell")
+        super("Multiple services in one container")
     }
 }
