@@ -209,10 +209,8 @@ export class AnalyserService {
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);;
-        if (refactoring) {
-          smell.addRefactoring(refactoring);
-        }
+        let refactorings: Refactoring[] = this.refactoringFactory.getRefactoring(refactoringName, smell);;
+        refactorings.forEach(refactoring => smell.addRefactoring(refactoring));
       });
       this.addIgnoreOptions(group, smell);
       agroup.addSmell(smell);
@@ -253,11 +251,8 @@ export class AnalyserService {
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring = this.refactoringFactory.getRefactoring(refactoringName, smell);
-
-        if (refactoring) {
-          smell.addRefactoring(refactoring);
-        }
+        let refactorings: Refactoring[] = this.refactoringFactory.getRefactoring(refactoringName, smell);
+        refactorings.forEach((refactoring) => smell.addRefactoring(refactoring));
       });
       let node = this.gs.getGraph().findRootByName(anode.name);
       this.addIgnoreOptions(node, smell);

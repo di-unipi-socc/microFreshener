@@ -13,12 +13,14 @@ export class RefactoringFactoryService {
     private gs: GraphService
   ) { }
 
-  getRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
+  getRefactoring(refactoringName: string, smell: SmellObject): Refactoring[] {
+    let refactorings;
     if(smell instanceof GroupSmellObject){
-      return this.getGroupRefactoring(refactoringName, smell);
+      refactorings = this.getGroupRefactoring(refactoringName, smell);
     } else {
-      return this.getNodeRefactoring(refactoringName, smell);
+      refactorings = this.getNodeRefactoring(refactoringName, smell);
     }
+    return [].concat(refactorings);
   }
 
   private getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
@@ -51,25 +53,20 @@ export class RefactoringFactoryService {
     }
   }
 
-  private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): Refactoring {
+  private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): (Refactoring | Refactoring[]) {
     
     switch(refactoringName){
 
       case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
         return new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
 
-      case REFACTORING_NAMES.REFACTORING_CHANGE_DATASTORE_OWENRSHIP:
-        return new ChangeDatastoreOwnershipRefactoring(this.gs.getGraph(), smell);
-
-      case REFACTORING_NAMES.REFACTORING_CHANGE_SERVICE_OWENRSHIP:
-        return new ChangeServiceOwnershipRefactoring(this.gs.getGraph(), smell);
-
-      case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return new SplitTeamsSharedDatastoreRefactoring(this.gs.getGraph(), smell);
-
-      case REFACTORING_NAMES.REFACTORING_MERGE_TEAMS:
-        return new MergeTeamsRefactoring(this.gs.getGraph(), smell);
-
+      case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
+        return [
+          new ChangeDatastoreOwnershipRefactoring(this.gs.getGraph(), smell),
+          new ChangeServiceOwnershipRefactoring(this.gs.getGraph(), smell),
+          new SplitTeamsSharedDatastoreRefactoring(this.gs.getGraph(), smell),
+          new MergeTeamsRefactoring(this.gs.getGraph(), smell)
+        ]
     }
   }
 }
