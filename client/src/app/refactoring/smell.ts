@@ -180,3 +180,15 @@ export class MultipleServicesInOneContainerSmellObject extends SmellObject {
         super("Multiple services in one container")
     }
 }
+
+export class TightlyCoupledTeamsSmell extends GroupSmellObject {
+
+    constructor(group:joint.shapes.microtosca.SquadGroup) {
+        super("Tightly coupled teams", group);
+    }
+
+    getDescription(): string {
+        return `The services ${this.getNodeBasedCauses().join(", ")} are more coupled to other teams than their own.`;
+    }
+
+}

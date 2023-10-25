@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GroupSmellObject, SmellObject } from './smell';
 import { REFACTORING_NAMES } from './costants';
 import { GraphService } from '../graph/graph.service';
-import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, SplitTeamsSharedDatastoreRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring, MergeTeamsRefactoring } from './refactoring-commands';
+import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, SplitTeamsSharedDatastoreRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring, MergeTeamsRefactoring, ChangeNodeOwnershipToMostCoupledRefactoring } from './refactoring-commands';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +65,12 @@ export class RefactoringFactoryService {
           new ChangeDatastoreOwnershipRefactoring(this.gs.getGraph(), smell),
           new ChangeServiceOwnershipRefactoring(this.gs.getGraph(), smell),
           new SplitTeamsSharedDatastoreRefactoring(this.gs.getGraph(), smell),
+          new MergeTeamsRefactoring(this.gs.getGraph(), smell)
+        ];
+      
+      case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
+        return [
+          new ChangeNodeOwnershipToMostCoupledRefactoring(this.gs.getGraph(), smell),
           new MergeTeamsRefactoring(this.gs.getGraph(), smell)
         ]
     }
