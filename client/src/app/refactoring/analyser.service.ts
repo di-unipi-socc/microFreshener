@@ -14,10 +14,11 @@ import { Smell } from '../graph/model/smell';
 import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject, TightlyCoupledTeamsSmell } from './smell';
 import { SMELL_NAMES } from "./costants";
 
-import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, Refactoring } from "./refactoring-commands";
 import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
 import { CommunicationPattern } from "../graph/model/communicationpattern";
 import { RefactoringFactoryService } from './refactoring-factory.service';
+import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactoring-commands/ignore-refactoring-commands';
+import { Refactoring } from './refactoring-commands/refactoring-command';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

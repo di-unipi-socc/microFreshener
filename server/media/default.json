@@ -40,14 +40,6 @@
             "type": "interaction"
         },
         {
-            "source": "order",
-            "target": "shipping",
-            "timeout": false,
-            "dynamic_discovery": false,
-            "circuit_breaker": false,
-            "type": "interaction"
-        },
-        {
             "source": "shipping",
             "target": "rabbitmq",
             "timeout": false,
@@ -83,18 +75,17 @@
             ]
         },
         {
-            "name": "team1",
+            "name": "t2",
             "type": "squadgroup",
             "members": [
-                "rabbitmq",
+                "order",
                 "shipping"
             ]
         },
         {
-            "name": "team2",
+            "name": "t",
             "type": "squadgroup",
             "members": [
-                "order",
                 "order_db"
             ]
         }

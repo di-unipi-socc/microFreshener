@@ -2,7 +2,21 @@ import { Injectable } from '@angular/core';
 import { GroupSmellObject, SmellObject } from './smell';
 import { REFACTORING_NAMES } from './costants';
 import { GraphService } from '../graph/graph.service';
-import { AddApiGatewayRefactoring, AddCircuitBreakerRefactoring, AddDataManagerRefactoring, AddMessageBrokerRefactoring, AddMessageRouterRefactoring, AddServiceDiscoveryRefactoring, SplitTeamsSharedDatastoreRefactoring, MergeServicesRefactoring, ChangeDatastoreOwnershipRefactoring, ChangeServiceOwnershipRefactoring, Refactoring, SplitDatastoreRefactoring, UseTimeoutRefactoring, MergeTeamsRefactoring, ChangeNodeOwnershipToMostCoupledRefactoring } from './refactoring-commands';
+import { AddApiGatewayRefactoring } from './refactoring-commands/add-api-gateway-refactoring-command';
+import { AddCircuitBreakerRefactoring } from './refactoring-commands/add-circuit-breaker';
+import { AddDataManagerRefactoring } from './refactoring-commands/add-data-manager';
+import { AddMessageBrokerRefactoring } from './refactoring-commands/add-message-broker';
+import { AddMessageRouterRefactoring } from './refactoring-commands/add-message-router';
+import { AddServiceDiscoveryRefactoring } from './refactoring-commands/add-service-discovery';
+import { ChangeDatastoreOwnershipRefactoring } from './refactoring-commands/change-datastore-ownership';
+import { ChangeNodeOwnershipToMostCoupledRefactoring } from './refactoring-commands/change-node-ownership-to-most-coupled-team';
+import { ChangeServiceOwnershipRefactoring } from './refactoring-commands/change-service-ownership';
+import { MergeServicesRefactoring } from './refactoring-commands/merge-services-refactoring';
+import { MergeTeamsRefactoring } from './refactoring-commands/merge-teams';
+import { Refactoring } from './refactoring-commands/refactoring-command';
+import { SplitDatastoreRefactoring } from './refactoring-commands/split-database';
+import { SplitTeamsSharedDatastoreRefactoring } from './refactoring-commands/split-teams-shared-datastore';
+import { UseTimeoutRefactoring } from './refactoring-commands/use-timeout';
 
 @Injectable({
   providedIn: 'root'
