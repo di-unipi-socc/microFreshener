@@ -188,7 +188,7 @@ export class TightlyCoupledTeamsSmell extends GroupSmellObject {
     }
 
     getDescription(): string {
-        return `The services ${this.getNodeBasedCauses().join(", ")} are more coupled to other teams than their own.`;
+        return `${this.getNodeBasedCauses().map((n) => n.getName()).join(", ")} more coupled to other teams than their own.`;
     }
 
 }

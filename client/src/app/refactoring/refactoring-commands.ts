@@ -17,7 +17,6 @@ abstract class RefactoringCommand extends CompositeCommand {
     abstract getRefactoringImplementation(graph: Graph, smell: SmellObject);
 
     getCommandsImplementation(graph, smell): Command[] {
-        console.debug("returning refactoring impl in get commandsimpl")
         return this.getRefactoringImplementation(graph, smell);
     }
 
@@ -587,11 +586,16 @@ export class ChangeNodeOwnershipToMostCoupledRefactoring extends RefactoringComm
         let team = smell.getGroup();
         let NO_TEAM = new joint.shapes.microtosca.SquadGroup();
         smell.getNodeBasedCauses().forEach((n) => {
-            let teamCount = graph.getConnectedLinks(n)
+            let teamCount: Map<joint.shapes.microtosca.SquadGroup, number> = graph.getConnectedLinks(n)
                                   .map((links) => {
-                                        let sourceTeam = graph.getTeamOfNode(graph.getTeamOfNode(<joint.shapes.microtosca.Node> links.getSourceElement()));
-                                        let targetTeam = graph.getTeamOfNode(graph.getTeamOfNode(<joint.shapes.microtosca.Node> links.getTargetElement()));
-                                        return sourceTeam != team ? sourceTeam : targetTeam; })
+                                        let source = graph.getTeamOfNode(<joint.shapes.microtosca.Node> links.getSourceElement());
+                                        let sourceTeam;
+                                        if(source) sourceTeam = graph.getTeamOfNode(source);
+                                        let target = graph.getTeamOfNode(<joint.shapes.microtosca.Node> links.getTargetElement());
+                                        let targetTeam;
+                                        if(target) targetTeam = graph.getTeamOfNode(target);
+                                        return sourceTeam != team ? sourceTeam : targetTeam;
+                                    })
                                   .reduce(((map, t) => map.has(t) ? map.set(t, map.get(t)+1) : map.set(t, 1)), new Map<joint.shapes.microtosca.SquadGroup, number>());
             let maxCount = Math.max(...Array.from(teamCount.values()));
             let maxTeams = Array.from(teamCount).filter(([t, count]) => count == maxCount).map(([t, c]) => t);
@@ -624,7 +628,6 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let cmds: Command[] = [];
         cmds = smell.getLinkBasedCauses().map(link => {
-            console.debug("iterating on getRefactoringImplementation");
             let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
             let newDatabaseName = `${service.getName()}'s ${databaseName}`;
@@ -650,27 +653,27 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 export class MergeTeamsRefactoring extends RefactoringCommand {
 
     getRefactoringImplementation(graph: Graph, smell: GroupSmellObject): Command[] {
-        console.debug("refactoring implementation of merge teams");
         let nodeBasedCauses = smell.getNodeBasedCauses();
-        let nodes;
-        console.debug("nodeBasedCauses", nodeBasedCauses);
-        console.debug("linkBasedCauses", smell.getLinkBasedCauses());
-        if(nodeBasedCauses.length > 0) {
-            nodes = nodeBasedCauses;
+        let linkBasedCauses = smell.getLinkBasedCauses();
+        let links;
+        if(nodeBasedCauses.length > 0 && linkBasedCauses.length == 0) {
+            links = nodeBasedCauses.flatMap((node) => graph.getConnectedLinks(node));
         } else {
-            nodes = _.uniq(smell.getLinkBasedCauses()
-                                .flatMap((link) => [link.getSourceElement(), link.getTargetElement()]));
+            links = linkBasedCauses;
         }
-        let teams = nodes.map((n) => graph.getTeamOfNode(n));
+        let teams: joint.shapes.microtosca.SquadGroup[] = _.uniq(links.flatMap((link) => [link.getSourceElement(), link.getTargetElement()])
+                         .map((n: joint.shapes.microtosca.Node) => graph.getTeamOfNode(n))
+                         .filter((t) => t));
+        console.log("teams are:", teams.map((t) => t.getName()));
         let thisTeam = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let name = "Merged " + thisTeam.getName();
-        console.debug("team", teams[0]);
-        console.debug("teams - slice", teams, teams.slice(1));
-        return [new MergeTeamsCommand(graph, name, teams[0], ...teams.slice(1))];
+        return [new MergeTeamsCommand(graph, name, ...teams)];
     }
+
     getName(): string {
         return "Merge teams";
     }
+
     getDescription(): string {
         return "Merge all the teams involved.";
     }
