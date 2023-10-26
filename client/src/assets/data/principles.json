@@ -51,6 +51,11 @@
                     "id": 7,
                     "name": "Single Layer Teams",
                     "description": ""
+               },
+               {
+                    "id": 8,
+                    "name": "Tightly Coupled Teams",
+                    "description": ""
                }
             ]
         }

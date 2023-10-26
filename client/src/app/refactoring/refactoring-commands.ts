@@ -5,6 +5,7 @@ import * as joint from 'jointjs';
 import { AddDatastoreCommand, AddMessageRouterCommand } from "../architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "../architecture/link-commands";
 import { AddMemberToTeamGroupCommand, MergeTeamsCommand, RemoveMemberFromTeamGroupCommand } from "../teams/team-commands";
+import * as _ from 'lodash';
 
 export interface Refactoring extends Command {
     getName(): string;
@@ -16,7 +17,6 @@ abstract class RefactoringCommand extends CompositeCommand {
     abstract getRefactoringImplementation(graph: Graph, smell: SmellObject);
 
     getCommandsImplementation(graph, smell): Command[] {
-        console.debug("returning refactoring impl in get commandsimpl")
         return this.getRefactoringImplementation(graph, smell);
     }
 
@@ -495,35 +495,6 @@ export class AddDataManagerRefactoring implements Refactoring {
 
 }
 
-export class ChangeDatastoreOwnershipRefactoring extends RefactoringCommand {
-
-    team: joint.shapes.microtosca.SquadGroup;
-
-    constructor(graph: Graph, smell: GroupSmellObject) {
-        super(graph, smell);
-    }
-
-    getRefactoringImplementation(graph, smell): Command[] {
-        let team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
-        let cmds: Command[] = [];
-        smell.getLinkBasedCauses().forEach(link => {
-            let datastore = <joint.shapes.microtosca.Datastore>link.getTargetElement();
-            let squadOfDatastore = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(datastore);
-            cmds.push(new RemoveMemberFromTeamGroupCommand(squadOfDatastore, datastore).then(new AddMemberToTeamGroupCommand(team)));
-        });
-
-        return cmds;
-    }
-
-    getName() {
-        return "Change datastores ownership";
-    }
-
-    getDescription() {
-        return `Move datastores under this service team's responsibility.`;
-    }
-}
-
 export class ChangeServiceOwnershipRefactoring extends RefactoringCommand {
 
     team: joint.shapes.microtosca.SquadGroup;
@@ -572,6 +543,94 @@ export class ChangeServiceOwnershipRefactoring extends RefactoringCommand {
     }
 }
 
+export class ChangeDatastoreOwnershipRefactoring extends RefactoringCommand {
+
+    team: joint.shapes.microtosca.SquadGroup;
+
+    constructor(graph: Graph, smell: GroupSmellObject) {
+        super(graph, smell);
+    }
+
+    getRefactoringImplementation(graph, smell): Command[] {
+        let team = <joint.shapes.microtosca.SquadGroup>smell.getGroup();
+        let cmds: Command[] = [];
+        smell.getLinkBasedCauses().forEach(link => {
+            let datastore = <joint.shapes.microtosca.Datastore>link.getTargetElement();
+            let squadOfDatastore = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(datastore);
+            cmds.push(new RemoveMemberFromTeamGroupCommand(squadOfDatastore, datastore).then(new AddMemberToTeamGroupCommand(team)));
+        });
+
+        return cmds;
+    }
+
+    getName() {
+        return "Change datastores ownership";
+    }
+
+    getDescription() {
+        return `Move datastores under this service team's responsibility.`;
+    }
+}
+
+export class ChangeNodeOwnershipToMostCoupledRefactoring extends RefactoringCommand {
+
+    team: joint.shapes.microtosca.SquadGroup;
+
+    constructor(graph: Graph, smell: GroupSmellObject) {
+        super(graph, smell);
+        this.team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
+    }
+
+    getRefactoringImplementation(graph: Graph, smell): Command[] {
+        let cmds: Command[] = [];
+        let team: joint.shapes.microtosca.SquadGroup = smell.getGroup();
+        let NO_TEAM = new joint.shapes.microtosca.SquadGroup();
+        smell.getNodeBasedCauses().forEach((n) => {
+            let teamCount: Map<joint.shapes.microtosca.SquadGroup, number> = graph.getConnectedLinks(n)
+                                  .map((link) => {
+                                        let source = <joint.shapes.microtosca.Node> link.getSourceElement();
+                                        let sourceTeam;
+                                        if(source) {
+                                            console.debug("getting source team")
+                                            sourceTeam = graph.getTeamOfNode(source);
+                                        }
+                                        let target = <joint.shapes.microtosca.Node> link.getTargetElement();
+                                        let targetTeam;
+                                        if(target) {
+                                            console.debug("getting target team")
+                                            targetTeam = graph.getTeamOfNode(target);
+                                        }
+                                        console.debug("source - target - link", (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), (<joint.shapes.microtosca.Node> link.getTargetElement()).getName(), link)
+                                        console.debug("sourceTeam - targetTeam", sourceTeam, targetTeam);
+                                        return sourceTeam !== team ? sourceTeam : targetTeam;
+                                    })
+                                  .filter((t) => t)
+                                  .reduce(((map, t) => {console.debug("updating with data of team", t); map.has(t) ? map.set(t, map.get(t)+1) : map.set(t, 1); return map; }), new Map<joint.shapes.microtosca.SquadGroup, number>());
+            let maxCount = Math.max(...Array.from(teamCount.values()));
+            let maxTeams = Array.from(teamCount).filter(([t, count]) => count == maxCount).map(([t, c]) => t);
+            let newTeam = maxTeams.length == 1 ? maxTeams[0] : NO_TEAM;
+            console.debug("teamCount is", teamCount);
+            console.debug("newTeam", newTeam);
+            console.debug("teams are", maxTeams);
+            if(newTeam != NO_TEAM) {
+                console.debug("!= NO_TEAM")
+                cmds.push(new RemoveMemberFromTeamGroupCommand(team, n));
+                cmds.push(new AddMemberToTeamGroupCommand(newTeam, n));
+            }
+        });
+        return cmds;
+    }
+
+    getName() {
+        return "Change ownership";
+    }
+
+    getDescription() {
+        return `Change ownership of the nodes.`;
+    }
+
+}
+
 export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 
     constructor(graph: Graph,smell: GroupSmellObject) {
@@ -582,7 +641,6 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let cmds: Command[] = [];
         cmds = smell.getLinkBasedCauses().map(link => {
-            console.debug("iterating on getRefactoringImplementation");
             let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
             let newDatabaseName = `${service.getName()}'s ${databaseName}`;
@@ -608,21 +666,30 @@ export class SplitTeamsSharedDatastoreRefactoring extends RefactoringCommand {
 export class MergeTeamsRefactoring extends RefactoringCommand {
 
     getRefactoringImplementation(graph: Graph, smell: GroupSmellObject): Command[] {
-        console.debug("refactoring implementation of merge teams");
-        let otherTeams = smell.getLinkBasedCauses()
-                              .map((link) => link.getTargetElement())
-                              .map((el) => graph.getTeamOfNode(<joint.shapes.microtosca.Node> el));
-        console.debug("otherTeams is", otherTeams);
+        let nodeBasedCauses = smell.getNodeBasedCauses();
+        let linkBasedCauses = smell.getLinkBasedCauses();
+        let links;
+        if(nodeBasedCauses.length > 0 && linkBasedCauses.length == 0) {
+            links = nodeBasedCauses.flatMap((node) => graph.getConnectedLinks(node));
+        } else {
+            links = linkBasedCauses;
+        }
+        let teams: joint.shapes.microtosca.SquadGroup[] = _.uniq(links.flatMap((link) => [link.getSourceElement(), link.getTargetElement()])
+                         .map((n: joint.shapes.microtosca.Node) => graph.getTeamOfNode(n))
+                         .filter((t) => t));
+        console.log("teams are:", teams.map((t) => t.getName()));
         let thisTeam = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let name = "Merged " + thisTeam.getName();
-        console.debug("returning refactoring impl...");
-        return [new MergeTeamsCommand(graph, name, thisTeam, ...otherTeams)];
+        return [new MergeTeamsCommand(graph, name, ...teams)];
     }
+
     getName(): string {
         return "Merge teams";
     }
+
     getDescription(): string {
-        return "Merge the teams owning the services and the datastores.";
+        return "Merge all the teams involved.";
     }
 
 }
+

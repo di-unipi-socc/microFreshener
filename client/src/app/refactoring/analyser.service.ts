@@ -11,7 +11,7 @@ import { GraphService } from '../graph/graph.service';
 
 import { Principle } from '../graph/model/principles';
 import { Smell } from '../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject } from './smell';
+import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject, TightlyCoupledTeamsSmell } from './smell';
 import { SMELL_NAMES } from "./costants";
 
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, Refactoring } from "./refactoring-commands";
@@ -190,6 +190,9 @@ export class AnalyserService {
           break;
         case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
           smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
+          break;
+        case SMELL_NAMES.SMELL_TIGHTLY_COUPLED_TEAMS:
+          smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
           break;
         default:
           break;
