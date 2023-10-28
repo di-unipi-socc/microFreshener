@@ -65,7 +65,7 @@ export class SubtoolbarRefactoringComponent {
                                 this.as.runRemoteAnalysis(this.options.smells)
                                     .subscribe(data => {
                                         this.as.showSmells();
-                                        this.smellsNumber = this.as.getNumSmells()
+                                        this.smellsNumber = this.as.getSmellsCount()
                                         //this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
                                     });
                             });
