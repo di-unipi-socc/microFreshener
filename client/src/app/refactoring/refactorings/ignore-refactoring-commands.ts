@@ -1,4 +1,4 @@
-import { SmellObject } from "../smell";
+import { SmellObject } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 
 export class IgnoreOnceRefactoring implements Refactoring {

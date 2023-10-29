@@ -1,4 +1,4 @@
-import { SmellObject } from "../smell";
+import { SmellObject } from "./smell";
 
 export class WobblyServiceInteractionSmellObject extends SmellObject {
 

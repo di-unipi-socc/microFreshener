@@ -1,4 +1,4 @@
-import { GroupSmellObject } from "../smell";
+import { GroupSmellObject } from "./smell";
 
 export class SingleLayerTeamsSmellObject extends GroupSmellObject {
 

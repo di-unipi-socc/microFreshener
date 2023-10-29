@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { RefactoringCommand } from "./refactoring-command";
-import { GroupSmellObject } from "../smell";
+import { GroupSmellObject } from "../smells/smell";
 import { Command, Sequentiable } from "src/app/commands/icommand";
 import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";

@@ -1,5 +1,5 @@
 import { Graph } from "src/app/graph/model/graph";
-import { SmellObject } from "../smell";
+import { SmellObject } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 
 export class AddMessageRouterRefactoring implements Refactoring {

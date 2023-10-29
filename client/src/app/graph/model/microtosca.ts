@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject } from '../../refactoring/smell';
+import { SmellObject } from '../../refactoring/smells/smell';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;

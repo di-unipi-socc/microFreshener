@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { RefactoringCommand } from "./refactoring-command";
-import { GroupSmellObject } from "../smell";
+import { GroupSmellObject } from "../smells/smell";
 import { Command } from "src/app/commands/icommand";
 import { MergeTeamsCommand } from "src/app/teams/team-commands";
 import * as _ from "lodash";

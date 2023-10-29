@@ -1,6 +1,6 @@
 import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
 import { RefactoringCommand } from "./refactoring-command";
-import { GroupSmellObject } from "../smell";
+import { GroupSmellObject } from "../smells/smell";
 import { Graph } from "src/app/graph/model/graph";
 import { Command } from "src/app/commands/icommand";
 import * as joint from "jointjs";

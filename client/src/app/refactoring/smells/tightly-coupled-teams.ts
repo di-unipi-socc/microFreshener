@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { GroupSmellObject } from '../smell';
+import { GroupSmellObject } from './smell';
 
 
 export class TightlyCoupledTeamsSmell extends GroupSmellObject {

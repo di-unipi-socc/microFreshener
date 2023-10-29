@@ -1,7 +1,18 @@
 import * as joint from 'jointjs';
-import { Refactoring } from './refactoring-commands/refactoring-command';
+import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-command';
 
-export class SmellObject {
+export interface Smell {
+    getName(): string;
+    getDescription(): string;
+    addNodeBasedCause(node: joint.shapes.microtosca.Node);
+    getNodeBasedCauses(): joint.shapes.microtosca.Node[];
+    addLinkBasedCause(link: joint.shapes.microtosca.RunTimeLink);
+    getLinkBasedCauses(): joint.shapes.microtosca.RunTimeLink[];
+    addRefactoring(refactoring: Refactoring);
+    getRefactorings(): Refactoring[];
+}
+
+export class SmellObject implements Smell {
 
     name: string;
     refactorings: Refactoring[];
@@ -54,7 +65,7 @@ export class SmellObject {
     }
 }
 
-export class GroupSmellObject {
+export class GroupSmellObject implements Smell {
 
     name: string;
 
@@ -64,12 +75,15 @@ export class GroupSmellObject {
     linksCause: joint.shapes.microtosca.RunTimeLink[];
     nodesCause: joint.shapes.microtosca.Node[];
 
+    memberSmells: Map<joint.shapes.microtosca.Node, SmellObject>;
+
     constructor(name: string, group:joint.shapes.microtosca.Group) {
         this.name = name;
         this.group = group;
         this.linksCause = [];
         this.refactorings = [];
         this.nodesCause = [];
+        this.memberSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
     }
 
     getName() {
@@ -95,8 +109,23 @@ export class GroupSmellObject {
         return this.linksCause;
     }
 
-    addRefactoring(refactoring: Refactoring) {
+    addRefactoring(refactoring: (Refactoring | GroupRefactoring)) {
+        // Add refactoring to whole group
         this.refactorings.push(refactoring);
+        console.debug("a refactoring has been pushed", refactoring.getName())
+        // Add partial member refactoring to members' smells
+        if(refactoring instanceof GroupRefactoring) {
+            console.debug("GroupRefactoring, adding member smells now...", refactoring.getMemberRefactorings())
+            refactoring.getMemberRefactorings().forEach((refactoring, member) => {
+                console.debug(`Adding member smell ${refactoring.getName()} to ${member.getName()}`)
+                let memberSmell = this.memberSmells.get(member);
+                if(!memberSmell) {
+                    memberSmell = new SmellObject(this.name);
+                    this.memberSmells.set(member, memberSmell);
+                }
+                memberSmell.addRefactoring(refactoring);
+            });
+        }
     }
 
     getRefactorings(): Refactoring[] {
@@ -112,5 +141,9 @@ export class GroupSmellObject {
             descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
         })
         return descr;
+    }
+
+    getMemberSmells(): Map<joint.shapes.microtosca.Node, SmellObject> {
+        return this.memberSmells;
     }
 }

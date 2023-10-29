@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
-import { SmellObject } from "../smell";
+import { SmellObject } from "../smells/smell";
 
 export class AddDataManagerRefactoring implements Refactoring {
 
