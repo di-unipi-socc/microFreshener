@@ -3,7 +3,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
 
 @Injectable({
-  providedIn: TeamsService
+  providedIn: 'root'// TeamsService
 })
 export class TeamsAnalyticsService {
 

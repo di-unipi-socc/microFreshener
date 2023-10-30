@@ -1,22 +1,18 @@
 import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
-import { RefactoringCommand } from "./refactoring-command";
 import { GroupSmellObject } from "../smells/smell";
 import { Graph } from "src/app/graph/model/graph";
-import { Command } from "src/app/commands/icommand";
 import * as joint from "jointjs";
+import { Command, CompositeCommand } from "src/app/commands/icommand";
+import { GroupRefactoring, Refactoring } from "./refactoring-command";
 
-export class ChangeNodeOwnershipToMostCoupledRefactoring extends RefactoringCommand {
+export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
 
-    team: joint.shapes.microtosca.SquadGroup;
+    private command: Command;
 
     constructor(graph: Graph, smell: GroupSmellObject) {
-        super(graph, smell);
-        this.team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
-    }
-
-    getRefactoringImplementation(graph: Graph, smell): Command[] {
+        super();
         let cmds: Command[] = [];
-        let team: joint.shapes.microtosca.SquadGroup = smell.getGroup();
+        let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let NO_TEAM = new joint.shapes.microtosca.SquadGroup();
         smell.getNodeBasedCauses().forEach((n) => {
             let teamCount: Map<joint.shapes.microtosca.SquadGroup, number> = graph.getConnectedLinks(n)
@@ -42,16 +38,29 @@ export class ChangeNodeOwnershipToMostCoupledRefactoring extends RefactoringComm
             let maxCount = Math.max(...Array.from(teamCount.values()));
             let maxTeams = Array.from(teamCount).filter(([t, count]) => count == maxCount).map(([t, c]) => t);
             let newTeam = maxTeams.length == 1 ? maxTeams[0] : NO_TEAM;
-            console.debug("teamCount is", teamCount);
-            console.debug("newTeam", newTeam);
-            console.debug("teams are", maxTeams);
             if(newTeam != NO_TEAM) {
-                console.debug("!= NO_TEAM")
-                cmds.push(new RemoveMemberFromTeamGroupCommand(team, n));
-                cmds.push(new AddMemberToTeamGroupCommand(newTeam, n));
+                //console.debug("!= NO_TEAM")
+                let moveNodeCommand = new RemoveMemberFromTeamGroupCommand(team, n)
+                                    .then(new AddMemberToTeamGroupCommand(newTeam));
+                this.command = moveNodeCommand;
+                this.addMemberRefactoring(n, moveNodeCommand);
             }
         });
-        return cmds;
+        this.command = CompositeCommand.of(cmds);
+    }
+    addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name?: string, description?: string): void {
+        throw new Error("Method not implemented.");
+    }
+    getMemberRefactorings(): Map<joint.shapes.microtosca.Node, Refactoring> {
+        throw new Error("Method not implemented.");
+    }
+
+    execute() {
+        this.command.execute();
+    }
+
+    unexecute() {
+        this.command.unexecute();
     }
 
     getName() {

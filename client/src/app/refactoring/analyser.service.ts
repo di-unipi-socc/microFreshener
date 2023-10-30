@@ -63,19 +63,9 @@ export class AnalyserService {
   private showGroupSmells() {
     this.groupsWithSmells.forEach((agroup) => {
       let g = this.gs.getGraph().getGroup(agroup.getName());
-      agroup.getSmells().forEach((smell) => {/*
-        // Add node causes to nodes
-        smell.getNodeBasedCauses().forEach(node => {
-          node.addSmell(smell);
-        });
-        smell.getLinkBasedCauses().forEach(link => {
-          // Add link causes to source/target nodes
-          let source = <joint.shapes.microtosca.Node> link.getSourceElement();
-          source.addSmell(smell);
-          let target = <joint.shapes.microtosca.Node> link.getTargetElement();
-          target.addSmell(smell);
-        });*/
-        g.addSmell(smell);
+      console.debug("showGroupSmells, smells are", g.getSmells())
+      agroup.getSmells().forEach((smell) => {
+          g.addSmell(smell);
       })
     })
   }
@@ -86,7 +76,6 @@ export class AnalyserService {
       node.resetSmells();
     });
     this.gs.getGraph().getGroups().forEach(group => {
-      console.log("group is", group);
       group.resetSmells();
     });
   }
@@ -184,20 +173,21 @@ export class AnalyserService {
             // Build the smells of the group
             let group = this.gs.getGraph().findGroupByName(groupJson['name']);
             let groupSmells: GroupSmellObject[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
-            console.debug("analysing group", groupJson['name'], groupJson);
-            console.debug("group smells is", groupSmells);
             let agroup = Analysed.getBuilder<joint.shapes.microtosca.Group>()
                                 .setElement(group)
                                 .setSmells(groupSmells)
                                 .build();
+            console.debug("analysed group", agroup);
             this.groupsWithSmells.push(agroup);
             // Derive node actions from the group smells (e.g., AddApiGateway in edge nodes)
-            if(groupSmells) {
-              console.log("groupSmells", groupSmells);
-              let membersSmells = new Map<joint.shapes.microtosca.Node, SmellObject[]>();
-              let allMembersSmells = groupSmells.flatMap((groupSmell) => groupSmell.getMemberSmells()).map((membersSmells) => membersSmells.keys());
-            }
-            // TODO: foreach member, fai anode
+            groupSmells.flatMap(groupSmell => [...groupSmell.getMembers()])?.forEach((memberSmell) => {
+              this.nodesWithSmells.push(
+                Analysed.getBuilder<joint.shapes.microtosca.Node>()
+                        .setElement(memberSmell[0])
+                        .setSmells([memberSmell[1]])
+                        .build()
+              );
+            })
           });
           return true;
         }),

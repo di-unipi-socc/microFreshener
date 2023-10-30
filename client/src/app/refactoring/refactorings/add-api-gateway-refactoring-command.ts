@@ -1,19 +1,18 @@
 import { Graph } from "src/app/graph/model/graph";
-import { GroupRefactoring, Refactoring, RefactoringCommand } from "./refactoring-command";
+import { GroupRefactoring } from "./refactoring-command";
 import { GroupSmellObject } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { Command, CompositeCommand } from "src/app/commands/icommand";
 
 export class AddApiGatewayRefactoring extends GroupRefactoring {
 
     smell: GroupSmellObject;
+    command: Command;
 
     constructor(graph: Graph, smell: GroupSmellObject) {
-        super(graph, smell);
+        super();
         this.smell = smell;
-    }
-
-    getGroupRefactoringImplementation(graph, smell) {
         let edgeGroup = <joint.shapes.microtosca.EdgeGroup> smell.getGroup();
         let commands = [];
         smell.getNodeBasedCauses().forEach(node => {
@@ -26,7 +25,15 @@ export class AddApiGatewayRefactoring extends GroupRefactoring {
             commands.push(addApiGatewayCommand);
             this.addMemberRefactoring(node, addApiGatewayCommand);
         });
-        return commands;
+        this.command = CompositeCommand.of(commands);
+    }
+
+    execute(): void {
+        this.execute();
+    }
+
+    unexecute(): void {
+        this.unexecute();
     }
 
     getName() {

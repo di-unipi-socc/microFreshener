@@ -3,19 +3,11 @@ export interface Command {
     unexecute: () => void
 }
 
-export abstract class CompositeCommand implements Command {
+export class CompositeCommand implements Command {
 
-    private commands: Command[];
-
-    abstract getCommandsImplementation(...any): Command[];
-
-    constructor(...any) {
-        this.commands = this.getCommandsImplementation(...any);
-        console.debug("commands have been set in composite", this.commands);
-    }
+    private constructor(private commands: Command[]) {}
 
     execute() {
-        console.debug("executing commands", this.commands);
         this.commands.forEach(command => command.execute());
     }
 
@@ -24,11 +16,7 @@ export abstract class CompositeCommand implements Command {
     }
 
     static of(commands: Command[]): CompositeCommand {
-        return new class extends CompositeCommand {
-            getCommandsImplementation(...any: any[]): Command[] {
-                return commands;
-            }
-        }
+        return new CompositeCommand(commands);
     }
 
 }
@@ -80,12 +68,10 @@ export class Sequentiable<T extends Command> implements Command {
     private constructor(private command: T) {}
 
     execute() {
-        console.debug("executing", this.command);
         this.command.execute();
     }
     
     unexecute() {
-        console.debug("unexecuting", this.command);
         this.command.unexecute();
     }
 

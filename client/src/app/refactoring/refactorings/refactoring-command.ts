@@ -1,5 +1,3 @@
-import { Graph } from "../../graph/model/graph";
-import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command, CompositeCommand } from "../../commands/icommand";
 
 export interface Refactoring extends Command {
@@ -7,41 +5,22 @@ export interface Refactoring extends Command {
     getDescription(): string;
 }
 
-export abstract class RefactoringCommand extends CompositeCommand implements Refactoring {
-    
+export abstract class GroupRefactoring implements Refactoring {
+
     abstract getName(): string;
     abstract getDescription(): string;
+    abstract execute(): void;
+    abstract unexecute(): void;
 
-    abstract getRefactoringImplementation(graph: Graph, smell: (SmellObject | GroupSmellObject));
+    private memberRefactorings: Map<joint.shapes.microtosca.Node, Refactoring>;
 
-    getCommandsImplementation(graph, smell): Command[] {
-        return this.getRefactoringImplementation(graph, smell);
-    }
-
-    constructor(graph, smell) {
-        super(graph, smell);
-    }
-
-}
-
-export abstract class GroupRefactoring extends RefactoringCommand {
-
-    memberRefactorings: Map<joint.shapes.microtosca.Node, Refactoring>;
-
-    abstract getGroupRefactoringImplementation(graph: Graph, smell: GroupSmellObject);
-
-    getRefactoringImplementation(graph: Graph, smell: GroupSmellObject) {
+    constructor() {
         this.memberRefactorings = new Map<joint.shapes.microtosca.Node, Refactoring>();
-        this.getGroupRefactoringImplementation(graph, smell);
-    }
-
-    constructor(graph: Graph, smell: GroupSmellObject) {
-        super(graph, smell);
     }
 
     addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name?: string, description?: string) {
-        let memberGetName = name ? () => { return name; } : this.getName;
-        let memberGetDescription = description ? () => { return description; } : this.getDescription;
+        let memberGetName = this.getName;
+        let memberGetDescription = this.getDescription;
         this.memberRefactorings.set(member, new class implements Refactoring {
             getName(): string {
                 return memberGetName();

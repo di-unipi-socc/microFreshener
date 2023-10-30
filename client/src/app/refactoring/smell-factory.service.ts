@@ -16,16 +16,13 @@ import { AddDataManagerRefactoring } from './refactorings/add-data-manager';
 import { AddMessageBrokerRefactoring } from './refactorings/add-message-broker';
 import { AddMessageRouterRefactoring } from './refactorings/add-message-router';
 import { AddServiceDiscoveryRefactoring } from './refactorings/add-service-discovery';
-import { ChangeDatastoreOwnershipRefactoring } from './refactorings/change-datastore-ownership';
-import { ChangeNodeOwnershipToMostCoupledRefactoring } from './refactorings/change-node-ownership-to-most-coupled-team';
-import { ChangeServiceOwnershipRefactoring } from './refactorings/change-service-ownership';
 import { MergeServicesRefactoring } from './refactorings/merge-services-refactoring';
-import { MergeTeamsRefactoring } from './refactorings/merge-teams';
 import { SplitDatastoreRefactoring } from './refactorings/split-database';
-import { SplitTeamsSharedDatastoreRefactoring } from './refactorings/split-teams-shared-datastore';
 import { UseTimeoutRefactoring } from './refactorings/use-timeout';
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
+import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './refactorings/split-teams-by-service';
+import { SplitTeamsByCouplingRefactoring } from './refactorings/change-node-ownership-to-most-coupled-team';
 
 @Injectable({
   providedIn: 'root'
@@ -52,24 +49,26 @@ export class SmellFactoryService {
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
         smell = new MultipleServicesInOneContainerSmellObject();
       default:
-        break;
+        console.warn(`Unsupported smell: ${smellJson.name}`);
     }
 
-    smellJson['links'].forEach((cause) => {
-      var source = this.gs.getGraph().findNodeByName(cause['source']);
-      var target = this.gs.getGraph().findNodeByName(cause['target']);
-      var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-      smell.addLinkBasedCause(link);
-      smell.addNodeBasedCause(node)
-    });
+    if(smell) {
+      smellJson['links'].forEach((cause) => {
+        var source = this.gs.getGraph().findNodeByName(cause['source']);
+        var target = this.gs.getGraph().findNodeByName(cause['target']);
+        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        smell.addLinkBasedCause(link);
+        smell.addNodeBasedCause(node)
+      });
 
-    smellJson['refactorings'].forEach((refactoringJson) => {
-      let refactoringName = refactoringJson['name'];
-      let refactoring: Refactoring = this.getNodeRefactoring(refactoringName, smell);
-      smell.addRefactoring(refactoring);
-    });
-    this.addIgnoreOptions(node, smell);
-    return smell;
+      smellJson['refactorings'].forEach((refactoringJson) => {
+        let refactoringName = refactoringJson['name'];
+        let refactoring: Refactoring = this.getNodeRefactoring(refactoringName, smell);
+        smell.addRefactoring(refactoring);
+      });
+      this.addIgnoreOptions(node, smell);
+      return smell;
+    }
   }
 
   private getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
@@ -103,7 +102,6 @@ export class SmellFactoryService {
   }
 
   getGroupSmell(smellJson, group): GroupSmellObject {
-    console.debug("get group smell");
     let smell: GroupSmellObject;
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_NO_API_GATEWAY:
@@ -116,28 +114,30 @@ export class SmellFactoryService {
         smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
         break;
       default:
-        break;
+        console.warn(`Unsupported smell: ${smellJson.name}`);
     }
-    smellJson['nodes'].forEach((node_name) => {
-      let node = this.gs.getGraph().findNodeByName(node_name);
-      smell.addNodeBasedCause(node);
-    });
-    
-    smellJson['links'].forEach((link_cause) => {
-      var source = this.gs.getGraph().findNodeByName(link_cause['source']);
-      var target = this.gs.getGraph().findNodeByName(link_cause['target']);
-      var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-      console.log("source/target", source.getName(), target.getName());
-      smell.addLinkBasedCause(link);
-    });
 
-    smellJson['refactorings'].forEach((refactoringJson) => {
-      let refactoringName = refactoringJson['name'];
-      let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
-      smell.addRefactoring(refactoring);
-    });
-    this.addIgnoreOptions(group, smell);
-    return smell;
+    if(smell) {
+      smellJson['nodes'].forEach((node_name) => {
+        let node = this.gs.getGraph().findNodeByName(node_name);
+        smell.addNodeBasedCause(node);
+      });
+      
+      smellJson['links'].forEach((link_cause) => {
+        let source = this.gs.getGraph().findNodeByName(link_cause['source']);
+        let target = this.gs.getGraph().findNodeByName(link_cause['target']);
+        let link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        smell.addLinkBasedCause(link);
+      });
+
+      smellJson['refactorings'].forEach((refactoringJson) => {
+        let refactoringName = refactoringJson['name'];
+        let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
+        smell.addRefactoring(refactoring);
+      });
+      this.addIgnoreOptions(group, smell);
+      return smell;
+    }
   }
 
   private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
@@ -148,18 +148,10 @@ export class SmellFactoryService {
         return new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
 
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
-        return;/* [
-          new ChangeDatastoreOwnershipRefactoring(this.gs.getGraph(), smell),
-          new ChangeServiceOwnershipRefactoring(this.gs.getGraph(), smell),
-          new SplitTeamsSharedDatastoreRefactoring(this.gs.getGraph(), smell),
-          new MergeTeamsRefactoring(this.gs.getGraph(), smell)
-        ];*/
+        return new SplitTeamsByServiceRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
-        return;/* [
-          new ChangeNodeOwnershipToMostCoupledRefactoring(this.gs.getGraph(), smell),
-          new MergeTeamsRefactoring(this.gs.getGraph(), smell)
-        ]*/
+        return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
     }
   }
 

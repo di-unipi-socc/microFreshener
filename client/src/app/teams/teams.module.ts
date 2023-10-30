@@ -22,6 +22,7 @@ import { StyleClassModule } from "primeng/styleclass";
 import { ToggleButtonModule } from "primeng/togglebutton";
 import { SubtoolbarTeamsComponent } from "./subtoolbar-teams-management/subtoolbar-teams-management.component";
 import { TooltipModule } from "primeng/tooltip";
+import { CommonModule } from "@angular/common";
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { TooltipModule } from "primeng/tooltip";
         SubtoolbarTeamsComponent
     ],
     imports: [
+        CommonModule,
         FormsModule,
         ButtonModule,
         SidebarModule,
