@@ -22,7 +22,7 @@ import { UseTimeoutRefactoring } from './refactorings/use-timeout';
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
 import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './refactorings/split-teams-by-service';
-import { SplitTeamsByCouplingRefactoring } from './refactorings/change-node-ownership-to-most-coupled-team';
+import { SplitTeamsByCouplingRefactoring } from './refactorings/split-teams-by-coupling';
 
 @Injectable({
   providedIn: 'root'
