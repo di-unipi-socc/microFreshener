@@ -215,7 +215,10 @@ class MicrotoscaElementConfiguration {
             removeSmell: function (smell: ISmell): ISmell {
                 let smells: ISmell[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
-                return smells.splice(smellIndex, 1)[0];
+                let removingSmell = smells.splice(smellIndex, 1)[0];
+                if(smells.length == 0)
+                    this.hideSmells();
+                return removingSmell;
             },
             resetSmells: function () {
                 this.attributes.smells = [];
@@ -226,7 +229,7 @@ class MicrotoscaElementConfiguration {
                 this.attr('SmellsFoundExclamation/visibility', 'hidden');
             },
             ignoreAlways: function(smell: ISmell) {
-                let ignoredSmell: ISmell = this.ignoreOnce(smell);
+                let ignoredSmell: ISmell = this.removeSmell(smell);
                 this.attributes.ignoreAlwaysSmells.add(ignoredSmell.getName());
             },
             undoIgnoreAlways: function(smell: ISmell) {

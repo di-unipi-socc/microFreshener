@@ -116,18 +116,6 @@ export class GroupSmellObject implements ISmell {
     addRefactoring(refactoring: (Refactoring | GroupRefactoring)) {
         // Add refactoring to whole group
         this.refactorings.push(refactoring);
-        // Add partial member refactoring to members' smells
-        if(refactoring instanceof GroupRefactoring) {
-            let membersRefactoring = refactoring.getMemberRefactorings();
-            membersRefactoring?.forEach((refactoring, member) => {
-                let memberSmell = this.memberSmells.get(member);
-                if(!memberSmell) {
-                    memberSmell = new SmellObject(`${this.name} in ${this.group.getName()}`, this.group);
-                    this.memberSmells.set(member, memberSmell);
-                }
-                memberSmell.addRefactoring(refactoring);
-            });
-        }
     }
 
     getRefactorings(): Refactoring[] {
@@ -145,7 +133,11 @@ export class GroupSmellObject implements ISmell {
         return descr;
     }
 
-    getMembers(): Map<joint.shapes.microtosca.Node, SmellObject> {
+    getSubSmells(): Map<joint.shapes.microtosca.Node, SmellObject> {
         return this.memberSmells;
+    }
+
+    setSubSmells(smells: Map<joint.shapes.microtosca.Node, SmellObject>) {
+        this.memberSmells = smells;
     }
 }

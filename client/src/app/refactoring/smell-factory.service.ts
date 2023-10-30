@@ -66,7 +66,8 @@ export class SmellFactoryService {
         let refactoring: Refactoring = this.getNodeRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
       });
-      this.addIgnoreOptions(node, smell);
+      smell.addRefactoring(new IgnoreOnceRefactoring(node, smell));
+      smell.addRefactoring(new IgnoreAlwaysRefactoring(node, smell));
       return smell;
     }
   }
@@ -134,8 +135,25 @@ export class SmellFactoryService {
         let refactoringName = refactoringJson['name'];
         let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
+        // Add partial member refactoring to members' smells
+        let membersRefactoring = refactoring.getMemberRefactorings();
+        let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
+        membersRefactoring?.forEach((refactoring, member) => {
+            let memberSmell = subSmells.get(member);
+            if(!memberSmell) {
+                memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
+                subSmells.set(member, memberSmell);
+            }
+            memberSmell.addRefactoring(refactoring);
+            memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
+            memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
+        });
+        smell.setSubSmells(subSmells);
       });
-      this.addIgnoreOptions(group, smell);
+
+      smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
+      smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
+      
       return smell;
     }
   }
@@ -153,11 +171,6 @@ export class SmellFactoryService {
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
     }
-  }
-
-  addIgnoreOptions(element, smell) {
-    smell.addRefactoring(new IgnoreOnceRefactoring(element, smell));
-    smell.addRefactoring(new IgnoreAlwaysRefactoring(element, smell));
   }
 
 }

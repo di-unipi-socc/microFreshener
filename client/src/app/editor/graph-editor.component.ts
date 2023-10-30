@@ -24,6 +24,7 @@ import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
+import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 
 @Component({
     selector: 'app-graph-editor',
@@ -406,7 +407,9 @@ export class GraphEditorComponent {
 
         ref.onClose.subscribe((refactoringCommand) => {
             if (refactoringCommand) {
-                this.graphInvoker.executeCommand(refactoringCommand);
+                let silent: boolean;
+                silent = refactoringCommand instanceof IgnoreOnceRefactoring || refactoringCommand instanceof IgnoreAlwaysRefactoring;
+                this.graphInvoker.executeCommand(refactoringCommand, silent);
                 this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
             }
         });

@@ -1,12 +1,12 @@
-import { SmellObject } from "../smells/smell";
+import { ISmell, SmellObject } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 
 export class IgnoreOnceRefactoring implements Refactoring {
 
-    smell: SmellObject;
+    smell: ISmell;
     element: joint.shapes.microtosca.Root;
 
-    constructor(element: joint.shapes.microtosca.Root, smell: SmellObject) {
+    constructor(element: joint.shapes.microtosca.Root, smell: ISmell) {
         this.smell = smell;
         this.element = element;
     }
@@ -31,10 +31,10 @@ export class IgnoreOnceRefactoring implements Refactoring {
 
 export class IgnoreAlwaysRefactoring implements Refactoring {
 
-    smell: SmellObject;
+    smell: ISmell;
     element: joint.shapes.microtosca.Root;
 
-    constructor(element: joint.shapes.microtosca.Root, smell: SmellObject) {
+    constructor(element: joint.shapes.microtosca.Root, smell: ISmell) {
         this.smell = smell;
         this.element = element;
     }

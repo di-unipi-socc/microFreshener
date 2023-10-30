@@ -188,7 +188,7 @@ export class AnalyserService {
                                 .build();
             this.groupsWithSmells.push(agroup);
             // Derive node actions from the group smells (e.g., AddApiGateway in edge nodes)
-            groupSmells.flatMap(groupSmell => [...groupSmell.getMembers()])?.forEach((memberSmell) => {
+            groupSmells.flatMap(groupSmell => [...groupSmell.getSubSmells()])?.forEach((memberSmell) => {
               this.groupMembersCausingSmells.push(
                 Analysed.getBuilder<joint.shapes.microtosca.Node>()
                         .setElement(memberSmell[0])
