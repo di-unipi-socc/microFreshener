@@ -20,29 +20,24 @@ export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
                                         let source = <joint.shapes.microtosca.Node> link.getSourceElement();
                                         let sourceTeam;
                                         if(source) {
-                                            console.debug("getting source team")
                                             sourceTeam = graph.getTeamOfNode(source);
                                         }
                                         let target = <joint.shapes.microtosca.Node> link.getTargetElement();
                                         let targetTeam;
                                         if(target) {
-                                            console.debug("getting target team")
                                             targetTeam = graph.getTeamOfNode(target);
                                         }
-                                        console.debug("source - target - link", (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), (<joint.shapes.microtosca.Node> link.getTargetElement()).getName(), link)
-                                        console.debug("sourceTeam - targetTeam", sourceTeam, targetTeam);
                                         return sourceTeam !== team ? sourceTeam : targetTeam;
                                     })
                                   .filter((t) => t)
-                                  .reduce(((map, t) => {console.debug("updating with data of team", t); map.has(t) ? map.set(t, map.get(t)+1) : map.set(t, 1); return map; }), new Map<joint.shapes.microtosca.SquadGroup, number>());
+                                  .reduce(((map, t) => { map.has(t) ? map.set(t, map.get(t)+1) : map.set(t, 1); return map; }), new Map<joint.shapes.microtosca.SquadGroup, number>());
             let maxCount = Math.max(...Array.from(teamCount.values()));
             let maxTeams = Array.from(teamCount).filter(([t, count]) => count == maxCount).map(([t, c]) => t);
             let newTeam = maxTeams.length == 1 ? maxTeams[0] : NO_TEAM;
             if(newTeam != NO_TEAM) {
-                //console.debug("!= NO_TEAM")
                 let moveNodeCommand = new RemoveMemberFromTeamGroupCommand(team, n)
                                     .bind(new AddMemberToTeamGroupCommand(newTeam));
-                this.command = moveNodeCommand;
+                cmds.push(moveNodeCommand);
                 let name = this.getName();
                 let description = `Let ${newTeam} manage this service`;
                 this.addMemberRefactoring(n, moveNodeCommand, name, description);

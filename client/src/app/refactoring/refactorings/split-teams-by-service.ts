@@ -34,6 +34,7 @@ export class SplitTeamsByService extends GroupRefactoring {
                 this.addMemberRefactoring(service, splitDatastore, name, description);
                 this.addMemberRefactoring(datastore, splitDatastore, name, description);
             } else if(graph.isCommunicationPattern) {
+                console.debug("SLT - Communication pattern found");
                 // Service in one team -> Communication pattern in another team which is not used by any service of its team
                 let communicationPattern = <joint.shapes.microtosca.CommunicationPattern> targetNode;
                 let communicationPatternTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(communicationPattern);

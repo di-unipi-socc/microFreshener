@@ -162,6 +162,7 @@ export class AnalyserService {
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
+          console.debug("ANALYSIS RESPONSE", response);
           this.clearSmells(); 
           // reset analysed node array
           this.nodesWithSmells = [];
@@ -185,7 +186,6 @@ export class AnalyserService {
                                 .setElement(group)
                                 .setSmells(groupSmells)
                                 .build();
-            console.debug("analysed group", agroup);
             this.groupsWithSmells.push(agroup);
             // Derive node actions from the group smells (e.g., AddApiGateway in edge nodes)
             groupSmells.flatMap(groupSmell => [...groupSmell.getMembers()])?.forEach((memberSmell) => {
