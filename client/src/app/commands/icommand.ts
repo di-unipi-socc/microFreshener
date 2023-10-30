@@ -21,51 +21,9 @@ export class CompositeCommand implements Command {
 
 }
 
-export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> implements Command {
-    
-    abstract execute();
-    abstract unexecute();
+export class Sequentiable<T extends Command> {
 
-    protected element: T;
-
-    set(element: T) {
-        this.element = element;
-    }
-
-    get(): T {
-        return this.element;
-    }
-
-    constructor(element?: T) {
-        this.element = element;
-    }
-
-    then<U extends Command>(next: U): Sequentiable<U> {
-        let action = () => {this.execute()};
-        let revert = () => {this.unexecute()};
-        let getNode = () => { return this.get() };
-
-        let newCommand = Sequentiable.of(next);
-
-        newCommand.execute = () => {
-            action();
-            let element = getNode();
-            if(next instanceof ElementCommand)
-                next.set(element);
-            next.execute();
-        }
-        newCommand.unexecute = () => {
-            next.unexecute();
-            revert();
-        }
-        return newCommand;
-    };
-
-}
-
-export class Sequentiable<T extends Command> implements Command {
-
-    private constructor(private command: T) {}
+    protected constructor(private command?: T) {}
 
     execute() {
         this.command.execute();
@@ -86,20 +44,65 @@ export class Sequentiable<T extends Command> implements Command {
         let revert = () => {this.unexecute()};
 
         let newCommand;
-        if(next instanceof Sequentiable)
+        if(next instanceof Sequentiable) {
             newCommand = next;
-        else
+        } else {
             newCommand = Sequentiable.of(next);
-
-        newCommand.execute = () => {
-            action();
-            next.execute();
-        }
-        newCommand.unexecute = () => {
-            next.unexecute();
-            revert();
         }
         
-        return newCommand;
+        return new class extends Sequentiable<C> {
+            execute(): void {
+                action();
+                newCommand.execute();
+            }
+
+            unexecute(): void {
+                newCommand.unexecute();
+                revert();
+            }
+        };
     };
+}
+
+export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> {
+    
+    abstract execute();
+    abstract unexecute();
+
+    protected element: T;
+
+    set(element: T) {
+        this.element = element;
+    }
+
+    get(): T {
+        return this.element;
+    }
+
+    constructor(element: T) {
+        this.element = element;
+    }
+
+    bind<U extends joint.shapes.microtosca.Root>(next: ElementCommand<U>): ElementCommand<U> {
+        let action = () => {this.execute()};
+        let revert = () => {this.unexecute()};
+        let get = (): T => {return this.get()};
+        return new class extends ElementCommand<U> {
+
+            constructor() {
+                super(<U> <unknown>get());
+            }
+
+            execute(): void {
+                action();
+                next.set(<U> <unknown>get());
+                next.execute();
+            }
+
+            unexecute(): void {
+                next.unexecute();
+                revert();
+            }
+        };
+    }
 }

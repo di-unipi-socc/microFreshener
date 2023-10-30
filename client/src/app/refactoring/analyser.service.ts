@@ -12,7 +12,7 @@ import { Smell } from '../graph/model/smell';
 import { CommunicationPattern } from "../graph/model/communicationpattern";
 import { SmellFactoryService } from './smell-factory.service';
 import { Analysed } from './analysed';
-import { GroupSmellObject, SmellObject } from './smells/smell';
+import { GroupSmellObject } from './smells/smell';
 import * as _ from 'lodash';
 
 
@@ -27,6 +27,7 @@ export class AnalyserService {
   
   nodesWithSmells: Analysed<joint.shapes.microtosca.Node>[] = [];   // list of analysed nodes in analysis response
   groupsWithSmells: Analysed<joint.shapes.microtosca.Group>[] = []; // list of analysed groups in analysis response
+  groupMembersCausingSmells: Analysed<joint.shapes.microtosca.Node>[] = []; // group smells duplication in group member nodes
 
   constructor(
     private http: HttpClient,
@@ -63,9 +64,15 @@ export class AnalyserService {
   private showGroupSmells() {
     this.groupsWithSmells.forEach((agroup) => {
       let g = this.gs.getGraph().getGroup(agroup.getName());
-      console.debug("showGroupSmells, smells are", g.getSmells())
       agroup.getSmells().forEach((smell) => {
           g.addSmell(smell);
+      })
+    })
+
+    this.groupMembersCausingSmells.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.getName());
+      anode.getSmells().forEach((smell) => {
+        n.addSmell(smell);
       })
     })
   }
@@ -169,6 +176,7 @@ export class AnalyserService {
           });
 
           this.groupsWithSmells = [];
+          this.groupMembersCausingSmells = [];
           response['groups'].forEach((groupJson) => {
             // Build the smells of the group
             let group = this.gs.getGraph().findGroupByName(groupJson['name']);
@@ -181,7 +189,7 @@ export class AnalyserService {
             this.groupsWithSmells.push(agroup);
             // Derive node actions from the group smells (e.g., AddApiGateway in edge nodes)
             groupSmells.flatMap(groupSmell => [...groupSmell.getMembers()])?.forEach((memberSmell) => {
-              this.nodesWithSmells.push(
+              this.groupMembersCausingSmells.push(
                 Analysed.getBuilder<joint.shapes.microtosca.Node>()
                         .setElement(memberSmell[0])
                         .setSmells([memberSmell[1]])

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, NodeCommand, RemoveCommunicationPatternCommand, RemoveDatastoreCommand, RemoveNodeCommand, RemoveServiceCommand } from '../node-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveNodeCommand } from '../node-commands';
 import { MessageService } from 'primeng/api';
 import { GraphInvoker } from '../../commands/invoker';
 import { GraphService } from '../../graph/graph.service';
@@ -56,7 +56,7 @@ export class ArchitectureEditingService {
       command = addNodeCommand;
     } else {
       let addToTeamCommand = new AddMemberToTeamGroupCommand(team);
-      command = addNodeCommand.then(addToTeamCommand);
+      command = addNodeCommand.bind(addToTeamCommand);
     }
 
     this.graphInvoker.executeCommand(command);

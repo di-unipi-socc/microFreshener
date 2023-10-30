@@ -3,7 +3,7 @@ import { GroupRefactoring } from "./refactoring-command";
 import { GroupSmellObject } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
-import { Command, CompositeCommand } from "src/app/commands/icommand";
+import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 
 export class AddApiGatewayRefactoring extends GroupRefactoring {
 
@@ -17,13 +17,14 @@ export class AddApiGatewayRefactoring extends GroupRefactoring {
         let commands = [];
         smell.getNodeBasedCauses().forEach(node => {
             let gatewayName = "API Gateway " + node.getName();
-            let addApiGatewayCommand = new AddMessageRouterCommand(graph, gatewayName)
+            let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(edgeGroup, node)))
                                     .then(new AddMessageRouterCommand(graph, gatewayName))
                                     .then(new AddLinkCommand(graph, edgeGroup.getName(), gatewayName))
                                     .then(new AddLinkCommand(graph, gatewayName, node.getName()))
-                                    .then(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(edgeGroup, node)));
             commands.push(addApiGatewayCommand);
-            this.addMemberRefactoring(node, addApiGatewayCommand);
+            let name = this.getName();
+            let description = `Add an API Gateway before ${node.getName()}`
+            this.addMemberRefactoring(node, addApiGatewayCommand, name, description);
         });
         this.command = CompositeCommand.of(commands);
     }

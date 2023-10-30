@@ -3,7 +3,7 @@ import { GroupSmellObject } from "../smells/smell";
 import { Graph } from "src/app/graph/model/graph";
 import * as joint from "jointjs";
 import { Command, CompositeCommand } from "src/app/commands/icommand";
-import { GroupRefactoring, Refactoring } from "./refactoring-command";
+import { GroupRefactoring } from "./refactoring-command";
 
 export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
 
@@ -41,18 +41,14 @@ export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
             if(newTeam != NO_TEAM) {
                 //console.debug("!= NO_TEAM")
                 let moveNodeCommand = new RemoveMemberFromTeamGroupCommand(team, n)
-                                    .then(new AddMemberToTeamGroupCommand(newTeam));
+                                    .bind(new AddMemberToTeamGroupCommand(newTeam));
                 this.command = moveNodeCommand;
-                this.addMemberRefactoring(n, moveNodeCommand);
+                let name = this.getName();
+                let description = `Let ${newTeam} manage this service`;
+                this.addMemberRefactoring(n, moveNodeCommand, name, description);
             }
         });
         this.command = CompositeCommand.of(cmds);
-    }
-    addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name?: string, description?: string): void {
-        throw new Error("Method not implemented.");
-    }
-    getMemberRefactorings(): Map<joint.shapes.microtosca.Node, Refactoring> {
-        throw new Error("Method not implemented.");
     }
 
     execute() {

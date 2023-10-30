@@ -18,15 +18,13 @@ export abstract class GroupRefactoring implements Refactoring {
         this.memberRefactorings = new Map<joint.shapes.microtosca.Node, Refactoring>();
     }
 
-    addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name?: string, description?: string) {
-        let memberGetName = this.getName;
-        let memberGetDescription = this.getDescription;
+    addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name: string, description: string) {
         this.memberRefactorings.set(member, new class implements Refactoring {
             getName(): string {
-                return memberGetName();
+                return name;
             }
             getDescription(): string {
-                return memberGetDescription();
+                return description;
             }
             execute() {
                 command.execute();

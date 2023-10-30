@@ -1,20 +1,18 @@
-import { Command, ElementCommand, Sequentiable } from '../commands/icommand';
+import { Command, CompositeCommand, ElementCommand } from '../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
+import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
+import { RemoveLinkCommand } from './link-commands';
 
 
-
-
-export abstract class NodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {}
-
-abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends NodeCommand<T> {
+abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
     name: string;
     position?: g.Point;
 
     constructor(name: string, position?: g.Point) {
-        super();
+        super(undefined);
         this.name = name;
         this.position = position;
     }
@@ -90,50 +88,47 @@ export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.m
     }
 }
 
-export class RemoveNodeCommand extends NodeCommand<joint.shapes.microtosca.Node> {
+export class RemoveNodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
     graph: Graph;
-    node: joint.shapes.microtosca.Root;
-    teamOfNode: joint.shapes.microtosca.SquadGroup;
+    removeNodeFromEverything: Command;
 
-    cloneNode: joint.shapes.microtosca.Root;
-    incomingNodes: joint.shapes.microtosca.Root[];
-    outcomingNodes: joint.shapes.microtosca.Root[];
-
-    constructor(graph: Graph, node: joint.shapes.microtosca.Root) {
-        super();
+    constructor(graph: Graph, node?: T) {
+        super(node);
         this.graph = graph;
-        this.node = node;
-        // TODO get the team of the node in order to restore in into the team when redo
-        this.teamOfNode = graph.getTeamOfNode(node);
-        this.cloneNode = <joint.shapes.microtosca.Root>node.clone();
-        this.incomingNodes = this.graph.getInboundNeighbors(this.node);
-        this.outcomingNodes = this.graph.getOutboundNeighbors(this.node);
     }
 
     execute() {
-        this.node.remove();
+        let node = this.get();
+        let team = this.graph.getTeamOfNode(node);
+        let preprocessing: Command[] = [];
+        
+        if(team)
+            preprocessing = preprocessing.concat(new RemoveMemberFromTeamGroupCommand(team, node));
+        
+        let links = this.graph.getIngoingLinks(node).concat(this.graph.getOutgoingLinks(node));
+        links.forEach((link) => { preprocessing = preprocessing.concat(new RemoveLinkCommand(this.graph, link)) });
+        
+        this.removeNodeFromEverything = CompositeCommand.of(preprocessing);
+        this.removeNodeFromEverything.execute();
+
+        node.remove();
     }
 
     unexecute() {
-        if (this.node instanceof joint.shapes.microtosca.Service)
-            this.node = this.graph.addService(this.cloneNode.getName());
-        else if (this.node instanceof joint.shapes.microtosca.Datastore)
-            this.node = this.graph.addDatastore(this.cloneNode.getName());
-        else if (this.node instanceof joint.shapes.microtosca.CommunicationPattern)
-            this.node = this.graph.addCommunicationPattern(this.cloneNode.getName(), (<joint.shapes.microtosca.CommunicationPattern>this.cloneNode).getType());
-
-        this.incomingNodes.forEach(inNode => {
-            this.graph.addRunTimeInteraction(inNode, this.node);
-        })
-        this.outcomingNodes.forEach(outNode => {
-            this.graph.addRunTimeInteraction(this.node, outNode);
-        })
-        this.teamOfNode.addMember(this.node);
+        let node = this.get();
+        node.addTo(this.graph);
+        this.removeNodeFromEverything.unexecute();
     }
 }
 
-export class RemoveServiceCommand extends NodeCommand<joint.shapes.microtosca.Service> {
+export class RemoveServiceCommand extends RemoveNodeCommand<joint.shapes.microtosca.Service> {}
+
+export class RemoveDatastoreCommand extends RemoveNodeCommand<joint.shapes.microtosca.Datastore> {}
+
+export class RemoveCommunicationPatternCommand extends RemoveNodeCommand<joint.shapes.microtosca.CommunicationPattern> {}
+
+/*export class RemoveServiceCommand extends ElementCommand<joint.shapes.microtosca.Service> {
 
     graph: Graph;
     node_name: string;
@@ -187,7 +182,7 @@ export class RemoveServiceCommand extends NodeCommand<joint.shapes.microtosca.Se
     }
 }
 
-export class RemoveDatastoreCommand extends NodeCommand<joint.shapes.microtosca.Datastore> {
+export class RemoveDatastoreCommand extends ElementCommand<joint.shapes.microtosca.Datastore> {
 
     graph: Graph;
     node_name: string;
@@ -230,7 +225,7 @@ export class RemoveDatastoreCommand extends NodeCommand<joint.shapes.microtosca.
     }
 }
 
-export class RemoveCommunicationPatternCommand extends NodeCommand<joint.shapes.microtosca.CommunicationPattern> {
+export class RemoveCommunicationPatternCommand extends ElementCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     graph: Graph;
     node_name: string;
@@ -287,4 +282,4 @@ export class RemoveCommunicationPatternCommand extends NodeCommand<joint.shapes.
         if(this.team_name)
             this.graph.getTeam(this.team_name).addMember(node);
     }
-}
+}*/

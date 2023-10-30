@@ -24,22 +24,27 @@ export class SplitTeamsByService extends GroupRefactoring {
                 let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
                 let splitDatastore = Sequentiable.of(new RemoveLinkCommand(graph, link))
-                    .then(new AddDatastoreCommand(graph, newDatabaseName).then(new AddMemberToTeamGroupCommand(team)))
+                    .then(new AddDatastoreCommand(graph, newDatabaseName).bind(new AddMemberToTeamGroupCommand(team)))
                     .then(new AddLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);
-                this.addMemberRefactoring(service, splitDatastore);
-                this.addMemberRefactoring(datastore, splitDatastore);
+                let name = this.getName();
+                let datastoreTeam = graph.getTeamOfNode(datastore);
+                let description = `Split datastore among ${team.getName()} and ${datastoreTeam.getName()}`;
+                this.addMemberRefactoring(service, splitDatastore, name, description);
+                this.addMemberRefactoring(datastore, splitDatastore, name, description);
             } else if(graph.isCommunicationPattern) {
                 // Service in one team -> Communication pattern in another team which is not used by any service of its team
                 let communicationPattern = <joint.shapes.microtosca.CommunicationPattern> targetNode;
                 let communicationPatternTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(communicationPattern);
                 let moveCommunicationPattern = new RemoveMemberFromTeamGroupCommand(communicationPatternTeam, communicationPattern)
-                                                .then(new AddMemberToTeamGroupCommand(team));
+                                                .bind(new AddMemberToTeamGroupCommand(team));
                 // Add to global command and single nodes
                 cmds.push(moveCommunicationPattern);
-                this.addMemberRefactoring(service, moveCommunicationPattern);
-                this.addMemberRefactoring(communicationPattern, moveCommunicationPattern);
+                let name = this.getName();
+                let description = `Split datastore among ${team.getName()} and ${communicationPatternTeam.getName()}`;
+                this.addMemberRefactoring(service, moveCommunicationPattern, name, description);
+                this.addMemberRefactoring(communicationPattern, moveCommunicationPattern, name, description);
             }
         });
         this.command = CompositeCommand.of(cmds);

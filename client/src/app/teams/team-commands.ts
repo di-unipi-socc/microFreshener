@@ -1,16 +1,13 @@
-import { Command, CompositeCommand, ElementCommand, Sequentiable } from '../commands/icommand';
+import { Command, ElementCommand } from '../commands/icommand';
 import { Graph } from "../graph/model/graph";
-import { NodeCommand } from '../architecture/node-commands';
 
-export abstract class TeamCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {}
-
-export class AddTeamGroupCommand extends TeamCommand {
+export class AddTeamGroupCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {
 
     graph: Graph;
     team_name: string;
 
     constructor(graph: Graph, team_name: string) {
-        super();
+        super(undefined);
         this.graph = graph;
         this.team_name = team_name;
     }
@@ -28,11 +25,10 @@ export class AddTeamGroupCommand extends TeamCommand {
 
 }
 
-export class AddMemberToTeamGroupCommand extends NodeCommand<joint.shapes.microtosca.Node> {
+export class AddMemberToTeamGroupCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
-        super();
-        this.set(node);
+    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: T) {
+        super(node);
     }
 
     execute() {
@@ -47,11 +43,10 @@ export class AddMemberToTeamGroupCommand extends NodeCommand<joint.shapes.microt
 
 }
 
-export class RemoveMemberFromTeamGroupCommand extends NodeCommand<joint.shapes.microtosca.Node> {
+export class RemoveMemberFromTeamGroupCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
-    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: joint.shapes.microtosca.Node) {
-        super();
-        this.set(node);
+    constructor(private team: joint.shapes.microtosca.SquadGroup, node?: T) {
+        super(node);
     }
 
     execute() {
@@ -68,7 +63,7 @@ export class RemoveMemberFromTeamGroupCommand extends NodeCommand<joint.shapes.m
 
 export class RemoveTeamGroupCommand implements Command {
 
-    removeMemberCommands: RemoveMemberFromTeamGroupCommand[];
+    removeMemberCommands: RemoveMemberFromTeamGroupCommand<joint.shapes.microtosca.Node>[];
 
     constructor(
         private graph: Graph,
@@ -91,7 +86,7 @@ export class RemoveTeamGroupCommand implements Command {
     }
 }
 
-export class AddManyMembersToTeamGroupCommand extends TeamCommand {
+/*export class AddManyMembersToTeamGroupCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {
 
     command: Command;
 
@@ -131,4 +126,4 @@ export class MergeTeamsCommand implements Command {
         this.command.unexecute();
     }
 
-}
+}*/
