@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { SmellObject } from '../../refactoring/smells/smell';
+import { ISmell } from 'src/app/refactoring/smells/smell';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
@@ -13,15 +13,15 @@ declare module 'jointjs' {
             class Root extends joint.dia.Element {
                 setName(name): void;
                 getName(): string;
-                addSmell(smell: SmellObject): void;
-                getSmell(name: string): SmellObject;
-                getSmells(): SmellObject[];
+                addSmell(smell: ISmell): void;
+                getSmell(name: string): ISmell;
+                getSmells(): ISmell[];
                 hasSmells(): boolean;
-                removeSmell(smell: SmellObject): void;
+                removeSmell(smell: ISmell): void;
                 resetSmells(): void
-                ignoreAlways(smell: SmellObject): void;
-                undoIgnoreAlways(smell: SmellObject): void;
-                getIgnoreAlwaysSmells(): SmellObject[];
+                ignoreAlways(smell: ISmell): void;
+                undoIgnoreAlways(smell: ISmell): void;
+                getIgnoreAlwaysSmells(): ISmell[];
             }
             class Node extends Root {
 
@@ -195,16 +195,16 @@ class MicrotoscaElementConfiguration {
         }
         this.prototypeProperties = {
             ...this.prototypeProperties,
-            addSmell: function (smell: SmellObject) {
+            addSmell: function (smell: ISmell) {
                 if(!this.attributes.alwaysIgnoredSmells.has(smell.getName())) {
                     this.attributes.smells.push(smell);
                     this.showSmells();
                 }
             },
-            getSmells: function (): SmellObject[] {
+            getSmells: function (): ISmell[] {
                 return this.attributes.smells;
             },
-            getSmell: function (name: string): SmellObject {
+            getSmell: function (name: string): ISmell {
                 return this.attributes.smells.find(smell => {
                     return name === smell.getName();
                 });
@@ -212,8 +212,8 @@ class MicrotoscaElementConfiguration {
             hasSmells: function ():  boolean {
                 return this.attributes.smells.length > 0;
             },
-            removeSmell: function (smell: SmellObject): SmellObject {
-                let smells: SmellObject[] = this.attributes.smells;
+            removeSmell: function (smell: ISmell): ISmell {
+                let smells: ISmell[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
                 return smells.splice(smellIndex, 1)[0];
             },
@@ -225,11 +225,11 @@ class MicrotoscaElementConfiguration {
                 this.attr('SmellsFoundTriangle/visibility', 'hidden');
                 this.attr('SmellsFoundExclamation/visibility', 'hidden');
             },
-            ignoreAlways: function(smell: SmellObject) {
-                let ignoredSmell: SmellObject = this.ignoreOnce(smell);
+            ignoreAlways: function(smell: ISmell) {
+                let ignoredSmell: ISmell = this.ignoreOnce(smell);
                 this.attributes.ignoreAlwaysSmells.add(ignoredSmell.getName());
             },
-            undoIgnoreAlways: function(smell: SmellObject) {
+            undoIgnoreAlways: function(smell: ISmell) {
                 this.addSmell(smell);
                 this.attributes.alwaysIgnoredSmells.delete(smell.getName());
             },

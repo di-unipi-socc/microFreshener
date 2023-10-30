@@ -1,7 +1,7 @@
 import * as joint from 'jointjs';
 import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-command';
 
-export interface Smell {
+export interface ISmell {
     getName(): string;
     getDescription(): string;
     addNodeBasedCause(node: joint.shapes.microtosca.Node);
@@ -12,14 +12,14 @@ export interface Smell {
     getRefactorings(): Refactoring[];
 }
 
-export class SmellObject implements Smell {
+export class SmellObject implements ISmell {
 
     name: string;
     refactorings: Refactoring[];
     linksCause: joint.shapes.microtosca.RunTimeLink[];
     nodesCause: joint.shapes.microtosca.Node[];
 
-    constructor(name: string) {
+    constructor(name: string, private group?:joint.shapes.microtosca.Group) {
         this.name = name;
         this.linksCause = [];
         this.refactorings = [];
@@ -28,6 +28,10 @@ export class SmellObject implements Smell {
 
     getName() {
         return this.name;
+    }
+
+    getGroup(): joint.shapes.microtosca.Group{
+        return this.group;
     }
 
     addNodeBasedCause(node) {
@@ -65,7 +69,7 @@ export class SmellObject implements Smell {
     }
 }
 
-export class GroupSmellObject implements Smell {
+export class GroupSmellObject implements ISmell {
 
     name: string;
 
@@ -118,7 +122,7 @@ export class GroupSmellObject implements Smell {
             membersRefactoring?.forEach((refactoring, member) => {
                 let memberSmell = this.memberSmells.get(member);
                 if(!memberSmell) {
-                    memberSmell = new SmellObject(this.name);
+                    memberSmell = new SmellObject(`${this.name} in ${this.group.getName()}`, this.group);
                     this.memberSmells.set(member, memberSmell);
                 }
                 memberSmell.addRefactoring(refactoring);
