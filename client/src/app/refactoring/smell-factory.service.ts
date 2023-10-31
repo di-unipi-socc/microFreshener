@@ -23,6 +23,8 @@ import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactorings/i
 import * as joint from 'jointjs';
 import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './refactorings/split-teams-by-service';
 import { SplitTeamsByCouplingRefactoring } from './refactorings/split-teams-by-coupling';
+import { EditorPermissionsService as PermissionsService } from '../core/permissions/editor-permissions.service';
+import { SessionService } from '../core/session/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +33,8 @@ export class SmellFactoryService {
 
   constructor(
     private gs: GraphService,
+    private session: SessionService,
+    private permissions: PermissionsService
   ) {}
 
   getNodeSmell(smellJson, node): SmellObject {
@@ -53,19 +57,25 @@ export class SmellFactoryService {
     }
 
     if(smell) {
+      
       smellJson['links'].forEach((cause) => {
         var source = this.gs.getGraph().findNodeByName(cause['source']);
         var target = this.gs.getGraph().findNodeByName(cause['target']);
         var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
-        smell.addNodeBasedCause(node)
+        smell.addNodeBasedCause(node);
       });
+
+      if(!this.session.isAdmin)
+        this.filterSmellCauses(smell);
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         let refactoring: Refactoring = this.getNodeRefactoring(refactoringName, smell);
-        smell.addRefactoring(refactoring);
+        if(refactoring)
+          smell.addRefactoring(refactoring);
       });
+
       smell.addRefactoring(new IgnoreOnceRefactoring(node, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(node, smell));
       return smell;
@@ -100,61 +110,73 @@ export class SmellFactoryService {
       case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
         return new AddDataManagerRefactoring(this.gs.getGraph(), smell);
     }
+
+  }
+
+  filterSmellCauses(smell: SmellObject) {
+    if(this.session.isTeam) {
+      let team: joint.shapes.microtosca.SquadGroup = this.gs.getGraph().findTeamByName(this.session.getName());
+      smell.nodesCause = smell.nodesCause.filter((node) => this.permissions.isEditingAllowedForATeam(team, node));
+      smell.linksCause = smell.linksCause.filter((link) => this.permissions.isEditingAllowedForATeam(team, link.getSourceElement()) && this.permissions.isEditingAllowedForATeam(team, link.getTargetElement()));
+    }
   }
 
   getGroupSmell(smellJson, group): GroupSmellObject {
-    let smell: GroupSmellObject;
-    switch (smellJson.name) {
-      case SMELL_NAMES.SMELL_NO_API_GATEWAY:
-        smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
-        break;
-      case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
-        smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
-        break;
-      case SMELL_NAMES.SMELL_TIGHTLY_COUPLED_TEAMS:
-        smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
-        break;
-      default:
-        console.warn(`Unsupported smell: ${smellJson.name}`);
-    }
-
-    if(smell) {
-      smellJson['nodes'].forEach((node_name) => {
-        let node = this.gs.getGraph().findNodeByName(node_name);
-        smell.addNodeBasedCause(node);
-      });
+    if(this.session.isAdmin) {
+      let smell: GroupSmellObject;
+      switch (smellJson.name) {
+        case SMELL_NAMES.SMELL_NO_API_GATEWAY:
+          smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
+          break;
+        case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
+          smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
+          break;
+        case SMELL_NAMES.SMELL_TIGHTLY_COUPLED_TEAMS:
+          smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
+          break;
+        default:
+          console.warn(`Unsupported smell: ${smellJson.name}`);
+      }
       
-      smellJson['links'].forEach((link_cause) => {
-        let source = this.gs.getGraph().findNodeByName(link_cause['source']);
-        let target = this.gs.getGraph().findNodeByName(link_cause['target']);
-        let link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-        smell.addLinkBasedCause(link);
-      });
 
-      smellJson['refactorings'].forEach((refactoringJson) => {
-        let refactoringName = refactoringJson['name'];
-        let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
-        smell.addRefactoring(refactoring);
-        // Add partial member refactoring to members' smells
-        let membersRefactorings = refactoring.getMemberRefactorings();
-        let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
-        membersRefactorings?.forEach((refactorings, member) => {
-            let memberSmell = subSmells.get(member);
-            if(!memberSmell) {
-                memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
-                subSmells.set(member, memberSmell);
-            }
-            refactorings.forEach((r) => memberSmell.addRefactoring(r));
-            memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
-            memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
+      if(smell) {
+        smellJson['nodes'].forEach((node_name) => {
+          let node = this.gs.getGraph().findNodeByName(node_name);
+          smell.addNodeBasedCause(node);
         });
-        smell.setSubSmells(subSmells);
-      });
+        
+        smellJson['links'].forEach((link_cause) => {
+          let source = this.gs.getGraph().findNodeByName(link_cause['source']);
+          let target = this.gs.getGraph().findNodeByName(link_cause['target']);
+          let link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+          smell.addLinkBasedCause(link);
+        });
 
-      smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
-      
-      return smell;
+        smellJson['refactorings'].forEach((refactoringJson) => {
+          let refactoringName = refactoringJson['name'];
+          let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
+          smell.addRefactoring(refactoring);
+          // Add partial member refactoring to members' smells
+          let membersRefactorings = refactoring.getMemberRefactorings();
+          let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
+          membersRefactorings?.forEach((refactorings, member) => {
+              let memberSmell = subSmells.get(member);
+              if(!memberSmell) {
+                  memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
+                  subSmells.set(member, memberSmell);
+              }
+              refactorings.forEach((r) => memberSmell.addRefactoring(r));
+              memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
+              memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
+          });
+          smell.setSubSmells(subSmells);
+        });
+
+        smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
+        smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
+        
+        return smell;
+      }
     }
   }
 

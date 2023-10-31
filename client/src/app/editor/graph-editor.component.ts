@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { EditorPermissionsService } from './permissions/editor-permissions.service';
+import { EditorPermissionsService } from '../core/permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
