@@ -168,9 +168,3 @@ export class SingleLayerTeamSmellObject extends GroupSmellObject {
         super("SingleLayerTeamSmell", group);
     }
 }
-
-export class MultipleServicesInOneContainerSmellObject extends SmellObject {
-    constructor() {
-        super("MultipleServicesInOneContainerSmell")
-    }
-}

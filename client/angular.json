@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "microtosca-client"
+  "defaultProject": "microtosca-client",
+  "cli": {
+    "analytics": false
+  }
 }

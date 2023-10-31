@@ -27,7 +27,7 @@ pytz==2019.2
 PyYAML==5.1.2
 requests==2.22.0
 ruamel.yaml==0.16.5
-ruamel.yaml.clib==0.1.2
+ruamel.yaml.clib==0.2.6
 simplejson==3.16.0
 six==1.12.0
 sqlparse==0.3.0
