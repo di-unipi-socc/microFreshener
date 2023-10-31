@@ -1,206 +1,61 @@
 tosca_definitions_version: micro_tosca_yaml_1.1
-description: micro.tosca
+description: FTGO
 imports:
 - micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
 topology_template:
   node_templates:
-    carts.sock-shop.svc:
+    Order:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: order-db
+      - interaction: Accounting
+    Kitchen:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: kitchen-db
+    Accounting:
+      type: micro.nodes.Service
+      requirements:
+      - interaction: accounting-db
+    API gateway:
       type: micro.nodes.MessageRouter
       requirements:
-      - interaction: carts.carts.sock-shop.deploy
-    catalogue-carts-db.sock-shop.svc:
-      type: micro.nodes.MessageRouter
+      - interaction: Restaurant
+      - interaction: Delivery
+    Restaurant:
+      type: micro.nodes.Service
       requirements:
-      - interaction: carts-db.catalogue-carts-db.sock-shop.deploy
-      - interaction: catalogue-db.catalogue-carts-db.sock-shop.deploy
-    catalogue.sock-shop.svc:
-      type: micro.nodes.MessageRouter
+      - interaction: Restaurant-db
+      - interaction: Notification
+    Delivery:
+      type: micro.nodes.Service
       requirements:
-      - interaction: catalogue.catalogue.sock-shop.deploy
-    orders-db.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: orders-db.orders-db.sock-shop.deploy
-    orders.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: test.orders.sock-shop.deploy
-      - interaction: orders.orders.sock-shop.deploy
-    queue-master.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: queue-master.queue-master.sock-shop.deploy
-    user.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: user.user.sock-shop.deploy
-    carts-db.catalogue-carts-db.sock-shop.deploy:
+      - interaction: delivery-db
+      - interaction: Accounting
+    order-db:
       type: micro.nodes.Datastore
-      requirements:
-      - deployed_on:
-          node: carts-db-catalogue-carts-db.sock-shop.deploy
-    carts.carts.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: catalogue-carts-db.sock-shop.svc
-          relationship: tc
-      - deployed_on:
-          node: carts.sock-shop.deploy
-    catalogue.catalogue.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: catalogue-carts-db.sock-shop.svc
-          relationship: tc
-      - deployed_on:
-          node: catalogue.sock-shop.deploy
-    front-end.front-end.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: catalogue.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: user.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: carts.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: orders.sock-shop.svc
-          relationship: t
-      - deployed_on:
-          node: front-end.sock-shop.deploy
-    orders-db.orders-db.sock-shop.deploy:
+    Restaurant-db:
       type: micro.nodes.Datastore
-      requirements:
-      - deployed_on:
-          node: orders-db.sock-shop.deploy
-    test.orders.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - deployed_on:
-          node: test-orders.sock-shop.deploy
-    orders.orders.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: orders-db.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: carts.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: user.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: payment-clusterip-svc-mf.sock-shop.svc
-          relationship: t
-      - interaction:
-          node: shipping-clusterip-svc-mf.sock-shop.svc
-          relationship: t
-      - deployed_on:
-          node: orders-orders.sock-shop.deploy
-    payment.payment.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - deployed_on:
-          node: payment.sock-shop.deploy
-    queue-master.queue-master.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: rabbitmq.sock-shop.svc
-          relationship: tc
-      - deployed_on:
-          node: queue-master.sock-shop.deploy
-    rabbitmq.rabbitmq.sock-shop.deploy:
-      type: micro.nodes.MessageBroker
-      requirements:
-      - deployed_on:
-          node: rabbitmq.sock-shop.deploy
-    shipping.shipping.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: rabbitmq.sock-shop.svc
-          relationship: tc
-      - deployed_on:
-          node: shipping.sock-shop.deploy
-    user.user.sock-shop.deploy:
-      type: micro.nodes.Service
-      requirements:
-      - interaction:
-          node: user-db.sock-shop.svc
-          relationship: t
-      - deployed_on:
-          node: user.sock-shop.deploy
-    rabbitmq.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: rabbitmq.rabbitmq.sock-shop.deploy
-    user-db.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: user-db.user-db.sock-shop.deploy
-    carts.sock-shop.deploy:
-      type: micro.nodes.Compute
-    catalogue.sock-shop.deploy:
-      type: micro.nodes.Compute
-    user.sock-shop.deploy:
-      type: micro.nodes.Compute
-    front-end.sock-shop.deploy:
-      type: micro.nodes.Compute
-    orders-db.sock-shop.deploy:
-      type: micro.nodes.Compute
-    payment.sock-shop.deploy:
-      type: micro.nodes.Compute
-    queue-master.sock-shop.deploy:
-      type: micro.nodes.Compute
-    rabbitmq.sock-shop.deploy:
-      type: micro.nodes.Compute
-    session-db.sock-shop.deploy:
-      type: micro.nodes.Compute
-    shipping.sock-shop.deploy:
-      type: micro.nodes.Compute
-    user-db.sock-shop.deploy:
-      type: micro.nodes.Compute
-    catalogue-db.catalogue-carts-db.sock-shop.deploy:
+    kitchen-db:
       type: micro.nodes.Datastore
-      requirements:
-      - deployed_on:
-          node: catalogue-db-catalogue-carts-db.sock-shop.deploy
-    user-db.user-db.sock-shop.deploy:
+    delivery-db:
       type: micro.nodes.Datastore
+    Restaurant WebUI:
+      type: micro.nodes.Service
       requirements:
-      - deployed_on:
-          node: user-db.sock-shop.deploy
-    payment-clusterip-svc-mf.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: payment.payment.sock-shop.deploy
-    shipping-clusterip-svc-mf.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: shipping.shipping.sock-shop.deploy
-    test-orders.sock-shop.deploy:
-      type: micro.nodes.Compute
-    orders-orders.sock-shop.deploy:
-      type: micro.nodes.Compute
-    catalogue-db-catalogue-carts-db.sock-shop.deploy:
-      type: micro.nodes.Compute
-    carts-db-catalogue-carts-db.sock-shop.deploy:
-      type: micro.nodes.Compute
-    front-end-nodeport-svc-mf.sock-shop.svc:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: front-end.front-end.sock-shop.deploy
+      - interaction: Order
+      - interaction: Restaurant
+      - interaction: Kitchen
+    Notification:
+      type: micro.nodes.Service
+    accounting-db:
+      type: micro.nodes.Datastore
   groups:
-    edge:
+    edgenodes:
       type: micro.groups.Edge
       members:
-      - front-end-nodeport-svc-mf.sock-shop.svc
+      - Restaurant WebUI
+      - API gateway
   relationship_templates:
     t:
       type: micro.relationships.InteractsWith

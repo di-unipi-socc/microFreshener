@@ -14,7 +14,7 @@ import { SmellObject, GroupSmellObject, SingleLayerTeamSmellObject } from './ana
 
 import { IgnoreOnceRefactoring, MergeServicesRefactoring, AddMessageRouterRefactoring, AddMessageBrokerRefactoring, AddServiceDiscoveryRefactoring, UseTimeoutRefactoring, AddCircuitBreakerRefactoring, SplitDatastoreRefactoring, AddDataManagerRefactoring, Refactoring, IgnoreAlwaysRefactoring, AddApiGatewayRefactoring, MoveDatastoreIntoTeamRefactoring, MoveserviceIntoTeamRefactoring, AddDataManagerIntoTeamRefactoring } from "./refactor/refactoring";
 import { AddMessageRouterCommand, AddMessageBrokerCommand, AddCircuitBreakerCommand, AddServiceDiscoveryCommand, UseTimeoutCommand, MergeServicesCommand, SplitDatastoreCommand, AddDataManagerCommand, IgnoreOnceCommand, IgnoreAlwaysCommand, AddApiGatewayCommand, MoveDatastoreIntoTeamCommand, MoveServiceIntoTeamCommand, AddDataManagerIntoTeamCommand } from "./refactor/refactoring-command";
-import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./analyser/smell";
+import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject } from "./analyser/smell";
 import { CommunicationPattern } from "./model/communicationpattern";
 import { SMELL_NAMES } from "./analyser/costants";
 import { REFACTORING_NAMES } from "./analyser/costants";
@@ -244,8 +244,6 @@ export class AnalyserService {
         case SMELL_NAMES.SMELL_SHARED_PERSITENCY:
           smell = new SharedPersistencySmellObject();
           break;
-        case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
-          smell = new MultipleServicesInOneContainerSmellObject();
         default:
           break;
       }
