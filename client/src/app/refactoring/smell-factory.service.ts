@@ -136,15 +136,15 @@ export class SmellFactoryService {
         let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
         // Add partial member refactoring to members' smells
-        let membersRefactoring = refactoring.getMemberRefactorings();
+        let membersRefactorings = refactoring.getMemberRefactorings();
         let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
-        membersRefactoring?.forEach((refactoring, member) => {
+        membersRefactorings?.forEach((refactorings, member) => {
             let memberSmell = subSmells.get(member);
             if(!memberSmell) {
                 memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
                 subSmells.set(member, memberSmell);
             }
-            memberSmell.addRefactoring(refactoring);
+            refactorings.forEach((r) => memberSmell.addRefactoring(r));
             memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
             memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
         });

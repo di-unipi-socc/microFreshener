@@ -12,14 +12,17 @@ export abstract class GroupRefactoring implements Refactoring {
     abstract execute(): void;
     abstract unexecute(): void;
 
-    private memberRefactorings: Map<joint.shapes.microtosca.Node, Refactoring>;
+    private memberRefactorings: Map<joint.shapes.microtosca.Node, Refactoring[]>;
 
     constructor() {
-        this.memberRefactorings = new Map<joint.shapes.microtosca.Node, Refactoring>();
+        this.memberRefactorings = new Map<joint.shapes.microtosca.Node, Refactoring[]>();
     }
 
     addMemberRefactoring(member: joint.shapes.microtosca.Node, command: Command, name: string, description: string) {
-        this.memberRefactorings.set(member, new class implements Refactoring {
+        if(!this.memberRefactorings.has(member)) {
+            this.memberRefactorings.set(member, []);
+        }
+        this.memberRefactorings.get(member).push(new class implements Refactoring {
             getName(): string {
                 return name;
             }
@@ -35,7 +38,7 @@ export abstract class GroupRefactoring implements Refactoring {
         });
     }
 
-    getMemberRefactorings(): Map<joint.shapes.microtosca.Node, Refactoring> {
+    getMemberRefactorings(): Map<joint.shapes.microtosca.Node, Refactoring[]> {
         return this.memberRefactorings;
     }
 }
