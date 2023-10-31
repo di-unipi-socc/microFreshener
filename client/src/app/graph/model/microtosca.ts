@@ -230,14 +230,14 @@ class MicrotoscaElementConfiguration {
             },
             ignoreAlways: function(smell: ISmell) {
                 let ignoredSmell: ISmell = this.removeSmell(smell);
-                this.attributes.ignoreAlwaysSmells.add(ignoredSmell.getName());
+                this.attributes.alwaysIgnoredSmells.add(ignoredSmell.getName());
             },
             undoIgnoreAlways: function(smell: ISmell) {
                 this.addSmell(smell);
                 this.attributes.alwaysIgnoredSmells.delete(smell.getName());
             },
             getIgnoreAlwaysSmells: function() {
-                return this.attributes.ignoreAlwaysSmells;
+                return this.attributes.alwaysIgnoredSmells;
             }
         }
     }
