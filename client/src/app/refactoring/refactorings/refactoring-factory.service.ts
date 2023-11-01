@@ -73,19 +73,17 @@ export class RefactoringFactoryService {
 
   }
 
-  restrictToTeamIfAny(refactoring: AddMessageRouterRefactoring | AddMessageBrokerRefactoring | MergeServicesRefactoring | SplitDatastoreRefactoring | AddDataManagerRefactoring) {
+  private restrictToTeamIfAny(refactoring: AddMessageRouterRefactoring | AddMessageBrokerRefactoring | MergeServicesRefactoring | SplitDatastoreRefactoring | AddDataManagerRefactoring) {
     let team = this.session.isTeam() ? this.gs.getGraph().findTeamByName(this.session.getName()) : undefined;
     if(team) {
-      refactoring.cmd.map((cmd: Command) => this.addNodesInTeam(cmd, team));
+      refactoring.cmd.map((cmd: Command) => {
+        if(cmd instanceof NodeGeneratorCommand) {
+          cmd.bind(new AddMemberToTeamGroupCommand(team));
+        }
+        return cmd;
+      });
     }
     return refactoring;
-  }
-
-  addNodesInTeam(cmd: Command, team: joint.shapes.microtosca.SquadGroup): Command {
-    if(cmd instanceof NodeGeneratorCommand) {
-      cmd = cmd.bind(new AddMemberToTeamGroupCommand(team));
-    }
-    return cmd;
   }
 
   getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {

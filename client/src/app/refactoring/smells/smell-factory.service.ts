@@ -83,7 +83,7 @@ export class SmellFactoryService {
     }
   }
 
-  filterSmellCauses(smell: SmellObject) {
+  private filterSmellCauses(smell: SmellObject) {
     if(this.session.isTeam) {
       let team: joint.shapes.microtosca.SquadGroup = this.gs.getGraph().findTeamByName(this.session.getName());
       smell.nodesCause = smell.nodesCause.filter((node) => this.permissions.isEditingAllowed(team, node));
