@@ -1,46 +1,36 @@
 import { Graph } from "src/app/graph/model/graph";
 import { SmellObject } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
+import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { CompositeCommand } from "src/app/commands/icommand";
+import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 
 export class AddMessageRouterRefactoring implements Refactoring {
 
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
-    team: joint.shapes.microtosca.SquadGroup;
-
-    // name of incoming nodes, name of outcoming nodes, Communication pattern
-    addedSourceTargetRouters: [string, string, joint.shapes.microtosca.CommunicationPattern][];
+    cmd: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetRouters = [];
+        let links = smell.getLinkBasedCauses();
+        let cmds = [];
+        links.forEach((link) => {
+            cmds.push(new RemoveLinkCommand(graph, link));
+            let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
+            let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
+            let messageRouterName = `${sourceNode.getName()} ${targetNode.getName()}`;
+            cmds.push(new AddMessageRouterCommand(graph, messageRouterName));
+            cmds.push(new AddLinkCommand(graph, sourceNode.getName(), messageRouterName));
+            cmds.push(new AddLinkCommand(graph, messageRouterName, targetNode.getName()));
+        });
+        this.cmd = CompositeCommand.of(cmds);
+        console.debug("Commands are", cmds, this.cmd);
     }
 
     execute() {
-        let len = this.links.length;
-        for (var _i = 0; _i < len; _i++) {
-            var link = this.links.pop();
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
-            let messageRouter = this.graph.addMessageRouter(`${sourceNode.getName()} ${targetNode.getName()}`);
-            this.graph.addRunTimeInteraction(sourceNode, messageRouter);
-            this.graph.addRunTimeInteraction(messageRouter, targetNode);
-            this.addedSourceTargetRouters.push([sourceNode.getName(), targetNode.getName(), messageRouter]);
-            link.remove();
-        }
+        this.cmd.execute();
     }
 
     unexecute() {
-        let len = this.addedSourceTargetRouters.length;
-        for (var _i = 0; _i < len; _i++) {
-            let sourceTargetPattern = this.addedSourceTargetRouters.pop();
-            let sourceNmae = sourceTargetPattern[0];
-            let targetname = sourceTargetPattern[1];
-            let link = this.graph.addRunTimeInteraction(this.graph.findNodeByName(sourceNmae), this.graph.findRootByName(targetname));
-            this.links.push(link);
-            sourceTargetPattern[2].remove();
-        };
+        this.cmd.unexecute();
     }
 
     getName() {

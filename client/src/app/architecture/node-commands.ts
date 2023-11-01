@@ -6,7 +6,7 @@ import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
 import { RemoveLinkCommand } from './link-commands';
 
 
-abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
+export abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
     name: string;
     position?: g.Point;

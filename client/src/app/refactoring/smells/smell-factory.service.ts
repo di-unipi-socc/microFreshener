@@ -1,30 +1,29 @@
 import { Injectable } from '@angular/core';
-import { GroupSmellObject, SmellObject } from './smells/smell';
-import { REFACTORING_NAMES, SMELL_NAMES } from './constants';
-import { GraphService } from '../graph/graph.service';
-import { SharedPersistencySmellObject } from './smells/shared-persistency';
-import { NoApiGatewaySmellObject } from './smells/no-api-gateway';
-import { SingleLayerTeamsSmellObject } from './smells/single-layer-teams';
-import { TightlyCoupledTeamsSmell } from './smells/tightly-coupled-teams';
-import { GroupRefactoring, Refactoring } from './refactorings/refactoring-command';
-import { EndpointBasedServiceInteractionSmellObject } from './smells/endpoint-based-service-interaction';
-import { MultipleServicesInOneContainerSmellObject } from './smells/multiple-services-in-one-container';
-import { WobblyServiceInteractionSmellObject } from './smells/wobbly-service-interaction';
-import { AddApiGatewayRefactoring } from './refactorings/add-api-gateway-refactoring-command';
-import { AddCircuitBreakerRefactoring } from './refactorings/add-circuit-breaker';
-import { AddDataManagerRefactoring } from './refactorings/add-data-manager';
-import { AddMessageBrokerRefactoring } from './refactorings/add-message-broker';
-import { AddMessageRouterRefactoring } from './refactorings/add-message-router';
-import { AddServiceDiscoveryRefactoring } from './refactorings/add-service-discovery';
-import { MergeServicesRefactoring } from './refactorings/merge-services-refactoring';
-import { SplitDatastoreRefactoring } from './refactorings/split-datastore';
-import { UseTimeoutRefactoring } from './refactorings/use-timeout';
-import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactorings/ignore-refactoring-commands';
+import { GroupSmellObject, SmellObject } from './smell';
+import { GraphService } from '../../graph/graph.service';
+import { SharedPersistencySmellObject } from './shared-persistency';
+import { NoApiGatewaySmellObject } from './no-api-gateway';
+import { SingleLayerTeamsSmellObject } from './single-layer-teams';
+import { TightlyCoupledTeamsSmell } from './tightly-coupled-teams';
+import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-command';
+import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
+import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
+import { WobblyServiceInteractionSmellObject } from './wobbly-service-interaction';
+import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
-import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './refactorings/split-teams-by-service';
-import { SplitTeamsByCouplingRefactoring } from './refactorings/split-teams-by-coupling';
-import { EditorPermissionsService as PermissionsService } from '../core/permissions/editor-permissions.service';
-import { SessionService } from '../core/session/session.service';
+import { EditorPermissionsService as PermissionsService } from '../../core/permissions/editor-permissions.service';
+import { SessionService } from '../../core/session/session.service';
+import { RefactoringFactoryService } from '../refactorings/refactoring-factory.service';
+
+enum SMELL_NAMES {
+  SMELL_ENDPOINT_BASED_SERVICE_INTERACTION = "Endpoint-based-service-interaction",
+  SMELL_WOBBLY_SERVICE_INTERACTION_SMELL = "Wobbly-service-interaction",
+  SMELL_SHARED_PERSISTENCY = "Shared-persistency",
+  SMELL_NO_API_GATEWAY = "No-api-gateway",
+  SMELL_SINGLE_LAYER_TEAMS = "Single-layer-teams",
+  SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "Multiple-services-in-one-container",
+  SMELL_TIGHTLY_COUPLED_TEAMS = "Tightly-coupled-teams"
+}
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +32,7 @@ export class SmellFactoryService {
 
   constructor(
     private gs: GraphService,
+    private refactoring: RefactoringFactoryService,
     private session: SessionService,
     private permissions: PermissionsService
   ) {}
@@ -72,7 +72,7 @@ export class SmellFactoryService {
 
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring = this.getNodeRefactoring(refactoringName, smell);
+        let refactoring: Refactoring = this.refactoring.getNodeRefactoring(refactoringName, smell);
         if(refactoring)
           smell.addRefactoring(refactoring);
       });
@@ -83,42 +83,11 @@ export class SmellFactoryService {
     }
   }
 
-  private getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
-
-    switch (refactoringName) {
-
-      case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-        return new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-        return new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-        return new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-        return new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
-        return new UseTimeoutRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-        return new MergeServicesRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-        return new AddDataManagerRefactoring(this.gs.getGraph(), smell);
-    }
-
-  }
-
   filterSmellCauses(smell: SmellObject) {
     if(this.session.isTeam) {
       let team: joint.shapes.microtosca.SquadGroup = this.gs.getGraph().findTeamByName(this.session.getName());
-      smell.nodesCause = smell.nodesCause.filter((node) => this.permissions.isEditingAllowedForATeam(team, node));
-      smell.linksCause = smell.linksCause.filter((link) => this.permissions.isEditingAllowedForATeam(team, link.getSourceElement()) && this.permissions.isEditingAllowedForATeam(team, link.getTargetElement()));
+      smell.nodesCause = smell.nodesCause.filter((node) => this.permissions.isEditingAllowed(team, node));
+      smell.linksCause = smell.linksCause.filter((link) => this.permissions.isEditingAllowed(team, link));
     }
   }
 
@@ -155,7 +124,7 @@ export class SmellFactoryService {
 
         smellJson['refactorings'].forEach((refactoringJson) => {
           let refactoringName = refactoringJson['name'];
-          let refactoring: GroupRefactoring = this.getGroupRefactoring(refactoringName, smell);
+          let refactoring: GroupRefactoring = this.refactoring.getGroupRefactoring(refactoringName, smell);
           smell.addRefactoring(refactoring);
           // Add partial member refactoring to members' smells
           let membersRefactorings = refactoring.getMemberRefactorings();
@@ -178,21 +147,6 @@ export class SmellFactoryService {
         
         return smell;
       }
-    }
-  }
-
-  private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
-    
-    switch(refactoringName){
-
-      case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
-        return new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
-
-      case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
-        return new SplitTeamsByServiceRefactoring(this.gs.getGraph(), smell);
-      
-      case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
-        return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
     }
   }
 

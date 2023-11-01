@@ -7,6 +7,15 @@ export class CompositeCommand implements Command {
 
     private constructor(private commands: Command[]) {}
 
+    /**
+     * Inplace map on commands array.
+     * @param f 
+     */
+    map(f: ((command: Command, ...args: any[]) => Command)) {
+        console.debug("Applying ", f, " to ", this.commands)
+        this.commands = this.commands.map((cmd) => f(cmd));
+    }
+
     execute() {
         this.commands.forEach(command => command.execute());
     }

@@ -1,42 +1,31 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
+import { RemoveNodeCommand } from "src/app/architecture/node-commands";
+import { CompositeCommand } from "src/app/commands/icommand";
+import { AddLinkCommand } from "src/app/architecture/link-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
-    graph: Graph;
-    smell: SmellObject;
-
-    sharedDatastore: joint.shapes.microtosca.Datastore;
-    splittedDatastore: joint.shapes.microtosca.Datastore[];
-
+    cmd: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
-        this.smell = smell;
-        this.graph = graph;
-        this.sharedDatastore = <joint.shapes.microtosca.Datastore>smell.getNodeBasedCauses()[0];
-        this.splittedDatastore = [];
+        let cmds = [];
+        cmds.push(new RemoveNodeCommand(graph, smell.getNodeBasedCauses()[0]));
+        smell.getLinkBasedCauses().forEach((link) => {
+            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
+            let newDatastoreName = "DB " + sourceNode.getName();
+            cmds.push(new AddLinkCommand(graph, sourceNode.getName(), newDatastoreName));
+        });
+        this.cmd = CompositeCommand.of(cmds);
     }
 
-
     execute() {
-
-        this.smell.getLinkBasedCauses().forEach(link => {
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
-            let newDB = this.graph.addDatastore("DB " + sourceNode.getName());
-            this.splittedDatastore.push(newDB);
-            link.target(newDB);
-        })
-        this.sharedDatastore.remove();
+        this.cmd.execute();
     }
 
     unexecute() {
-        this.sharedDatastore = <joint.shapes.microtosca.Datastore>this.smell.getNodeBasedCauses()[0];
-        this.graph.addCell(this.sharedDatastore);
-        this.smell.getLinkBasedCauses().forEach(link => {
-            link.target(this.sharedDatastore);
-        })
-        this.splittedDatastore.forEach(db => db.remove())
+        this.cmd.unexecute();
     }
 
     getName() {

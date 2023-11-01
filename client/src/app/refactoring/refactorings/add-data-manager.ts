@@ -1,36 +1,30 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
+import { AddServiceCommand } from "src/app/architecture/node-commands";
+import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { CompositeCommand } from "src/app/commands/icommand";
 
 export class AddDataManagerRefactoring implements Refactoring {
 
-    graph: Graph;
-    smell: SmellObject;
-
-    sharedDB: joint.shapes.microtosca.Datastore;
-    databaseManager: joint.shapes.microtosca.Service;
+    cmd: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
-        this.smell = smell;
-        this.graph = graph;
-        this.sharedDB = <joint.shapes.microtosca.Datastore>this.smell.getNodeBasedCauses()[0];
+        let cmds = [];
+        let databaseManagerName = "DB manager";
+        cmds.push(new AddServiceCommand(graph, databaseManagerName));
+        smell.getLinkBasedCauses().forEach(link => {
+            cmds.push(new AddLinkCommand(graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
+            cmds.push(new RemoveLinkCommand(graph, link));
+        });
     }
 
     execute() {
-        this.databaseManager = this.graph.addService("DB manager");
-
-        this.smell.getLinkBasedCauses().forEach(link => {
-            link.target(this.databaseManager);
-        });
-
-        this.graph.addRunTimeInteraction(this.databaseManager, this.sharedDB);
+        this.cmd.execute();
     }
 
     unexecute() {
-        this.smell.getLinkBasedCauses().forEach(link => {
-            link.target(this.sharedDB);
-        });
-        this.databaseManager.remove();
+        this.cmd.unexecute();
     }
 
     getName() {

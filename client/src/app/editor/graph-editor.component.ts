@@ -289,7 +289,7 @@ export class GraphEditorComponent {
 
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
-        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+        if(this.permissions.writePermissions.isTeamManagementAllowed()) {
             teamContextMenuItems.push({label: "Details", icon: "pi pi-info-circle", command: () => {
                 this.contextMenuAction.emit(new ContextMenuAction("team-details", rightClickedTeam));
             }});
@@ -346,7 +346,7 @@ export class GraphEditorComponent {
         if (this.graph.getGraph().isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
+        if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = node;
         }
@@ -368,7 +368,7 @@ export class GraphEditorComponent {
         // disable link from communication pattern to Datastore
         if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
             add_link = false;
-        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedCell, node)) {
+        if (add_link && this.permissions.writePermissions.areLinkable(this.leftClickSelectedCell, node)) {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
@@ -445,7 +445,7 @@ export class GraphEditorComponent {
                                     team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
+                                    if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team);
                                     }
                                 }
@@ -458,7 +458,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.graph.getGraph().getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
+                            if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team);
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })

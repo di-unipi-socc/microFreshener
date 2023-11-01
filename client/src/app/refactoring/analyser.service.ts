@@ -10,7 +10,7 @@ import { Principle } from '../graph/model/principles';
 import { Smell } from '../graph/model/smell';
 
 import { CommunicationPattern } from "../graph/model/communicationpattern";
-import { SmellFactoryService } from './smell-factory.service';
+import { SmellFactoryService } from './smells/smell-factory.service';
 import { Analysed } from './analysed';
 import { GroupSmellObject } from './smells/smell';
 import * as _ from 'lodash';
