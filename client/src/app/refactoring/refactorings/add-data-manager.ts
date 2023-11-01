@@ -17,6 +17,7 @@ export class AddDataManagerRefactoring implements Refactoring {
             cmds.push(new AddLinkCommand(graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
             cmds.push(new RemoveLinkCommand(graph, link));
         });
+        this.cmd = CompositeCommand.of(cmds);
     }
 
     execute() {

@@ -22,7 +22,6 @@ export class AddMessageRouterRefactoring implements Refactoring {
             cmds.push(new AddLinkCommand(graph, messageRouterName, targetNode.getName()));
         });
         this.cmd = CompositeCommand.of(cmds);
-        console.debug("Commands are", cmds, this.cmd);
     }
 
     execute() {
