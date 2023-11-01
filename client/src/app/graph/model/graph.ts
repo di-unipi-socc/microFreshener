@@ -507,7 +507,7 @@ export class Graph extends joint.dia.Graph {
             if (link.type == "interaction")
                 // TODO: Change to add InteractionLink
                 this.addRunTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']), link['timeout'], link['circuit_breaker'], link['dynamic_discovery'], );
-            else if (link.type == "deployed_on")
+            else if (link.type == "deployment")
                 this.addDeploymentTimeInteraction(this.findNodeByName(link['source']), this.findNodeByName(link['target']));
             else
                 throw new Error(`Link type of ${link.type} not recognized`);
