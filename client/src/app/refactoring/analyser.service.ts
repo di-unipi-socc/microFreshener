@@ -169,9 +169,10 @@ export class AnalyserService {
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
           response['nodes'].forEach((nodeJson) => {
             let node = this.gs.getGraph().findNodeByName(nodeJson['name']);
+            let nodeSmells = nodeJson['smells'].map((smellJson) => this.smellFactory.getNodeSmell(smellJson, node));
             let anode = Analysed.getBuilder<joint.shapes.microtosca.Node>()
                                 .setElement(node)
-                                .setSmells(nodeJson['smells'].map((smellJson) => this.smellFactory.getNodeSmell(smellJson, node)))
+                                .setSmells(nodeSmells)
                                 .build();
             this.nodesWithSmells.push(anode);
           });

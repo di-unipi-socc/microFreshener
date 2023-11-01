@@ -17,7 +17,7 @@ import { AddMessageBrokerRefactoring } from './refactorings/add-message-broker';
 import { AddMessageRouterRefactoring } from './refactorings/add-message-router';
 import { AddServiceDiscoveryRefactoring } from './refactorings/add-service-discovery';
 import { MergeServicesRefactoring } from './refactorings/merge-services-refactoring';
-import { SplitDatastoreRefactoring } from './refactorings/split-database';
+import { SplitDatastoreRefactoring } from './refactorings/split-datastore';
 import { UseTimeoutRefactoring } from './refactorings/use-timeout';
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from './refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
@@ -39,6 +39,7 @@ export class SmellFactoryService {
 
   getNodeSmell(smellJson, node): SmellObject {
     let smell: SmellObject;
+    let isAdmin: boolean = this.session.isAdmin();
 
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
@@ -66,7 +67,7 @@ export class SmellFactoryService {
         smell.addNodeBasedCause(node);
       });
 
-      if(!this.session.isAdmin)
+      if(!isAdmin)
         this.filterSmellCauses(smell);
 
       smellJson['refactorings'].forEach((refactoringJson) => {
