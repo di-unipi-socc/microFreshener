@@ -2,7 +2,7 @@ import { Graph } from "src/app/graph/model/graph";
 import { GroupRefactoring } from "./refactoring-command";
 import { GroupSmellObject } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
-import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 
 export class AddApiGatewayRefactoring extends GroupRefactoring {
@@ -19,8 +19,8 @@ export class AddApiGatewayRefactoring extends GroupRefactoring {
             let gatewayName = "API Gateway " + node.getName();
             let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(edgeGroup, node)))
                                     .then(new AddMessageRouterCommand(graph, gatewayName))
-                                    .then(new AddLinkCommand(graph, edgeGroup.getName(), gatewayName))
-                                    .then(new AddLinkCommand(graph, gatewayName, node.getName()))
+                                    .then(new AddRunTimeLinkCommand(graph, edgeGroup.getName(), gatewayName))
+                                    .then(new AddRunTimeLinkCommand(graph, gatewayName, node.getName()))
             commands.push(addApiGatewayCommand);
             let name = this.getName();
             let description = `Add an API Gateway before ${node.getName()}`

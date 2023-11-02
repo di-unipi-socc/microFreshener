@@ -1,13 +1,13 @@
 import { Graph } from "src/app/graph/model/graph";
 import { SmellObject } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
-import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 
 export class AddMessageRouterRefactoring implements Refactoring {
 
-    cmd: CompositeCommand;
+    command: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
         let links = smell.getLinkBasedCauses();
@@ -18,18 +18,18 @@ export class AddMessageRouterRefactoring implements Refactoring {
             let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
             let messageRouterName = `${sourceNode.getName()} ${targetNode.getName()}`;
             cmds.push(new AddMessageRouterCommand(graph, messageRouterName));
-            cmds.push(new AddLinkCommand(graph, sourceNode.getName(), messageRouterName));
-            cmds.push(new AddLinkCommand(graph, messageRouterName, targetNode.getName()));
+            cmds.push(new AddRunTimeLinkCommand(graph, sourceNode.getName(), messageRouterName));
+            cmds.push(new AddRunTimeLinkCommand(graph, messageRouterName, targetNode.getName()));
         });
-        this.cmd = CompositeCommand.of(cmds);
+        this.command = CompositeCommand.of(cmds);
     }
 
     execute() {
-        this.cmd.execute();
+        this.command.execute();
     }
 
     unexecute() {
-        this.cmd.unexecute();
+        this.command.unexecute();
     }
 
     getName() {

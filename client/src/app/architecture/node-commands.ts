@@ -3,16 +3,16 @@ import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
-import { RemoveLinkCommand } from './link-commands';
+import { AddRunTimeLinkCommand, ChangeLinkSourceCommand, RemoveLinkCommand } from './link-commands';
 
 
-export abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
+export abstract class AddNodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
     name: string;
     position?: g.Point;
 
     constructor(name: string, position?: g.Point) {
-        super(undefined);
+        super();
         this.name = name;
         this.position = position;
     }
@@ -28,7 +28,7 @@ export abstract class NodeGeneratorCommand<T extends joint.shapes.microtosca.Nod
     }
 }
 
-export class AddServiceCommand extends NodeGeneratorCommand<joint.shapes.microtosca.Service> {
+export class AddServiceCommand extends AddNodeCommand<joint.shapes.microtosca.Service> {
 
     constructor(
         private graph: Graph,
@@ -43,7 +43,7 @@ export class AddServiceCommand extends NodeGeneratorCommand<joint.shapes.microto
     }
 }
 
-export class AddDatastoreCommand extends NodeGeneratorCommand<joint.shapes.microtosca.Datastore> {
+export class AddDatastoreCommand extends AddNodeCommand<joint.shapes.microtosca.Datastore> {
 
     constructor(
         private graph: Graph,
@@ -58,7 +58,7 @@ export class AddDatastoreCommand extends NodeGeneratorCommand<joint.shapes.micro
     }
 }
 
-export class AddMessageBrokerCommand extends NodeGeneratorCommand<joint.shapes.microtosca.CommunicationPattern> {
+export class AddMessageBrokerCommand extends AddNodeCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     constructor(
         private graph: Graph,
@@ -73,7 +73,7 @@ export class AddMessageBrokerCommand extends NodeGeneratorCommand<joint.shapes.m
     }
 }
 
-export class AddMessageRouterCommand extends NodeGeneratorCommand<joint.shapes.microtosca.CommunicationPattern> {
+export class AddMessageRouterCommand extends AddNodeCommand<joint.shapes.microtosca.CommunicationPattern> {
 
     constructor(
         private graph: Graph,
@@ -128,158 +128,58 @@ export class RemoveDatastoreCommand extends RemoveNodeCommand<joint.shapes.micro
 
 export class RemoveCommunicationPatternCommand extends RemoveNodeCommand<joint.shapes.microtosca.CommunicationPattern> {}
 
-/*export class RemoveServiceCommand extends ElementCommand<joint.shapes.microtosca.Service> {
+export class MergeServices extends ElementCommand<joint.shapes.microtosca.Service> {
 
-    graph: Graph;
-    node_name: string;
+    mergingServices: Set<joint.shapes.microtosca.Service>;
+    command: CompositeCommand;
 
-    team_name: string = null;
-
-    incoming_links = new Map();
-    outcoming_links = new Map();
-
-    constructor(graph: Graph, node_name: string) {
+    constructor(
+        private graph: Graph,
+        private position?: g.Point,
+        ...services: joint.shapes.microtosca.Service[]
+    ) {
         super();
-        this.graph = graph;
-        this.node_name = node_name;
-      
-        var node = this.graph.getNode(node_name)
-        if(graph.getTeamOfNode(node))
-            this.team_name = graph.getTeamOfNode(node).getName();
-
-         this.graph.getIngoingLinks(node).forEach(link =>{
-            var source_name = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
-            var t =  [link.hasTimeout(), link.hasCircuitBreaker(), link.hasCircuitBreaker()];
-            this.incoming_links.set(source_name, t);
-        });
-        this.graph.getOutgoingLinks(node).forEach(link =>{
-            var target_name = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
-            var t =  [link.hasTimeout(), link.hasCircuitBreaker(), link.hasCircuitBreaker()];
-            this.outcoming_links.set(target_name, t);
-        });
-
+        this.mergingServices = new Set(services);
     }
 
     execute() {
-        this.graph.removeNode(this.node_name);
+        let linksToJustBeDeleted: joint.dia.Link[] = [];
+        let linksToBeFromMergedService = new Map<joint.dia.Element, joint.dia.Link>();
+        let targetsToBeLinked = new Set<joint.shapes.microtosca.Node>();
+        this.mergingServices.forEach((mergingService) => {
+            let mergingLinks = this.graph.getConnectedLinks(mergingService);
+            mergingLinks.forEach((link) => {
+                if(this.mergingServices.has(<joint.shapes.microtosca.Service> link.getTargetElement())) {
+                    // If the link targets another merging service, just delete it
+                    linksToJustBeDeleted.push(link);
+                } else if(linksToBeFromMergedService.has(link.getTargetElement())) {
+                    // If the link targets the same target of another merging link, delete both and add a new one to the merged service
+                    linksToJustBeDeleted.push(link);
+                    linksToJustBeDeleted.push(linksToBeFromMergedService.get(link.getTargetElement()));
+                    targetsToBeLinked.add(<joint.shapes.microtosca.Node>  link.getTargetElement());
+                } else {
+                    // If the link targets a new non-merging service, change the source to the newly creating merging service
+                    linksToBeFromMergedService.set(link.getTargetElement(), link);
+                }});
+        })
+
+        let cmds = [];
+        // Add merged service
+        let mergedServiceName = Array.from(this.mergingServices).map((service) => service.getName()).join(" + ")
+        let addMergedServiceCommand = new AddServiceCommand(this.graph, mergedServiceName, this.position);
+        cmds.push(addMergedServiceCommand);
+        // Create link manipulation commands
+        cmds = cmds.concat(linksToJustBeDeleted.map((link) => new RemoveLinkCommand(this.graph, link)));
+        cmds = cmds.concat(Array.from(linksToBeFromMergedService.values()).map((link) => new ChangeLinkSourceCommand(this.graph, link, mergedServiceName)));
+        cmds = cmds.concat(Array.from(targetsToBeLinked).map((target) => new AddRunTimeLinkCommand(this.graph, mergedServiceName, target.getName())));
+        this.command = CompositeCommand.of(cmds);
+        // Execute the composed command and set the newly created service
+        this.command.execute();
+        this.set(addMergedServiceCommand.get());
     }
 
     unexecute() {
-        var node = this.graph.addService(this.node_name);
-
-        this.incoming_links.forEach((value, key)=>{
-            var source = this.graph.getNode(key);
-            this.graph.addRunTimeInteraction(source, node, value[0], value[1], value[2]);
-        });
-        
-        this.outcoming_links.forEach((value, key)=>{
-            var target = this.graph.getNode(key);
-            this.graph.addRunTimeInteraction(node, target, value[0], value[1], value[2]);
-        });
-       
-        if(this.team_name)
-            this.graph.getTeam(this.team_name).addMember(node);
+        this.command.unexecute();
     }
+    
 }
-
-export class RemoveDatastoreCommand extends ElementCommand<joint.shapes.microtosca.Datastore> {
-
-    graph: Graph;
-    node_name: string;
-
-    team_name: string = null;
-
-    incoming_links = new Map();
-
-    constructor(graph: Graph, node_name: string) {
-        super();
-        this.graph = graph;
-        this.node_name = node_name;
-      
-        var node = this.graph.getNode(node_name)
-        if(graph.getTeamOfNode(node))
-            this.team_name = graph.getTeamOfNode(node).getName();
-
-         this.graph.getIngoingLinks(node).forEach(link =>{
-            var source_name = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
-            var t =  [link.hasTimeout(), link.hasCircuitBreaker(), link.hasCircuitBreaker()];
-            this.incoming_links.set(source_name, t);
-        });
-
-    }
-
-    execute() {
-        this.graph.removeNode(this.node_name);
-    }
-
-    unexecute() {
-        var node = this.graph.addDatastore(this.node_name);
-
-        this.incoming_links.forEach((value, key)=>{
-            var source = this.graph.getNode(key);
-            this.graph.addRunTimeInteraction(source, node, value[0], value[1], value[2]);
-        });
-       
-        if(this.team_name)
-            this.graph.getTeam(this.team_name).addMember(node);
-    }
-}
-
-export class RemoveCommunicationPatternCommand extends ElementCommand<joint.shapes.microtosca.CommunicationPattern> {
-
-    graph: Graph;
-    node_name: string;
-    type_node: string;
-    team_name: string = null;
-
-    incoming_links = new Map();
-    outcoming_links = new Map();
-
-
-    constructor(graph: Graph, node_name: string) {
-        super();
-        this.graph = graph;
-        this.node_name = node_name;
-      
-        var node = this.graph.getNode(node_name);
-        this.type_node  = (<joint.shapes.microtosca.CommunicationPattern>node).getType();
-
-        if(graph.getTeamOfNode(node))
-            this.team_name = graph.getTeamOfNode(node).getName();
-
-         this.graph.getIngoingLinks(node).forEach(link =>{
-            var source_name = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
-            var t =  [link.hasTimeout(), link.hasCircuitBreaker(), link.hasCircuitBreaker()];
-            this.incoming_links.set(source_name, t);
-        });
-
-        this.graph.getOutgoingLinks(node).forEach(link =>{
-            var target_name = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
-            var t =  [link.hasTimeout(), link.hasCircuitBreaker(), link.hasCircuitBreaker()];
-            this.outcoming_links.set(target_name, t);
-        });
-
-
-    }
-
-    execute() {
-        this.graph.removeNode(this.node_name);
-    }
-
-    unexecute() {
-        var node = this.graph.addCommunicationPattern(this.node_name, this.type_node);
-
-        this.incoming_links.forEach((value, key)=>{
-            var source = this.graph.getNode(key);
-            this.graph.addRunTimeInteraction(source, node, value[0], value[1], value[2]);
-        });
-
-        this.outcoming_links.forEach((value, key)=>{
-            var target = this.graph.getNode(key);
-            this.graph.addRunTimeInteraction(node, target, value[0], value[1], value[2]);
-        });
-       
-        if(this.team_name)
-            this.graph.getTeam(this.team_name).addMember(node);
-    }
-}*/

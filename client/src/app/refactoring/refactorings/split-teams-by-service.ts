@@ -1,5 +1,5 @@
 import * as joint from "jointjs";
-import { RemoveLinkCommand, AddLinkCommand } from "src/app/architecture/link-commands";
+import { RemoveLinkCommand, AddRunTimeLinkCommand } from "src/app/architecture/link-commands";
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";
 import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { Graph } from "src/app/graph/model/graph";
@@ -25,7 +25,7 @@ export class SplitTeamsByService extends GroupRefactoring {
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
                 let splitDatastore = Sequentiable.of(new RemoveLinkCommand(graph, link))
                     .then(new AddDatastoreCommand(graph, newDatabaseName).bind(new AddMemberToTeamGroupCommand(team)))
-                    .then(new AddLinkCommand(graph, service.getName(), newDatabaseName));
+                    .then(new AddRunTimeLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);
                 let name = this.getName();

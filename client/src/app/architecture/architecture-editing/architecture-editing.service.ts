@@ -5,7 +5,7 @@ import { GraphInvoker } from '../../commands/invoker';
 import { GraphService } from '../../graph/graph.service';
 
 import { g } from 'jointjs';
-import { AddLinkCommand, RemoveLinkCommand } from '../link-commands';
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
@@ -68,7 +68,7 @@ export class ArchitectureEditingService {
 
   addLink(leftClickSelectedNode, target, timeout?, circuit_breaker?, dynamic_discovery?) {
     console.log("selected, new ->", leftClickSelectedNode, target);
-    var command = new AddLinkCommand(this.graphService.getGraph(), leftClickSelectedNode.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
+    var command = new AddRunTimeLinkCommand(this.graphService.getGraph(), leftClickSelectedNode.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
     this.graphInvoker.executeCommand(command);
     this.navigation.getPaper().findViewByModel(leftClickSelectedNode).unhighlight();
     console.log("added link");

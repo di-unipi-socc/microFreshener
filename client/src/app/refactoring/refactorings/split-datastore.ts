@@ -3,11 +3,11 @@ import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
 import { RemoveNodeCommand } from "src/app/architecture/node-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
-import { AddLinkCommand } from "src/app/architecture/link-commands";
+import { AddRunTimeLinkCommand } from "src/app/architecture/link-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
-    cmd: CompositeCommand;
+    command: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
         let cmds = [];
@@ -15,17 +15,17 @@ export class SplitDatastoreRefactoring implements Refactoring {
         smell.getLinkBasedCauses().forEach((link) => {
             let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
             let newDatastoreName = "DB " + sourceNode.getName();
-            cmds.push(new AddLinkCommand(graph, sourceNode.getName(), newDatastoreName));
+            cmds.push(new AddRunTimeLinkCommand(graph, sourceNode.getName(), newDatastoreName));
         });
-        this.cmd = CompositeCommand.of(cmds);
+        this.command = CompositeCommand.of(cmds);
     }
 
     execute() {
-        this.cmd.execute();
+        this.command.execute();
     }
 
     unexecute() {
-        this.cmd.unexecute();
+        this.command.unexecute();
     }
 
     getName() {

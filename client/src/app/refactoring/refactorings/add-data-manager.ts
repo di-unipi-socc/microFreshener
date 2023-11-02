@@ -2,30 +2,30 @@ import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
 import { AddServiceCommand } from "src/app/architecture/node-commands";
-import { AddLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
 
 export class AddDataManagerRefactoring implements Refactoring {
 
-    cmd: CompositeCommand;
+    command: CompositeCommand;
 
     constructor(graph: Graph, smell: SmellObject) {
         let cmds = [];
         let databaseManagerName = "DB manager";
         cmds.push(new AddServiceCommand(graph, databaseManagerName));
         smell.getLinkBasedCauses().forEach(link => {
-            cmds.push(new AddLinkCommand(graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
+            cmds.push(new AddRunTimeLinkCommand(graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
             cmds.push(new RemoveLinkCommand(graph, link));
         });
-        this.cmd = CompositeCommand.of(cmds);
+        this.command = CompositeCommand.of(cmds);
     }
 
     execute() {
-        this.cmd.execute();
+        this.command.execute();
     }
 
     unexecute() {
-        this.cmd.unexecute();
+        this.command.unexecute();
     }
 
     getName() {

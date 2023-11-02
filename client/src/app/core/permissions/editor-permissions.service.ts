@@ -12,7 +12,7 @@ export class EditorPermissionsService {
   private readonly DENY_ALL_TWO_NODES = (n1, n2?) => { return false; }
 
   public writePermissions = {
-    isAllowed: this.DENY_ALL,
+    isAllowed: (cell) => this.DENY_ALL(cell),
     isTeamManagementAllowed: this.DENY_ALL,
     areLinkable: this.DENY_ALL_TWO_NODES
   };

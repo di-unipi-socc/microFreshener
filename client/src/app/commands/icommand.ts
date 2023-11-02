@@ -11,8 +11,7 @@ export class CompositeCommand implements Command {
      * Inplace map on commands array.
      * @param f 
      */
-    map(f: ((command: Command, ...args: any[]) => Command)) {
-        console.debug("Applying ", f, " to ", this.commands)
+    apply(f: ((command: Command, ...args: any[]) => Command)) {
         this.commands = this.commands.map((cmd) => f(cmd));
     }
 
@@ -88,7 +87,7 @@ export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> {
         return this.element;
     }
 
-    constructor(element: T) {
+    constructor(element?: T) {
         this.element = element;
     }
 

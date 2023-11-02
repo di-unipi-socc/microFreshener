@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NodeGeneratorCommand } from 'src/app/architecture/node-commands';
+import { AddNodeCommand, RemoveNodeCommand, RemoveServiceCommand } from 'src/app/architecture/node-commands';
 import { Command } from 'src/app/commands/icommand';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { SmellObject, GroupSmellObject } from '../smells/smell';
@@ -17,6 +17,7 @@ import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './split-t
 import { UseTimeoutRefactoring } from './use-timeout';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
+import { EditorPermissionsService as PermissionsService } from 'src/app/core/permissions/editor-permissions.service';
 
 enum REFACTORING_NAMES {
   REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -40,6 +41,7 @@ export class RefactoringFactoryService {
   constructor(
     private gs: GraphService,
     private session: SessionService,
+    private permissions: PermissionsService
   ) {}
 
   getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
@@ -75,15 +77,24 @@ export class RefactoringFactoryService {
 
   private restrictToTeamIfAny(refactoring: AddMessageRouterRefactoring | AddMessageBrokerRefactoring | MergeServicesRefactoring | SplitDatastoreRefactoring | AddDataManagerRefactoring) {
     let team = this.session.isTeam() ? this.gs.getGraph().findTeamByName(this.session.getName()) : undefined;
+    let allowedRefactoring = true;
     if(team) {
-      refactoring.cmd.map((cmd: Command) => {
-        if(cmd instanceof NodeGeneratorCommand) {
-          cmd.bind(new AddMemberToTeamGroupCommand(team));
+      refactoring.command.apply((cmd: Command) => {
+        if(cmd instanceof RemoveServiceCommand) {
+          let removingNode = cmd.get();
+          if(this.permissions.writePermissions.isAllowed(removingNode)) {
+            console.debug("Removing node is invalid:", removingNode.getName());
+            allowedRefactoring = false;
+          }
+        }
+        if(cmd instanceof AddNodeCommand) {
+          cmd = cmd.bind(new AddMemberToTeamGroupCommand(team));
         }
         return cmd;
       });
     }
-    return refactoring;
+    if(allowedRefactoring)
+      return refactoring;
   }
 
   getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
