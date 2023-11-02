@@ -128,7 +128,7 @@ export class RemoveDatastoreCommand extends RemoveNodeCommand<joint.shapes.micro
 
 export class RemoveCommunicationPatternCommand extends RemoveNodeCommand<joint.shapes.microtosca.CommunicationPattern> {}
 
-export class MergeServices extends ElementCommand<joint.shapes.microtosca.Service> {
+export class MergeServicesCommand extends ElementCommand<joint.shapes.microtosca.Service> {
 
     mergingServices: Set<joint.shapes.microtosca.Service>;
     command: CompositeCommand;
