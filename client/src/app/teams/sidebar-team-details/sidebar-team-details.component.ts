@@ -116,7 +116,6 @@ export class SidebarTeamDetailsComponent {
     this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
-    this.navigation.moveTo(selectedTeam);
     this.teamSelected = true;
   }
 
