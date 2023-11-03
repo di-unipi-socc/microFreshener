@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
-import { SmellObject } from '../smell';
+import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command } from '../../commands/icommand';
+import { GraphService } from 'src/app/graph/graph.service';
 
 @Component({
   selector: 'app-dialog-smell',
@@ -15,9 +15,9 @@ export class DialogSmellComponent implements OnInit {
   selectedCommand: Command;
 
   jointNodeModel;
-  smell: SmellObject;
+  smell: (SmellObject | GroupSmellObject);
 
-  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
+  constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private graphService: GraphService) {
     this.actions = [];
     this.selectedCommand = null;
   }
@@ -25,8 +25,7 @@ export class DialogSmellComponent implements OnInit {
   ngOnInit() {
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
-      this.smell = <SmellObject>this.config.data.selectedsmell;
-
+      this.smell = this.config.data.selectedsmell;
       this.smell.getRefactorings().forEach(refactoring => {
         this.actions.push({ "label": refactoring.getName(), "description": refactoring.getDescription(), "value": refactoring });
       });

@@ -19,10 +19,11 @@ export class GraphInvoker {
         this.redoStack = [];
     }
 
-    executeCommand(command: Command) {
+    executeCommand(command: Command, silent?: boolean) {
         command.execute();
         this.undoStack.push(command);
-        this.invokeSubject.next();
+        if(!silent)
+            this.invokeSubject.next();
     }
 
     undo() {

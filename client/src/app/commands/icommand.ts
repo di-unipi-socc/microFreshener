@@ -3,19 +3,19 @@ export interface Command {
     unexecute: () => void
 }
 
-export abstract class CompositeCommand implements Command {
+export class CompositeCommand implements Command {
 
-    private commands: Command[];
+    private constructor(private commands: Command[]) {}
 
-    abstract getCommandsImplementation(...any): Command[];
-
-    constructor(...any) {
-        this.commands = this.getCommandsImplementation(...any);
-        console.debug("commands have been set in composite", this.commands);
+    /**
+     * Inplace map on commands array.
+     * @param f 
+     */
+    apply(f: ((command: Command, ...args: any[]) => Command)) {
+        this.commands = this.commands.map((cmd) => f(cmd));
     }
 
     execute() {
-        console.debug("executing commands", this.commands);
         this.commands.forEach(command => command.execute());
     }
 
@@ -24,16 +24,55 @@ export abstract class CompositeCommand implements Command {
     }
 
     static of(commands: Command[]): CompositeCommand {
-        return new class extends CompositeCommand {
-            getCommandsImplementation(...any: any[]): Command[] {
-                return commands;
-            }
-        }
+        return new CompositeCommand(commands);
     }
 
 }
 
-export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> implements Command {
+export class Sequentiable<T extends Command> {
+
+    protected constructor(private command?: T) {}
+
+    execute() {
+        this.command.execute();
+    }
+    
+    unexecute() {
+        this.command.unexecute();
+    }
+
+    static of<T extends Command>(command: T): Sequentiable<T> {
+        if(command instanceof Sequentiable)
+            return new Sequentiable<T>(command.command);
+        return new Sequentiable<T>(command);
+    }
+
+    then<C extends Command>(next: (C | Sequentiable<C>)): Sequentiable<C> {
+        let action = () => {this.execute()};
+        let revert = () => {this.unexecute()};
+
+        let newCommand;
+        if(next instanceof Sequentiable) {
+            newCommand = next;
+        } else {
+            newCommand = Sequentiable.of(next);
+        }
+        
+        return new class extends Sequentiable<C> {
+            execute(): void {
+                action();
+                newCommand.execute();
+            }
+
+            unexecute(): void {
+                newCommand.unexecute();
+                revert();
+            }
+        };
+    };
+}
+
+export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> {
     
     abstract execute();
     abstract unexecute();
@@ -52,68 +91,26 @@ export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> imp
         this.element = element;
     }
 
-    then<U extends Command>(next: U): Sequentiable<U> {
+    bind<U extends joint.shapes.microtosca.Root>(next: ElementCommand<U>): ElementCommand<U> {
         let action = () => {this.execute()};
         let revert = () => {this.unexecute()};
-        let getNode = () => { return this.get() };
+        let get = (): T => {return this.get()};
+        return new class extends ElementCommand<U> {
 
-        let newCommand = Sequentiable.of(next);
+            constructor() {
+                super(<U> <unknown>get());
+            }
 
-        newCommand.execute = () => {
-            action();
-            let element = getNode();
-            if(next instanceof ElementCommand)
-                next.set(element);
-            next.execute();
-        }
-        newCommand.unexecute = () => {
-            next.unexecute();
-            revert();
-        }
-        return newCommand;
-    };
+            execute(): void {
+                action();
+                next.set(<U> <unknown>get());
+                next.execute();
+            }
 
-}
-
-export class Sequentiable<T extends Command> implements Command {
-
-    private constructor(private command: T) {}
-
-    execute() {
-        console.debug("executing", this.command);
-        this.command.execute();
+            unexecute(): void {
+                next.unexecute();
+                revert();
+            }
+        };
     }
-    
-    unexecute() {
-        console.debug("unexecuting", this.command);
-        this.command.unexecute();
-    }
-
-    static of<T extends Command>(command: T): Sequentiable<T> {
-        if(command instanceof Sequentiable)
-            return new Sequentiable<T>(command.command);
-        return new Sequentiable<T>(command);
-    }
-
-    then<C extends Command>(next: (C | Sequentiable<C>)): Sequentiable<C> {
-        let action = () => {this.execute()};
-        let revert = () => {this.unexecute()};
-
-        let newCommand;
-        if(next instanceof Sequentiable)
-            newCommand = next;
-        else
-            newCommand = Sequentiable.of(next);
-
-        newCommand.execute = () => {
-            action();
-            next.execute();
-        }
-        newCommand.unexecute = () => {
-            next.unexecute();
-            revert();
-        }
-        
-        return newCommand;
-    };
 }

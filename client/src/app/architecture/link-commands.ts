@@ -3,7 +3,7 @@ import * as joint from 'jointjs';
 import { Graph } from "../graph/model/graph";
 
 
-export class AddLinkCommand implements Command {
+export class AddRunTimeLinkCommand implements Command {
 
     graph: Graph;
     link: joint.shapes.microtosca.RunTimeLink;
@@ -38,32 +38,33 @@ export class AddLinkCommand implements Command {
 
 export class RemoveLinkCommand implements Command {
 
-    graph: Graph;
-    link: joint.shapes.microtosca.RunTimeLink;
-    source_name: string;
-    target_name: string;
-    t: boolean;
-    cb:boolean;
-    sd:boolean;
-    removedLink: joint.shapes.microtosca.RunTimeLink;
-
-    constructor(graph: Graph, link: joint.shapes.microtosca.RunTimeLink) {
+    constructor(private graph: Graph, private link: joint.dia.Link) {
         this.graph = graph;
         this.link = link;
-        var source = <joint.shapes.microtosca.Root>link.getSourceElement();
-        var target = <joint.shapes.microtosca.Root>link.getTargetElement();
-        this.source_name = source.getName();
-        this.target_name = target.getName();
-        this.t = this.link.hasTimeout();
-        this.cb = this.link.hasCircuitBreaker();
-        this.sd =  this.link.hasDynamicDiscovery();
     }
 
     execute() {
-        this.removedLink = this.link.remove();
+        this.link.remove();
     }
 
     unexecute() {
-        this.removedLink.addTo(this.graph);
+        this.link.addTo(this.graph);
+    }
+}
+
+export class ChangeLinkTargetCommand implements Command {
+
+    oldTarget;
+
+    constructor(private graph: Graph, private link: joint.dia.Link, private newTargetName: string) {}
+
+    execute() {
+        this.oldTarget = this.link.getSourceElement();
+        let newTarget = this.graph.getNode(this.newTargetName);
+        this.link.target(newTarget);
+    }
+
+    unexecute() {
+        this.link.target(this.oldTarget);
     }
 }

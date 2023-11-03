@@ -1,27 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
-
-import { ANode } from "./node";
-import { AGroup } from "./group";
 
 import { GraphService } from '../graph/graph.service';
 
 import { Principle } from '../graph/model/principles';
 import { Smell } from '../graph/model/smell';
-import { SmellObject, GroupSmellObject, SingleLayerTeamsSmellObject, TightlyCoupledTeamsSmell } from './smell';
-import { SMELL_NAMES } from "./costants";
 
-import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring, Refactoring } from "./refactoring-commands";
-import { WobblyServiceInteractionSmellObject, SharedPersistencySmellObject, EndpointBasedServiceInteractionSmellObject, NoApiGatewaySmellObject, MultipleServicesInOneContainerSmellObject } from "./smell";
 import { CommunicationPattern } from "../graph/model/communicationpattern";
-import { RefactoringFactoryService } from './refactoring-factory.service';
+import { SmellFactoryService } from './smells/smell-factory.service';
+import { Analysed } from './analysed';
+import { GroupSmellObject } from './smells/smell';
+import * as _ from 'lodash';
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 
 @Injectable({
   providedIn: 'root'
@@ -32,17 +25,22 @@ export class AnalyserService {
 
   private analysisUrl = environment.serverUrl + '/api/analyse';
   
-  analysednodes: ANode[] = [];   // list of analysed node;
-  analysedgroups: AGroup[] = []; // list of analysed groups;
+  nodesWithSmells: Analysed<joint.shapes.microtosca.Node>[] = [];   // list of analysed nodes in analysis response
+  groupsWithSmells: Analysed<joint.shapes.microtosca.Group>[] = []; // list of analysed groups in analysis response
+  groupMembersCausingSmells: Analysed<joint.shapes.microtosca.Node>[] = []; // group smells duplication in group member nodes
 
-  constructor(private http: HttpClient, private gs: GraphService, private refactoringFactory: RefactoringFactoryService) { }
+  constructor(
+    private http: HttpClient,
+    private gs: GraphService,
+    private smellFactory: SmellFactoryService
+  ) { }
 
-  getNumSmells(){
+  getSmellsCount(){
     var num_smells = 0;
-    this.analysednodes.forEach((anode)=> {
+    this.nodesWithSmells.forEach((anode)=> {
       num_smells +=  anode.getSmells().length;
     });
-    this.analysedgroups.forEach((agroup)=> {
+    this.groupsWithSmells.forEach((agroup)=> {
       num_smells +=  agroup.getSmells().length;
     });
 
@@ -50,21 +48,31 @@ export class AnalyserService {
   }
   
   showSmells() {
-    this.analysednodes.forEach((anode) => {
-      let n = this.gs.getGraph().getNode(anode.name);
+    this.showNodeSmells();
+    this.showGroupSmells();
+  }
+
+  private showNodeSmells() {
+    this.nodesWithSmells.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.getName());
       anode.getSmells().forEach((smell) => {
         n.addSmell(smell);
       })
     })
+  }
 
-    this.analysedgroups.forEach((agroup) => {
-      let g = this.gs.getGraph().getGroup(agroup.name);
+  private showGroupSmells() {
+    this.groupsWithSmells.forEach((agroup) => {
+      let g = this.gs.getGraph().getGroup(agroup.getName());
       agroup.getSmells().forEach((smell) => {
-        // in EdgeGroup the NoApiGateway smell is inseted in the node of the group
-        smell.getNodeBasedCauses().forEach(node => {
-          node.addSmell(smell);
-        })
-        g.addSmell(smell);
+          g.addSmell(smell);
+      })
+    })
+
+    this.groupMembersCausingSmells.forEach((anode) => {
+      let n = this.gs.getGraph().getNode(anode.getName());
+      anode.getSmells().forEach((smell) => {
+        n.addSmell(smell);
       })
     })
   }
@@ -75,15 +83,8 @@ export class AnalyserService {
       node.resetSmells();
     });
     this.gs.getGraph().getGroups().forEach(group => {
-      console.log("group is", group);
       group.resetSmells();
     });
-  }
-
-  getCommunicationPatterns() {
-    return this.http.get<any>('assets/data/communicationpatterns.json')
-      .toPromise()
-      .then(res => <CommunicationPattern[]>res.data);
   }
 
   getPrinciplesToAnalyse() {
@@ -91,6 +92,12 @@ export class AnalyserService {
       .toPromise()
       .then(res => (<Principle[]>res.data)
       .filter(principle => principle.id != 1))
+  }
+
+  getCommunicationPatterns() {
+    return this.http.get<any>('assets/data/communicationpatterns.json')
+      .toPromise()
+      .then(res => <CommunicationPattern[]>res.data);
   }
 
   getPrinciplesAndSmells() {
@@ -155,21 +162,41 @@ export class AnalyserService {
     return this.http.get(this.analysisUrl, { params })
       .pipe(
         map((response: Response) => {
-          console.log("analysis response", response);
-          // reset analysed node array
-          this.analysednodes = [];
-          // TODO: saved the analysed node ?? in order to have the history of the analysis.
+          console.debug("ANALYSIS RESPONSE", response);
           this.clearSmells(); 
-
-          response['nodes'].forEach((node) => {
-            var anode = this.buildAnalysedNodeFromJson(node);
-            this.analysednodes.push(anode);
+          // reset analysed node array
+          this.nodesWithSmells = [];
+          // TODO: saved the analysed node ?? in order to have the history of the analysis.
+          response['nodes'].forEach((nodeJson) => {
+            let node = this.gs.getGraph().findNodeByName(nodeJson['name']);
+            let nodeSmells = nodeJson['smells'].map((smellJson) => this.smellFactory.getNodeSmell(smellJson, node));
+            let anode = Analysed.getBuilder<joint.shapes.microtosca.Node>()
+                                .setElement(node)
+                                .setSmells(nodeSmells)
+                                .build();
+            this.nodesWithSmells.push(anode);
           });
 
-          this.analysedgroups = [];
-          response['groups'].forEach((group) => {
-            let agroup = this.buildAnalysedGroupFromJson(group);
-            this.analysedgroups.push(agroup);
+          this.groupsWithSmells = [];
+          this.groupMembersCausingSmells = [];
+          response['groups'].forEach((groupJson) => {
+            // Build the smells of the group
+            let group = this.gs.getGraph().findGroupByName(groupJson['name']);
+            let groupSmells: GroupSmellObject[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
+            let agroup = Analysed.getBuilder<joint.shapes.microtosca.Group>()
+                                .setElement(group)
+                                .setSmells(groupSmells)
+                                .build();
+            this.groupsWithSmells.push(agroup);
+            // Derive node actions from the group smells (e.g., AddApiGateway in edge nodes)
+            groupSmells.flatMap(groupSmell => [...groupSmell.getSubSmells()])?.forEach((memberSmell) => {
+              this.groupMembersCausingSmells.push(
+                Analysed.getBuilder<joint.shapes.microtosca.Node>()
+                        .setElement(memberSmell[0])
+                        .setSmells([memberSmell[1]])
+                        .build()
+              );
+            })
           });
           return true;
         }),
@@ -177,96 +204,6 @@ export class AnalyserService {
         ),
         catchError((e: Response) => throwError(e))
       );
-  }
-
-  buildAnalysedGroupFromJson(data: Object) {
-    var agroup: AGroup = new AGroup(data['name']);
-    let group = this.gs.getGraph().getGroup(data['name']);
-    data['smells'].forEach((smellJson) => {
-      let smell: GroupSmellObject;
-      switch (smellJson.name) {
-        case SMELL_NAMES.SMELL_NO_API_GATEWAY:
-          smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
-          break;
-        case SMELL_NAMES.SMELL_SINGLE_LAYER_TEAMS:
-          smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
-          break;
-        case SMELL_NAMES.SMELL_TIGHTLY_COUPLED_TEAMS:
-          smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
-          break;
-        default:
-          break;
-      }
-      smellJson['nodes'].forEach((node_name) => {
-        let node = this.gs.getGraph().findNodeByName(node_name);
-        smell.addNodeBasedCause(node);
-      });
-      
-      smellJson['links'].forEach((link_cause) => {
-        var source = this.gs.getGraph().findNodeByName(link_cause['source']);
-        var target = this.gs.getGraph().findNodeByName(link_cause['target']);
-        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-        console.log("source/target", source.getName(), target.getName());
-        smell.addLinkBasedCause(link);
-      });
-
-      smellJson['refactorings'].forEach((refactoringJson) => {
-        let refactoringName = refactoringJson['name'];
-        let refactorings: Refactoring[] = this.refactoringFactory.getRefactoring(refactoringName, smell);;
-        refactorings.forEach(refactoring => smell.addRefactoring(refactoring));
-      });
-      this.addIgnoreOptions(group, smell);
-      agroup.addSmell(smell);
-    });
-    console.log("agroup is", agroup);
-    return agroup;
-  }
-
-  buildAnalysedNodeFromJson(data: Object) {
-    var anode: ANode = new ANode(data['name']);
-
-    data['smells'].forEach((smellJson) => {
-      let smell: SmellObject;
-
-      switch (smellJson.name) {
-        case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
-          smell = new EndpointBasedServiceInteractionSmellObject();
-          break;
-        case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
-          smell = new WobblyServiceInteractionSmellObject();
-          break;
-        case SMELL_NAMES.SMELL_SHARED_PERSISTENCY:
-          smell = new SharedPersistencySmellObject();
-          break;
-        case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
-          smell = new MultipleServicesInOneContainerSmellObject();
-        default:
-          break;
-      }
-
-      smellJson['links'].forEach((cause) => {
-        var source = this.gs.getGraph().findNodeByName(cause['source']);
-        var target = this.gs.getGraph().findNodeByName(cause['target']);
-        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
-        smell.addLinkBasedCause(link);
-        smell.addNodeBasedCause(this.gs.getGraph().findNodeByName(anode.name))
-      });
-
-      smellJson['refactorings'].forEach((refactoringJson) => {
-        let refactoringName = refactoringJson['name'];
-        let refactorings: Refactoring[] = this.refactoringFactory.getRefactoring(refactoringName, smell);
-        refactorings.forEach((refactoring) => smell.addRefactoring(refactoring));
-      });
-      let node = this.gs.getGraph().findRootByName(anode.name);
-      this.addIgnoreOptions(node, smell);
-      anode.addSmell(smell);
-    });
-    return anode;
-  }
-
-  addIgnoreOptions(element, smell) {
-    smell.addRefactoring(new IgnoreOnceRefactoring(element, smell));
-    smell.addRefactoring(new IgnoreAlwaysRefactoring(element, smell));
   }
 
   /** Log a AnalyserService message with the MessageService */

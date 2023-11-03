@@ -5,7 +5,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 @Injectable({
   providedIn: 'root'
 })
-export class EditorPermissionsService {
+export class PermissionsService {
 
   private readonly ALLOW_ALL = (...any: any[]) => { return true; }
   private readonly DENY_ALL = (...any: any[]) => { return false; }
@@ -13,8 +13,8 @@ export class EditorPermissionsService {
 
   public writePermissions = {
     isAllowed: this.DENY_ALL,
-    isTeamWriteAllowed: this.DENY_ALL,
-    linkable: this.DENY_ALL_TWO_NODES
+    isTeamManagementAllowed: this.DENY_ALL,
+    areLinkable: this.DENY_ALL_TWO_NODES
   };
 
   constructor(
@@ -27,8 +27,8 @@ export class EditorPermissionsService {
             console.warn("ADMIN privileges have been set.");
             // Admin can write everything
             this.writePermissions.isAllowed = this.ALLOW_ALL;
-            this.writePermissions.linkable = this.ALLOW_ALL;
-            this.writePermissions.isTeamWriteAllowed = this.ALLOW_ALL;
+            this.writePermissions.areLinkable = this.ALLOW_ALL;
+            this.writePermissions.isTeamManagementAllowed = this.ALLOW_ALL;
             break;
         case UserRole.TEAM:
             console.warn("TEAM privileges have been set.");
@@ -36,25 +36,25 @@ export class EditorPermissionsService {
             if(!team) {
               // The team doesn't exist in the graph, so block everything
               this.writePermissions.isAllowed = this.DENY_ALL;
-              this.writePermissions.linkable = this.DENY_ALL;
-              this.writePermissions.isTeamWriteAllowed = this.ALLOW_ALL;
+              this.writePermissions.areLinkable = this.DENY_ALL;
+              this.writePermissions.isTeamManagementAllowed = this.ALLOW_ALL;
             } else {
               // The team exists, so set the consequent permissions
-              this.writePermissions.isAllowed = ( (cell) => (this.isEditingAllowedForATeam(team, cell)) );
-              this.writePermissions.linkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
+              this.writePermissions.isAllowed = ( (cell) => (this.isEditingAllowed(team, cell)) );
+              this.writePermissions.areLinkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
                 return this.gs.getGraph().getTeamOfNode(n) == team && (n2 ? this.gs.getGraph().getTeamOfNode(n2) == team : true);
               };
-              this.writePermissions.isTeamWriteAllowed = this.DENY_ALL;
+              this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }
             break;
           default:
             this.writePermissions.isAllowed = this.DENY_ALL;
-            this.writePermissions.linkable = this.DENY_ALL;
-            this.writePermissions.isTeamWriteAllowed = this.DENY_ALL;
+            this.writePermissions.areLinkable = this.DENY_ALL;
+            this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
       }
   }
 
-  isEditingAllowedForATeam(team, cell): boolean {
+  isEditingAllowed(team, cell): boolean {
 
     if(cell.isLink()) {
       // Check that the links the user is adding doesn't involve other teams' nodes

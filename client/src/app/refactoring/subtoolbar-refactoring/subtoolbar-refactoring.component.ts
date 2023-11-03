@@ -58,14 +58,12 @@ export class SubtoolbarRefactoringComponent {
                 }
 
                 let analyseGraph = () => {
-                    console.debug("analysing...")
                     this.gs.uploadGraph(this.options.team)
                             .subscribe(data => {
-                                console.log("uploadGraph response", data);
                                 this.as.runRemoteAnalysis(this.options.smells)
                                     .subscribe(data => {
                                         this.as.showSmells();
-                                        this.smellsNumber = this.as.getNumSmells()
+                                        this.smellsNumber = this.as.getSmellsCount()
                                         //this.messageService.add({ severity: 'success', summary: "Analysis performed correctly", detail: `Found ${this.smellsNumber} smells` });
                                     });
                             });
@@ -80,7 +78,6 @@ export class SubtoolbarRefactoringComponent {
     }
 
     stopMonitoring() {
-        console.log("stopMonitoring");
         this.invokerSubscription.unsubscribe();
         this.as.clearSmells();
         this.messageService.add({ severity: 'success', summary: "Smells analysis stopped", detail: `Smells analysis is not active anymore.` });

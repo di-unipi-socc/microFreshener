@@ -4,7 +4,7 @@ import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
 
 @Injectable({
-  providedIn: TeamsService
+  providedIn: 'root'// TeamsService
 })
 export class TeamVisualizationService {
 

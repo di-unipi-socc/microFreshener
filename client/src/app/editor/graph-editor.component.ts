@@ -5,7 +5,7 @@ import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
 import { GraphService } from "../graph/graph.service";
-import { SmellObject } from '../refactoring/smell';
+import { SmellObject } from '../refactoring/smells/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';
@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { EditorPermissionsService } from './permissions/editor-permissions.service';
+import { PermissionsService } from '../core/permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
@@ -24,6 +24,7 @@ import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
+import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 
 @Component({
     selector: 'app-graph-editor',
@@ -48,7 +49,7 @@ export class GraphEditorComponent {
         private graph: GraphService, // Injectable JointJS graph singleton
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
-        private permissions: EditorPermissionsService, // Privilege manager
+        private permissions: PermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,
@@ -288,7 +289,7 @@ export class GraphEditorComponent {
 
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
-        if(this.permissions.writePermissions.isTeamWriteAllowed()) {
+        if(this.permissions.writePermissions.isTeamManagementAllowed()) {
             teamContextMenuItems.push({label: "Details", icon: "pi pi-info-circle", command: () => {
                 this.contextMenuAction.emit(new ContextMenuAction("team-details", rightClickedTeam));
             }});
@@ -345,7 +346,7 @@ export class GraphEditorComponent {
         if (this.graph.getGraph().isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.permissions.writePermissions.linkable(node)) {
+        if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = node;
         }
@@ -367,7 +368,7 @@ export class GraphEditorComponent {
         // disable link from communication pattern to Datastore
         if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
             add_link = false;
-        if (add_link && this.permissions.writePermissions.linkable(this.leftClickSelectedCell, node)) {
+        if (add_link && this.permissions.writePermissions.areLinkable(this.leftClickSelectedCell, node)) {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
@@ -406,7 +407,9 @@ export class GraphEditorComponent {
 
         ref.onClose.subscribe((refactoringCommand) => {
             if (refactoringCommand) {
-                this.graphInvoker.executeCommand(refactoringCommand);
+                let silent: boolean;
+                silent = refactoringCommand instanceof IgnoreOnceRefactoring || refactoringCommand instanceof IgnoreAlwaysRefactoring;
+                this.graphInvoker.executeCommand(refactoringCommand, silent);
                 this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
             }
         });
@@ -442,7 +445,7 @@ export class GraphEditorComponent {
                                     team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
+                                    if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team);
                                     }
                                 }
@@ -455,7 +458,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.graph.getGraph().getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.writePermissions.isTeamWriteAllowed() && this.teams.areVisible()) {
+                            if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team);
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })

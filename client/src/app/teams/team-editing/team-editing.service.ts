@@ -8,7 +8,7 @@ import { Graph } from 'src/app/graph/model/graph';
 import { TeamsService } from '../teams.service';
 
 @Injectable({
-  providedIn: TeamsService
+  providedIn: 'root'// TeamsService
 })
 export class TeamEditingService {
 

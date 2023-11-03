@@ -1,47 +1,15 @@
 <div class="p-grid p-justify-center p-align-center vertical-container">
     <div class="p-col-2">
-        <h3>Node:</h3>
-    </div>
-    <div class="p-col-8">
-        <p>{{jointNodeModel.getName()}}</p>
-    </div>
-</div>
-
-
-<div class="p-grid p-justify-center p-align-center vertical-container">
-    <div class="p-col-2">
-        <h3>Smell:</h3>
-    </div>
-    <div class="p-col-8">
-        <p>{{smell.name}}</p>
+        <h1>Found {{smell.name}} for {{jointNodeModel.getName()}}</h1>
+        <p>{{smell.getDescription()}}</p>
     </div>
 </div>
 
 <div class="p-grid p-justify-center p-align-center vertical-container">
     <div class="p-col-2">
-        <h3>Description:</h3>
-    </div>
-    <div class="p-col-8">
-        {{smell.getDescription()}}
-    </div>
-</div>
-
-<hr>
-
-<div class="p-grid p-justify-center p-align-center vertical-container">
-    <div class="p-col-2">
-        <h3>Action:</h3>
-    </div>
-    <div class="p-col-8">
+        <h3>Refactor</h3>
         <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
-    </div>
-</div>
-<div class="p-grid p-justify-center p-align-center vertical-container">
-    <div class="p-col-2">
-        <h3>Description:</h3>
-    </div>
-    <div class="p-col-8">
-        <p *ngIf="selectedCommand" pInputTextarea> {{selectedCommand.getDescription() || 'none'}}</p>
+        <p *ngIf="selectedCommand"> {{selectedCommand.getDescription() || 'none'}}</p>
     </div>
 </div>
 

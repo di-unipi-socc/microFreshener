@@ -86,8 +86,8 @@
             "name": "team1",
             "type": "squadgroup",
             "members": [
-                "rabbitmq",
-                "shipping"
+                "shipping",
+                "rabbitmq"
             ]
         },
         {
