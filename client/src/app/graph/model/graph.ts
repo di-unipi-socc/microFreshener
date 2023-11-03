@@ -561,8 +561,9 @@ export class Graph extends joint.dia.Graph {
                 throw new Error(`Node type of ${node.getName()} not recognized`);
             data['nodes'].push(dnode);
         })
-        // Add links
-        this.getLinks().forEach((link: joint.shapes.microtosca.RunTimeLink) => {
+        // Add links for interactions
+        this.getLinks().filter((link) => this.isInteractionLink(link)).forEach((link: joint.shapes.microtosca.RunTimeLink) => {
+            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link.getSourceElement()).getName()} and ${(<joint.shapes.microtosca.Node>link.getTargetElement()).getName()}`);
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),
@@ -571,11 +572,6 @@ export class Graph extends joint.dia.Graph {
                 "circuit_breaker": link.hasCircuitBreaker()
 
             }
-            // if (link instanceof joint.shapes.microtosca.RunTimeLink)
-            //     dlink['type'] = "runtime";
-            // else if (<any>link instanceof joint.shapes.microtosca.DeploymentTimeLink)
-            //     dlink['type'] = "deploymenttime";
-
             // TODO: Change to Interaction Link
             if (link instanceof joint.shapes.microtosca.RunTimeLink)
                 dlink['type'] = "interaction";
@@ -583,7 +579,20 @@ export class Graph extends joint.dia.Graph {
                 throw new Error(`Link type of ${link} not recognized`);
             data['links'].push(dlink);
         })
-        this.getLinks
+        // Add links for deployments
+        /*this.getLinks().filter((link) => this.isDeploymentLink(link)).forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
+            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link.getSourceElement()).getName()} and ${(<joint.shapes.microtosca.Node>link.getTargetElement()).getName()}`);
+            var dlink = {
+                'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
+                'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName()
+            }
+
+            if (link instanceof joint.shapes.microtosca.RunTimeLink)
+                dlink['type'] = "deployment";
+            else
+                throw new Error(`Link type of ${link} not recognized`);
+            data['links'].push(dlink);
+        })*/
         // Add EdgeGroups
         this.getEdgeGroups().forEach(node => {
             var edgeGroup = { 'name': node.getName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
