@@ -12,7 +12,8 @@ export class AddDataManagerRefactoring implements Refactoring {
     constructor(graph: Graph, smell: SmellObject) {
         let cmds = [];
         let databaseManagerName = "DB manager";
-        cmds.push(new AddServiceCommand(graph, databaseManagerName));
+        let dbManagerPosition = graph.getPointCloseTo(smell.getLinkBasedCauses()[0]?.getTargetElement());
+        cmds.push(new AddServiceCommand(graph, databaseManagerName, dbManagerPosition));
         smell.getLinkBasedCauses().forEach(link => {
             cmds.push(new AddRunTimeLinkCommand(graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
             cmds.push(new RemoveLinkCommand(graph, link));

@@ -17,7 +17,7 @@ export class AddMessageRouterRefactoring implements Refactoring {
             let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
             let messageRouterName = `${sourceNode.getName()} ${targetNode.getName()}`;
-            cmds.push(new AddMessageRouterCommand(graph, messageRouterName));
+            cmds.push(new AddMessageRouterCommand(graph, messageRouterName, graph.getPointCloseTo(sourceNode)));
             cmds.push(new AddRunTimeLinkCommand(graph, sourceNode.getName(), messageRouterName));
             cmds.push(new AddRunTimeLinkCommand(graph, messageRouterName, targetNode.getName()));
         });

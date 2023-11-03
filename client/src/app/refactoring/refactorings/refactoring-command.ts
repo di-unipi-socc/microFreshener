@@ -1,4 +1,4 @@
-import { Command, CompositeCommand } from "../../commands/icommand";
+import { Command } from "../../commands/icommand";
 
 export interface Refactoring extends Command {
     getName(): string;

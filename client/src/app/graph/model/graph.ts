@@ -159,6 +159,23 @@ export class Graph extends joint.dia.Graph {
                           .reduce((others: joint.shapes.microtosca.RunTimeLink[], links: joint.shapes.microtosca.RunTimeLink[]) => others.concat(links), []);
     }
 
+    getCenteredPoint(e: joint.dia.Element, topLeftCorner: g.Point): g.Point {
+        let x = topLeftCorner.x;
+        let y = topLeftCorner.y;
+        let size = e.size();
+        let centerX = x-(size.width/2);
+        let centerY = y-(size.height/2);
+        return new g.Point(centerX, centerY);
+    }
+
+    getPointCloseTo(e: joint.dia.Element) {
+        let position = e.position();
+        let size = e.size();
+        let x = position.x - size.width/2;
+        let y = position.y - size.height/2;
+        return new g.Point(x, y);
+    }
+
     addTeamGroup(name: string): joint.shapes.microtosca.SquadGroup {
         let g = new joint.shapes.microtosca.SquadGroup();
         g.setName(name);
@@ -192,15 +209,6 @@ export class Graph extends joint.dia.Graph {
             return this.addMessageRouter(node);
         else
             throw new Error(`Node type ${node} not recognized`);
-    }
-
-    getCenteredPoint(e: joint.dia.Element, topLeftCorner: g.Point): g.Point {
-        let x = topLeftCorner.x;
-        let y = topLeftCorner.y;
-        let size = e.size();
-        let centerX = x-(size.width/2);
-        let centerY = y-(size.height/2);
-        return new g.Point(centerX, centerY);
     }
 
     addService(name: string, position?: g.Point): joint.shapes.microtosca.Service {

@@ -24,7 +24,7 @@ export class SplitTeamsByService extends GroupRefactoring {
                 let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
                 let splitDatastore = Sequentiable.of(new RemoveLinkCommand(graph, link))
-                    .then(new AddDatastoreCommand(graph, newDatabaseName).bind(new AddMemberToTeamGroupCommand(team)))
+                    .then(new AddDatastoreCommand(graph, newDatabaseName, graph.getPointCloseTo(service)).bind(new AddMemberToTeamGroupCommand(team)))
                     .then(new AddRunTimeLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);

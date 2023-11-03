@@ -10,7 +10,8 @@ export class MergeServicesRefactoring implements Refactoring {
     constructor(graph: Graph, smell: SmellObject) {
         // Add the new merged service and link it to the datastore
         let databaseUsers = smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
-        this.command = new MergeServicesCommand(graph, undefined, ...databaseUsers);
+        let position = graph.getPointCloseTo(smell.getLinkBasedCauses()[0].getTargetElement());
+        this.command = new MergeServicesCommand(graph, position, ...databaseUsers);
     }
 
     execute() {
