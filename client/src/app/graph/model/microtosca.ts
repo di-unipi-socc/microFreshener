@@ -519,17 +519,17 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
             fill:"#E5E7E9",
             fillOpacity:"0.4",
             stroke: '#7e7e77', 
-            strokeWidth: 2,
-            strokeDasharray: "10,5",
+            strokeWidth: 1,//2,
+            //strokeDasharray: "10,5",
             rx: 10,
             ry: 10,
             magnet: false
         },
         label: {
-            refX: '50%',
-            refY: '-5%',
-            // yAlignment: 'hanging',
-            xAlignment: 'center',
+            refX: '99%',
+            refY: '-22',
+            //yAlignment: 'hanging',
+            xAlignment: 'right',
             fontSize: 18,
             text: name != undefined ? name : '',
             magnet: false
