@@ -36,6 +36,7 @@ export class GraphEditorComponent {
     
     @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
 
+    addingLink: joint.shapes.microtosca.RunTimeLink;
     leftClickSelectedCell: joint.dia.Cell;
 
     @ViewChild('contextMenu') contextMenu;
@@ -140,9 +141,13 @@ export class GraphEditorComponent {
         });
     }
 
-    unhighlight() {
-        this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
-        this.leftClickSelectedCell = null;
+    stopAddingLink() {
+        if(this.leftClickSelectedCell) {
+            this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
+            this.leftClickSelectedCell = null;
+        }
+        this.jointJsGraph.nativeElement.onmousemove = null;
+        this.addingLink.remove();
     }
 
     openAddNodeDialog(nodeType, position, team?) {
@@ -188,7 +193,7 @@ export class GraphEditorComponent {
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
             } else {
                 if (this.leftClickSelectedCell) {
-                    this.unhighlight();
+                    this.stopAddingLink();
                 }
             }
         });
@@ -302,6 +307,7 @@ export class GraphEditorComponent {
 
     bindSingleClickCell() {
         this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
+            console.debug("clicked", cellView);
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
@@ -322,12 +328,11 @@ export class GraphEditorComponent {
             }
             // node clicked
             else {
-                console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
-                console.log("hasSmells?", element.hasSmells());
-                console.log("contextmenu", this.contextMenu);
                 if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
+                    // If adding a link and there isn't a selected node, select the node
                     this.highlight(cellView);
                 } else if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                    // If adding a link and there is a selected node, link them
                     this.linkWithHighlighted(element);
                 }
             }
@@ -347,12 +352,31 @@ export class GraphEditorComponent {
             can_select_source_node = false;
         }
         if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
-            cellView.highlight();
-            this.leftClickSelectedCell = node;
+            this.startAddingLink(cellView);
         }
         else {
             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
         }
+    }
+
+    private startAddingLink(cellView: joint.dia.CellView) {
+        cellView.highlight();
+        let node = <joint.shapes.microtosca.Node> cellView.model;
+        this.leftClickSelectedCell = node;
+        let addingLink = new joint.shapes.microtosca.RunTimeLink({
+            source: { id: node.id }
+        });
+        addingLink.attr('path/pointer-events', 'none');
+        this.addingLink = addingLink;
+        addingLink.addTo(this.graph.getGraph());
+        this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
+            console.debug(`x ${evt.x}, y ${evt.y}`);
+            let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
+            let d = 0;
+            let dx = mousePosition.x > node.position().x ? -d : d;
+            let dy = mousePosition.y > node.position().y ? -d : d;
+            addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
+        });
     }
 
     private linkWithHighlighted(node) {
@@ -379,7 +403,7 @@ export class GraphEditorComponent {
             ref.onClose.subscribe((data) => {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                    this.leftClickSelectedCell = null;
+                    this.stopAddingLink();
                 }
             });
         }
@@ -392,7 +416,7 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
             evt.preventDefault();
             evt.stopPropagation();
-            console.log("Double click cell");
+            console.debug("Double click cell", cellView);
         });
     }
 
@@ -420,12 +444,13 @@ export class GraphEditorComponent {
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
         this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
+            console.debug("cell:pointerup", cellView);
             var cell = cellView.model;
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                 !this.graph.getGraph().isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
                 !this.graph.getGraph().isGroup(cell)) {
-
+                console.debug("clicked", cellView);
                 var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
 
                 if (cellViewsBelow.length) {
@@ -704,7 +729,6 @@ export class GraphEditorComponent {
     bindDragNavigation() {
         let movingStatus = { isMoving: false, x: undefined, y: undefined };
         this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
-            console.log("pointerdown on blank, start dragging paper");
             if(!movingStatus.isMoving) {
                 movingStatus.isMoving = true;
                 let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
@@ -726,7 +750,6 @@ export class GraphEditorComponent {
 
         this.navigation.getPaper().on("blank:pointerup", () => {
             if(movingStatus.isMoving) {
-                console.log("pointerup on blank, no more dragging paper")
                 movingStatus.isMoving = false;
             }
         });

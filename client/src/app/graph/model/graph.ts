@@ -73,8 +73,8 @@ export class Graph extends joint.dia.Graph {
 
     getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
         return (<joint.shapes.microtosca.RunTimeLink[]>super.getLinks()).find(link => {
-            var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement()).getName();
-            var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement()).getName();
+            var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement())?.getName();
+            var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement())?.getName();
             return s === source.getName() && t === target.getName();
         });
     }
