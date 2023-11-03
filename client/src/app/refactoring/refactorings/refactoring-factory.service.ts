@@ -120,9 +120,12 @@ class TeamBoundariesFilter {
       refactoring instanceof SplitDatastoreRefactoring ||
       refactoring instanceof AddDataManagerRefactoring) {
       command = refactoring.command;
+    } else {
+      console.debug("Other command: " + command);
     }
 
-    this.addNewNodesToTeam(command, this.team);
+    if(command)
+      this.addNewNodesToTeam(command, this.team);
 
     return refactoring;
   }

@@ -1,9 +1,9 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
-import { RemoveNodeCommand } from "src/app/architecture/node-commands";
+import { AddDatastoreCommand, RemoveNodeCommand } from "src/app/architecture/node-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
-import { AddRunTimeLinkCommand } from "src/app/architecture/link-commands";
+import { AddRunTimeLinkCommand, ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
@@ -11,12 +11,15 @@ export class SplitDatastoreRefactoring implements Refactoring {
 
     constructor(graph: Graph, smell: SmellObject) {
         let cmds = [];
-        cmds.push(new RemoveNodeCommand(graph, smell.getNodeBasedCauses()[0]));
         smell.getLinkBasedCauses().forEach((link) => {
-            let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
+            let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
             let newDatastoreName = "DB " + sourceNode.getName();
-            cmds.push(new AddRunTimeLinkCommand(graph, sourceNode.getName(), newDatastoreName));
+            cmds.push(new AddDatastoreCommand(graph, newDatastoreName));
+            cmds.push(new ChangeLinkTargetCommand(graph, link, newDatastoreName));
         });
+        if(graph.getConnectedLinks(smell.getNodeBasedCauses()[0]).length - smell.getLinkBasedCauses().length == 0) {
+            cmds.push(new RemoveNodeCommand(graph, smell.getNodeBasedCauses()[0]));
+        }
         this.command = CompositeCommand.of(cmds);
     }
 
@@ -33,6 +36,6 @@ export class SplitDatastoreRefactoring implements Refactoring {
     }
 
     getDescription() {
-        return "Split database";
+        return "Split datastore.";
     }
 }
