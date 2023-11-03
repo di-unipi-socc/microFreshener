@@ -135,7 +135,6 @@ export class SessionService {
       default:
         this.permissions.updatePermissions(role);
     }
-    this.teams.hideTeams();
     this.gs.getGraph().applyLayout("LR");
   }
 

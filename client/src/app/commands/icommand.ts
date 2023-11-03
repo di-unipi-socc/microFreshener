@@ -15,6 +15,14 @@ export class CompositeCommand implements Command {
         this.commands = this.commands.map((cmd) => f(cmd));
     }
 
+    push(command: Command) {
+        this.commands.push(command);
+    }
+
+    prepend(command: Command) {
+        this.commands.unshift(command);
+    }
+
     execute() {
         this.commands.forEach(command => command.execute());
     }
