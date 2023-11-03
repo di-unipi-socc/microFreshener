@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { EditorPermissionsService } from '../core/permissions/editor-permissions.service';
+import { PermissionsService } from '../core/permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
@@ -49,7 +49,7 @@ export class GraphEditorComponent {
         private graph: GraphService, // Injectable JointJS graph singleton
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
-        private permissions: EditorPermissionsService, // Privilege manager
+        private permissions: PermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,

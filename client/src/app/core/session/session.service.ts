@@ -7,7 +7,7 @@ import { DialogImportComponent } from '../dialog-import/dialog-import.component'
 
 // import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
-import { EditorPermissionsService } from 'src/app/core/permissions/editor-permissions.service';
+import { PermissionsService } from 'src/app/core/permissions/editor-permissions.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { TeamsService } from 'src/app/teams/teams.service';
 
@@ -25,7 +25,7 @@ export class SessionService {
   constructor(
     private gs: GraphService,
     private navigation: EditorNavigationService,
-    private permissions: EditorPermissionsService,
+    private permissions: PermissionsService,
     private teams: TeamsService,
     public dialogService: DialogService,
     private messageService: MessageService

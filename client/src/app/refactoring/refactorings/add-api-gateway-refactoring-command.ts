@@ -3,12 +3,12 @@ import { GroupRefactoring } from "./refactoring-command";
 import { GroupSmellObject } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
-import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
+import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 
 export class AddApiGatewayRefactoring extends GroupRefactoring {
 
     smell: GroupSmellObject;
-    command: Command;
+    command: CompositeCommand;
 
     constructor(graph: Graph, smell: GroupSmellObject) {
         super();

@@ -52,19 +52,19 @@ export class RemoveLinkCommand implements Command {
     }
 }
 
-export class ChangeLinkSourceCommand implements Command {
+export class ChangeLinkTargetCommand implements Command {
 
-    oldSource;
+    oldTarget;
 
     constructor(private graph: Graph, private link: joint.dia.Link, private newTargetName: string) {}
 
     execute() {
-        this.oldSource = this.link.getTargetElement();
-        let newSource = this.graph.getNode(this.newTargetName);
-        this.link.source(newSource);
+        this.oldTarget = this.link.getSourceElement();
+        let newTarget = this.graph.getNode(this.newTargetName);
+        this.link.target(newTarget);
     }
 
     unexecute() {
-        this.link.source(this.oldSource);
+        this.link.target(this.oldTarget);
     }
 }

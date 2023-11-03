@@ -21,7 +21,7 @@ export class AddMessageBrokerRefactoring implements Refactoring {
             cmds.push(new AddMessageBrokerCommand(graph, messageRouterName));
             cmds.push(new RemoveLinkCommand(graph, link));
             cmds.push(new AddRunTimeLinkCommand(graph, sourceNode.getName(), messageRouterName));
-            cmds.push(new AddRunTimeLinkCommand(graph, messageRouterName, targetNode.getName()));
+            cmds.push(new AddRunTimeLinkCommand(graph, targetNode.getName(), messageRouterName));
         });
         this.command = CompositeCommand.of(cmds);
     }

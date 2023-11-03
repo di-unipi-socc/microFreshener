@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EditorPermissionsService } from './editor-permissions.service';
+import { PermissionsService } from './editor-permissions.service';
 
 describe('EditorPermissionsService', () => {
-  let service: EditorPermissionsService;
+  let service: PermissionsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EditorPermissionsService);
+    service = TestBed.inject(PermissionsService);
   });
 
   it('should be created', () => {

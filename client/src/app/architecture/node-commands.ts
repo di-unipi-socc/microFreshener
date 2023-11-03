@@ -3,7 +3,7 @@ import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
 import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
-import { AddRunTimeLinkCommand, ChangeLinkSourceCommand, RemoveLinkCommand } from './link-commands';
+import { AddRunTimeLinkCommand, ChangeLinkTargetCommand, RemoveLinkCommand } from './link-commands';
 
 
 export abstract class AddNodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
@@ -90,12 +90,10 @@ export class AddMessageRouterCommand extends AddNodeCommand<joint.shapes.microto
 
 export class RemoveNodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {
 
-    graph: Graph;
     removeNodeFromEverything: Command;
 
-    constructor(graph: Graph, node?: T) {
+    constructor(private graph: Graph, node?: T) {
         super(node);
-        this.graph = graph;
     }
 
     execute() {
@@ -106,7 +104,7 @@ export class RemoveNodeCommand<T extends joint.shapes.microtosca.Node> extends E
         if(team)
             preprocessing = preprocessing.concat(new RemoveMemberFromTeamGroupCommand(team, node));
         
-        let links = this.graph.getIngoingLinks(node).concat(this.graph.getOutgoingLinks(node));
+        let links = this.graph.getConnectedLinks(node);
         links.forEach((link) => { preprocessing = preprocessing.concat(new RemoveLinkCommand(this.graph, link)) });
         
         this.removeNodeFromEverything = CompositeCommand.of(preprocessing);
@@ -130,56 +128,62 @@ export class RemoveCommunicationPatternCommand extends RemoveNodeCommand<joint.s
 
 export class MergeServicesCommand extends ElementCommand<joint.shapes.microtosca.Service> {
 
-    mergingServices: Set<joint.shapes.microtosca.Service>;
+    addMergedServiceCommand: AddServiceCommand;
     command: CompositeCommand;
 
     constructor(
-        private graph: Graph,
-        private position?: g.Point,
+        graph: Graph,
+        position?: g.Point,
         ...services: joint.shapes.microtosca.Service[]
     ) {
         super();
-        this.mergingServices = new Set(services);
+        let mergingServices = new Set(services);
+        let linksToBeDeleted: joint.dia.Link[] = [];
+        let linksToBeMoved: joint.dia.Link[] = [];
+        let targets = new Set<joint.dia.Element>();
+        mergingServices.forEach((mergingService) => {
+            let merginServiceLinks = graph.getConnectedLinks(mergingService);
+            merginServiceLinks.forEach((link) => {
+                if(link.getSourceElement() == mergingService) {
+                    // Delete the outgoing links
+                    linksToBeDeleted.push(link);
+                    // If the link goes to a non-merging service, add a new link towards that target
+                    if(!graph.isService(link.getTargetElement()) || !mergingServices.has(<joint.shapes.microtosca.Service> link.getTargetElement())) {
+                        targets.add(link.getTargetElement());
+                    }
+                } else {
+                    // Delete the ingoing links that come from a merging services
+                    if(mergingServices.has(<joint.shapes.microtosca.Node> link.getSourceElement())) {
+                        linksToBeDeleted.push(link);
+                    } else {
+                        // If the link comes from a non-merging service, just change its target to the new merged service
+                        linksToBeMoved.push(link);
+                    }
+                }
+            });
+        });
+        let cmds = [];
+        // Add merged service
+        let mergedServiceName = `Merged service (${Array.from(mergingServices).map((service) => service.getName()).join(" + ")})`
+        this.addMergedServiceCommand = new AddServiceCommand(graph, mergedServiceName, position);
+        cmds.push(this.addMergedServiceCommand);
+        // Create link manipulation commands
+        cmds = cmds.concat(linksToBeDeleted.map((link) => new RemoveLinkCommand(graph, link)));
+        cmds = cmds.concat(Array.from(linksToBeMoved.values()).map((link) => new ChangeLinkTargetCommand(graph, link, mergedServiceName)));
+        cmds = cmds.concat(Array.from(targets.values()).map((target) => new AddRunTimeLinkCommand(graph, mergedServiceName, (<joint.shapes.microtosca.Node> target).getName())));
+        // Remove all the merged services
+        cmds = cmds.concat(Array.from(mergingServices).map((service: joint.shapes.microtosca.Service) => {console.debug("Remove command for node", service); return new RemoveServiceCommand(graph, service)}));
+        this.command = CompositeCommand.of(cmds);
     }
 
     execute() {
-        let linksToJustBeDeleted: joint.dia.Link[] = [];
-        let linksToBeFromMergedService = new Map<joint.dia.Element, joint.dia.Link>();
-        let targetsToBeLinked = new Set<joint.shapes.microtosca.Node>();
-        this.mergingServices.forEach((mergingService) => {
-            let mergingLinks = this.graph.getConnectedLinks(mergingService);
-            mergingLinks.forEach((link) => {
-                if(this.mergingServices.has(<joint.shapes.microtosca.Service> link.getTargetElement())) {
-                    // If the link targets another merging service, just delete it
-                    linksToJustBeDeleted.push(link);
-                } else if(linksToBeFromMergedService.has(link.getTargetElement())) {
-                    // If the link targets the same target of another merging link, delete both and add a new one to the merged service
-                    linksToJustBeDeleted.push(link);
-                    linksToJustBeDeleted.push(linksToBeFromMergedService.get(link.getTargetElement()));
-                    targetsToBeLinked.add(<joint.shapes.microtosca.Node>  link.getTargetElement());
-                } else {
-                    // If the link targets a new non-merging service, change the source to the newly creating merging service
-                    linksToBeFromMergedService.set(link.getTargetElement(), link);
-                }});
-        })
-
-        let cmds = [];
-        // Add merged service
-        let mergedServiceName = Array.from(this.mergingServices).map((service) => service.getName()).join(" + ")
-        let addMergedServiceCommand = new AddServiceCommand(this.graph, mergedServiceName, this.position);
-        cmds.push(addMergedServiceCommand);
-        // Create link manipulation commands
-        cmds = cmds.concat(linksToJustBeDeleted.map((link) => new RemoveLinkCommand(this.graph, link)));
-        cmds = cmds.concat(Array.from(linksToBeFromMergedService.values()).map((link) => new ChangeLinkSourceCommand(this.graph, link, mergedServiceName)));
-        cmds = cmds.concat(Array.from(targetsToBeLinked).map((target) => new AddRunTimeLinkCommand(this.graph, mergedServiceName, target.getName())));
-        this.command = CompositeCommand.of(cmds);
         // Execute the composed command and set the newly created service
         this.command.execute();
-        this.set(addMergedServiceCommand.get());
+        this.set(this.addMergedServiceCommand.get());
     }
 
     unexecute() {
         this.command.unexecute();
     }
-    
+
 }

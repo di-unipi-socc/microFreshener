@@ -5,14 +5,14 @@ import { GraphService } from 'src/app/graph/graph.service';
 @Injectable({
   providedIn: 'root'
 })
-export class EditorPermissionsService {
+export class PermissionsService {
 
   private readonly ALLOW_ALL = (...any: any[]) => { return true; }
   private readonly DENY_ALL = (...any: any[]) => { return false; }
   private readonly DENY_ALL_TWO_NODES = (n1, n2?) => { return false; }
 
   public writePermissions = {
-    isAllowed: (cell) => this.DENY_ALL(cell),
+    isAllowed: this.DENY_ALL,
     isTeamManagementAllowed: this.DENY_ALL,
     areLinkable: this.DENY_ALL_TWO_NODES
   };

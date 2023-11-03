@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AddNodeCommand, RemoveNodeCommand, RemoveServiceCommand } from 'src/app/architecture/node-commands';
-import { Command } from 'src/app/commands/icommand';
+import { AddNodeCommand } from 'src/app/architecture/node-commands';
+import { Command, CompositeCommand } from 'src/app/commands/icommand';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { SmellObject, GroupSmellObject } from '../smells/smell';
 import { AddApiGatewayRefactoring } from './add-api-gateway-refactoring-command';
@@ -17,7 +17,6 @@ import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './split-t
 import { UseTimeoutRefactoring } from './use-timeout';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
-import { EditorPermissionsService as PermissionsService } from 'src/app/core/permissions/editor-permissions.service';
 
 enum REFACTORING_NAMES {
   REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -40,19 +39,32 @@ export class RefactoringFactoryService {
 
   constructor(
     private gs: GraphService,
-    private session: SessionService,
-    private permissions: PermissionsService
+    private session: SessionService
   ) {}
 
-  getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
+  getRefactoring(refactoringName: string, smell: (SmellObject | GroupSmellObject)): Refactoring {
+    if(smell instanceof SmellObject) {
+      let refactoring = this.getNodeRefactoring(refactoringName, smell);
+      if(this.session.isTeam()) {
+        let team = this.gs.getGraph().findTeamByName(this.session.getName())
+        let teamBoundariesFilter = new TeamBoundariesFilter(team);
+        refactoring = teamBoundariesFilter.filter(refactoring);
+      }
+      return refactoring;
+    } else if(smell instanceof GroupSmellObject && this.session.isAdmin()) {
+      return this.getGroupRefactoring(refactoringName, smell);
+    }
+  }
+
+  private getNodeRefactoring(refactoringName: string, smell: SmellObject): Refactoring {
 
     switch (refactoringName) {
 
       case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-        return this.restrictToTeamIfAny(new AddMessageRouterRefactoring(this.gs.getGraph(), smell));
+        return new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-        return this.restrictToTeamIfAny(new AddMessageBrokerRefactoring(this.gs.getGraph(), smell));
+        return new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
         return new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
@@ -64,40 +76,18 @@ export class RefactoringFactoryService {
         return new UseTimeoutRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-        return this.restrictToTeamIfAny(new MergeServicesRefactoring(this.gs.getGraph(), smell));
+        return new MergeServicesRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return this.restrictToTeamIfAny(new SplitDatastoreRefactoring(this.gs.getGraph(), smell));
+        return new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-        return this.restrictToTeamIfAny(new AddDataManagerRefactoring(this.gs.getGraph(), smell));
+        return new AddDataManagerRefactoring(this.gs.getGraph(), smell);
     }
 
   }
 
-  private restrictToTeamIfAny(refactoring: AddMessageRouterRefactoring | AddMessageBrokerRefactoring | MergeServicesRefactoring | SplitDatastoreRefactoring | AddDataManagerRefactoring) {
-    let team = this.session.isTeam() ? this.gs.getGraph().findTeamByName(this.session.getName()) : undefined;
-    let allowedRefactoring = true;
-    if(team) {
-      refactoring.command.apply((cmd: Command) => {
-        if(cmd instanceof RemoveServiceCommand) {
-          let removingNode = cmd.get();
-          if(this.permissions.writePermissions.isAllowed(removingNode)) {
-            console.debug("Removing node is invalid:", removingNode.getName());
-            allowedRefactoring = false;
-          }
-        }
-        if(cmd instanceof AddNodeCommand) {
-          cmd = cmd.bind(new AddMemberToTeamGroupCommand(team));
-        }
-        return cmd;
-      });
-    }
-    if(allowedRefactoring)
-      return refactoring;
-  }
-
-  getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
+  private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
     
     switch(refactoringName){
 
@@ -110,5 +100,40 @@ export class RefactoringFactoryService {
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
     }
+  }
+}
+
+class TeamBoundariesFilter {
+
+  constructor(
+    private team: joint.shapes.microtosca.SquadGroup
+  ) {}
+
+  filter(refactoring: Refactoring): Refactoring {
+
+    let command: CompositeCommand;
+
+    if(refactoring instanceof MergeServicesRefactoring) {
+      command = refactoring.command.command;
+    } else if(refactoring instanceof AddMessageRouterRefactoring ||
+      refactoring instanceof AddMessageBrokerRefactoring ||
+      refactoring instanceof SplitDatastoreRefactoring ||
+      refactoring instanceof AddDataManagerRefactoring) {
+      command = refactoring.command;
+    }
+
+    this.addNewNodesToTeam(command, this.team);
+
+    return refactoring;
+  }
+
+  private addNewNodesToTeam(refactoringCommand: CompositeCommand, team: joint.shapes.microtosca.SquadGroup): CompositeCommand {
+    refactoringCommand.apply((simpleCommand: Command) => {
+      if(simpleCommand instanceof AddNodeCommand) {
+        simpleCommand = simpleCommand.bind(new AddMemberToTeamGroupCommand(team));
+      }
+      return simpleCommand;
+    });
+    return refactoringCommand;
   }
 }
