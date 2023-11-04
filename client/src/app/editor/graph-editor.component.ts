@@ -142,6 +142,7 @@ export class GraphEditorComponent {
     }
 
     stopAddingLink() {
+        console.debug("stopAddingLink");
         if(this.leftClickSelectedCell) {
             this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
             this.leftClickSelectedCell = null;
@@ -261,6 +262,13 @@ export class GraphEditorComponent {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
+                { label: "Add link", icon: "pi pi-arrow-right", command: () => {
+                    if(this.leftClickSelectedCell)
+                        this.stopAddingLink();
+                    this.toolSelection.enable(ToolSelectionService.LINK, true);
+                    this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
+                } })
+            nodeContextMenuItems.push(
                 { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
             );
         }
@@ -328,10 +336,10 @@ export class GraphEditorComponent {
             }
             // node clicked
             else {
-                if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
+                /*if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
                     // If adding a link and there isn't a selected node, select the node
                     this.highlight(cellView);
-                } else if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                } else */if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
                     // If adding a link and there is a selected node, link them
                     this.linkWithHighlighted(element);
                 }
@@ -339,7 +347,7 @@ export class GraphEditorComponent {
         });
     }
 
-    private highlight(cellView) {
+    private startAddingLink(cellView) {
         let node = cellView.model;
         // selecting source node
         let can_select_source_node = true;
@@ -352,31 +360,29 @@ export class GraphEditorComponent {
             can_select_source_node = false;
         }
         if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
-            this.startAddingLink(cellView);
+            cellView.highlight();
+            let node = <joint.shapes.microtosca.Node> cellView.model;
+            this.leftClickSelectedCell = node;
+            let position = node.position();
+            let addingLink = new joint.shapes.microtosca.RunTimeLink({
+                source: { id: node.id },
+                target: { x: position.x, y: position.y }
+            });
+            addingLink.attr('path/pointer-events', 'none');
+            this.addingLink = addingLink;
+            addingLink.addTo(this.graph.getGraph());
+            this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
+                console.debug(`x ${evt.x}, y ${evt.y}`);
+                let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
+                let d = 0;
+                let dx = mousePosition.x > node.position().x ? -d : d;
+                let dy = mousePosition.y > node.position().y ? -d : d;
+                addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
+            });
         }
         else {
             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
         }
-    }
-
-    private startAddingLink(cellView: joint.dia.CellView) {
-        cellView.highlight();
-        let node = <joint.shapes.microtosca.Node> cellView.model;
-        this.leftClickSelectedCell = node;
-        let addingLink = new joint.shapes.microtosca.RunTimeLink({
-            source: { id: node.id }
-        });
-        addingLink.attr('path/pointer-events', 'none');
-        this.addingLink = addingLink;
-        addingLink.addTo(this.graph.getGraph());
-        this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
-            console.debug(`x ${evt.x}, y ${evt.y}`);
-            let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
-            let d = 0;
-            let dx = mousePosition.x > node.position().x ? -d : d;
-            let dy = mousePosition.y > node.position().y ? -d : d;
-            addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
-        });
     }
 
     private linkWithHighlighted(node) {
@@ -404,6 +410,7 @@ export class GraphEditorComponent {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
+                    this.toolSelection.enable(ToolSelectionService.LINK, false);
                 }
             });
         }
