@@ -130,24 +130,24 @@ export class SubtoolbarTeamsComponent {
 
   private nodeToBeAddedClicked(cellView: joint.dia.CellView) {
     // priority gently left to addLink when clicking an element
-    if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
-      let graph = this.gs.getGraph();
-      let cell = cellView.model;
-      if(graph.isNode(cell)) {
-        console.log("cellView.model", cell);
-        let node = <joint.shapes.microtosca.Node> cell;
-        if((graph.isService(node) || graph.isCommunicationPattern(node) || graph.isDatastore(node))
-          && !this.selectedNodes.includes(node)) {
-          this.selectedNodes.push(node);
-          this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
-        }
-      } else if(graph.isTeamGroup(cell)) {
-        console.log("adding members of a team")
-        let team = <joint.shapes.microtosca.SquadGroup> cell;
-        this.selectedNodes = this.selectedNodes.concat(team.getMembers());
-        this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
+    //if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
+    let graph = this.gs.getGraph();
+    let cell = cellView.model;
+    if(graph.isNode(cell)) {
+      console.log("cellView.model", cell);
+      let node = <joint.shapes.microtosca.Node> cell;
+      if((graph.isService(node) || graph.isCommunicationPattern(node) || graph.isDatastore(node))
+        && !this.selectedNodes.includes(node)) {
+        this.selectedNodes.push(node);
+        this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
       }
+    } else if(graph.isTeamGroup(cell)) {
+      console.log("adding members of a team")
+      let team = <joint.shapes.microtosca.SquadGroup> cell;
+      this.selectedNodes = this.selectedNodes.concat(team.getMembers());
+      this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
     }
+    //}
   }
 
   toggleTeamsInfo() {

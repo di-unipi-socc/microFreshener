@@ -152,6 +152,7 @@ export class GraphEditorComponent {
     }
 
     openAddNodeDialog(nodeType, position, team?) {
+        console.debug("opening addnode dialog with nodeType", nodeType)
         // Ask for node required data
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
@@ -186,16 +187,16 @@ export class GraphEditorComponent {
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
+            if (this.leftClickSelectedCell) {
+                this.stopAddingLink();
+            }
+
             let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
                 let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getName()) : undefined;
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
-            } else {
-                if (this.leftClickSelectedCell) {
-                    this.stopAddingLink();
-                }
             }
         });
     }
@@ -265,7 +266,7 @@ export class GraphEditorComponent {
                 { label: "Add link", icon: "pi pi-arrow-right", command: () => {
                     if(this.leftClickSelectedCell)
                         this.stopAddingLink();
-                    this.toolSelection.enable(ToolSelectionService.LINK, true);
+                    //this.toolSelection.enableOnly(ToolSelectionService.LINK);
                     this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
                 } })
             nodeContextMenuItems.push(
@@ -336,10 +337,7 @@ export class GraphEditorComponent {
             }
             // node clicked
             else {
-                /*if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
-                    // If adding a link and there isn't a selected node, select the node
-                    this.highlight(cellView);
-                } else */if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                if(/*this.toolSelection.isAddLinkEnabled() && */(this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
                     // If adding a link and there is a selected node, link them
                     this.linkWithHighlighted(element);
                 }
@@ -372,7 +370,6 @@ export class GraphEditorComponent {
             this.addingLink = addingLink;
             addingLink.addTo(this.graph.getGraph());
             this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
-                console.debug(`x ${evt.x}, y ${evt.y}`);
                 let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
                 let d = 0;
                 let dx = mousePosition.x > node.position().x ? -d : d;
@@ -410,7 +407,7 @@ export class GraphEditorComponent {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
-                    this.toolSelection.enable(ToolSelectionService.LINK, false);
+                    //this.toolSelection.enable(ToolSelectionService.LINK, false);
                 }
             });
         }
