@@ -57,4 +57,7 @@ p-sidebar .p-sidebar-right {
     border-bottom: none;
     border-right: none;
     border-left: 5px solid #f4f4f4;
+    position: relative;
+    display: flex;
+    scroll-behavior: unset;
 }
