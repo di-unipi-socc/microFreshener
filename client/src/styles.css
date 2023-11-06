@@ -63,3 +63,7 @@ p-sidebar .p-sidebar-right {
     border-left: 5px solid #f4f4f4;
     position: relative;
 }
+
+.p-card {
+    background-color: rgb(229,231,233, 0.4);
+}
