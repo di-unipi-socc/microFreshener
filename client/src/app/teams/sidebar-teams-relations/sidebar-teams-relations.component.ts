@@ -17,6 +17,8 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
+  description: string;
+
   teams: joint.shapes.microtosca.SquadGroup[];
   interactingTeamsExist: boolean;
 
@@ -152,13 +154,15 @@ export class SidebarTeamsRelationsComponent {
         .style("mix-blend-mode", "multiply")
         .attr("id", d => `ribbon-${d.source.index}-${d.target.index}`)
         .attr("class", d => `ribbon-source-${d.source.index} ribbon-target-${d.target.index}`)
-        .on("mouseover", (event) => {
+        .on("mouseover", (event, d) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
+          this.description = `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} from nodes owned by ${this.interactingTeamsNames[d.source.index]} to nodes owned by ${this.interactingTeamsNames[d.target.index]}`;
         })
         .on("mouseout", (event) => {
           let ribbonId = event.target.id;
           this.mouseOutRibbon(ribbonId);
+          this.description = "";
         })
       .append("title")
         .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${this.interactingTeamsNames[d.source.index]} with nodes owned by ${this.interactingTeamsNames[d.target.index]}`)
@@ -174,13 +178,15 @@ export class SidebarTeamsRelationsComponent {
         .attr("fill-opacity", this.OPACITY_ARC)
         .attr("stroke", "#fff")
         .attr("id", d => `arc-${d.index}`)
-        .on("mouseover", (event) => {
+        .on("mouseover", (event, d) => {
           let arcId = event.target.id;
           this.mouseOverArc(arcId);
+          this.description = `Interactions involving nodes in ${this.interactingTeamsNames[d.index]}`;
         })
         .on("mouseout", (event) => {
           let arcId = event.target.id;
           this.mouseOutArc(arcId);
+          this.description = "";
         })
 
     g.append("text")
