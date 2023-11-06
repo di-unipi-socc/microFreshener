@@ -214,7 +214,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     getAvatarLetter() {
-        let username = this.session.getName();
+        let username = this.session.getTeamName();
         if(username)
             return username.charAt(0).toUpperCase();
         else
@@ -222,7 +222,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     getTooltipText() {
-        let username = this.session.getName();
+        let username = this.session.getTeamName();
         if(username) {
             return "Logged as " + username;
         } else {

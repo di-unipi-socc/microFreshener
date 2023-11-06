@@ -47,7 +47,7 @@ export class RefactoringFactoryService {
     if(smell instanceof SmellObject) {
       let refactoring = this.getNodeRefactoring(refactoringName, smell);
       if(this.session.isTeam()) {
-        let team = this.gs.getGraph().findTeamByName(this.session.getName())
+        let team = this.gs.getGraph().findTeamByName(this.session.getTeamName())
         let teamBoundariesFilter = new TeamBoundariesFilter(team, {graph: this.gs.getGraph()});
         refactoring = teamBoundariesFilter.filter(refactoring);
       }

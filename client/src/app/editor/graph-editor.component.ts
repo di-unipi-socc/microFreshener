@@ -195,7 +195,7 @@ export class GraphEditorComponent {
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getName()) : undefined;
+                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getTeamName()) : undefined;
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
             }
         });
@@ -329,7 +329,7 @@ export class GraphEditorComponent {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
-                        team = this.graph.getGraph().findTeamByName(this.session.getName())
+                        team = this.graph.getGraph().findTeamByName(this.session.getTeamName())
                      } else {
                         team = cellView.model;
                      }
