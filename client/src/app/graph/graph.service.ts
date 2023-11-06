@@ -70,7 +70,7 @@ export class GraphService {
 
   load(json) {
     this.graph.clear();
-    this.graph.builtFromJSON(json);
+    return this.graph.builtFromJSON(json);
   }
 
     // exportGraphToJSON(): Observable<string> {

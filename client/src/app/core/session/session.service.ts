@@ -123,6 +123,8 @@ export class SessionService {
 
   loadGraph(graphJson) {
     this.gs.load(graphJson);
+    this.modelName = this.gs.getGraph().getName();
+    console.debug("Loaded graph", this.gs.getGraph().getName());
     let role = this.getRole();
     switch(role) {
       case UserRole.TEAM:

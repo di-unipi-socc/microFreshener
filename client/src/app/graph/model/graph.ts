@@ -488,7 +488,7 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.SquadGroup>node.getParentCell();
     }
 
-    builtFromJSON(json: string) {
+    builtFromJSON(json: string): string {
         // var g = new Graph(json['name']);
         this.name = json['name'];
         json['nodes'].forEach(node => {
@@ -548,6 +548,8 @@ export class Graph extends joint.dia.Graph {
             else
                 throw new Error(`Group type ${group_type} not recognized`);
         })
+
+        return this.name;
     }
 
     toJSON() {
