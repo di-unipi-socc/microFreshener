@@ -17,7 +17,8 @@ export class SidebarTeamsRelationsComponent {
   @ViewChild('teamRelationsContainer') teamRelationsContainer: ElementRef;
   @ViewChild('teamRelations') teamRelations: ElementRef;
 
-  fewTeams: boolean;
+  teams: joint.shapes.microtosca.SquadGroup[];
+  interactingTeamsExist: boolean;
 
   private svg;
   private width;
@@ -29,7 +30,7 @@ export class SidebarTeamsRelationsComponent {
   private readonly LINK_COLOR = "black";
   private readonly TEAM_COLOR = "#E5E7E9";
 
-  private names;
+  private interactingTeamsNames;
   private colors;
   private index;
 
@@ -39,7 +40,10 @@ export class SidebarTeamsRelationsComponent {
     private graphService: GraphService,
     private teamsService: TeamsService,
     private commands: GraphInvoker
-  ) {}
+  ) {
+    this.teams = [];
+    this.interactingTeamsExist = false;
+  }
 
   ngAfterViewInit() {
     // create the svg area
@@ -55,13 +59,7 @@ export class SidebarTeamsRelationsComponent {
     // Create listener for graph changes
     this.invokerSubscription = this.commands.subscribe(() => {
       if(this.visible) {
-        this.cleanChordDiagram();
-        if(this.graphService.getGraph().getTeamGroups().length > 1) {
-          this.updateChordDiagram();
-          this.fewTeams = false;
-        } else {
-          this.fewTeams = true;
-        }
+        this.updateChordDiagram();
       }
     });
   }
@@ -80,23 +78,20 @@ export class SidebarTeamsRelationsComponent {
   }
 
   private onSidebarOpen() {
-    this.cleanChordDiagram();
     this.updateChordDiagram();
   }
 
   private cleanChordDiagram() {
     d3.select(this.teamRelations.nativeElement).selectAll("svg > *").remove();
-    //this.restoreGraphColor();
   }
 
   private updateChordDiagram() {
-    let teams = this.teamsService.getTeams();
-    if(teams.length > 1) {
-      this.createChordDiagram(teams);
-      this.fewTeams = false;
-    } else {
-      this.fewTeams = true;
-    }
+    this.cleanChordDiagram();
+    this.teams = this.teamsService.getTeams();
+    this.interactingTeamsExist = this.teams.map(t => t.getName()).filter((t) => t).length > 1;
+    console.debug("interacting teams", this.teams.map(t => t.getName()).filter((t) => t))
+    if(this.interactingTeamsExist)
+      this.createChordDiagram(this.teams);
   }
 
   private createChordDiagram(teams: joint.shapes.microtosca.SquadGroup[]) {
@@ -110,9 +105,9 @@ export class SidebarTeamsRelationsComponent {
     let data: [string, string, number][] = this.teamInteractionsToMatrix(teams);
     
     // Compute a dense matrix from the weighted links in data.
-    this.names = teams.map((t) => t.getName());
-    this.index = new Map(this.names.map((name, i) => [name, i]));
-    let matrix = Array.from(this.index, () => new Array(this.names.length).fill(0));
+    this.interactingTeamsNames = teams.map((t) => t.getName());
+    this.index = new Map(this.interactingTeamsNames.map((name, i) => [name, i]));
+    let matrix = Array.from(this.index, () => new Array(this.interactingTeamsNames.length).fill(0));
     data.forEach( ([source, target, value]) => { matrix[this.index.get(source)][this.index.get(target)] += value });
 
     let chord = d3any.chordDirected()
@@ -166,7 +161,7 @@ export class SidebarTeamsRelationsComponent {
           this.mouseOutRibbon(ribbonId);
         })
       .append("title")
-        .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${this.names[d.source.index]} with nodes owned by ${this.names[d.target.index]}`)
+        .text(d => `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} of nodes owned by ${this.interactingTeamsNames[d.source.index]} with nodes owned by ${this.interactingTeamsNames[d.target.index]}`)
 
     let g = this.svg.append("g")
       .selectAll()
@@ -193,15 +188,15 @@ export class SidebarTeamsRelationsComponent {
         .append("textPath")
         .attr("xlink:href", textId.href)
         .attr("startOffset", d => d.startAngle * outerRadius)
-        .text(d => this.names[d.index]);
+        .text(d => this.interactingTeamsNames[d.index]);
 
     g.append("title")
-        .text(d => `Interactions involving nodes in ${this.names[d.index]}`);
+        .text(d => `Interactions involving nodes in ${this.interactingTeamsNames[d.index]}`);
   }
 
   private teamInteractionsToMatrix(teams: joint.shapes.microtosca.SquadGroup[]): [string, string, number][] {
     let matrix: [string, string, number][] = []
-    
+    // Get all teams interactions
     teams.map((s) => this.teamsService.getTeamInteractions(s)
                                       .outgoing
                                       .forEach(teamInteraction => {
@@ -211,6 +206,8 @@ export class SidebarTeamsRelationsComponent {
                                           teamInteraction[1].length
                                         ]);
                                       }));
+    // Filter out non interacting teams
+    matrix = matrix.filter((d) => d[2] > 0);
     return matrix;
   }
 
@@ -276,9 +273,9 @@ export class SidebarTeamsRelationsComponent {
 
   private highlightRibbonSubgraph(sourceIndex: string, targetIndex: string) {
     // Get graph references
-    let sourceTeamName = this.names[sourceIndex];
+    let sourceTeamName = this.interactingTeamsNames[sourceIndex];
     let sourceTeam = this.graphService.getGraph().findTeamByName(sourceTeamName);
-    let targetTeamName = this.names[targetIndex];
+    let targetTeamName = this.interactingTeamsNames[targetIndex];
     let targetTeam = this.graphService.getGraph().findTeamByName(targetTeamName);
     // Color links
     let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;

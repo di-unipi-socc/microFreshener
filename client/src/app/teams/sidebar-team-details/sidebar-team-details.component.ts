@@ -38,7 +38,9 @@ export class SidebarTeamDetailsComponent {
     private teamService: TeamsService,
     private commands: GraphInvoker,
     private navigation: EditorNavigationService
-  ) {}
+  ) {
+    this.teamsInfo = [];
+  }
 
   ngOnChanges(change: SimpleChanges) {
 
