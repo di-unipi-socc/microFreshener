@@ -1,4 +1,4 @@
-import { EventEmitter, Component, Output } from '@angular/core';
+import { EventEmitter, Component, Output, ViewChild } from '@angular/core';
 import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -16,6 +16,7 @@ import { GraphInvoker } from 'src/app/commands/invoker';
 export class SubtoolbarTeamsComponent {
 
   // Add team
+  @ViewChild('teamEditingTool') addTeam;
   public readonly ADD_TEAM_LABEL: string;
   nodeList: SelectItemGroup[];
   selectedNodes: joint.shapes.microtosca.Node[];
@@ -72,7 +73,7 @@ export class SubtoolbarTeamsComponent {
       this.toggleShowTeam(true);
     } else {
       // Toggle off
-      this.invokerSubscription?.unsubscribe();
+      this.invokerSubscription.unsubscribe();
       this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
       if(this.selectedNodes.length > 0) {
         const ref = this.dialogService.open(DialogAddTeamComponent, {
@@ -106,7 +107,7 @@ export class SubtoolbarTeamsComponent {
         else array.push(node);
         return map;
       }, new Map());
-    //  Make the SelectItemGroup elements for the menu out of the grouped nodes
+    // Make the SelectItemGroup elements for the menu out of the grouped nodes
     let NO_TEAM_LABEL: string  = "Nodes owned by no one";
     this.nodeList = Array.from(nodesGroupedBySquads
       .keys()).map((team) => {
@@ -117,7 +118,7 @@ export class SubtoolbarTeamsComponent {
         items: (items ? items.map(node => ({ label: node.getName(), value: node })) : undefined)
       };
     });
-    // Put unassigned nodes in the beginning of the list
+    // Put unassigned nodes at the beginning of the list
     this.nodeList.sort((tA, tB) => {
       if(tA.label === NO_TEAM_LABEL)
         return -1;
@@ -139,12 +140,13 @@ export class SubtoolbarTeamsComponent {
       if((graph.isService(node) || graph.isCommunicationPattern(node) || graph.isDatastore(node))
         && !this.selectedNodes.includes(node)) {
         this.selectedNodes.push(node);
+        this.addTeam.hide();
         this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
       }
     } else if(graph.isTeamGroup(cell)) {
       console.log("adding members of a team")
       let team = <joint.shapes.microtosca.SquadGroup> cell;
-      this.selectedNodes = this.selectedNodes.concat(team.getMembers());
+      this.selectedNodes = this.selectedNodes.concat(team.getMembers().filter(node => !this.selectedNodes.includes(node)));
       this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
     }
     //}
@@ -202,7 +204,7 @@ export class SubtoolbarTeamsComponent {
   }
 
   ngOnDestroy() {
-    this.invokerSubscription?.unsubscribe();
+    this.invokerSubscription.unsubscribe();
     this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
   }
 

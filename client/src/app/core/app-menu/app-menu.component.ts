@@ -203,7 +203,8 @@ export class AppMenuComponent implements OnInit {
     }
 
     editName() {
-        this.renaming = true;
+        if(this.session.isAdmin())
+            this.renaming = true;
     }
 
     rename() {

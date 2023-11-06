@@ -45,7 +45,7 @@ h2 {
 }
 
 
-/**********************************/
+/* Background */
 
 .area{
     width: 100vw;
@@ -72,7 +72,7 @@ h2 {
     height: 20px;
     background: rgb(28, 103, 120, 0.2);
     
-    animation: animate 25s linear infinite;
+    animation: animate 25s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
     bottom: -150px;
     border-radius: 100%;
     opacity: 0;
