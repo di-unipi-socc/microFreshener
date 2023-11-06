@@ -324,6 +324,7 @@ export class GraphEditorComponent {
             let graph = this.graph.getGraph();
             // team clicked
             if (graph.isTeamGroup(element)) {
+                console.debug("team clicked", cellView);
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
@@ -337,7 +338,8 @@ export class GraphEditorComponent {
             }
             // node clicked
             else {
-                if(/*this.toolSelection.isAddLinkEnabled() && */(this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                console.debug("node clicked", cellView, this.leftClickSelectedCell);
+                if(this.addingLink && this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id) {
                     // If adding a link and there is a selected node, link them
                     this.linkWithHighlighted(element);
                 }
@@ -359,8 +361,8 @@ export class GraphEditorComponent {
         }
         if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
             cellView.highlight();
-            let node = <joint.shapes.microtosca.Node> cellView.model;
-            this.leftClickSelectedCell = node;
+            this.leftClickSelectedCell = cellView.model;
+            let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
             let position = node.position();
             let addingLink = new joint.shapes.microtosca.RunTimeLink({
                 source: { id: node.id },
