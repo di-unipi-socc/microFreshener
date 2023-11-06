@@ -78,7 +78,7 @@ export class SubtoolbarRefactoringComponent {
     }
 
     stopMonitoring() {
-        this.invokerSubscription.unsubscribe();
+        this.invokerSubscription?.unsubscribe();
         this.as.clearSmells();
         this.messageService.add({ severity: 'success', summary: "Smells analysis stopped", detail: `Smells analysis is not active anymore.` });
     }

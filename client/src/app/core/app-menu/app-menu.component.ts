@@ -24,6 +24,14 @@ export class AppMenuComponent implements OnInit {
     @ViewChildren('renameInput') private renameInputList: QueryList<ElementRef>;
     renaming: boolean;
     
+    newMenuItem;
+    saveMenuItem;
+    importMenuItem;
+    exportMenuItem;
+    refineMenuItem;
+    examplesMenuItem;
+    logoutMenuItem;
+
     sessionMenuItems: MenuItem[];
 
     @Output() onSidebarChange: EventEmitter<{}> = new EventEmitter();
@@ -39,106 +47,146 @@ export class AppMenuComponent implements OnInit {
         ) {
             this.renaming = false;
             this.sidebarStatus = {};
+                    // Add 'New' button if admin
+        this.newMenuItem = {
+            label: 'New',
+            icon: 'pi pi-fw pi-plus',
+            command: () => {
+                this.confirmationService.confirm({
+                    header: 'New file',
+                    icon: 'pi pi-exclamation-triangle',
+                    message: 'Are you sure that you want to delete the current work and create a new one?',
+                    accept: () => {
+                        this.session.newFile();
+                        this.updatePostDocumentLoadMenu();
+                    }
+                });
+            }
+        };
+        this.importMenuItem = {
+            label: 'Import',
+            icon: 'pi pi-fw pi-download',
+            command: () => {
+                this.session.import()
+                this.updatePostDocumentLoadMenu();
+            }
+        };
+        this.examplesMenuItem = {
+            label: 'Examples',
+            icon: 'pi pi-fw pi-question-circle',
+            items: [
+                // examples
+                {
+                    label: 'Hello world',
+                    command: () => {
+                        this.session.downloadExample("helloworld");
+                        this.updatePostDocumentLoadMenu();
+                    }
+                },
+                {
+                    label: 'Case study',
+                    command: () => {
+                        this.session.downloadExample("case-study-initial");
+                        this.updatePostDocumentLoadMenu();
+                    }
+                },
+                {
+                    label: 'Case study (refactored)',
+                    command: () => {
+                        this.session.downloadExample("case-study-refactored");
+                        this.updatePostDocumentLoadMenu();
+                    }
+                },
+                {
+                    label: 'Sockshop',
+                    command: () => {
+                        this.session.downloadExample("sockshop");
+                        this.updatePostDocumentLoadMenu();
+                    }
+                },
+                {
+                    label: 'FTGO',
+                    command: () => {
+                        this.session.downloadExample("ftgo");
+                        this.updatePostDocumentLoadMenu();
+                    }
+                }
+                //end examples
+            ]
+        };
+        this.logoutMenuItem = {
+            label: 'Logout',
+            icon: 'pi pi-fw pi-times',
+            routerLink: "..",
+            command: () => {
+                this.session.logout();
+            }
+        }
+
+        // After document load
+
+        this.saveMenuItem = {
+            label: 'Save',
+            icon: 'pi pi-fw pi-save',
+            command: () => {
+                if(this.session.isDocumentReady())
+                    this.session.save();
+            }
+        };
+        this.exportMenuItem = {
+            label: 'Export',
+            url: this.hrefDownload,
+            icon: 'pi pi-fw pi-upload',
+        };
+        this.refineMenuItem = {
+            label: 'Refine',
+            icon: 'pi pi-fw pi-pencil',
+            command: () => {
+                this.refineService.refine();
+            }
+        };
     }
 
     ngOnInit() {
         this.modelName = this.gs.getGraph().getName();
-        this.fileMenuItems = [];
-        // Add 'New' button if admin
-        if(this.session.isAdmin())
-            this.fileMenuItems.push({
-                label: 'New',
-                icon: 'pi pi-fw pi-plus',
-                command: () => {
-                    this.confirmationService.confirm({
-                        header: 'New file',
-                        icon: 'pi pi-exclamation-triangle',
-                        message: 'Are you sure that you want to delete the current work and create a new one?',
-                        accept: () => {
-                            this.session.newFile();
-                        }
-                    });
-                }
-            });
-        // Populate file menu
-        this.fileMenuItems = this.fileMenuItems.concat([
-            {
-                label: 'Save',
-                icon: 'pi pi-fw pi-save',
-                command: () => {
-                    if(this.session.isDocumentReady())
-                        this.session.save();
-                }
-            },
-            { separator: true },
-            {
-                label: 'Import',
-                icon: 'pi pi-fw pi-download',
-                command: () => {
-                    this.session.import()
-                }
-            },
-            {
-                label: 'Export',
-                url: this.hrefDownload,
-                icon: 'pi pi-fw pi-upload',
-            },
-            {
-                label: 'Refine',
-                icon: 'pi pi-fw pi-pencil',
-                command: () => {
-                    this.refineService.refine();
-                }
-            },
-            { separator: true },
-            {
-                label: 'Examples',
-                icon: 'pi pi-fw pi-question-circle',
-                items: [
-                    // examples
-                    {
-                        label: 'Hello world',
-                        command: () => {
-                            this.session.downloadExample("helloworld");
-                        }
-                    },
-                    {
-                        label: 'Case study',
-                        command: () => {
-                            this.session.downloadExample("case-study-initial");
-                        }
-                    },
-                    {
-                        label: 'Case study (refactored)',
-                        command: () => {
-                            this.session.downloadExample("case-study-refactored");
-                        }
-                    },
-                    {
-                        label: 'Sockshop',
-                        command: () => {
-                            this.session.downloadExample("sockshop");
-                        }
-                    },
-                    {
-                        label: 'FTGO',
-                        command: () => {
-                            this.session.downloadExample("ftgo");
-                        }
-                    }
-                    //end examples
-                ]
-            }
-        ]);
+        
+        this.updatePreDocumentLoadMenu();
 
         this.sessionMenuItems = [
-            {
-                label: 'Logout',
-                routerLink: "..",
-                command: () => {
-                    this.session.logout();
-                }
-            }
+            this.logoutMenuItem
+        ];
+    }
+
+    updatePreDocumentLoadMenu() {
+        if(this.session.isAdmin()) {
+            this.fileMenuItems = [
+                this.newMenuItem,
+                this.importMenuItem,
+                { separator: true },
+                this.examplesMenuItem,
+                { separator: true },
+                this.logoutMenuItem
+            ];
+        }
+
+        if(this.session.isTeam()) {
+            this.fileMenuItems = [
+                this.importMenuItem,
+                { separator: true },
+                this.logoutMenuItem
+            ];
+        }
+    }
+
+    updatePostDocumentLoadMenu() {
+        this.fileMenuItems = [
+            this.saveMenuItem,
+            { separator: true },
+            this.exportMenuItem,
+            { separator: true },
+            this.refineMenuItem,
+            { separator: true },
+                this.logoutMenuItem
         ];
     }
 

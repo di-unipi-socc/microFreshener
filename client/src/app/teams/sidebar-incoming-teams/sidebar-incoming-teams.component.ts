@@ -36,7 +36,7 @@ export class SidebarIncomingTeamsComponent {
   }
 
   ngOnDestroy() {
-    this.invokerSubscription.unsubscribe();
+    this.invokerSubscription?.unsubscribe();
   }
 
   updateIngoingRequestGroups() {

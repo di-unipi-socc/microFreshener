@@ -76,7 +76,7 @@ export class SidebarTeamsRelationsComponent {
   }
 
   ngOnDestroy() {
-    this.invokerSubscription.unsubscribe();
+    this.invokerSubscription?.unsubscribe();
   }
 
   private onSidebarOpen() {

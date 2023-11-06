@@ -89,7 +89,7 @@ export class SidebarTeamDetailsComponent {
   }
 
   onSidebarClose() {
-    this.invokerSubscription.unsubscribe();
+    this.invokerSubscription?.unsubscribe();
   }
 
   updateTeamsInfo() {
@@ -112,7 +112,7 @@ export class SidebarTeamDetailsComponent {
   }
 
   // From list to single team details
-  more(selectedTeam) {
+  more(selectedTeam: joint.shapes.microtosca.SquadGroup) {
     this.selectedTeam = selectedTeam;
     this.selectedTeamChange.emit(selectedTeam);
     this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
@@ -129,10 +129,6 @@ export class SidebarTeamDetailsComponent {
     if (!this.list) {
       this.closeSidebar();
     }
-  }
-
-  focus(e: joint.dia.Element) {
-    this.navigation.moveTo(e);
   }
 
   closeSidebar() {

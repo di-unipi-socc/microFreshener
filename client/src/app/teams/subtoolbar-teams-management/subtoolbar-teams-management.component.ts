@@ -72,7 +72,7 @@ export class SubtoolbarTeamsComponent {
       this.toggleShowTeam(true);
     } else {
       // Toggle off
-      this.invokerSubscription.unsubscribe();
+      this.invokerSubscription?.unsubscribe();
       this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
       if(this.selectedNodes.length > 0) {
         const ref = this.dialogService.open(DialogAddTeamComponent, {
@@ -202,7 +202,7 @@ export class SubtoolbarTeamsComponent {
   }
 
   ngOnDestroy() {
-    this.invokerSubscription.unsubscribe();
+    this.invokerSubscription?.unsubscribe();
     this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
   }
 

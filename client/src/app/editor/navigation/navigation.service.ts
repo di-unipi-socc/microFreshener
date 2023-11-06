@@ -99,18 +99,7 @@ export class EditorNavigationService {
     if(!padding){
       padding = this.FIT_CONTENT_PADDING;
     }
-    this.paper.scaleContentToFit({padding: padding});
-  }
-
-  moveTo(e: joint.dia.Element) {
-    let ecx = e.position().x+e.size().width/2;
-    let ecy = e.position().y+e.size().height/2;
-    let canvas = document.getElementsByTagName('app-graph-editor')[0];
-    let offsetX = canvas.clientWidth/4;
-    let offsetY = canvas.clientHeight/2;
-    let dx = offsetX-ecx;
-    let dy = offsetY-ecy;
-    this.move(dx, dy);
+    this.paper.scaleContentToFit({ padding: padding });
   }
 
 }
