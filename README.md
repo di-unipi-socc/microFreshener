@@ -54,6 +54,15 @@ source venv/bin/activate
 pip install -r requirements.txt 
 ```
 
+If you're using Windows, type this instead.
+
+```bash
+python -m venv venv  
+Set-ExecutionPolicy Unrestricted -Scope Process
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
 Apply migrations (if this doesn't work, try running it after you already run the server once)
 
 ```bash
@@ -83,8 +92,11 @@ Serve the client with a local server
 ```bash
 sudo ng serve
 ```
+
 [comment]: <> (// deploy on production host "neri.di.unipi.it")
 [comment]: <> (ng serve --host neri.di.unipi.it -c production)
+
+In case of `ERR_OSSL_EVP_UNSUPPORTED` error, type `export NODE_OPTIONS=--openssl-legacy-provider` before `ng serve`.
 
 Open the bowser on http://127.0.0.1:4200/.
 
