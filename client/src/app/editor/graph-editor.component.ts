@@ -36,6 +36,7 @@ export class GraphEditorComponent {
     
     @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
 
+    addingLink: joint.shapes.microtosca.RunTimeLink;
     leftClickSelectedCell: joint.dia.Cell;
 
     @ViewChild('contextMenu') contextMenu;
@@ -140,12 +141,18 @@ export class GraphEditorComponent {
         });
     }
 
-    unhighlight() {
-        this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
-        this.leftClickSelectedCell = null;
+    stopAddingLink() {
+        console.debug("stopAddingLink");
+        if(this.leftClickSelectedCell) {
+            this.navigation.getPaper().findViewByModel(this.leftClickSelectedCell).unhighlight();
+            this.leftClickSelectedCell = null;
+        }
+        this.jointJsGraph.nativeElement.onmousemove = null;
+        this.addingLink.remove();
     }
 
     openAddNodeDialog(nodeType, position, team?) {
+        console.debug("opening addnode dialog with nodeType", nodeType)
         // Ask for node required data
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: 'Add Node',
@@ -180,16 +187,16 @@ export class GraphEditorComponent {
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
+            if (this.leftClickSelectedCell) {
+                this.stopAddingLink();
+            }
+
             let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getName()) : undefined;
+                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getTeamName()) : undefined;
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
-            } else {
-                if (this.leftClickSelectedCell) {
-                    this.unhighlight();
-                }
             }
         });
     }
@@ -256,6 +263,13 @@ export class GraphEditorComponent {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
+                { label: "Add link", icon: "pi pi-arrow-right", command: () => {
+                    if(this.leftClickSelectedCell)
+                        this.stopAddingLink();
+                    //this.toolSelection.enableOnly(ToolSelectionService.LINK);
+                    this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
+                } })
+            nodeContextMenuItems.push(
                 { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
             );
         }
@@ -302,6 +316,7 @@ export class GraphEditorComponent {
 
     bindSingleClickCell() {
         this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
+            console.debug("clicked", cellView);
             console.log("click on cell");
             evt.preventDefault();
             evt.stopPropagation()
@@ -309,11 +324,12 @@ export class GraphEditorComponent {
             let graph = this.graph.getGraph();
             // team clicked
             if (graph.isTeamGroup(element)) {
+                console.debug("team clicked", cellView);
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
-                        team = this.graph.getGraph().findTeamByName(this.session.getName())
+                        team = this.graph.getGraph().findTeamByName(this.session.getTeamName())
                      } else {
                         team = cellView.model;
                      }
@@ -322,19 +338,16 @@ export class GraphEditorComponent {
             }
             // node clicked
             else {
-                console.log("add link enabled?", this.toolSelection.isAddLinkEnabled());
-                console.log("hasSmells?", element.hasSmells());
-                console.log("contextmenu", this.contextMenu);
-                if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell == null || element.id == this.leftClickSelectedCell.id)) {
-                    this.highlight(cellView);
-                } else if(this.toolSelection.isAddLinkEnabled() && (this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id)) {
+                console.debug("node clicked", cellView, this.leftClickSelectedCell);
+                if(this.addingLink && this.leftClickSelectedCell !== null && element.id !== this.leftClickSelectedCell.id) {
+                    // If adding a link and there is a selected node, link them
                     this.linkWithHighlighted(element);
                 }
             }
         });
     }
 
-    private highlight(cellView) {
+    private startAddingLink(cellView) {
         let node = cellView.model;
         // selecting source node
         let can_select_source_node = true;
@@ -348,7 +361,23 @@ export class GraphEditorComponent {
         }
         if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
             cellView.highlight();
-            this.leftClickSelectedCell = node;
+            this.leftClickSelectedCell = cellView.model;
+            let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
+            let position = node.position();
+            let addingLink = new joint.shapes.microtosca.RunTimeLink({
+                source: { id: node.id },
+                target: { x: position.x, y: position.y }
+            });
+            addingLink.attr('path/pointer-events', 'none');
+            this.addingLink = addingLink;
+            addingLink.addTo(this.graph.getGraph());
+            this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
+                let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
+                let d = 0;
+                let dx = mousePosition.x > node.position().x ? -d : d;
+                let dy = mousePosition.y > node.position().y ? -d : d;
+                addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
+            });
         }
         else {
             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `[${node.getName()}] cannot be the source node of a link` });
@@ -379,7 +408,8 @@ export class GraphEditorComponent {
             ref.onClose.subscribe((data) => {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
-                    this.leftClickSelectedCell = null;
+                    this.stopAddingLink();
+                    //this.toolSelection.enable(ToolSelectionService.LINK, false);
                 }
             });
         }
@@ -392,7 +422,7 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("cell:pointerdblclick", (cellView, evt, x, y, ) => {
             evt.preventDefault();
             evt.stopPropagation();
-            console.log("Double click cell");
+            console.debug("Double click cell", cellView);
         });
     }
 
@@ -420,12 +450,13 @@ export class GraphEditorComponent {
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
         this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
+            console.debug("cell:pointerup", cellView);
             var cell = cellView.model;
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                 !this.graph.getGraph().isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
                 !this.graph.getGraph().isGroup(cell)) {
-
+                console.debug("clicked", cellView);
                 var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
 
                 if (cellViewsBelow.length) {
@@ -704,7 +735,6 @@ export class GraphEditorComponent {
     bindDragNavigation() {
         let movingStatus = { isMoving: false, x: undefined, y: undefined };
         this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
-            console.log("pointerdown on blank, start dragging paper");
             if(!movingStatus.isMoving) {
                 movingStatus.isMoving = true;
                 let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
@@ -726,7 +756,6 @@ export class GraphEditorComponent {
 
         this.navigation.getPaper().on("blank:pointerup", () => {
             if(movingStatus.isMoving) {
-                console.log("pointerup on blank, no more dragging paper")
                 movingStatus.isMoving = false;
             }
         });

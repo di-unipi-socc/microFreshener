@@ -519,17 +519,17 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
             fill:"#E5E7E9",
             fillOpacity:"0.4",
             stroke: '#7e7e77', 
-            strokeWidth: 2,
-            strokeDasharray: "10,5",
+            strokeWidth: 1,//2,
+            //strokeDasharray: "10,5",
             rx: 10,
             ry: 10,
             magnet: false
         },
         label: {
-            refX: '50%',
-            refY: '-5%',
-            // yAlignment: 'hanging',
-            xAlignment: 'center',
+            refX: '99%',
+            refY: '-22',
+            //yAlignment: 'hanging',
+            xAlignment: 'right',
             fontSize: 18,
             text: name != undefined ? name : '',
             magnet: false
@@ -673,7 +673,7 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
         },
         _showTimeout: function () {
             this.insertLabel(0, {
-                markup: [
+/*                markup: [
                     {
                         tagName: 'path',
                         selector: 'clock'
@@ -688,12 +688,21 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
                         strokeWidth: 0.5,
 
                     },
+                }*/
+                attrs: {
+                    text: {
+                        text: 'timeout',
+                        fontSize: 10
+                    }
+                },
+                position: {
+                    distance: 0.1
                 }
             });
         },
         _showCircuitBreaker: function () {
             this.insertLabel(1, {
-                markup: [
+                /*markup: [
                     {
                         tagName: 'path',
                         selector: 'clock'
@@ -708,7 +717,16 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
                         strokeWidth: 0.5,
 
                     },
-                }
+                }*/
+                attrs: {
+                    text: {
+                        text: 'circuit\nbreaker',
+                        fontSize: 10
+                    },
+                    position: {
+                        distance: 0.2
+                    }
+                },
             });
         },
         _hideCircuitBreaker: function () {
@@ -716,7 +734,7 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
         },
         _showDynamicDiscovery: function () {
             this.insertLabel(2, {
-                markup: [
+                /*markup: [
                     {
                         tagName: 'path',
                         selector: 'clock'
@@ -730,6 +748,15 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
                         stroke: '#0E343D',
                         strokeWidth: 0.5,
                     },
+                }*/
+                attrs: {
+                    text: {
+                        text: 'dynamic\ndiscovery',
+                        fontSize: 10
+                    }
+                },
+                position: {
+                    distance: 0.3
                 }
             });
 

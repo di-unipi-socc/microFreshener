@@ -60,15 +60,22 @@ import { TagModule } from 'primeng/tag';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { BadgeModule } from 'primeng/badge';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
+import { ChartModule } from 'primeng/chart';
 
-// Import dialog components
 import { DialogAddLinkComponent } from './architecture/dialog-add-link/dialog-add-link.component';
 import { DialogRefineComponent } from './refine/dialog-refine/dialog-refine.component';
 import { DialogImportComponent } from './core/dialog-import/dialog-import.component';
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
-import { TeamsModule } from './teams/teams.module';
+import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
+import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
+import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/sidebar-teams-relations.component';
+import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
+import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
 
 @NgModule({
   declarations: [
@@ -88,12 +95,18 @@ import { TeamsModule } from './teams/teams.module';
     SubtoolbarRefactoringComponent,
     LoginPageComponent,
     EditorPageComponent,
+    DialogAddTeamComponent,
+    SubtoolbarFromTeamNavigationComponent,
+    SidebarIncomingTeamsComponent,
+    SidebarTeamDetailsComponent,
+    SidebarTeamsRelationsComponent,
+    SubtoolbarTeamsComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    TeamsModule,
     FormsModule,
     AccordionModule,
     DynamicDialogModule,
@@ -133,7 +146,21 @@ import { TeamsModule } from './teams/teams.module';
     TagModule,
     MultiSelectModule,
     ContextMenuModule,
-    BadgeModule
+    BadgeModule,
+    ScrollPanelModule,
+    FormsModule,
+    ButtonModule,
+    SidebarModule,
+    CardModule,
+    TagModule,
+    BrowserModule,
+    DynamicDialogModule,
+    ChartModule,
+    ToggleButtonModule,
+    StyleClassModule,
+    MultiSelectModule,
+    InputTextModule,
+    TooltipModule
   ],
   providers: [
     DialogService,

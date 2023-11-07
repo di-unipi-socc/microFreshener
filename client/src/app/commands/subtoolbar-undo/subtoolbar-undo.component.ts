@@ -8,7 +8,17 @@ import { GraphInvoker } from '../invoker';
 })
 export class SubtoolbarUndoComponent {
 
-  constructor(private graphInvoker: GraphInvoker) {}
+  canUndo: boolean;
+  canRedo: boolean;
+
+  constructor(public graphInvoker: GraphInvoker) {
+    this.canUndo = false;
+    this.canRedo = false;
+    graphInvoker.subscribe(() => {
+      this.canUndo = graphInvoker.isUndoPossible();
+      this.canRedo = graphInvoker.isRedoPossible();
+    });
+  }
 
   undo() {
     this.graphInvoker.undo();

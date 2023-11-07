@@ -3,7 +3,7 @@ import { Refactoring } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
 import { AddDatastoreCommand, RemoveNodeCommand } from "src/app/architecture/node-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
-import { AddRunTimeLinkCommand, ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
+import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
@@ -14,7 +14,7 @@ export class SplitDatastoreRefactoring implements Refactoring {
         smell.getLinkBasedCauses().forEach((link) => {
             let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
             let newDatastoreName = "DB " + sourceNode.getName();
-            cmds.push(new AddDatastoreCommand(graph, newDatastoreName));
+            cmds.push(new AddDatastoreCommand(graph, newDatastoreName, graph.getPointCloseTo(sourceNode)));
             cmds.push(new ChangeLinkTargetCommand(graph, link, newDatastoreName));
         });
         if(graph.getConnectedLinks(smell.getNodeBasedCauses()[0]).length - smell.getLinkBasedCauses().length == 0) {

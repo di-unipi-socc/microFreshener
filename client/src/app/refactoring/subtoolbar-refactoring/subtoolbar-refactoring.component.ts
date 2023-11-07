@@ -53,7 +53,7 @@ export class SubtoolbarRefactoringComponent {
             if (data?.selected_smells) {
                 this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
-                    let teamName = this.session.getName();
+                    let teamName = this.session.getTeamName();
                     this.options.team = this.gs.getGraph().findTeamByName(teamName);
                 }
 
@@ -78,7 +78,7 @@ export class SubtoolbarRefactoringComponent {
     }
 
     stopMonitoring() {
-        this.invokerSubscription.unsubscribe();
+        this.invokerSubscription?.unsubscribe();
         this.as.clearSmells();
         this.messageService.add({ severity: 'success', summary: "Smells analysis stopped", detail: `Smells analysis is not active anymore.` });
     }

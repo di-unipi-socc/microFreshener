@@ -1,6 +1,5 @@
 import { Command } from "./icommand";
 import { Injectable } from '@angular/core';
-import { AnalyserService } from '../refactoring/analyser.service';
 import { Observable, Subject } from "rxjs";
 
 @Injectable({
@@ -50,6 +49,14 @@ export class GraphInvoker {
 
     subscribe(observer) {
         return this.observableInvocation.subscribe(observer);
+    }
+
+    isUndoPossible() {
+        return this.undoStack.length > 0;
+    }
+
+    isRedoPossible() {
+        return this.redoStack.length > 0;
     }
 
 }

@@ -16,7 +16,7 @@ import { TeamsService } from 'src/app/teams/teams.service';
 })
 export class SessionService {
   
-  private username: string;
+  private teamName: string;
   private role: UserRole;
   private documentReady: boolean;
   private modelName: string; // name of the model
@@ -34,8 +34,6 @@ export class SessionService {
   }
 
   login(username: string) {
-    console.log("Logged as " + username);
-    this.username = username;
     switch(username) {
       case "admin":
         this.role = UserRole.ADMIN;
@@ -43,6 +41,7 @@ export class SessionService {
       default:
         this.role = UserRole.TEAM;
     }
+    this.teamName = username;
   }
 
   logout() {
@@ -50,8 +49,8 @@ export class SessionService {
     this.resetUserData();
   }
 
-  getName(): string {
-    return this.username;
+  getTeamName(): string {
+    return this.teamName;
   }
 
   getRole(): UserRole {
@@ -123,10 +122,12 @@ export class SessionService {
 
   loadGraph(graphJson) {
     this.gs.load(graphJson);
+    this.modelName = this.gs.getGraph().getName();
+    console.debug("Loaded graph", this.gs.getGraph().getName());
     let role = this.getRole();
     switch(role) {
       case UserRole.TEAM:
-        let teamName = this.getName();
+        let teamName = this.getTeamName();
         let team = this.gs.getGraph().getTeam(teamName);
         this.gs.getGraph().showOnlyTeam(team);
         this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
@@ -145,7 +146,7 @@ export class SessionService {
   }
 
   resetUserData() {
-    this.username = undefined;
+    this.teamName = undefined;
     this.role = undefined;
   }
 

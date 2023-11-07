@@ -32,6 +32,10 @@ body, body p, h1, h2, h3, h4, h5, div {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 }
 
+h1, h2, h3, h4, h5 {
+    cursor: default;
+}
+
 h1, h2 {
     font-weight: 200;
 }
@@ -57,4 +61,45 @@ p-sidebar .p-sidebar-right {
     border-bottom: none;
     border-right: none;
     border-left: 5px solid #f4f4f4;
+    position: relative;
 }
+
+.p-card {
+    background-color: rgb(229,231,233, 0.4);
+}
+
+.file-name-button .p-button-label {
+    font-weight: bold;
+}
+
+.p-togglebutton.p-button .p-button-icon-left {
+    color: #007ad9;
+}
+
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-left,
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-right {
+    color: #007ad9;;
+}
+
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover,
+.p-togglebutton.p-button:active {
+    color: #007ad9;
+    background-color: rgba(0, 122, 217, 0.04);
+    border-color: white;
+}
+
+/*.p-togglebutton.p-button.p-highlight,
+.p-togglebutton.p-button.p-highlight:hover {
+    background-color: rgba(0, 122, 217, 0.04);
+    color: #007ad9;
+    border-color: white;
+}
+
+.p-togglebutton.p-button.p-highlight .p-button-icon-left,
+
+.p-togglebutton.p-button.p-highlight .p-button-icon-right,
+
+.p-togglebutton.p-button.p-highlight:hover .p-button-icon-left,
+.p-togglebutton.p-button.p-highlight:hover .p-button-icon-right  {
+    color: #007ad9;
+}*/

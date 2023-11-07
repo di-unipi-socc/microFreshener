@@ -43,3 +43,150 @@ h2 {
     outline: none;
     border-color: rgba(0, 0, 0, 0);
 }
+
+
+/* Background */
+
+.area{
+    width: 100vw;
+    height:100vh;
+    position: absolute;
+    top: 0;
+    z-index: -1;
+}
+
+.circles{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.circles li{
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgb(28, 103, 120, 0.2);
+    
+    animation: animate 25s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+    bottom: -150px;
+    border-radius: 100%;
+    opacity: 0;
+}
+
+.circles li:nth-child(1){
+    top: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+    animation-duration: 17s;
+}
+
+
+.circles li:nth-child(2){
+    top: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0.2s;
+    animation-duration: 12s;
+}
+
+.circles li:nth-child(3){
+    top: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0.4s;
+    animation-duration: 15s;
+}
+
+.circles li:nth-child(4){
+    top: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 11s;
+}
+
+.circles li:nth-child(5){
+    top: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+    animation-duration: 15s;
+}
+
+.circles li:nth-child(6){
+    top: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 0.3s;
+    animation-duration: 10s;
+}
+
+.circles li:nth-child(7){
+    top: 30%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0.7s;
+    animation-duration: 20s;
+}
+
+.circles li:nth-child(8){
+    top: 80%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 1.5s;
+    animation-duration: 22s;
+}
+
+.circles li:nth-child(9){
+    top: 10%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 0.2s;
+    animation-duration: 15s;
+}
+
+.circles li:nth-child(10){
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 16s;
+}
+
+
+
+@keyframes animate {
+
+    0%{
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    10%{
+        opacity: 0;
+    }
+
+    20%{
+        opacity: 1;
+    }
+
+    80%{
+        opacity: 1;
+    }
+
+    90%{
+        opacity: 1;
+    }
+
+    100%{
+        transform: translateX(90vw);
+        opacity: 0;
+    }
+
+}

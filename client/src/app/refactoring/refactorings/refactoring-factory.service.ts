@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AddNodeCommand } from 'src/app/architecture/node-commands';
-import { Command, CompositeCommand } from 'src/app/commands/icommand';
+import { Command, CompositeCommand, Sequentiable } from 'src/app/commands/icommand';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { SmellObject, GroupSmellObject } from '../smells/smell';
 import { AddApiGatewayRefactoring } from './add-api-gateway-refactoring-command';
@@ -17,6 +17,7 @@ import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './split-t
 import { UseTimeoutRefactoring } from './use-timeout';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
+import { Graph } from 'src/app/graph/model/graph';
 
 enum REFACTORING_NAMES {
   REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -46,8 +47,8 @@ export class RefactoringFactoryService {
     if(smell instanceof SmellObject) {
       let refactoring = this.getNodeRefactoring(refactoringName, smell);
       if(this.session.isTeam()) {
-        let team = this.gs.getGraph().findTeamByName(this.session.getName())
-        let teamBoundariesFilter = new TeamBoundariesFilter(team);
+        let team = this.gs.getGraph().findTeamByName(this.session.getTeamName())
+        let teamBoundariesFilter = new TeamBoundariesFilter(team, {graph: this.gs.getGraph()});
         refactoring = teamBoundariesFilter.filter(refactoring);
       }
       return refactoring;
@@ -106,7 +107,8 @@ export class RefactoringFactoryService {
 class TeamBoundariesFilter {
 
   constructor(
-    private team: joint.shapes.microtosca.SquadGroup
+    private team: joint.shapes.microtosca.SquadGroup,
+    private options?
   ) {}
 
   filter(refactoring: Refactoring): Refactoring {
@@ -115,28 +117,39 @@ class TeamBoundariesFilter {
 
     if(refactoring instanceof MergeServicesRefactoring) {
       command = refactoring.command.command;
+      this.addNewNodesToTeam(command);
+      this.thenShowOnlyTeam(command);
     } else if(refactoring instanceof AddMessageRouterRefactoring ||
       refactoring instanceof AddMessageBrokerRefactoring ||
       refactoring instanceof SplitDatastoreRefactoring ||
       refactoring instanceof AddDataManagerRefactoring) {
       command = refactoring.command;
-    } else {
-      console.debug("Other command: " + command);
+      this.addNewNodesToTeam(command);
     }
-
-    if(command)
-      this.addNewNodesToTeam(command, this.team);
 
     return refactoring;
   }
 
-  private addNewNodesToTeam(refactoringCommand: CompositeCommand, team: joint.shapes.microtosca.SquadGroup): CompositeCommand {
+  private addNewNodesToTeam(refactoringCommand: CompositeCommand): CompositeCommand {
     refactoringCommand.apply((simpleCommand: Command) => {
       if(simpleCommand instanceof AddNodeCommand) {
-        simpleCommand = simpleCommand.bind(new AddMemberToTeamGroupCommand(team));
+        simpleCommand = simpleCommand.bind(new AddMemberToTeamGroupCommand(this.team));
       }
       return simpleCommand;
     });
     return refactoringCommand;
+  }
+
+  private thenShowOnlyTeam(command: CompositeCommand) {
+    let team = this.team;
+    let graph: Graph = this.options.graph;
+    let showOnlyTeamCommand = new class implements Command {
+      execute(): void {
+        graph.showOnlyTeam(team);
+      }
+      unexecute(): void {}
+    };
+    command.prepend(showOnlyTeamCommand);
+    command.push(showOnlyTeamCommand);
   }
 }

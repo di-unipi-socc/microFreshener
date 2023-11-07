@@ -11,6 +11,7 @@
 
 <!-- Add Team -->
 <p-multiSelect
+    #teamEditingTool
     *ngIf="addTeamToggled"
     defaultLabel="Nodes in new team"
     styleClass="add-node-input"
@@ -27,7 +28,7 @@
     </ng-template>
 </p-multiSelect>
 <p-toggleButton
-    onIcon="pi pi-user-plus" offIcon="pi pi-user-plus"
+    onIcon="pi pi-check" offIcon="pi pi-user-plus"
     styleClass="p-button-text p-button-lg"
     pTooltip="New team"
     showDelay="1000"

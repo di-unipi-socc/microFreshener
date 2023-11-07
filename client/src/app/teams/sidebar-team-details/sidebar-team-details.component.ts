@@ -38,7 +38,9 @@ export class SidebarTeamDetailsComponent {
     private teamService: TeamsService,
     private commands: GraphInvoker,
     private navigation: EditorNavigationService
-  ) {}
+  ) {
+    this.teamsInfo = [];
+  }
 
   ngOnChanges(change: SimpleChanges) {
 
@@ -87,7 +89,7 @@ export class SidebarTeamDetailsComponent {
   }
 
   onSidebarClose() {
-    this.invokerSubscription.unsubscribe();
+    this.invokerSubscription?.unsubscribe();
   }
 
   updateTeamsInfo() {
@@ -110,13 +112,12 @@ export class SidebarTeamDetailsComponent {
   }
 
   // From list to single team details
-  more(selectedTeam) {
+  more(selectedTeam: joint.shapes.microtosca.SquadGroup) {
     this.selectedTeam = selectedTeam;
     this.selectedTeamChange.emit(selectedTeam);
     this.teamsInfo = this.teamsInfo.filter(teamInfo => teamInfo.team.getName() == selectedTeam.getName());
     this.selectedTeamInfo = this.teamsInfo[0];
     this.updateCharts();
-    this.navigation.moveTo(selectedTeam);
     this.teamSelected = true;
   }
 
@@ -128,10 +129,6 @@ export class SidebarTeamDetailsComponent {
     if (!this.list) {
       this.closeSidebar();
     }
-  }
-
-  focus(e: joint.dia.Element) {
-    this.navigation.moveTo(e);
   }
 
   closeSidebar() {

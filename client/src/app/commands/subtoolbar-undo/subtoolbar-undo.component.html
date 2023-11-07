@@ -1,2 +1,2 @@
-<p-button icon="pi pi-fw pi-undo" pTooltip="Undo" showDelay="1000" tooltipPosition="bottom" styleClass="p-button-text p-button-lg" (click)="undo()"></p-button>
-<p-button icon="pi pi-fw pi-refresh" pTooltip="Redo" showDelay="1000" tooltipPosition="bottom" styleClass="p-button-text p-button-lg" (click)="redo()"></p-button>
+<p-button [disabled]="!canUndo" icon="pi pi-fw pi-undo" pTooltip="Undo" showDelay="1000" tooltipPosition="bottom" styleClass="p-button-text p-button-lg" (click)="undo()"></p-button>
+<p-button [disabled]="!canRedo" icon="pi pi-fw pi-refresh" pTooltip="Redo" showDelay="1000" tooltipPosition="bottom" styleClass="p-button-text p-button-lg" (click)="redo()"></p-button>

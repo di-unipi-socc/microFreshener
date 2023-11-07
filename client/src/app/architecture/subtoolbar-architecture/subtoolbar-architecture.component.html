@@ -1,14 +1,14 @@
 <p-toggleButton
     onIcon="pi pi-fw pi-circle-fill" offIcon="pi pi-fw pi-circle-off"
     styleClass="p-button-text p-button-lg"
-    pTooltip="Add node"
+    pTooltip="Add service"
     showDelay="1000"
     tooltipPosition="bottom"
     [(ngModel)]="toggledButtonsStatus[ADD_SERVICE]"
     (onChange)="toggle(ADD_SERVICE)"
 ></p-toggleButton>
 
-<p-toggleButton
+<!--<p-toggleButton
     onIcon="pi pi-fw pi-arrow-right"
     offIcon="pi pi-fw pi-arrow-right"
     styleClass="p-button-text p-button-lg"
@@ -17,7 +17,7 @@
     tooltipPosition="bottom"
     [(ngModel)]="toggledButtonsStatus[ADD_LINK]"
     (onChange)="toggle(ADD_LINK)"
-></p-toggleButton>
+></p-toggleButton>-->
 
 <p-toggleButton
     onIcon="pi pi-fw pi-database"
@@ -31,8 +31,8 @@
 ></p-toggleButton>
 
 <p-toggleButton
-    onIcon="pi pi-fw pi-directions"
-    offIcon="pi pi-fw pi-directions"
+    onIcon="pi pi-fw pi-arrow-right-arrow-left"
+    offIcon="pi pi-fw pi-arrow-right-arrow-left"
     styleClass="p-button-text p-button-lg"
     pTooltip="Add message router"
     showDelay="1000"
@@ -42,12 +42,13 @@
 ></p-toggleButton>
 
 <p-toggleButton
-    onIcon="pi pi-fw pi-ticket"
-    offIcon="pi pi-fw pi-ticket"
-    styleClass="p-button-text p-button-lg"
+    onIcon="pi pi-fw pi-database"
+    offIcon="pi pi-fw pi-database"
+    styleClass="p-button-text p-button-lg p-button-messagebroker"
     pTooltip="Add message broker"
     showDelay="1000"
     tooltipPosition="bottom"
     [(ngModel)]="toggledButtonsStatus[ADD_MESSAGE_BROKER]"
     (onChange)="toggle(ADD_MESSAGE_BROKER)"
+    #messageBrokerButton
 ></p-toggleButton>
