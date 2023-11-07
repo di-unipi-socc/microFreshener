@@ -130,8 +130,6 @@ export class SubtoolbarTeamsComponent {
   }
 
   private nodeToBeAddedClicked(cellView: joint.dia.CellView) {
-    // priority gently left to addLink when clicking an element
-    //if(!this.tools.enabledActions[ToolSelectionService.LINK]) {
     let graph = this.gs.getGraph();
     let cell = cellView.model;
     if(graph.isNode(cell)) {
@@ -149,7 +147,6 @@ export class SubtoolbarTeamsComponent {
       this.selectedNodes = this.selectedNodes.concat(team.getMembers().filter(node => !this.selectedNodes.includes(node)));
       this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
     }
-    //}
   }
 
   toggleTeamsInfo() {
