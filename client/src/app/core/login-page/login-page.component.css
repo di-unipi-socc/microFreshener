@@ -83,7 +83,7 @@ h2 {
     width: 80px;
     height: 80px;
     animation-delay: 0s;
-    animation-duration: 7s;
+    animation-duration: 17s;
 }
 
 
@@ -116,7 +116,7 @@ h2 {
     width: 20px;
     height: 20px;
     animation-delay: 0s;
-    animation-duration: 5s;
+    animation-duration: 15s;
 }
 
 .circles li:nth-child(6){
@@ -156,7 +156,7 @@ h2 {
     width: 150px;
     height: 150px;
     animation-delay: 0s;
-    animation-duration: 6s;
+    animation-duration: 16s;
 }
 
 
