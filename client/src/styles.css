@@ -67,3 +67,39 @@ p-sidebar .p-sidebar-right {
 .p-card {
     background-color: rgb(229,231,233, 0.4);
 }
+
+.file-name-button .p-button-label {
+    font-weight: bold;
+}
+
+.p-togglebutton.p-button .p-button-icon-left {
+    color: #007ad9;
+}
+
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-left,
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover .p-button-icon-right {
+    color: #007ad9;;
+}
+
+.p-togglebutton.p-button:not(.p-disabled):not(.p-highlight):hover,
+.p-togglebutton.p-button:active {
+    color: #007ad9;
+    background-color: rgba(0, 122, 217, 0.04);
+    border-color: white;
+}
+
+/*.p-togglebutton.p-button.p-highlight,
+.p-togglebutton.p-button.p-highlight:hover {
+    background-color: rgba(0, 122, 217, 0.04);
+    color: #007ad9;
+    border-color: white;
+}
+
+.p-togglebutton.p-button.p-highlight .p-button-icon-left,
+
+.p-togglebutton.p-button.p-highlight .p-button-icon-right,
+
+.p-togglebutton.p-button.p-highlight:hover .p-button-icon-left,
+.p-togglebutton.p-button.p-highlight:hover .p-button-icon-right  {
+    color: #007ad9;
+}*/
