@@ -20,10 +20,14 @@ export class SplitDatastoreAmongTeamsRefactoring extends GroupRefactoring {
             let newDatastoreName = "DB " + sourceNode.getName();
             let addDatastoreInServiceTeamCommand = Sequentiable.of(new AddDatastoreCommand(graph, newDatastoreName, graph.getPointCloseTo(sourceNode)).bind(new AddMemberToTeamGroupCommand(sourceTeam)))
                                                     .then(new ChangeLinkTargetCommand(graph, link, newDatastoreName));
-            // For each service user, add the granular command in targeted datastores
+            // Add the granular commands
             let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
             let targetTeam = graph.getTeamOfNode(targetNode);
-            this.addMemberRefactoring(targetNode, addDatastoreInServiceTeamCommand, `Split datastore to ${sourceTeam.getName()}`, `Split ${targetNode.getName()} among ${sourceTeam.getName()} and ${targetTeam.getName()}`);
+            let memberTeam = smell.getGroup();
+            let member = sourceTeam == memberTeam ? sourceNode : targetNode;
+            let memberRefactoringName = `Split datastore to ${sourceTeam == memberTeam ? targetTeam.getName() : sourceTeam.getName()}`;
+            let memberRefactoringDescription = `Split ${targetNode.getName()} among ${sourceTeam.getName()} and ${targetTeam.getName()}`;
+            this.addMemberRefactoring(member, addDatastoreInServiceTeamCommand, memberRefactoringName, memberRefactoringDescription);
             cmds.push(addDatastoreInServiceTeamCommand);
         });
         this.command = CompositeCommand.of(cmds);
