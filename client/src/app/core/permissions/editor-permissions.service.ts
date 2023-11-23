@@ -68,14 +68,17 @@ export class PermissionsService {
       if(!targetTeam || targetTeam != team) {
         return false;
       }
-    } else {
+    } else { // as for now, if not a link this is a node
       // Check that the node belongs to the team and that it is not linked to the frontier
-      let nodeTeam = this.gs.getGraph().getTeamOfNode(cell);
+      /*let nodeTeam = this.gs.getGraph().getTeamOfNode(cell);
       let outgoingLinks = this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team);
       let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
       if(nodeTeam != team || nodesLinkedToFrontier.includes(cell)) {
         return false;
-      }
+      }*/
+      let graph = this.gs.getGraph();
+      return graph.getIngoingLinks(cell).concat(graph.getOutgoingLinks(cell)).reduce(((acc, link) => acc && this.writePermissions.areLinkable(link.getSourceElement(), link.getTargetElement())), true);
+
     }
 
     return true;
