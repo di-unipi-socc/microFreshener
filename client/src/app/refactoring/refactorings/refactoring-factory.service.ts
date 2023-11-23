@@ -19,6 +19,7 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
 import { MergeTeamsRefactoring } from './merge-teams';
+import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
 
 enum REFACTORING_NAMES {
   REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
