@@ -108,14 +108,14 @@ export class AddManyMembersToTeamGroupCommand extends ElementCommand<joint.shape
 
 export class MergeTeamsCommand implements Command {
 
-    command;
+    command: Command;
 
     constructor(graph: Graph, newTeamName: string, ...teams: joint.shapes.microtosca.SquadGroup[]) {
         let cmds = [];
         teams.forEach((team) => cmds.push(new RemoveTeamGroupCommand(graph, team)));
         let members: joint.shapes.microtosca.Node[] = teams.flatMap((t) => t.getMembers());
         cmds.push(new AddTeamGroupCommand(graph, newTeamName).bind(new AddManyMembersToTeamGroupCommand(members)));
-        this.command = cmds;
+        this.command = CompositeCommand.of(cmds);
     }
 
     execute() {

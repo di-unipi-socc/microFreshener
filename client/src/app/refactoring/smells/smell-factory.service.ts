@@ -116,28 +116,32 @@ export class SmellFactoryService {
         smell.addLinkBasedCause(link);
       });
 
+      let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
         // Add partial member refactoring to members' smells
         let membersRefactorings = refactoring.getMemberRefactorings();
-        let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
         membersRefactorings?.forEach((refactorings, member) => {
             let memberSmell = subSmells.get(member);
             if(!memberSmell) {
                 memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
                 subSmells.set(member, memberSmell);
             }
+            console.debug("refactorings", refactorings.map((r) => r.getName()));
             refactorings.forEach((r) => memberSmell.addRefactoring(r));
-            memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
-            memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
         });
-        smell.setSubSmells(subSmells);
       });
+      smell.setSubSmells(subSmells);
 
+      // Add ignore operations to smell and its subsmells
       smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
+      subSmells.forEach((subSmell, member) => {
+        subSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
+        subSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
+      });
       
       return smell;
     }

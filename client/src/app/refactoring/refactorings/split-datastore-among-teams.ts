@@ -27,6 +27,7 @@ export class SplitDatastoreAmongTeamsRefactoring extends GroupRefactoring {
             cmds.push(addDatastoreInServiceTeamCommand);
         });
         this.command = CompositeCommand.of(cmds);
+        console.debug("Split datastore member refactorings are", this.getMemberRefactorings())
     }
 
     execute() {

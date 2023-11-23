@@ -21,7 +21,8 @@ export class MergeTeamsRefactoring extends GroupRefactoring {
             let mergeTeamsCommand = new MergeTeamsCommand(graph, `${sourceTeam.getName()} + ${targetTeam.getName()}`, sourceTeam, targetTeam);
             let name = `Merge ${sourceTeam.getName()} and ${targetTeam.getName()}`;
             let description = `Merge ${sourceTeam.getName()} and ${targetTeam.getName()}`;
-            this.addMemberRefactoring(sourceTeam, mergeTeamsCommand, name, description);
+            let member = sourceTeam == smell.getGroup() ? <joint.shapes.microtosca.Node> link.getSourceElement() : <joint.shapes.microtosca.Node> link.getTargetElement();
+            this.addMemberRefactoring(member, mergeTeamsCommand, name, description);
         });
     }
 
