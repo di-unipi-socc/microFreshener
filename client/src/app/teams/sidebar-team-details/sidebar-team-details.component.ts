@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
-import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { Subscription } from 'rxjs';
 import { GraphInvoker } from 'src/app/commands/invoker';
 
@@ -36,15 +35,12 @@ export class SidebarTeamDetailsComponent {
   constructor(
     private graphService: GraphService,
     private teamService: TeamsService,
-    private commands: GraphInvoker,
-    private navigation: EditorNavigationService
+    private commands: GraphInvoker
   ) {
     this.teamsInfo = [];
   }
 
   ngOnChanges(change: SimpleChanges) {
-
-    console.log("sidebar, change is:", change);
 
     // Sidebar opening
     if(!change.visible?.previousValue && change.visible?.currentValue) {
@@ -171,86 +167,112 @@ export class SidebarTeamDetailsComponent {
   }
 
   getTeamInteractionsChart() {
-    let ingoingMap: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = new Map(this.selectedTeamInfo.teamInteractions.ingoing);
-    let outgoingMap: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]> = new Map(this.selectedTeamInfo.teamInteractions.outgoing);
-    let teams = new Set<joint.shapes.microtosca.SquadGroup>(Array.from(ingoingMap.keys()).concat(Array.from(outgoingMap.keys())));
-    let labels = [];
-    let outgoingInteractionsData = [];
-    let ingoingInteractionsData = [];
+    let ingoingInteractions: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][] = this.selectedTeamInfo.teamInteractions.ingoing;
+    let ingoingLabels: string[] = [];
+    let ingoingInteractionsData: number[] = [];
+    console.log(ingoingInteractions);
+    ingoingInteractions.sort(([s1, ls1], [s2, ls2]) => Math.sign(ls2.length - ls1.length)).forEach(([n, ls]) => {console.log("ingoing squad is", n); ingoingLabels.push(n ? n.getName() : "unassigned nodes"); ingoingInteractionsData.push(ls.length); });
+    console.log("sorted", ingoingInteractions);
+
+    let outgoingInteractions: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][] = this.selectedTeamInfo.teamInteractions.outgoing;
+    let outgoingLabels: string[] = [];
+    let outgoingInteractionsData: number[] = [];
+    outgoingInteractions.sort(([s1, ls1], [s2, ls2]) => Math.sign(ls2.length - ls1.length)).forEach(([n, ls]) => {console.log("outgoing squad is", n); outgoingLabels.push(n ? n.getName() : "unassigned nodes"); outgoingInteractionsData.push(ls.length); });
+
     let selectedTeamName = this.selectedTeam.getName();
-    teams.forEach((t) => {
-      let labelOutgoing: string;
-      let labelIngoing: string;
-      let otherName = t ? t.getName() : "unassigned nodes";
-      let outgoing = outgoingMap.get(t);
-      if(outgoing) {
-        outgoingInteractionsData.push(outgoing.length);
-        labelOutgoing = selectedTeamName + " ➡ " + otherName;
-      } else {
-        outgoingInteractionsData.push(0);
-        labelOutgoing = "";
-      }
-      let ingoing = ingoingMap.get(t);
-      if(ingoing) {
-        ingoingInteractionsData.push(ingoing.length);
-        labelIngoing = selectedTeamName + " ⬅ " + otherName;
-      } else {
-        ingoingInteractionsData.push(0);
-        labelOutgoing = "";
-      }
-      labels.push([labelOutgoing, labelIngoing]);
-    });
 
     return {
-      data: {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Interactions from ' + selectedTeamName,
-                backgroundColor: this.documentStyle.getPropertyValue('--pink-500'),
-                borderColor: this.documentStyle.getPropertyValue('--pink-500'),
-                data: outgoingInteractionsData
-            },
-            {
-                label: 'Interactions towards ' + selectedTeamName,
-                backgroundColor: this.documentStyle.getPropertyValue('--blue-500'),
-                borderColor: this.documentStyle.getPropertyValue('--blue-500'),
-                data: ingoingInteractionsData
-            }
-          ]
-      },
-
-      options: {
-          indexAxis: 'y',
-          maintainAspectRatio: true,
-          responsive: true,
-          aspectRatio: 3,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              callbacks: {
-                  title: () => '' // Disable tooltip title
+      outgoing: {
+        data: {
+          labels: outgoingLabels,
+          datasets: [
+              {
+                  label: 'Interactions from ' + selectedTeamName,
+                  backgroundColor: this.documentStyle.getPropertyValue('--pink-500'),
+                  borderColor: this.documentStyle.getPropertyValue('--pink-500'),
+                  data: outgoingInteractionsData
               }
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                  min: 0,
-                  stepSize: 1
+            ]
+        },
+
+        options: {
+            indexAxis: 'y',
+            maintainAspectRatio: true,
+            responsive: true,
+            aspectRatio: 3,
+            plugins: {
+              legend: {
+                display: false
               },
+              tooltip: {
+                callbacks: {
+                    title: () => '' // Disable tooltip title
+                }
+              }
             },
-            y: {
-              ticks: {
-                  color: 'black',
-                  font: {
-                    size: 16
-                  }
+            scales: {
+              x: {
+                ticks: {
+                    min: 0,
+                    stepSize: 1
+                },
               },
-            }
+              y: {
+                ticks: {
+                    color: 'black',
+                    font: {
+                      size: 16
+                    }
+                },
+              }
+            },
           },
+        },
+        ingoing: {
+          data: {
+            labels: ingoingLabels,
+            datasets: [
+                {
+                    label: 'Interactions towards ' + selectedTeamName,
+                    backgroundColor: this.documentStyle.getPropertyValue('--blue-500'),
+                    borderColor: this.documentStyle.getPropertyValue('--blue-500'),
+                    data: ingoingInteractionsData
+                }
+              ]
+          },
+  
+          options: {
+            indexAxis: 'y',
+            maintainAspectRatio: true,
+            responsive: true,
+            aspectRatio: 3,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                    title: () => '' // Disable tooltip title
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                    min: 0,
+                    stepSize: 1
+                },
+              },
+              y: {
+                ticks: {
+                    color: 'black',
+                    font: {
+                      size: 16
+                    }
+                },
+              }
+            },
+          }
         }
       }
     }

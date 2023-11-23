@@ -56,7 +56,7 @@ export class TeamsAnalyticsService {
     return team.getMembers()
                .map((node) => this.graphService.getGraph().getOutgoingLinks(node))
                .reduce((ingoingTeamLinks, nodeLinks) => ingoingTeamLinks.concat(nodeLinks), [])
-               .filter((l) => graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getTargetElement()) != team);
+               .filter((l) => l.getTargetElement() && graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getTargetElement()) != team);
   }
 
   getEdgeIngoingLinks(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
