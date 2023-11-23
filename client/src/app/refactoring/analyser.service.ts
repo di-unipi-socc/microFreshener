@@ -183,6 +183,7 @@ export class AnalyserService {
             // Build the smells of the group
             let group = this.gs.getGraph().findGroupByName(groupJson['name']);
             let groupSmells: GroupSmellObject[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
+            console.debug("groupSmells", groupSmells);
             let agroup = Analysed.getBuilder<joint.shapes.microtosca.Group>()
                                 .setElement(group)
                                 .setSmells(groupSmells)

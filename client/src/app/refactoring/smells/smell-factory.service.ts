@@ -23,7 +23,7 @@ enum SMELL_NAMES {
   SMELL_SINGLE_LAYER_TEAMS = "Single-layer-teams",
   SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "Multiple-services-in-one-container",
   SMELL_TIGHTLY_COUPLED_TEAMS = "Tightly-coupled-teams",
-  SMELL_SHARED_BOUNDED_CONTEXT = "Shared bounded context"
+  SMELL_SHARED_BOUNDED_CONTEXT = "Shared-bounded-context"
 }
 
 @Injectable({
@@ -81,7 +81,7 @@ export class SmellFactoryService {
   }
 
   getGroupSmell(smellJson, group): GroupSmellObject {
-    
+    console.debug("Getting smell for", smellJson.name);
     if(!this.session.isAdmin) return;
     
     let smell: GroupSmellObject;
