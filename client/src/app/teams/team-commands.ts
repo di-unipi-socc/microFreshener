@@ -1,4 +1,4 @@
-import { Command, ElementCommand } from '../commands/icommand';
+import { Command, CompositeCommand, ElementCommand } from '../commands/icommand';
 import { Graph } from "../graph/model/graph";
 
 export class AddTeamGroupCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {
@@ -86,7 +86,7 @@ export class RemoveTeamGroupCommand implements Command {
     }
 }
 
-/*export class AddManyMembersToTeamGroupCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {
+export class AddManyMembersToTeamGroupCommand extends ElementCommand<joint.shapes.microtosca.SquadGroup> {
 
     command: Command;
 
@@ -114,7 +114,7 @@ export class MergeTeamsCommand implements Command {
         let cmds = [];
         teams.forEach((team) => cmds.push(new RemoveTeamGroupCommand(graph, team)));
         let members: joint.shapes.microtosca.Node[] = teams.flatMap((t) => t.getMembers());
-        cmds.push(new AddTeamGroupCommand(graph, newTeamName).then(new AddManyMembersToTeamGroupCommand(members)));
+        cmds.push(new AddTeamGroupCommand(graph, newTeamName).bind(new AddManyMembersToTeamGroupCommand(members)));
         this.command = cmds;
     }
 
@@ -126,4 +126,4 @@ export class MergeTeamsCommand implements Command {
         this.command.unexecute();
     }
 
-}*/
+}

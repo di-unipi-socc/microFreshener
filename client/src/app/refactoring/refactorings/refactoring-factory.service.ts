@@ -18,6 +18,7 @@ import { UseTimeoutRefactoring } from './use-timeout';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
+import { MergeTeamsRefactoring } from './merge-teams';
 
 enum REFACTORING_NAMES {
   REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -30,7 +31,8 @@ enum REFACTORING_NAMES {
   REFACTORING_ADD_DATA_MANAGER = "Add-data-manager",
   REFACTORING_ADD_API_GATEWAY = "Add-api-gateway",
   REFACTORING_SPLIT_TEAMS_BY_SERVICE = "Split-teams-by-service",
-  REFACTORING_SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling"
+  REFACTORING_SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling",
+  REFACTORING_MERGE_TEAMS = "Merge-teams"
 }
 
 @Injectable({
@@ -100,6 +102,12 @@ export class RefactoringFactoryService {
       
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
+
+      case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
+        return new SplitDatastoreAmongTeamsRefactoring(this.gs.getGraph(), smell);
+
+      case REFACTORING_NAMES.REFACTORING_MERGE_TEAMS:
+        return new MergeTeamsRefactoring(this.gs.getGraph(), smell);
     }
   }
 }
