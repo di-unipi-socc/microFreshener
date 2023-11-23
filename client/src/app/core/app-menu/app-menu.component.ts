@@ -129,15 +129,26 @@ export class AppMenuComponent implements OnInit {
             label: 'Save',
             icon: 'pi pi-fw pi-save',
             command: () => {
+                if(this.session.isDocumentReady()) {
+                    this.session.saveFile();
+                }
+            }
+        };
+
+        /*this.saveMenuItem = {
+            label: 'Save',
+            icon: 'pi pi-fw pi-save',
+            command: () => {
                 if(this.session.isDocumentReady())
-                    this.session.save();
+                    this.session.save(); // just upload
             }
         };
         this.exportMenuItem = {
             label: 'Export',
-            url: this.hrefDownload,
+            url: this.hrefDownload, // exports uploaded file
             icon: 'pi pi-fw pi-upload',
-        };
+        };*/
+        
         this.refineMenuItem = {
             label: 'Refine',
             icon: 'pi pi-fw pi-pencil',
@@ -181,8 +192,8 @@ export class AppMenuComponent implements OnInit {
     updatePostDocumentLoadMenu() {
         this.fileMenuItems = [
             this.saveMenuItem,
-            { separator: true },
-            this.exportMenuItem,
+            /*{ separator: true },
+            this.exportMenuItem,*/
             { separator: true },
             this.refineMenuItem,
             { separator: true },

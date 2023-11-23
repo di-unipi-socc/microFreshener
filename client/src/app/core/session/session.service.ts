@@ -10,6 +10,7 @@ import { UserRole } from '../user-role';
 import { PermissionsService } from 'src/app/core/permissions/editor-permissions.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { TeamsService } from 'src/app/teams/teams.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +92,15 @@ export class SessionService {
           if (res.msg)
               this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
       });
+  }
+
+  saveFile() {
+    this.gs.uploadGraph().subscribe(res => {
+      window.open(environment.serverUrl + '/api/export');
+      if (res.msg) {
+          this.messageService.add({ severity: 'success', detail: res.msg, summary: 'Saved' });
+      }
+  });
   }
 
   downloadExample(name: string) {
