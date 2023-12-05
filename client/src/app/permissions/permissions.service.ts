@@ -31,7 +31,7 @@ export class PermissionsService {
             this.writePermissions.isTeamManagementAllowed = this.ALLOW_ALL;
             break;
         case UserRole.TEAM:
-            console.warn("TEAM privileges have been set.");
+            console.info("TEAM privileges have been set.");
             let team = this.gs.getGraph().findTeamByName(teamName);
             if(!team) {
               // The team doesn't exist in the graph, so block everything
@@ -40,9 +40,19 @@ export class PermissionsService {
               this.writePermissions.isTeamManagementAllowed = this.ALLOW_ALL;
             } else {
               // The team exists, so set the consequent permissions
-              this.writePermissions.isAllowed = ( (cell) => (this.isEditingAllowed(team, cell)) );
+              this.writePermissions.isAllowed = ( (cell) => {
+                let sourceTeam;
+                if(this.gs.getGraph().isNode(cell)) {
+                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell);
+                } else if(cell.isLink()) {
+                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell.getSourceElement());
+                }
+                return sourceTeam && sourceTeam == team;
+              } );
               this.writePermissions.areLinkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
-                return this.gs.getGraph().getTeamOfNode(n) == team && (n2 ? this.gs.getGraph().getTeamOfNode(n2) == team : true);
+                return this.writePermissions.isAllowed(n)
+                        && !this.gs.getGraph().isDatastore(n)
+                        && !this.gs.getGraph().isMessageBroker(n);
               };
               this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }
@@ -52,36 +62,6 @@ export class PermissionsService {
             this.writePermissions.areLinkable = this.DENY_ALL;
             this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
       }
-  }
-
-  isEditingAllowed(team, cell): boolean {
-
-    if(cell.isLink()) {
-      // Check that the links the user is adding doesn't involve other teams' nodes
-      let source = cell.getSourceElement();
-      let sourceTeam = this.gs.getGraph().getTeamOfNode(source);
-      if(!sourceTeam || sourceTeam != team) {
-        return false;
-      }
-      let target = cell.getTargetElement();
-      let targetTeam = this.gs.getGraph().getTeamOfNode(target);
-      if(!targetTeam || targetTeam != team) {
-        return false;
-      }
-    } else { // as for now, if not a link this is a node
-      // Check that the node belongs to the team and that it is not linked to the frontier
-      /*let nodeTeam = this.gs.getGraph().getTeamOfNode(cell);
-      let outgoingLinks = this.gs.getGraph().getOutgoingLinksOfATeamFrontier(team);
-      let nodesLinkedToFrontier = outgoingLinks.map((link) => { return link.getSourceElement(); });
-      if(nodeTeam != team || nodesLinkedToFrontier.includes(cell)) {
-        return false;
-      }*/
-      let graph = this.gs.getGraph();
-      return graph.getIngoingLinks(cell).concat(graph.getOutgoingLinks(cell)).reduce(((acc, link) => acc && this.writePermissions.areLinkable(link.getSourceElement(), link.getTargetElement())), true);
-
-    }
-
-    return true;
   }
 
 }

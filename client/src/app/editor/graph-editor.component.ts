@@ -13,11 +13,11 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { PermissionsService } from '../core/permissions/editor-permissions.service';
+import { PermissionsService } from '../permissions/permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
-import { TeamsService } from '../teams/teams.service';
+import { TeamsService } from '../teams-management/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
@@ -184,6 +184,21 @@ export class GraphEditorComponent {
         });
     }
 
+    openAddExternalLinkDialog(selectedNode) {
+        const ref = this.dialogService.open(DialogAddLinkComponent, {
+            data: {
+                source: selectedNode,
+                external: true
+            },
+            header: 'Add an external interaction',
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.editing.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+            }
+        });
+    }
+
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
@@ -263,12 +278,18 @@ export class GraphEditorComponent {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
             nodeContextMenuItems.push(
-                { label: "Add link", icon: "pi pi-arrow-right", command: () => {
+                { label: "Add interaction", icon: "pi pi-arrow-right", command: () => {
                     if(this.leftClickSelectedCell)
                         this.stopAddingLink();
                     //this.toolSelection.enableOnly(ToolSelectionService.LINK);
                     this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
-                } })
+                } });
+            if(this.session.isTeam()) {
+                nodeContextMenuItems.push(
+                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                        this.openAddExternalLinkDialog(rightClickedNode);
+                    } });
+            }
         }
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
@@ -280,10 +301,14 @@ export class GraphEditorComponent {
 
     getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
         let interactionLinkContextMenuItems = [];
-        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
+        let source = rightClickedInteractionLink.getSourceElement();
+        let target = rightClickedInteractionLink.getTargetElement();
+        if(this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
             interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
                 this.editing.reverseLink(rightClickedInteractionLink);
             }});
+        }
+        if(this.permissions.writePermissions.areLinkable(source, target)) {
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
                 //this.editing.removeLink(rightClickedInteractionLink);
                 this.confirmationService.confirm({
@@ -411,11 +436,9 @@ export class GraphEditorComponent {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
-                    //this.toolSelection.enable(ToolSelectionService.LINK, false);
                 }
             });
-        }
-        else {
+        } else {
             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link cannot be created` });
         }
     }

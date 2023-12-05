@@ -12,7 +12,7 @@ import { ModalRefactoringsComponent } from './refactoring/modal-refactorings/mod
 import { DialogAnalysisComponent } from './refactoring/dialog-analysis/dialog-analysis.component';
 import { DialogSmellComponent } from './refactoring/dialog-smell/dialog-smell.component';
 import { DialogAddNodeComponent } from './architecture/dialog-add-node/dialog-add-node.component';
-import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.component';
+import { DialogAddTeamComponent } from './teams-management/dialog-add-team/dialog-add-team.component';
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './architecture/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
@@ -71,11 +71,11 @@ import { DialogImportComponent } from './core/dialog-import/dialog-import.compon
 import { SubtoolbarRefactoringComponent } from './refactoring/subtoolbar-refactoring/subtoolbar-refactoring.component';
 import { LoginPageComponent } from './core/login-page/login-page.component';
 import { EditorPageComponent } from './core/editor-page/editor-page.component';
-import { SidebarIncomingTeamsComponent } from './teams/sidebar-incoming-teams/sidebar-incoming-teams.component';
-import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sidebar-team-details.component';
-import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/sidebar-teams-relations.component';
-import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
-import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
+import { SidebarIncomingTeamsComponent } from './teams-management/sidebar-incoming-teams/sidebar-incoming-teams.component';
+import { SidebarTeamDetailsComponent } from './teams-management/sidebar-team-details/sidebar-team-details.component';
+import { SidebarTeamsRelationsComponent } from './teams-management/sidebar-teams-relations/sidebar-teams-relations.component';
+import { SubtoolbarFromTeamNavigationComponent } from './teams-management/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
+import { SubtoolbarTeamsComponent } from './teams-management/subtoolbar-teams-management/subtoolbar-teams-management.component';
 
 @NgModule({
   declarations: [
