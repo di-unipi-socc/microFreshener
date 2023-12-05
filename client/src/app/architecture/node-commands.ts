@@ -2,7 +2,7 @@ import { Command, CompositeCommand, ElementCommand } from '../commands/icommand'
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
 import { Graph } from "../graph/model/graph";
-import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
+import { RemoveMemberFromTeamGroupCommand } from '../teams-management/team-commands';
 import { AddRunTimeLinkCommand, ChangeLinkTargetCommand, RemoveLinkCommand } from './link-commands';
 
 

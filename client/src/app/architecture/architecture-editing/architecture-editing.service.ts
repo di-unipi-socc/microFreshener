@@ -8,7 +8,7 @@ import { g } from 'jointjs';
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
 import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
+import { AddMemberToTeamGroupCommand } from 'src/app/teams-management/team-commands';
 
 @Injectable({
   providedIn: 'root'
@@ -66,11 +66,11 @@ export class ArchitectureEditingService {
     this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.getGraph(), node));
   }
 
-  addLink(leftClickSelectedNode, target, timeout?, circuit_breaker?, dynamic_discovery?) {
-    console.log("selected, new ->", leftClickSelectedNode, target);
-    var command = new AddRunTimeLinkCommand(this.graphService.getGraph(), leftClickSelectedNode.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
+  addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
+    console.log("selected, new ->", source, target);
+    var command = new AddRunTimeLinkCommand(this.graphService.getGraph(), source.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
     this.graphInvoker.executeCommand(command);
-    this.navigation.getPaper().findViewByModel(leftClickSelectedNode).unhighlight();
+    this.navigation.getPaper().findViewByModel(source).unhighlight();
     console.log("added link");
   }
 

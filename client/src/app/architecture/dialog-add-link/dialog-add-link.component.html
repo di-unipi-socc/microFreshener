@@ -1,12 +1,16 @@
-
-
 <div class="p-grid p-justify-center">
     <div class="p-col-18">
-        <h2>
-        Adding link from [{{source.getName()}}] to [{{target.getName()}}]
-        </h2>
+        <h2>Adding link from [{{source.getName()}}]<span *ngIf="isTargetPresent()"> to [{{target?.getName()}}]</span></h2>
     </div>
 </div>
+
+<p-dropdown *ngIf="external" [options]="nodeList" [(ngModel)]="selectedNode" placeholder="Select a node" [group]="true">
+    <ng-template let-group pTemplate="group">
+        <div class="flex align-items-center">
+            <span>{{ group.label }}</span>
+        </div>
+    </ng-template>
+</p-dropdown>
 
 <div *ngIf="show_properties" >
         <div class="p-grid p-justify-center">
@@ -46,5 +50,5 @@
 
 
 <div class="p-grid p-justify-end">
-    <p-button label="Add" icon="pi pi-check" (onClick)="save()" autofocus></p-button>
+    <p-button label="Add" icon="pi pi-check" (onClick)="save()" autofocus [disabled]="isTargetPresent()"></p-button>
 </div>

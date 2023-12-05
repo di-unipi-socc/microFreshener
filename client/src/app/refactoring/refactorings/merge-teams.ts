@@ -1,7 +1,7 @@
 import * as joint from "jointjs";
 import { Command } from "src/app/commands/icommand";
 import { Graph } from "src/app/graph/model/graph";
-import { MergeTeamsCommand } from "src/app/teams/team-commands";
+import { MergeTeamsCommand } from "src/app/teams-management/team-commands";
 import { GroupSmellObject } from "../smells/smell";
 import { GroupRefactoring } from "./refactoring-command";
 

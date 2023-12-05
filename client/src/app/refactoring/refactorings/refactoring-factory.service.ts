@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddNodeCommand } from 'src/app/architecture/node-commands';
 import { Command, CompositeCommand, Sequentiable } from 'src/app/commands/icommand';
-import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
+import { AddMemberToTeamGroupCommand } from 'src/app/teams-management/team-commands';
 import { SmellObject, GroupSmellObject } from '../smells/smell';
 import { AddApiGatewayRefactoring } from './add-api-gateway-refactoring-command';
 import { AddCircuitBreakerRefactoring } from './add-circuit-breaker';

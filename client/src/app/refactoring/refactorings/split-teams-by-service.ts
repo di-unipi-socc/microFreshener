@@ -3,7 +3,7 @@ import { RemoveLinkCommand, AddRunTimeLinkCommand } from "src/app/architecture/l
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";
 import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { Graph } from "src/app/graph/model/graph";
-import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
+import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams-management/team-commands";
 import { GroupSmellObject } from "../smells/smell";
 import { GroupRefactoring } from "./refactoring-command";
 

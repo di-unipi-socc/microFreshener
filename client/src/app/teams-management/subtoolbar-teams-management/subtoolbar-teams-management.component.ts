@@ -96,37 +96,7 @@ export class SubtoolbarTeamsComponent {
   }
 
   private updateAddTeamNodeList() {
-    let graph = this.gs.getGraph();
-    let nodeList: joint.shapes.microtosca.Node[] = graph.getNodes();
-    // Group nodes by squad
-    let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodeList
-      .map(node => [graph.getTeamOfNode(node), node])
-      .reduce((map, [team, node]) => {
-        let array = map.get(team);
-        if(!array) map.set(team, [node])
-        else array.push(node);
-        return map;
-      }, new Map());
-    // Make the SelectItemGroup elements for the menu out of the grouped nodes
-    let NO_TEAM_LABEL: string  = "Nodes owned by no one";
-    this.nodeList = Array.from(nodesGroupedBySquads
-      .keys()).map((team) => {
-      let items = nodesGroupedBySquads.get(team);
-      return {
-        label: team ? team.getName() : NO_TEAM_LABEL,
-        value: team,
-        items: (items ? items.map(node => ({ label: node.getName(), value: node })) : undefined)
-      };
-    });
-    // Put unassigned nodes at the beginning of the list
-    this.nodeList.sort((tA, tB) => {
-      if(tA.label === NO_TEAM_LABEL)
-        return -1;
-      else if(tB.label === NO_TEAM_LABEL)
-        return 1;
-      else
-        return 0;
-    });
+    this.nodeList = this.teams.getNodesByTeams();
   }
 
   private nodeToBeAddedClicked(cellView: joint.dia.CellView) {

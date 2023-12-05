@@ -17,7 +17,7 @@ import { PermissionsService } from '../core/permissions/editor-permissions.servi
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
-import { TeamsService } from '../teams/teams.service';
+import { TeamsService } from '../teams-management/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
@@ -184,6 +184,21 @@ export class GraphEditorComponent {
         });
     }
 
+    openAddExternalLinkDialog(selectedNode) {
+        const ref = this.dialogService.open(DialogAddLinkComponent, {
+            data: {
+                source: selectedNode,
+                external: true
+            },
+            header: 'Add an external interaction',
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.editing.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+            }
+        });
+    }
+
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
@@ -263,12 +278,18 @@ export class GraphEditorComponent {
         let nodeContextMenuItems = [];
         if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
             nodeContextMenuItems.push(
-                { label: "Add link", icon: "pi pi-arrow-right", command: () => {
+                { label: "Add interaction", icon: "pi pi-arrow-right", command: () => {
                     if(this.leftClickSelectedCell)
                         this.stopAddingLink();
                     //this.toolSelection.enableOnly(ToolSelectionService.LINK);
                     this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
-                } })
+                } });
+            if(this.session.isTeam()) {
+                nodeContextMenuItems.push(
+                    { label: "Add interaction with an external node", icon: "pi pi-arrow-up-right", command: () => {
+                        this.openAddExternalLinkDialog(rightClickedNode);
+                    } });
+            }
         }
         if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
