@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { PermissionsService } from '../core/permissions/editor-permissions.service';
+import { PermissionsService } from '../permissions/editor-permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
@@ -432,11 +432,9 @@ export class GraphEditorComponent {
                 if (data) {
                     this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
-                    //this.toolSelection.enable(ToolSelectionService.LINK, false);
                 }
             });
-        }
-        else {
+        } else {
             this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: `Link cannot be created` });
         }
     }

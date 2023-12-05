@@ -1,6 +1,6 @@
 <div class="p-grid p-justify-center">
     <div class="p-col-18">
-        <h2>Adding link from [{{source.getName()}}]<span *ngIf="isTargetPresent()"> to [{{target?.getName()}}]</span></h2>
+        <h2>Adding link from {{source.getName()}}<span *ngIf="isTargetPresent()"> to {{selectedNode.getName()}}</span></h2>
     </div>
 </div>
 
@@ -50,5 +50,5 @@
 
 
 <div class="p-grid p-justify-end">
-    <p-button label="Add" icon="pi pi-check" (onClick)="save()" autofocus [disabled]="isTargetPresent()"></p-button>
+    <p-button label="Add" icon="pi pi-check" (onClick)="save()" autofocus [disabled]="!isTargetPresent()"></p-button>
 </div>
