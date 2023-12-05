@@ -4,7 +4,8 @@ import { GraphService } from '../../graph/graph.service';
 import { SharedPersistencySmellObject } from './shared-persistency';
 import { NoApiGatewaySmellObject } from './no-api-gateway';
 import { SingleLayerTeamsSmellObject } from './single-layer-teams';
-import { TightlyCoupledTeamsSmell } from './tightly-coupled-teams';
+import { TightlyCoupledTeamsSmellObject } from './tightly-coupled-teams';
+import { SharedBoundedContextSmellObject } from './shared-bounded-context';
 import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-command';
 import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
 import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
@@ -21,7 +22,8 @@ enum SMELL_NAMES {
   SMELL_NO_API_GATEWAY = "No-api-gateway",
   SMELL_SINGLE_LAYER_TEAMS = "Single-layer-teams",
   SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER = "Multiple-services-in-one-container",
-  SMELL_TIGHTLY_COUPLED_TEAMS = "Tightly-coupled-teams"
+  SMELL_TIGHTLY_COUPLED_TEAMS = "Tightly-coupled-teams",
+  SMELL_SHARED_BOUNDED_CONTEXT = "Shared-bounded-context"
 }
 
 @Injectable({
@@ -79,7 +81,7 @@ export class SmellFactoryService {
   }
 
   getGroupSmell(smellJson, group): GroupSmellObject {
-    
+    console.debug("Getting smell for", smellJson.name);
     if(!this.session.isAdmin) return;
     
     let smell: GroupSmellObject;
@@ -91,7 +93,10 @@ export class SmellFactoryService {
         smell = new SingleLayerTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
         break;
       case SMELL_NAMES.SMELL_TIGHTLY_COUPLED_TEAMS:
-        smell = new TightlyCoupledTeamsSmell(<joint.shapes.microtosca.SquadGroup> group);
+        smell = new TightlyCoupledTeamsSmellObject(<joint.shapes.microtosca.SquadGroup> group);
+        break;
+      case SMELL_NAMES.SMELL_SHARED_BOUNDED_CONTEXT:
+        smell = new SharedBoundedContextSmellObject(<joint.shapes.microtosca.SquadGroup> group);
         break;
       default:
         console.warn(`Unsupported smell: ${smellJson.name}`);
@@ -111,28 +116,32 @@ export class SmellFactoryService {
         smell.addLinkBasedCause(link);
       });
 
+      let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
         // Add partial member refactoring to members' smells
         let membersRefactorings = refactoring.getMemberRefactorings();
-        let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
         membersRefactorings?.forEach((refactorings, member) => {
             let memberSmell = subSmells.get(member);
             if(!memberSmell) {
                 memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
                 subSmells.set(member, memberSmell);
             }
+            console.debug("refactorings", refactorings.map((r) => r.getName()));
             refactorings.forEach((r) => memberSmell.addRefactoring(r));
-            memberSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
-            memberSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
         });
-        smell.setSubSmells(subSmells);
       });
+      smell.setSubSmells(subSmells);
 
+      // Add ignore operations to smell and its subsmells
       smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
+      subSmells.forEach((subSmell, member) => {
+        subSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
+        subSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
+      });
       
       return smell;
     }

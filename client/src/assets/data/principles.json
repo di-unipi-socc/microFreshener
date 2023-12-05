@@ -56,7 +56,12 @@
                     "id": 8,
                     "name": "Tightly Coupled Teams",
                     "description": ""
-               }
+               },
+               {
+                    "id": 9,
+                    "name": "Shared Bounded Context",
+                    "description": ""
+}
             ]
         }
     ]

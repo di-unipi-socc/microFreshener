@@ -201,8 +201,8 @@ export class SubtoolbarTeamsComponent {
   }
 
   ngOnDestroy() {
-    this.invokerSubscription.unsubscribe();
-    this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
+    this.invokerSubscription?.unsubscribe();
+    this.navigation.getPaper()?.off(this.PAPER_EVENTS_LABELS, this.paperListener);
   }
 
   resetLists() {

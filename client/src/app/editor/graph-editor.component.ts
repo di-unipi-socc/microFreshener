@@ -261,7 +261,7 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
-        if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+        if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
             nodeContextMenuItems.push(
                 { label: "Add link", icon: "pi pi-arrow-right", command: () => {
                     if(this.leftClickSelectedCell)
@@ -269,6 +269,8 @@ export class GraphEditorComponent {
                     //this.toolSelection.enableOnly(ToolSelectionService.LINK);
                     this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
                 } })
+        }
+        if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
                 { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
             );
