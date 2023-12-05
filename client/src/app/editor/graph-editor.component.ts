@@ -286,7 +286,7 @@ export class GraphEditorComponent {
                 } });
             if(this.session.isTeam()) {
                 nodeContextMenuItems.push(
-                    { label: "Add interaction with an external node", icon: "pi pi-arrow-up-right", command: () => {
+                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
                         this.openAddExternalLinkDialog(rightClickedNode);
                     } });
             }

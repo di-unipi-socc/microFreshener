@@ -66,12 +66,22 @@ export class ArchitectureEditingService {
     this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.getGraph(), node));
   }
 
+  showNode(node: joint.shapes.microtosca.Node) {
+    node.attr('./visibility', 'visible');
+  }
+
+  hideNode(node: joint.shapes.microtosca.Node) {
+    node.attr('./visibility', 'collapse');
+  }
+
   addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
     console.log("selected, new ->", source, target);
     var command = new AddRunTimeLinkCommand(this.graphService.getGraph(), source.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
     this.graphInvoker.executeCommand(command);
     this.navigation.getPaper().findViewByModel(source).unhighlight();
-    console.log("added link");
+    this.showNode(source);
+    this.showNode(target);
+    console.log("link added");
   }
 
   reverseLink(link) {

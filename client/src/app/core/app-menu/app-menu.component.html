@@ -33,10 +33,10 @@
                 <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-architecture></app-subtoolbar-architecture>
+                <app-subtoolbar-from-team-navigation (viewIncomingTeams)="sidebarChange($event)"></app-subtoolbar-from-team-navigation>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-undo></app-subtoolbar-undo>
                 <app-subtoolbar-navigation></app-subtoolbar-navigation>
-                <app-subtoolbar-from-team-navigation (viewIncomingTeams)="sidebarChange($event)"></app-subtoolbar-from-team-navigation>
             </div>
         </div>
 
