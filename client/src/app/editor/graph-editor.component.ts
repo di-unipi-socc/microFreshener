@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { PermissionsService } from '../permissions/editor-permissions.service';
+import { PermissionsService } from '../permissions/permissions.service';
 import { EditorNavigationService } from './navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
@@ -301,10 +301,14 @@ export class GraphEditorComponent {
 
     getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
         let interactionLinkContextMenuItems = [];
-        if(this.permissions.writePermissions.isAllowed(rightClickedInteractionLink)) {
+        let source = rightClickedInteractionLink.getSourceElement();
+        let target = rightClickedInteractionLink.getTargetElement();
+        if(this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
             interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
                 this.editing.reverseLink(rightClickedInteractionLink);
             }});
+        }
+        if(this.permissions.writePermissions.areLinkable(source, target)) {
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
                 //this.editing.removeLink(rightClickedInteractionLink);
                 this.confirmationService.confirm({

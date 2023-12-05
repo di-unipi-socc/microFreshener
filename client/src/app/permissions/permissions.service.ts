@@ -41,11 +41,18 @@ export class PermissionsService {
             } else {
               // The team exists, so set the consequent permissions
               this.writePermissions.isAllowed = ( (cell) => {
-                let sourceTeam = this.gs.getGraph().getTeamOfNode(cell);
+                let sourceTeam;
+                if(this.gs.getGraph().isNode(cell)) {
+                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell);
+                } else if(cell.isLink()) {
+                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell.getSourceElement());
+                }
                 return sourceTeam && sourceTeam == team;
               } );
               this.writePermissions.areLinkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
-                return this.writePermissions.isAllowed(n);
+                return this.writePermissions.isAllowed(n)
+                        && !this.gs.getGraph().isDatastore(n)
+                        && !this.gs.getGraph().isMessageBroker(n);
               };
               this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }
