@@ -187,7 +187,7 @@ class MicrotoscaElementConfiguration {
         } else {
             this.prototypeProperties.showSmells = function () {
                 let visibility = this.attr("./visibility");
-                if(this.hasSmells() && visibility === 'visible') {
+                if(this.hasSmells() && (!visibility || visibility === 'visible')) {
                     this.attr('SmellsFoundTriangle/visibility', 'visible');
                     this.attr('SmellsFoundExclamation/visibility', 'visible');
                 }
