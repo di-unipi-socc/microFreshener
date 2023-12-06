@@ -10,6 +10,7 @@ import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-comma
 import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
 import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
 import { WobblyServiceInteractionSmellObject } from './wobbly-service-interaction';
+import { ShareSmellRefactoring } from '../refactorings/share-smell';
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
 import { SessionService } from '../../core/session/session.service';
@@ -74,6 +75,7 @@ export class SmellFactoryService {
           smell.addRefactoring(refactoring);
       });
 
+      smell.addRefactoring(new ShareSmellRefactoring(node, smell));
       smell.addRefactoring(new IgnoreOnceRefactoring(node, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(node, smell));
       return smell;
@@ -136,10 +138,12 @@ export class SmellFactoryService {
       });
       smell.setSubSmells(subSmells);
 
-      // Add ignore operations to smell and its subsmells
+      // Add share and ignore operations to smell and its subsmells
+      smell.addRefactoring(new ShareSmellRefactoring(group, smell))
       smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
       subSmells.forEach((subSmell, member) => {
+        subSmell.addRefactoring(new ShareSmellRefactoring(member, smell));
         subSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
         subSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
       });

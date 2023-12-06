@@ -50,7 +50,8 @@ export class SmellObject implements ISmell {
     }
 
     addRefactoring(refactoring: Refactoring) {
-        this.refactorings.push(refactoring);
+        if(refactoring)
+            this.refactorings.push(refactoring);
     }
 
     getRefactorings(): Refactoring[] {
@@ -115,7 +116,8 @@ export class GroupSmellObject implements ISmell {
 
     addRefactoring(refactoring: (Refactoring | GroupRefactoring)) {
         // Add refactoring to whole group
-        this.refactorings.push(refactoring);
+        if(refactoring)
+            this.refactorings.push(refactoring);
     }
 
     getRefactorings(): Refactoring[] {
