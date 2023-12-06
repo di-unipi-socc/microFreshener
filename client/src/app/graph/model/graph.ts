@@ -366,7 +366,7 @@ export class Graph extends joint.dia.Graph {
         this.hideGraph();
         console.log("in showOnlyTeam team is " + team);
         console.log("got members: " + team.getMembers());
-        var cells = this.getSubgraphFromNodes(team.getMembers());
+        let cells = this.getSubgraphFromNodes(team.getMembers().concat(this.getEdgeGroups()));
         console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
         //this.showTeamBox(team);

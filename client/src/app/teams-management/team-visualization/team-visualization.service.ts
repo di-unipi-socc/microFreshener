@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
-import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
 
 @Injectable({
