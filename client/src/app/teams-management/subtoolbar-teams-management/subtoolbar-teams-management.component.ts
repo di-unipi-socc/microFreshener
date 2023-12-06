@@ -75,23 +75,21 @@ export class SubtoolbarTeamsComponent {
       // Toggle off
       this.invokerSubscription.unsubscribe();
       this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
-      if(this.selectedNodes.length > 0) {
-        const ref = this.dialogService.open(DialogAddTeamComponent, {
-          header: 'Add Team',
-          width: '50%',
-          data: {
-            selectedNodes: this.selectedNodes
-          }
-        });
-        ref.onClose.subscribe((data) => {
-          if(data) {
-            this.teams.addTeam(data.name, data.nodes);
-            this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` });
-            this.resetLists();
-            this.teams.showTeams();
-          }
-        });
-      }
+      const ref = this.dialogService.open(DialogAddTeamComponent, {
+        header: 'Add Team',
+        width: '50%',
+        data: {
+          selectedNodes: this.selectedNodes
+        }
+      });
+      ref.onClose.subscribe((data) => {
+        if(data) {
+          this.teams.addTeam(data.name, data.nodes);
+          this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` });
+          this.resetLists();
+          this.teams.showTeams();
+        }
+      });
     }
   }
 
