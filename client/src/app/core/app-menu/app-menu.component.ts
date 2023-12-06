@@ -147,7 +147,7 @@ export class AppMenuComponent implements OnInit {
             label: 'Export',
             url: this.hrefDownload, // exports uploaded file
             icon: 'pi pi-fw pi-upload',
-        };*/
+        };
         
         this.refineMenuItem = {
             label: 'Refine',
@@ -155,7 +155,7 @@ export class AppMenuComponent implements OnInit {
             command: () => {
                 this.refineService.refine();
             }
-        };
+        };*/
     }
 
     ngOnInit() {
