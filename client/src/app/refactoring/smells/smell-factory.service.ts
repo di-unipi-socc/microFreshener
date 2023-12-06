@@ -119,10 +119,11 @@ export class SmellFactoryService {
       let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
+        console.debug("Analysing refactoring", refactoringName);
         let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
         // Add partial member refactoring to members' smells
-        let membersRefactorings = refactoring.getMemberRefactorings();
+        let membersRefactorings = refactoring?.getMemberRefactorings();
         membersRefactorings?.forEach((refactorings, member) => {
             let memberSmell = subSmells.get(member);
             if(!memberSmell) {

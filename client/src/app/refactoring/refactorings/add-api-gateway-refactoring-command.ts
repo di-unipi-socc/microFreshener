@@ -17,7 +17,7 @@ export class AddApiGatewayRefactoring extends GroupRefactoring {
         let commands = [];
         smell.getNodeBasedCauses().forEach(node => {
             let gatewayName = "API Gateway " + node.getName();
-            let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(edgeGroup, node)))
+            let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(<joint.shapes.microtosca.Node> (<unknown> edgeGroup), node)))
                                     .then(new AddMessageRouterCommand(graph, gatewayName, graph.getPointCloseTo(edgeGroup)))
                                     .then(new AddRunTimeLinkCommand(graph, edgeGroup.getName(), gatewayName))
                                     .then(new AddRunTimeLinkCommand(graph, gatewayName, node.getName()))

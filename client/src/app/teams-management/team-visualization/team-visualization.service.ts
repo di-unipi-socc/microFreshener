@@ -53,7 +53,10 @@ export class TeamVisualizationService {
     link.attr("./visibility", visibility);
     if(linkColor)
       link.attr("line/stroke", linkColor);
-    node.attr("./visibility", visibility);
+    if(visibility == "visible")
+      node.show();
+    else
+      node.hide();
     let graph = this.graphService.getGraph();
     let team = graph.getTeamOfNode(node);
     if(team != null)
