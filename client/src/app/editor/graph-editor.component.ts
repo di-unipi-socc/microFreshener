@@ -276,7 +276,7 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
-        if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
+        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(rightClickedNode)) {
             nodeContextMenuItems.push(
                 { label: "Add interaction", icon: "pi pi-arrow-right", command: () => {
                     if(this.leftClickSelectedCell)
@@ -291,7 +291,7 @@ export class GraphEditorComponent {
                     } });
             }
         }
-        if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+        if(this.session.isTeam() && this.permissions.writePermissions.isAllowed(rightClickedNode)) {
             nodeContextMenuItems.push(
                 { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
             );
@@ -303,12 +303,12 @@ export class GraphEditorComponent {
         let interactionLinkContextMenuItems = [];
         let source = rightClickedInteractionLink.getSourceElement();
         let target = rightClickedInteractionLink.getTargetElement();
-        if(this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
+        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
             interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
                 this.editing.reverseLink(rightClickedInteractionLink);
             }});
         }
-        if(this.permissions.writePermissions.areLinkable(source, target)) {
+        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target)) {
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
                 //this.editing.removeLink(rightClickedInteractionLink);
                 this.confirmationService.confirm({
