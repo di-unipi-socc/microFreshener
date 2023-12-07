@@ -6,10 +6,10 @@ import { Injectable } from '@angular/core';
 export class ToolSelectionService {
 
   public static readonly SERVICE = "service";
+  public static readonly DATASTORE = "datastore";
   public static readonly COMMUNICATION_PATTERN = "communicationPattern";
   public static readonly MESSAGE_ROUTER = "messagerouter";
   public static readonly MESSAGE_BROKER = "messagebroker";
-  public static readonly DATASTORE = "datastore";
   public static readonly COMPUTE = "compute";
 
   public enabledActions;
@@ -17,13 +17,14 @@ export class ToolSelectionService {
   constructor() {
     this.enabledActions = {};
     this.enabledActions[ToolSelectionService.SERVICE] = false;
+    this.enabledActions[ToolSelectionService.DATASTORE] = false;
     this.enabledActions[ToolSelectionService.MESSAGE_ROUTER] = false;
     this.enabledActions[ToolSelectionService.MESSAGE_BROKER] = false;
-    this.enabledActions[ToolSelectionService.DATASTORE] = false;
     this.enabledActions[ToolSelectionService.COMPUTE] = false;
   }
 
   enable(name: string, isActive: boolean) {
+    console.debug("changing enable", name, isActive);
     this.enabledActions[name] = isActive;
   }
 
