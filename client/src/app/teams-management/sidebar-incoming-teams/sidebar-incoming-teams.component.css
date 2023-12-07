@@ -4,6 +4,11 @@ ul {
     margin: 0;
 }
 
+ul.edge-nodes-list li {
+    display: inline;
+    margin-right: 5px;
+}
+
 li {
     margin: 5px 0;
 }

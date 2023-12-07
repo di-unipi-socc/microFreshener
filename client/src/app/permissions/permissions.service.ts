@@ -50,9 +50,14 @@ export class PermissionsService {
                 return sourceTeam && sourceTeam == team;
               } );
               this.writePermissions.areLinkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
-                return this.writePermissions.isAllowed(n)
-                        && !this.gs.getGraph().isDatastore(n)
-                        && !this.gs.getGraph().isMessageBroker(n);
+                    let interactionFromTeamNode: boolean =
+                            this.writePermissions.isAllowed(n)
+                            && !this.gs.getGraph().isDatastore(n)
+                            && !this.gs.getGraph().isMessageBroker(n);
+                    let interactionFromExternalUserToTeamNode: boolean =
+                            n2 && this.gs.getGraph().isEdgeGroup(n) && this.writePermissions.isAllowed(n2);
+                    
+                    return interactionFromTeamNode || interactionFromExternalUserToTeamNode;
               };
               this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }

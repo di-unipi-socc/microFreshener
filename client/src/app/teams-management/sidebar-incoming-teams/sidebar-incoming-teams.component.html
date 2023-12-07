@@ -1,7 +1,11 @@
 <p-sidebar [visible]="true" position="right" [modal]="false" [showCloseIcon]="false" [closeOnEscape]="false">
-    <h1>Users</h1>
+    <h1>Teams using the system</h1>
     <ul>
         <li *ngFor="let el of groups">
             <p-tag [severity]="getSeverity(el.group)">{{getUIGroupName(el.group)}}</p-tag> (interacting with <p-tag class="node" [severity]="getSeverity(el.group)" *ngFor="let node of el.recipients">{{node.getName()}}</p-tag>)</li>
+    </ul>
+    <h1>Edge nodes</h1>
+    <ul class="edge-nodes-list">
+        <li *ngFor="let el of edge"><p-tag severity="success">{{el.getName()}}</p-tag></li>
     </ul>
 </p-sidebar>

@@ -19,6 +19,8 @@ export class SidebarIncomingTeamsComponent {
     recipients: joint.shapes.microtosca.Node[]
   }>;
 
+  edge: joint.shapes.microtosca.Node[];
+
   invokerSubscription: Subscription;
 
   constructor(
@@ -44,17 +46,26 @@ export class SidebarIncomingTeamsComponent {
     if(this.session.getRole() == UserRole.TEAM) {
       let teamName = this.session.getTeamName();
       let team = this.graphService.getGraph().findTeamByName(teamName);
-      // Get the groups that use the team's nodes and sort (edge first, then by number of recipients descending)
-      let groupsMap = this.teams.getTeamInteractions(team).ingoing.map(([g, ls]) => [g, ls.map((l: joint.shapes.microtosca.RunTimeLink) => <joint.shapes.microtosca.Node> l.getTargetElement())]);
-      console.log(this.teams.getTeamInteractions(team).ingoing);
-      this.groups = Array.from(groupsMap,
-        ([group, recipients]: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]]) =>
-        ({ group: group, recipients: recipients}));
-      this.groups.sort((g1, g2) => {
-          if(g1.group && g1.group instanceof joint.shapes.microtosca.EdgeGroup) return -1;
-          if(g1.recipients.length >= g2.recipients.length) return -1;
-        });
+      this.updateTeams(team);
+      this.updateEdge(team);
     }
+  }
+
+  updateTeams(team) {
+    // Get the groups that use the team's nodes and sort (edge first, then by number of recipients descending)
+    let groupsMap = this.teams.getTeamInteractions(team).ingoing.map(([g, ls]) => [g, ls.map((l: joint.shapes.microtosca.RunTimeLink) => <joint.shapes.microtosca.Node> l.getTargetElement())]);
+    console.log(this.teams.getTeamInteractions(team).ingoing);
+    this.groups = Array.from(groupsMap,
+      ([group, recipients]: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]]) =>
+      ({ group: group, recipients: recipients}));
+    this.groups.sort((g1, g2) => {
+        if(g1.group && g1.group instanceof joint.shapes.microtosca.EdgeGroup) return -1;
+        if(g1.recipients.length >= g2.recipients.length) return -1;
+      });
+  }
+
+  updateEdge(team) {
+    this.edge = this.teams.getTeamEdgeNodes(team);
   }
 
   getSeverity(group: joint.shapes.microtosca.Group) {
