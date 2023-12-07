@@ -152,10 +152,10 @@ export class GraphEditorComponent {
     }
 
     openAddNodeDialog(nodeType, position, team?) {
-        console.debug("opening addnode dialog with nodeType", nodeType)
+        console.debug("opening addnode dialog with nodeType", nodeType);
         // Ask for node required data
         const ref = this.dialogService.open(DialogAddNodeComponent, {
-            header: 'Add Node',
+            header: `Add ${nodeType}`,
             data: {
                 clickPosition: position,
                 nodeType: nodeType
