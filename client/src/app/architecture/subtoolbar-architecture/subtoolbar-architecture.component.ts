@@ -10,10 +10,10 @@ import { ToolSelectionService } from '../../editor/tool-selection/tool-selection
 export class SubtoolbarArchitectureComponent {
 
   public readonly ADD_SERVICE = ToolSelectionService.SERVICE;
-  //public readonly ADD_LINK = ToolSelectionService.LINK;
   public readonly ADD_DATASTORE = ToolSelectionService.DATASTORE;
   public readonly ADD_MESSAGE_ROUTER = ToolSelectionService.MESSAGE_ROUTER;
   public readonly ADD_MESSAGE_BROKER = ToolSelectionService.MESSAGE_BROKER;
+  public readonly ADD_COMPUTE = ToolSelectionService.COMPUTE;
 
   public toggledButtonsStatus;
 
@@ -23,10 +23,10 @@ export class SubtoolbarArchitectureComponent {
   ) {
     this.toggledButtonsStatus = {};
     this.toggledButtonsStatus[this.ADD_SERVICE] = false;
-    //this.toggledButtonsStatus[this.ADD_LINK] = false;
     this.toggledButtonsStatus[this.ADD_DATASTORE] = false;
     this.toggledButtonsStatus[this.ADD_MESSAGE_ROUTER] = false;
     this.toggledButtonsStatus[this.ADD_MESSAGE_BROKER] = false;
+    this.toggledButtonsStatus[this.ADD_COMPUTE] = false;
   }
 
   toggle(name: string) {
