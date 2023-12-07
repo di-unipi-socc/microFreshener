@@ -170,9 +170,21 @@ export class GraphEditorComponent {
     }
 
     openDeleteNodeDialog(node) {
+        let interactors = this.graph.getGraph().getIngoingLinks(node).map((l) => l.getSourceElement());
+        let isEdgeNode: boolean = interactors.filter((n) => this.graph.getGraph().isEdgeGroup(n)).length > 0;
+        let team = this.graph.getGraph().getTeamOfNode(node);
+        let nodeInteractingWithDeletingNode = interactors.filter((n) => !this.graph.getGraph().isEdgeGroup(n)).filter((n) => this.graph.getGraph().getTeamOfNode(<joint.shapes.microtosca.Node> n) != team)
+        .map((interactor) => {
+            let node = <joint.shapes.microtosca.Node> interactor;
+            let name = node.getName();
+            let team = this.graph.getGraph().getTeamOfNode(node)?.getName();
+            return team ? `${team}'s ${name}` : "" + name;
+        });
+        let edgeMessage = isEdgeNode ? `${node.getName()} is an edge node.\n` : "";
+        let interactionMessage = nodeInteractingWithDeletingNode.length > 0 ? `${nodeInteractingWithDeletingNode.join(", ")} interact${nodeInteractingWithDeletingNode.length > 0 ? "s" : ""} with ${node.getName()}.\n` : "";
         this.confirmationService.confirm({
-            message: 'Do you want to delete this node?',
-            header: 'Node Deletion Confirmation',
+            message: `${edgeMessage + interactionMessage}\nDo you want to delete this node?`,
+            header: 'Delete node',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
                 this.editing.deleteNode(node);
@@ -279,19 +291,28 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(rightClickedNode)) {
-            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-            if(this.session.isTeam()) {
-                nodeContextMenuItems.push(
-                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                        this.openAddExternalLinkDialog(rightClickedNode);
-                    } });
+        if(this.session.isTeam()) {
+            if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
+                nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
+                if(this.session.isTeam()) {
+                    nodeContextMenuItems.push(
+                        { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                            this.openAddExternalLinkDialog(rightClickedNode);
+                        } });
+                }
             }
-        }
-        if(this.session.isTeam() && this.permissions.writePermissions.isAllowed(rightClickedNode)) {
-            nodeContextMenuItems.push(
-                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
-            );
+            if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+                if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+                nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
+                    // TODO
+                }});
+            }
+            if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+                if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+                nodeContextMenuItems.push(
+                    { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+                );
+            }
         }
         return nodeContextMenuItems;
     }
