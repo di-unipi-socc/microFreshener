@@ -10,6 +10,7 @@ import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-comma
 import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
 import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
 import { WobblyServiceInteractionSmellObject } from './wobbly-service-interaction';
+import { ShareSmellRefactoring } from '../refactorings/share-smell';
 import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
 import { SessionService } from '../../core/session/session.service';
@@ -74,6 +75,7 @@ export class SmellFactoryService {
           smell.addRefactoring(refactoring);
       });
 
+      smell.addRefactoring(new ShareSmellRefactoring(node, smell));
       smell.addRefactoring(new IgnoreOnceRefactoring(node, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(node, smell));
       return smell;
@@ -119,10 +121,11 @@ export class SmellFactoryService {
       let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
+        console.debug("Analysing refactoring", refactoringName);
         let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
         smell.addRefactoring(refactoring);
         // Add partial member refactoring to members' smells
-        let membersRefactorings = refactoring.getMemberRefactorings();
+        let membersRefactorings = refactoring?.getMemberRefactorings();
         membersRefactorings?.forEach((refactorings, member) => {
             let memberSmell = subSmells.get(member);
             if(!memberSmell) {
@@ -135,10 +138,12 @@ export class SmellFactoryService {
       });
       smell.setSubSmells(subSmells);
 
-      // Add ignore operations to smell and its subsmells
+      // Add share and ignore operations to smell and its subsmells
+      smell.addRefactoring(new ShareSmellRefactoring(group, smell))
       smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
       smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
       subSmells.forEach((subSmell, member) => {
+        subSmell.addRefactoring(new ShareSmellRefactoring(member, smell));
         subSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
         subSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
       });

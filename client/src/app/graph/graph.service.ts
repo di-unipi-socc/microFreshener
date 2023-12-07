@@ -48,14 +48,15 @@ export class GraphService {
   // Import and Export
 
   // POST: upload the local graph to the server
-  uploadGraph(teamFilter?: joint.shapes.microtosca.SquadGroup): Observable<any> {
+  uploadGraph(filterTeam?: joint.shapes.microtosca.SquadGroup): Observable<any> {
     let graph: Graph = this.graph;
-    if(teamFilter) {
-      let subGraphName = teamFilter.getName() + "-subgraph";
+    /*if(filterTeam) {
+      let subGraphName = filterTeam.getName() + "-subgraph";
       let subGraph: Graph = new Graph(subGraphName);
-      subGraph.addCells(this.getGraph().getSubgraphFromNodes(teamFilter.getMembers()));
+      let members = filterTeam.getMembers();
+      subGraph.addCells(this.getGraph().getSubgraphFromNodes(members));
       graph = subGraph;
-    }
+    }*/
     let graphJson = JSON.stringify(graph.toJSON());
     return this.http.post<any>(this.graphUrlPost, graphJson, httpOptions);
   }

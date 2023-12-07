@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
-import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
 
 @Injectable({
@@ -52,16 +51,22 @@ export class TeamVisualizationService {
     let node = <joint.shapes.microtosca.Node> link.getTargetElement();
     let visibility = visible ? "visible" : "hidden";
     link.attr("./visibility", visibility);
-    if(linkColor)
-      link.attr("line/stroke", linkColor);
-    node.attr("./visibility", visibility);
+    /*if(linkColor)
+      link.attr("line/stroke", linkColor);*/
+    if(visibility == "visible")
+      node.show();
+    else
+      node.hide();
     let graph = this.graphService.getGraph();
     let team = graph.getTeamOfNode(node);
     if(team != null)
-      if(visibility == "visible")
+      if(visibility == "visible") {
         graph.showTeamBox(team);
-      else
+        team.attr("body/strokeDasharray", "10,5");
+        //team.attr("body/fill", "#007ad9");
+      } else { 
         graph.hideTeamBox(team);
+      }
   }
 
   getNodesByTeam() {

@@ -26,8 +26,9 @@ export class DialogSmellComponent implements OnInit {
     if (this.config.data) {
       this.jointNodeModel = this.config.data.model;
       this.smell = this.config.data.selectedsmell;
+      console.debug("Refactorings:", this.smell.getRefactorings());
       this.smell.getRefactorings().forEach(refactoring => {
-        this.actions.push({ "label": refactoring.getName(), "description": refactoring.getDescription(), "value": refactoring });
+        this.actions.push({ "label": refactoring?.getName(), "description": refactoring?.getDescription(), "value": refactoring });
       });
       this.moveIgnoreActionsToButtonInDropdownMenu();
     }

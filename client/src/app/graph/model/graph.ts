@@ -108,9 +108,9 @@ export class Graph extends joint.dia.Graph {
 
     }
 
-    getNeighbors(node: joint.shapes.microtosca.Node, opt?: joint.dia.Graph.ConnectionOptions): joint.shapes.microtosca.Root[] {
+    getNeighbors(node: joint.shapes.microtosca.Node, opt?: joint.dia.Graph.ConnectionOptions): joint.shapes.microtosca.Node[] {
         let neighbors = super.getNeighbors(node, opt);
-        return <joint.shapes.microtosca.Root[]>neighbors;
+        return <joint.shapes.microtosca.Node[]>neighbors;
     }
 
     getFrontierOfATeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Node[] {
@@ -193,7 +193,7 @@ export class Graph extends joint.dia.Graph {
         g.setExternalUserName("Ext user"); // default name for the external user node
         g.addTo(this);
         nodes.forEach(node => {
-            this.addRunTimeInteraction(g, node);
+            this.addRunTimeInteraction(<joint.shapes.microtosca.Node> (<unknown> g), node);
         });
         return g;
     }
@@ -366,7 +366,7 @@ export class Graph extends joint.dia.Graph {
         this.hideGraph();
         console.log("in showOnlyTeam team is " + team);
         console.log("got members: " + team.getMembers());
-        var cells = this.getSubgraphFromNodes(team.getMembers());
+        let cells = this.getSubgraphFromNodes(team.getMembers().concat(<joint.shapes.microtosca.Node> (<unknown> this.getEdgeGroups())));
         console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
         //this.showTeamBox(team);
@@ -607,7 +607,7 @@ export class Graph extends joint.dia.Graph {
         this.getEdgeGroups().forEach(node => {
             var edgeGroup = { 'name': node.getName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
             let members = [];
-            this.getOutboundNeighbors(node).forEach(neigbor => {
+            this.getOutboundNeighbors(<joint.shapes.microtosca.Node> (<unknown> node)).forEach(neigbor => {
                 members.push((<joint.shapes.microtosca.Node>neigbor).getName());
             })
             edgeGroup['members'] = members;

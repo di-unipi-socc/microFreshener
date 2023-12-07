@@ -24,7 +24,8 @@ declare module 'jointjs' {
                 getIgnoreAlwaysSmells(): ISmell[];
             }
             class Node extends Root {
-
+                show(): void;
+                hide(): void;
             }
             class Service extends Node {
             }
@@ -41,7 +42,7 @@ declare module 'jointjs' {
             class Group extends Root {
                 addMember(node:joint.shapes.microtosca.Node): void
                 removeMember(node:joint.shapes.microtosca.Node): void
-                getMembers(): joint.shapes.microtosca.Root[]
+                getMembers(): joint.shapes.microtosca.Node[]
                 getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
             }
             class EdgeGroup extends Group {
@@ -101,13 +102,11 @@ class MicrotoscaElementConfiguration {
             ...this.prototypeProperties,
             hide: function () {
                 this.attr('./visibility', 'hidden');
-                this.visibility = 'hidden';
                 if(this.hideSmells)
                     this.hideSmells();
             },
             show: function () {
                 this.attr('./visibility', 'visible');
-                this.visibility = 'visible';
                 if(this.showSmells)
                     this.showSmells();
             },
@@ -187,7 +186,8 @@ class MicrotoscaElementConfiguration {
             this.prototypeProperties.showSmells = custom.showSmells;
         } else {
             this.prototypeProperties.showSmells = function () {
-                if(this.hasSmells() && (!this.visibility || this.visibility === 'visible')) {
+                let visibility = this.attr("./visibility");
+                if(this.hasSmells() && (!visibility || visibility === 'visible')) {
                     this.attr('SmellsFoundTriangle/visibility', 'visible');
                     this.attr('SmellsFoundExclamation/visibility', 'visible');
                 }
@@ -279,7 +279,7 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
             tagName: 'text',
             selector: 'label'
         }]
-    }).buildName().buildSmells().build());
+    }).buildName().buildSmells().buildVisibility().build());
 
 
 joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration.builder({
@@ -331,7 +331,7 @@ joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration
             selector: 'MultipleServicesInOneContainer'
         },*/
         ],
-    }).buildName().buildSmells().build());
+    }).buildName().buildSmells().buildVisibility().build());
 
 
 joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaElementConfiguration.builder(
@@ -392,7 +392,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaEleme
 
             return this.attr({ body: bodyAttrs, top: topAttrs }, opt);
         }
-    }).buildName().buildSmells().build());
+    }).buildName().buildSmells().buildVisibility().build());
 
 joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElementConfiguration.builder(
 {
@@ -445,7 +445,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
             return this.attr('type/text');
         },
     }
-).buildName().buildSmells().build());
+).buildName().buildSmells().buildVisibility().build());
 
 joint.dia.Element.define('microtosca.Group', ...MicrotoscaElementConfiguration.builder({
 }, {
@@ -516,10 +516,11 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
             minWidth:"200px",
             // width: '150pc',
             // height: '100%',
-            fill:"#E5E7E9",
+            // fill:"#E5E7E9",
+            fill: "#ffffff",
             fillOpacity:"0.4",
             stroke: '#7e7e77', 
-            strokeWidth: 1,//2,
+            strokeWidth: 2,
             //strokeDasharray: "10,5",
             rx: 10,
             ry: 10,
