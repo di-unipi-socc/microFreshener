@@ -78,4 +78,8 @@ export class TeamsService {
     return this.analytics.getTeamDetails(team);
   }
 
+  getTeamEdgeNodes(team): joint.shapes.microtosca.Node[] {
+    return this.analytics.getTeamEdgeNodes(team);
+  }
+
 }
