@@ -225,6 +225,7 @@ export class GraphEditorComponent {
             
             // Add element-specific context menu items
             if(graph.isNode(cell)) {
+                console.debug("node right clicked");
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
                     this.contextMenuItems.push(smellsMenuItem);
@@ -240,6 +241,8 @@ export class GraphEditorComponent {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(graph.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
+            } else if(graph.isEdgeGroup(cell)) {
+                this.contextMenuItems = this.contextMenuItems.concat(this.getExternalUserContextMenu(cell));
             }
 
             // Avoid showing an empty context menu if no valid option is available
@@ -277,13 +280,7 @@ export class GraphEditorComponent {
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
         if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(rightClickedNode)) {
-            nodeContextMenuItems.push(
-                { label: "Add interaction", icon: "pi pi-arrow-right", command: () => {
-                    if(this.leftClickSelectedCell)
-                        this.stopAddingLink();
-                    //this.toolSelection.enableOnly(ToolSelectionService.LINK);
-                    this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
-                } });
+            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
             if(this.session.isTeam()) {
                 nodeContextMenuItems.push(
                     { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
@@ -297,6 +294,23 @@ export class GraphEditorComponent {
             );
         }
         return nodeContextMenuItems;
+    }
+
+    getExternalUserContextMenu(rightClickedNode): MenuItem[] {
+        let nodeContextMenuItems = [];
+        if(this.session.isTeam()) {
+            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
+        }
+        return nodeContextMenuItems;
+    }
+
+    getAddInteractionElement(rightClickedNode) {
+        return { label: "Add interaction", icon: "pi pi-arrow-right", command: () => {
+            if(this.leftClickSelectedCell)
+                this.stopAddingLink();
+            //this.toolSelection.enableOnly(ToolSelectionService.LINK);
+            this.startAddingLink(this.navigation.getPaper().findViewByModel(rightClickedNode));
+        } };
     }
 
     getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
@@ -386,7 +400,7 @@ export class GraphEditorComponent {
         if (this.graph.getGraph().isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.permissions.writePermissions.areLinkable(node)) {
+        if (can_select_source_node && this.graph.getGraph().isEdgeGroup(node) || this.permissions.writePermissions.isAllowed(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = cellView.model;
             let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
