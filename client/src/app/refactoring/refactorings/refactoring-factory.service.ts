@@ -50,8 +50,8 @@ export class RefactoringFactoryService {
     if(smell instanceof SmellObject) {
       let refactoring = this.getNodeRefactoring(refactoringName, smell);
       if(this.session.isTeam()) {
-        let team = this.gs.getGraph().findTeamByName(this.session.getTeamName())
-        let teamBoundariesFilter = new TeamBoundariesFilter(team, {graph: this.gs.getGraph()});
+        let team = this.gs.graph.findTeamByName(this.session.getTeamName())
+        let teamBoundariesFilter = new TeamBoundariesFilter(team, {graph: this.gs.graph});
         refactoring = teamBoundariesFilter.filter(refactoring);
       }
       return refactoring;
@@ -65,28 +65,28 @@ export class RefactoringFactoryService {
     switch (refactoringName) {
 
       case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-        return new AddMessageRouterRefactoring(this.gs.getGraph(), smell);
+        return new AddMessageRouterRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-        return new AddMessageBrokerRefactoring(this.gs.getGraph(), smell);
+        return new AddMessageBrokerRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-        return new AddServiceDiscoveryRefactoring(this.gs.getGraph(), smell);
+        return new AddServiceDiscoveryRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-        return new AddCircuitBreakerRefactoring(this.gs.getGraph(), smell);
+        return new AddCircuitBreakerRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_USE_TIMEOUT:
-        return new UseTimeoutRefactoring(this.gs.getGraph(), smell);
+        return new UseTimeoutRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_MERGE_SERVICES:
-        return new MergeServicesRefactoring(this.gs.getGraph(), smell);
+        return new MergeServicesRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return new SplitDatastoreRefactoring(this.gs.getGraph(), smell);
+        return new SplitDatastoreRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_ADD_DATA_MANAGER:
-        return new AddDataManagerRefactoring(this.gs.getGraph(), smell);
+        return new AddDataManagerRefactoring(this.gs.graph, smell);
     }
 
   }
@@ -96,19 +96,19 @@ export class RefactoringFactoryService {
     switch(refactoringName){
 
       case REFACTORING_NAMES.REFACTORING_ADD_API_GATEWAY:
-        return new AddApiGatewayRefactoring(this.gs.getGraph(), smell);
+        return new AddApiGatewayRefactoring(this.gs.graph, smell);
 
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
-        return new SplitTeamsByServiceRefactoring(this.gs.getGraph(), smell);
+        return new SplitTeamsByServiceRefactoring(this.gs.graph, smell);
       
       case REFACTORING_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
-        return new SplitTeamsByCouplingRefactoring(this.gs.getGraph(), smell);
+        return new SplitTeamsByCouplingRefactoring(this.gs.graph, smell);
 
       case REFACTORING_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return new SplitDatastoreAmongTeamsRefactoring(this.gs.getGraph(), smell);
+        return new SplitDatastoreAmongTeamsRefactoring(this.gs.graph, smell);
 
       case REFACTORING_NAMES.REFACTORING_MERGE_TEAMS:
-        return new MergeTeamsRefactoring(this.gs.getGraph(), smell);
+        return new MergeTeamsRefactoring(this.gs.graph, smell);
     }
   }
 }

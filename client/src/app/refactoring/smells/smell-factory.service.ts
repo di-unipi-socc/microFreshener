@@ -61,9 +61,9 @@ export class SmellFactoryService {
     if(smell) {
       
       smellJson['links'].forEach((cause) => {
-        var source = this.gs.getGraph().findNodeByName(cause['source']);
-        var target = this.gs.getGraph().findNodeByName(cause['target']);
-        var link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        var source = this.gs.graph.findNodeByName(cause['source']);
+        var target = this.gs.graph.findNodeByName(cause['target']);
+        var link = this.gs.graph.getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
         smell.addNodeBasedCause(node);
       });
@@ -107,14 +107,14 @@ export class SmellFactoryService {
 
     if(smell) {
       smellJson['nodes'].forEach((node_name) => {
-        let node = this.gs.getGraph().findNodeByName(node_name);
+        let node = this.gs.graph.findNodeByName(node_name);
         smell.addNodeBasedCause(node);
       });
       
       smellJson['links'].forEach((link_cause) => {
-        let source = this.gs.getGraph().findNodeByName(link_cause['source']);
-        let target = this.gs.getGraph().findNodeByName(link_cause['target']);
-        let link = this.gs.getGraph().getLinkFromSourceToTarget(source, target);
+        let source = this.gs.graph.findNodeByName(link_cause['source']);
+        let target = this.gs.graph.findNodeByName(link_cause['target']);
+        let link = this.gs.graph.getLinkFromSourceToTarget(source, target);
         smell.addLinkBasedCause(link);
       });
 
