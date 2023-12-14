@@ -12,7 +12,7 @@ export class SubtoolbarNavigationComponent {
 
   layoutMenuItems: MenuItem[];
 
-  constructor(private gs: GraphService, private navigation: EditorNavigationService) {}
+  constructor(private navigation: EditorNavigationService) {}
 
   zoomIn() {
       this.navigation.zoomIn();
@@ -31,25 +31,25 @@ export class SubtoolbarNavigationComponent {
         {
             label: 'Botton-to-top',
             command: () => {
-                this.gs.getGraph().applyLayout("BT");
+                this.navigation.applyLayout("BT");
             }
         },
         {
             label: 'Top-to-bottom',
             command: () => {
-                this.gs.getGraph().applyLayout("TB");
+                this.navigation.applyLayout("TB");
             }
         },
         {
             label: 'Left-to-right',
             command: () => {
-                this.gs.getGraph().applyLayout("LR");
+                this.navigation.applyLayout("LR");
             }
         },
         {
             label: 'Right-to-left',
             command: () => {
-                this.gs.getGraph().applyLayout("RL");
+                this.navigation.applyLayout("RL");
             }
         }
     ]
