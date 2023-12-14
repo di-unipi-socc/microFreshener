@@ -4,6 +4,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NodesService } from '../nodes/nodes.service';
+import * as joint from 'jointjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,12 +40,26 @@ export class InteractionsService {
     this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.graph, link));
   }
 
+  getLinks(): joint.shapes.microtosca.RunTimeLink[] {
+    return this.graphService.graph.getLinks();
+  }
+
   getIngoingLinks(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink[] {
     return this.graphService.graph.getIngoingLinks(node);
   }
 
   isInteractionLink(cell: joint.dia.Cell) {
     return this.graphService.graph.isInteractionLink(cell);
+  }
+
+  createAddingLink(sourceNodeId, position) {
+    let addingLink = new joint.shapes.microtosca.RunTimeLink({
+      source: { id: sourceNodeId },
+      target: { x: position.x, y: position.y }
+    });
+    addingLink.attr('path/pointer-events', 'none');
+    addingLink.addTo(this.graphService.graph);
+    return addingLink;
   }
 
 }

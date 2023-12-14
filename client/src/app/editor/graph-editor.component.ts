@@ -4,7 +4,6 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
-import { GraphService } from "../graph/graph.service";
 import { SmellObject } from '../refactoring/smells/smell';
 
 import * as joint from 'jointjs';
@@ -47,7 +46,6 @@ export class GraphEditorComponent {
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
         private toolSelection: ToolSelectionService, // Editor tool selection
         private architecture: ArchitectureEditingService, // Editing operations business logic
-        private graph: GraphService, // Injectable JointJS graph singleton
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
         private permissions: PermissionsService, // Privilege manager
@@ -397,19 +395,13 @@ export class GraphEditorComponent {
             this.leftClickSelectedCell = cellView.model;
             let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
             let position = node.position();
-            let addingLink = new joint.shapes.microtosca.RunTimeLink({
-                source: { id: node.id },
-                target: { x: position.x, y: position.y }
-            });
-            addingLink.attr('path/pointer-events', 'none');
-            this.addingLink = addingLink;
-            addingLink.addTo(this.graph.graph);
+            this.addingLink = this.architecture.createAddingLink(node.id, position);
             this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
                 let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
                 let d = 0;
                 let dx = mousePosition.x > node.position().x ? -d : d;
                 let dy = mousePosition.y > node.position().y ? -d : d;
-                addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
+                this.addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
             });
         }
         else {
@@ -551,6 +543,49 @@ export class GraphEditorComponent {
         })
     }
 
+    bindDragNavigation() {
+        let movingStatus = { isMoving: false, x: undefined, y: undefined };
+        this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
+            if(!movingStatus.isMoving) {
+                movingStatus.isMoving = true;
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
+            }
+        });
+
+        this.navigation.getPaper().on("blank:pointermove", (evt, x, y) => {
+            if(movingStatus.isMoving) {
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
+                let dx = this.navigation.getPaper().options.origin.x + paperPoint.x - movingStatus.x;
+                let dy = this.navigation.getPaper().options.origin.y + paperPoint.y - movingStatus.y;
+                this.navigation.move(dx, dy);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
+            }
+        });
+
+        this.navigation.getPaper().on("blank:pointerup", () => {
+            if(movingStatus.isMoving) {
+                movingStatus.isMoving = false;
+            }
+        });
+    }
+
+    bindWheelZoom() {
+        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
+        this.navigation.getPaper().on("blank:mousewheel", function(evt, x, y, delta) {
+            console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
+            evt.preventDefault();
+            wheelAction(x, y, evt, delta);
+        });
+
+        this.navigation.getPaper().on("cell:mousewheel", function(cellView, evt, x, y, delta) {
+            evt.preventDefault();
+            wheelAction(x, y, evt, delta);
+        });
+    }
+
     /*bindInteractionEvents(adjustVertices, graph, paper) {
 
         // bind `graph` to the `adjustVertices` function
@@ -564,7 +599,7 @@ export class GraphEditorComponent {
 
         // adjust vertices when the user stops interacting with an element
         paper.on('cell:pointerup', adjustGraphVertices);
-    }*/
+    }
 
     adjustVertices = (graph, cell) => {
 
@@ -677,49 +712,6 @@ export class GraphEditorComponent {
                 });
             }
         }
-    }
-
-    bindDragNavigation() {
-        let movingStatus = { isMoving: false, x: undefined, y: undefined };
-        this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
-            if(!movingStatus.isMoving) {
-                movingStatus.isMoving = true;
-                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
-                movingStatus.x = paperPoint.x;
-                movingStatus.y = paperPoint.y;
-            }
-        });
-
-        this.navigation.getPaper().on("blank:pointermove", (evt, x, y) => {
-            if(movingStatus.isMoving) {
-                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
-                let dx = this.navigation.getPaper().options.origin.x + paperPoint.x - movingStatus.x;
-                let dy = this.navigation.getPaper().options.origin.y + paperPoint.y - movingStatus.y;
-                this.navigation.move(dx, dy);
-                movingStatus.x = paperPoint.x;
-                movingStatus.y = paperPoint.y;
-            }
-        });
-
-        this.navigation.getPaper().on("blank:pointerup", () => {
-            if(movingStatus.isMoving) {
-                movingStatus.isMoving = false;
-            }
-        });
-    }
-
-    bindWheelZoom() {
-        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
-        this.navigation.getPaper().on("blank:mousewheel", function(evt, x, y, delta) {
-            console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
-            evt.preventDefault();
-            wheelAction(x, y, evt, delta);
-        });
-
-        this.navigation.getPaper().on("cell:mousewheel", function(cellView, evt, x, y, delta) {
-            evt.preventDefault();
-            wheelAction(x, y, evt, delta);
-        });
-    }
+    }*/
 
 }

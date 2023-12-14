@@ -8,6 +8,7 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
+import { TeamsService } from 'src/app/teams/teams.service';
 
 @Component({
   selector: 'app-subtoolbar-refactoring',
@@ -25,6 +26,7 @@ export class SubtoolbarRefactoringComponent {
     constructor(
         private dialogService: DialogService,
         private as: AnalyserService,
+        private teams: TeamsService,
         private commands: GraphInvoker,
         private session: SessionService,
         private messageService: MessageService,
@@ -54,7 +56,7 @@ export class SubtoolbarRefactoringComponent {
                 this.options.smells = data.selected_smells;
                 if(this.session.getRole() == UserRole.TEAM) {
                     let teamName = this.session.getTeamName();
-                    this.options.team = this.gs.getGraph().findTeamByName(teamName);
+                    this.options.team = this.teams.getTeam(teamName);
                 }
 
                 let analyseGraph = () => {

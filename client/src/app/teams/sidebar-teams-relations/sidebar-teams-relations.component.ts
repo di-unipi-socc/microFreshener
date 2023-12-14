@@ -5,6 +5,7 @@ import * as joint from 'jointjs';
 import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
+import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';
 
 @Component({
   selector: 'app-sidebar-teams-relations',
@@ -39,7 +40,7 @@ export class SidebarTeamsRelationsComponent {
   private invokerSubscription: Subscription;
 
   constructor(
-    private graphService: GraphService,
+    private architecture: ArchitectureEditingService,
     private teamsService: TeamsService,
     private commands: GraphInvoker
   ) {
@@ -280,9 +281,9 @@ export class SidebarTeamsRelationsComponent {
   private highlightRibbonSubgraph(sourceIndex: string, targetIndex: string) {
     // Get graph references
     let sourceTeamName = this.interactingTeamsNames[sourceIndex];
-    let sourceTeam = this.graphService.getGraph().findTeamByName(sourceTeamName);
+    let sourceTeam = this.teamsService.getTeam(sourceTeamName);
     let targetTeamName = this.interactingTeamsNames[targetIndex];
-    let targetTeam = this.graphService.getGraph().findTeamByName(targetTeamName);
+    let targetTeam = this.teamsService.getTeam(targetTeamName);
     // Color links
     let outgoingLinks = this.teamsService.getTeamInteractions(sourceTeam).outgoing;
     let ribbonTeamInteraction = outgoingLinks.filter(([g, ls]) => g == targetTeam);
@@ -293,7 +294,7 @@ export class SidebarTeamsRelationsComponent {
   }
 
   private restoreGraphColor() {
-    this.graphService.getGraph().getLinks().forEach((link) => {
+    this.architecture.getLinks().forEach((link) => {
       link.attr("line/stroke", this.LINK_COLOR);
     });
     this.teamsService.getTeams().forEach((t) => {

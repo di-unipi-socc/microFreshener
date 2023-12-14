@@ -45,7 +45,7 @@ export class SidebarIncomingTeamsComponent {
     // Defined for team members only
     if(this.session.getRole() == UserRole.TEAM) {
       let teamName = this.session.getTeamName();
-      let team = this.graphService.getGraph().findTeamByName(teamName);
+      let team = this.teams.getTeam(teamName);
       this.updateTeams(team);
       this.updateEdge(team);
     }

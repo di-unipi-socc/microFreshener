@@ -4,6 +4,7 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { environment } from '../../../environments/environment';
 import { GraphService } from "../../graph/graph.service";
 import { MessageService } from 'primeng/api';
+import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 
 @Component({
   selector: 'app-dialog-refine',
@@ -14,7 +15,7 @@ export class DialogRefineComponent implements OnInit {
   urlRefineKubernetes = environment.serverUrl + '/api/refine';
   urlRefineIstio = environment.serverUrl + '/api/refine/istio';
 
-  constructor(private gs: GraphService, public ref: DynamicDialogRef, private messageService: MessageService, public config: DynamicDialogConfig) { }
+  constructor(private gs: GraphService, private navigation: EditorNavigationService, public ref: DynamicDialogRef, private messageService: MessageService, public config: DynamicDialogConfig) { }
 
   ngOnInit() {
   }
@@ -32,8 +33,8 @@ export class DialogRefineComponent implements OnInit {
       .subscribe((data) => {
         //this.closeSidebar();
         console.log(data);
-        this.gs.getGraph().builtFromJSON(data);
-        this.gs.getGraph().applyLayout("LR");
+        //this.gs.builtFromJSON(data);
+        this.navigation.applyLayout("LR");
         this.ref.close();
         this.messageService.add({ severity: 'success', summary: 'Graph downloaded correctly', detail: '' });
       });

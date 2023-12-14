@@ -43,7 +43,7 @@ export class PermissionsService {
               // The team exists, so set the consequent permissions
               this.writePermissions.isAllowed = ( (cell) => {
                 let sourceTeam;
-                if(cell instanceof joint.shapes.microtosca.Node) {
+                if(this.gs.graph.isNode(cell)) {
                   sourceTeam = this.gs.graph.getTeamOfNode(cell);
                 } else if(cell.isLink()) {
                   sourceTeam = this.gs.graph.getTeamOfNode(cell.getSourceElement());

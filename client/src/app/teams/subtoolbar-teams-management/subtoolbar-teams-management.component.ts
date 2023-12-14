@@ -2,11 +2,11 @@ import { EventEmitter, Component, Output, ViewChild } from '@angular/core';
 import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
-import { GraphService } from '../../graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
+import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -39,9 +39,9 @@ export class SubtoolbarTeamsComponent {
 
   constructor(
     public tools: ToolSelectionService,
+    private architecture: ArchitectureEditingService,
     private teams: TeamsService,
     private dialogService: DialogService,
-    private gs: GraphService,
     private commands: GraphInvoker,
     private navigation: EditorNavigationService,
     private messageService: MessageService
@@ -98,18 +98,17 @@ export class SubtoolbarTeamsComponent {
   }
 
   private nodeToBeAddedClicked(cellView: joint.dia.CellView) {
-    let graph = this.gs.getGraph();
     let cell = cellView.model;
-    if(graph.isNode(cell)) {
+    if(this.architecture.isNode(cell)) {
       console.log("cellView.model", cell);
       let node = <joint.shapes.microtosca.Node> cell;
-      if((graph.isService(node) || graph.isCommunicationPattern(node) || graph.isDatastore(node))
+      if((this.architecture.isService(node) || this.architecture.isCommunicationPattern(node) || this.architecture.isDatastore(node))
         && !this.selectedNodes.includes(node)) {
         this.selectedNodes.push(node);
         this.addTeam.hide();
         this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
       }
-    } else if(graph.isTeamGroup(cell)) {
+    } else if(this.teams.isTeamGroup(cell)) {
       console.log("adding members of a team")
       let team = <joint.shapes.microtosca.SquadGroup> cell;
       this.selectedNodes = this.selectedNodes.concat(team.getMembers().filter(node => !this.selectedNodes.includes(node)));

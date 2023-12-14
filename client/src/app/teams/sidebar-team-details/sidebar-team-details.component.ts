@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { GraphService } from 'src/app/graph/graph.service';
 import { TeamsService } from '../teams.service';
 import { Subscription } from 'rxjs';
 import { GraphInvoker } from 'src/app/commands/invoker';
@@ -33,7 +32,6 @@ export class SidebarTeamDetailsComponent {
   private doughnutCutout;
   
   constructor(
-    private graphService: GraphService,
     private teamService: TeamsService,
     private commands: GraphInvoker
   ) {
@@ -91,7 +89,7 @@ export class SidebarTeamDetailsComponent {
   updateTeamsInfo() {
     this.teamsInfo = [];
     // Set info to be displayed for each team
-    for(let team of this.graphService.getGraph().getTeamGroups()) {
+    for(let team of this.teamService.getTeams()) {
       let teamDetails = this.teamService.getTeamDetails(team);
       let quantity = teamDetails.services.length + teamDetails.datastores.length + teamDetails.communicationPatterns.length;
       let teamInfo = {

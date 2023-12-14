@@ -66,12 +66,20 @@ export class ArchitectureEditingService {
     this.interactions.removeLink(link);
   }
 
+  getLinks(): joint.shapes.microtosca.RunTimeLink[] {
+    return this.interactions.getLinks();
+  }
+
   getIngoingLinks(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink[] {
     return this.interactions.getIngoingLinks(node);
   }
 
   isInteractionLink(cell: joint.dia.Cell) {
     return this.interactions.isInteractionLink(cell);
+  }
+
+  createAddingLink(sourceNodeId, position) {
+    return this.interactions.createAddingLink(sourceNodeId, position);
   }
 
   // Edge
