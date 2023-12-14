@@ -16,12 +16,12 @@ export class TeamVisualizationService {
   }
 
   showTeams() {
-    this.graphService.getGraph().showAllTeamBoxes();
+    this.graphService.graph.showAllTeamBoxes();
     this.visibleTeams = true;
   }
 
   hideTeams() {
-    this.graphService.getGraph().hideAllTeamBoxes();
+    this.graphService.graph.hideAllTeamBoxes();
     this.visibleTeams = false;
   }
 
@@ -30,16 +30,15 @@ export class TeamVisualizationService {
   }
 
   showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
-    let graph = this.graphService.getGraph();
-    graph.showTeamBox(team);
-    this.graphService.getGraph().getOutgoingLinksOfATeamFrontier(team)
+    this.graphService.graph.showTeamBox(team);
+    this.graphService.graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
           this.setVisibilityOfLinkAndRespectiveNodesAndGroups(link, true, "#007ad9");
         });
   }
 
   hideTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     graph.hideTeamBox(team);
     graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
@@ -57,7 +56,7 @@ export class TeamVisualizationService {
       node.show();
     else
       node.hide();
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     let team = graph.getTeamOfNode(node);
     if(team != null)
       if(visibility == "visible") {
@@ -70,7 +69,7 @@ export class TeamVisualizationService {
   }
 
   getNodesByTeam() {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     let nodes: joint.shapes.microtosca.Node[] = graph.getNodes();
     // Group nodes by squad
     let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodes

@@ -45,10 +45,6 @@ export class GraphService {
   clearGraph() {
     this.graph.clearGraph();
   }
-  
-  /*getGraph(): Graph {
-    return this.graph;
-  }*/
 
   // Logging
 

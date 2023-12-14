@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
-import { TeamsService } from '../teams.service';
 
 @Injectable({
   providedIn: 'root'// TeamsService
@@ -31,44 +30,44 @@ export class TeamsAnalyticsService {
   }
 
   getTeamServices(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Service[] {
-    return team.getMembers().filter(n => this.graphService.getGraph().isService(n)).map(n => <joint.shapes.microtosca.Service> n);
+    return team.getMembers().filter(n => this.graphService.graph.isService(n)).map(n => <joint.shapes.microtosca.Service> n);
   }
 
   getTeamDatastores(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.Datastore[] {
-    return team.getMembers().filter(n => this.graphService.getGraph().isDatastore(n)).map(n => <joint.shapes.microtosca.Datastore> n);
+    return team.getMembers().filter(n => this.graphService.graph.isDatastore(n)).map(n => <joint.shapes.microtosca.Datastore> n);
   }
 
   getTeamCommunicationPatterns(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.CommunicationPattern[] {
-    return team.getMembers().filter(n => this.graphService.getGraph().isCommunicationPattern(n)).map(n => <joint.shapes.microtosca.CommunicationPattern> n);
+    return team.getMembers().filter(n => this.graphService.graph.isCommunicationPattern(n)).map(n => <joint.shapes.microtosca.CommunicationPattern> n);
   }
 
   getTeamIngoingLinks(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     return team.getMembers()
-               .map((node) => this.graphService.getGraph().getIngoingLinks(node))
+               .map((node) => this.graphService.graph.getIngoingLinks(node))
                .reduce((ingoingTeamLinks, nodeLinks) => ingoingTeamLinks.concat(nodeLinks), [])
                .filter((l) => !graph.isEdgeGroup(l.getSourceElement()))
                .filter((l) => graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) != team);
   }
 
   getTeamOutgoingLinks(team: joint.shapes.microtosca.SquadGroup) {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     return team.getMembers()
-               .map((node) => this.graphService.getGraph().getOutgoingLinks(node))
+               .map((node) => this.graphService.graph.getOutgoingLinks(node))
                .reduce((ingoingTeamLinks, nodeLinks) => ingoingTeamLinks.concat(nodeLinks), [])
                .filter((l) => l.getTargetElement() && graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getTargetElement()) != team);
   }
 
   getEdgeIngoingLinks(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     return team.getMembers()
-               .map((node) => this.graphService.getGraph().getIngoingLinks(node))
+               .map((node) => this.graphService.graph.getIngoingLinks(node))
                .reduce((ingoingTeamLinks, nodeLinks) => ingoingTeamLinks.concat(nodeLinks), [])
                .filter((l) => graph.isEdgeGroup(l.getSourceElement()));
   }
 
   getTeamInteractions(team: joint.shapes.microtosca.SquadGroup): {ingoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][], outgoing: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][]} {
-    let graph = this.graphService.getGraph();
+    let graph = this.graphService.graph;
     let groupingByTeam = (map, [group, link]) => {
                             if(!map.has(group))
                               map.set(group, [link]);

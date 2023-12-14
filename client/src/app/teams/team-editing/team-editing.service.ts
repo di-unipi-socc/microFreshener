@@ -5,7 +5,6 @@ import { GraphInvoker } from 'src/app/commands/invoker';
 import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveTeamGroupCommand } from '../team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
-import { TeamsService } from '../teams.service';
 
 @Injectable({
   providedIn: 'root'// TeamsService
@@ -19,7 +18,7 @@ export class TeamEditingService {
   ) { }
 
   getTeams(): joint.shapes.microtosca.SquadGroup[] {
-    return this.graphService.getGraph().getTeamGroups();
+    return this.graphService.graph.getTeamGroups();
   }
 
   getTeam(teamName: string) {
@@ -30,17 +29,17 @@ export class TeamEditingService {
     let commandToExecute;
     if(!selectedNodes) {
       // Add a new empty team
-      commandToExecute = new AddTeamGroupCommand(this.graphService.getGraph(), name);
+      commandToExecute = new AddTeamGroupCommand(this.graphService.graph, name);
     } else {
       // Add a new team and add its nodes atomically
-      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.graphService.getGraph(), name, selectedNodes);
+      let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.graphService.graph, name, selectedNodes);
       commandToExecute = createTeamThenMoveSelectedMembersIntoIt;
     }
     this.invoker.executeCommand(commandToExecute);
   }
 
   removeTeam(team: joint.shapes.microtosca.SquadGroup) {
-    this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.getGraph(), team));
+    this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.graph, team));
   }
 
   private buildCreateTeamThenAddNodesCommand(graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
@@ -90,7 +89,7 @@ export class TeamEditingService {
   }
 
   addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
-    let previousTeam = this.graphService.getGraph().getTeamOfNode(member);
+    let previousTeam = this.graphService.graph.getTeamOfNode(member);
     let command;
     if(previousTeam) {
       command = this.buildMoveNodeCommand(member, previousTeam, team);
@@ -108,6 +107,6 @@ export class TeamEditingService {
   }
 
   getTeamOfNode(node: joint.shapes.microtosca.Node) {
-    return this.graphService.getGraph().getTeamOfNode(node);
+    return this.graphService.graph.getTeamOfNode(node);
   }
 }
