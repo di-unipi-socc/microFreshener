@@ -54,7 +54,7 @@ export class AnalyserService {
 
   private showNodeSmells() {
     this.nodesWithSmells.forEach((anode) => {
-      let n = this.gs.getGraph().getNode(anode.getName());
+      let n = this.gs.graph.getNode(anode.getName());
       anode.getSmells().forEach((smell) => {
         n.addSmell(smell);
       })
@@ -63,14 +63,14 @@ export class AnalyserService {
 
   private showGroupSmells() {
     this.groupsWithSmells.forEach((agroup) => {
-      let g = this.gs.getGraph().getGroup(agroup.getName());
+      let g = this.gs.graph.getGroup(agroup.getName());
       agroup.getSmells().forEach((smell) => {
           g.addSmell(smell);
       })
     })
 
     this.groupMembersCausingSmells.forEach((anode) => {
-      let n = this.gs.getGraph().getNode(anode.getName());
+      let n = this.gs.graph.getNode(anode.getName());
       anode.getSmells().forEach((smell) => {
         n.addSmell(smell);
       })
@@ -79,10 +79,10 @@ export class AnalyserService {
 
   // Remove the "smells" icons in the nodes and groups
   clearSmells() {
-    this.gs.getGraph().getNodes().forEach(node => {
+    this.gs.graph.getNodes().forEach(node => {
       node.resetSmells();
     });
-    this.gs.getGraph().getGroups().forEach(group => {
+    this.gs.graph.getGroups().forEach(group => {
       group.resetSmells();
     });
   }
@@ -168,7 +168,7 @@ export class AnalyserService {
           this.nodesWithSmells = [];
           // TODO: saved the analysed node ?? in order to have the history of the analysis.
           response['nodes'].forEach((nodeJson) => {
-            let node = this.gs.getGraph().findNodeByName(nodeJson['name']);
+            let node = this.gs.graph.findNodeByName(nodeJson['name']);
             let nodeSmells = nodeJson['smells'].map((smellJson) => this.smellFactory.getNodeSmell(smellJson, node));
             let anode = Analysed.getBuilder<joint.shapes.microtosca.Node>()
                                 .setElement(node)
@@ -181,7 +181,7 @@ export class AnalyserService {
           this.groupMembersCausingSmells = [];
           response['groups'].forEach((groupJson) => {
             // Build the smells of the group
-            let group = this.gs.getGraph().findGroupByName(groupJson['name']);
+            let group = this.gs.graph.findGroupByName(groupJson['name']);
             let groupSmells: GroupSmellObject[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
             console.debug("groupSmells", groupSmells);
             let agroup = Analysed.getBuilder<joint.shapes.microtosca.Group>()
