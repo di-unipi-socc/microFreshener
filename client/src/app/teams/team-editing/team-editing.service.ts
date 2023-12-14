@@ -109,4 +109,8 @@ export class TeamEditingService {
   getTeamOfNode(node: joint.shapes.microtosca.Node) {
     return this.graphService.graph.getTeamOfNode(node);
   }
+
+  isTeamGroup(node: joint.dia.Cell): boolean {
+    return this.graphService.graph.isTeamGroup(node);
+  }
 }

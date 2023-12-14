@@ -47,6 +47,10 @@ export class TeamsService {
     return this.visualization.showOnlyTeam(team);
   }
 
+  isTeamGroup(node: joint.dia.Cell): boolean {
+    return this.editing.isTeamGroup(node);
+  }
+
   // POV: admin
 
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {

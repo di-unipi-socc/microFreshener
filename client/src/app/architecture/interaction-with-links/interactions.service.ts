@@ -39,4 +39,12 @@ export class InteractionsService {
     this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.graph, link));
   }
 
+  getIngoingLinks(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink[] {
+    return this.graphService.graph.getIngoingLinks(node);
+  }
+
+  isInteractionLink(cell: joint.dia.Cell) {
+    return this.graphService.graph.isInteractionLink(cell);
+  }
+
 }

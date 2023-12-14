@@ -70,8 +70,24 @@ export class NodesService {
     node.attr('./visibility', 'collapse');
   }
 
+  isNode(node: joint.dia.Cell): boolean {
+    return this.graphService.graph.isNode(node);
+  }
+
   isService(node: joint.shapes.microtosca.Node) {
     return this.graphService.graph.isService(node);
+  }
+
+  isCommunicationPattern(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isCommunicationPattern(node);
+  }
+
+  isMessageBroker(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isMessageBroker(node);
+  }
+
+  isDatastore(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isDatastore(node);
   }
 
 }
