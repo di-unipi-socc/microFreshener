@@ -4,7 +4,7 @@ import { GroupSmellObject } from "../smells/smell";
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";
 import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
-import { AddMemberToTeamGroupCommand } from "src/app/teams-management/team-commands";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 export class SplitDatastoreAmongTeamsRefactoring extends GroupRefactoring {
 

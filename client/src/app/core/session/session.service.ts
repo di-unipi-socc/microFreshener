@@ -9,7 +9,7 @@ import { DialogImportComponent } from '../dialog-import/dialog-import.component'
 import { UserRole } from '../user-role';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
-import { TeamsService } from 'src/app/teams-management/teams.service';
+import { TeamsService } from 'src/app/teams/teams.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

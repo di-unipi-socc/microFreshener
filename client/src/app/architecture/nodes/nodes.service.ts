@@ -1,24 +1,20 @@
 import { Injectable } from '@angular/core';
-import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveNodeCommand } from '../node-commands';
-import { MessageService } from 'primeng/api';
-import { GraphInvoker } from '../../commands/invoker';
-import { GraphService } from '../../graph/graph.service';
-
-import { g } from 'jointjs';
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
-import { EditorNavigationService } from '../../editor/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { AddMemberToTeamGroupCommand } from 'src/app/teams-management/team-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveNodeCommand } from '../node-commands';
+import { g } from 'jointjs';
+import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
+import { GraphService } from 'src/app/graph/graph.service';
+import { MessageService } from 'primeng/api';
+import { GraphInvoker } from 'src/app/commands/invoker';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ArchitectureEditingService {
+export class NodesService {
 
   constructor(
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
-    private navigation: EditorNavigationService,
     private messageService: MessageService,
   ) { }
 
@@ -27,20 +23,20 @@ export class ArchitectureEditingService {
     let message: string;
     switch (nodeType) {
       case ToolSelectionService.SERVICE:
-        addNodeCommand = new AddServiceCommand(this.graphService.getGraph(), name, position);
+        addNodeCommand = new AddServiceCommand(this.graphService.graph, name, position);
         message = `Service ${name} added correctly`;
         break;
       case ToolSelectionService.DATASTORE:
-        addNodeCommand = new AddDatastoreCommand(this.graphService.getGraph(), name, position);
+        addNodeCommand = new AddDatastoreCommand(this.graphService.graph, name, position);
         message = `Datastore  ${name}  added correctly`;
         break;
       case ToolSelectionService.COMMUNICATION_PATTERN:
         if(communicationPatternType === ToolSelectionService.MESSAGE_BROKER){
-          addNodeCommand = new AddMessageBrokerCommand(this.graphService.getGraph(), name, position);
+          addNodeCommand = new AddMessageBrokerCommand(this.graphService.graph, name, position);
           message += `Message Broker ${name} added correctly`;
         }
         else if(communicationPatternType === ToolSelectionService.MESSAGE_ROUTER){
-          addNodeCommand = new AddMessageRouterCommand(this.graphService.getGraph(), name, position);
+          addNodeCommand = new AddMessageRouterCommand(this.graphService.graph, name, position);
           message += `Message Router ${name} added correctly`;
         }
         else
@@ -63,7 +59,7 @@ export class ArchitectureEditingService {
   }
 
   deleteNode(node) {
-    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.getGraph(), node));
+    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
   }
 
   showNode(node: joint.shapes.microtosca.Node) {
@@ -74,26 +70,8 @@ export class ArchitectureEditingService {
     node.attr('./visibility', 'collapse');
   }
 
-  addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
-    console.log("selected, new ->", source, target);
-    var command = new AddRunTimeLinkCommand(this.graphService.getGraph(), source.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
-    this.graphInvoker.executeCommand(command);
-    this.navigation.getPaper().findViewByModel(source).unhighlight();
-    this.showNode(source);
-    this.showNode(target);
-    console.log("link added");
-  }
-
-  reverseLink(link) {
-    let source = link.source();
-    let target = link.target();
-    link.source(target);
-    link.target(source);
-  }
-
-  removeLink(link: joint.shapes.microtosca.RunTimeLink) {
-    console.log("removing link called");
-    this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.getGraph(), link));
+  isService(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isService(node);
   }
 
 }

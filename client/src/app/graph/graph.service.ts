@@ -18,7 +18,7 @@ const httpOptions = {
 })
 export class GraphService {
 
-  private graph: Graph;
+  graph: Graph;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -34,9 +34,9 @@ export class GraphService {
     this.graph = new Graph('');
   }
   
-  getGraph(): Graph {
+  /*getGraph(): Graph {
     return this.graph;
-  }
+  }*/
 
   // Logging
 

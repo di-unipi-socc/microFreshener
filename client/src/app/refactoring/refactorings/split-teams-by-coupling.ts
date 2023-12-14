@@ -1,4 +1,4 @@
-import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams-management/team-commands";
+import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
 import { GroupSmellObject } from "../smells/smell";
 import { Graph } from "src/app/graph/model/graph";
 import * as joint from "jointjs";

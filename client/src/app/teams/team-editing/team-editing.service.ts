@@ -102,4 +102,8 @@ export class TeamEditingService {
     this.invoker.executeCommand(command);
     this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
   }
+
+  getTeamOfNode(node: joint.shapes.microtosca.Node) {
+    return this.graphService.getGraph().getTeamOfNode(node);
+  }
 }
