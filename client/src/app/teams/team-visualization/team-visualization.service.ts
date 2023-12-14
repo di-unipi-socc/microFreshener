@@ -105,4 +105,8 @@ export class TeamVisualizationService {
     return nodeList;
   }
 
+  showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
+    this.graphService.graph.showOnlyTeam(team);
+  }
+
 }

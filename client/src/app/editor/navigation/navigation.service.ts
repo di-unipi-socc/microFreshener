@@ -20,7 +20,7 @@ export class EditorNavigationService {
   initPaper(element): joint.dia.Paper {
     this.paper = new joint.dia.Paper({
       el: element,
-      model: this.graphService.getGraph(),
+      model: this.graphService.graph,
       preventContextMenu: true,
       width: '100%',
       height: '100%',
@@ -57,6 +57,12 @@ export class EditorNavigationService {
   mousewheel
   move(dx: number, dy: number) {
     this.paper.translate(dx, dy);
+  }
+
+  // Layout
+
+  applyLayout(rankdir: string) {
+    this.graphService.graph.applyLayout(rankdir);
   }
 
   // Zoom
@@ -100,6 +106,12 @@ export class EditorNavigationService {
       padding = this.FIT_CONTENT_PADDING;
     }
     this.paper.scaleContentToFit({ padding: padding });
+  }
+
+  // Visibility
+
+  hideGraph() {
+    this.graphService.graph.hideGraph();
   }
 
 }

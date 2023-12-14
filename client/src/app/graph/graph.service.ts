@@ -41,6 +41,10 @@ export class GraphService {
   setName(name) {
     this.graph.setName(name);
   }
+
+  clearGraph() {
+    this.graph.clearGraph();
+  }
   
   /*getGraph(): Graph {
     return this.graph;

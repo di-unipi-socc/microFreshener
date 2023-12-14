@@ -22,6 +22,10 @@ export class TeamEditingService {
     return this.graphService.getGraph().getTeamGroups();
   }
 
+  getTeam(teamName: string) {
+    return this.graphService.graph.getTeam(teamName);
+  }
+
   addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     let commandToExecute;
     if(!selectedNodes) {
