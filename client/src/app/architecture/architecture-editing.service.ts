@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { g } from 'jointjs';
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from './link-commands';
 import { NodesService } from './nodes/nodes.service';
 import { InteractionsService } from './interaction-with-links/interactions.service';
 
@@ -31,8 +30,8 @@ export class ArchitectureEditingService {
     this.hideNode(node);
   }
 
-  isService(node: joint.shapes.microtosca.Node) {
-    this.nodes.isService(node);
+  isService(node: joint.shapes.microtosca.Node): boolean {
+    return this.nodes.isService(node);
   }
 
   // Links

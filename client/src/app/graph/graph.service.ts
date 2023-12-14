@@ -33,6 +33,14 @@ export class GraphService {
   constructor(private http: HttpClient) {
     this.graph = new Graph('');
   }
+
+  getName() {
+    return this.graph.getName();
+  }
+
+  setName(name) {
+    this.graph.setName(name);
+  }
   
   /*getGraph(): Graph {
     return this.graph;
