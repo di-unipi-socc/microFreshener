@@ -4,7 +4,7 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { environment } from '../../../environments/environment';
 import { GraphService } from "../../graph/graph.service";
 import { MessageService } from 'primeng/api';
-import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
+import { EditorNavigationService } from 'src/app/navigation/navigation.service';
 
 @Component({
   selector: 'app-dialog-refine',

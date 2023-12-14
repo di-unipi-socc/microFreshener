@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
+import { EditorNavigationService } from '../../navigation/navigation.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NodesService } from '../nodes/nodes.service';
 import * as joint from 'jointjs';

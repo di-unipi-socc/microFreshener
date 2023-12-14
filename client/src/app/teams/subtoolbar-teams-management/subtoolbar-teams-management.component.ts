@@ -3,7 +3,7 @@ import { MessageService, SelectItemGroup } from 'primeng/api';
 import { DialogAddTeamComponent } from '../dialog-add-team/dialog-add-team.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TeamsService } from '../teams.service';
-import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
+import { EditorNavigationService } from 'src/app/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';

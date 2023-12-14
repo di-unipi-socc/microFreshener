@@ -16,7 +16,7 @@ import { DialogAddTeamComponent } from './teams/dialog-add-team/dialog-add-team.
 import { AppMenuComponent } from './core/app-menu/app-menu.component';
 import { SubtoolbarArchitectureComponent } from './architecture/subtoolbar-architecture/subtoolbar-architecture.component';
 import { SubtoolbarUndoComponent } from './commands/subtoolbar-undo/subtoolbar-undo.component';
-import { SubtoolbarNavigationComponent } from './editor/subtoolbar-navigation/subtoolbar-navigation.component';
+import { SubtoolbarNavigationComponent } from './navigation/subtoolbar-navigation/subtoolbar-navigation.component';
 
 
 // Import primeNG modules

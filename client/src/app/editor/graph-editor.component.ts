@@ -13,7 +13,7 @@ import { g } from 'jointjs';
 import * as $ from 'jquery';
 
 import { PermissionsService } from '../permissions/permissions.service';
-import { EditorNavigationService } from './navigation/navigation.service';
+import { EditorNavigationService } from '../navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing.service';
 import { TeamsService } from '../teams/teams.service';
