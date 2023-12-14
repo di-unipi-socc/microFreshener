@@ -35,7 +35,8 @@ export class DialogAddLinkComponent implements OnInit {
   ngOnInit() {
     this.source = this.config.data.source;
     this.selectedNode = this.config.data.target;
-    this.nodeList = this.teamService.getNodesByTeams();
+    let sourceTeam = this.gs.getGraph().getTeamOfNode(this.source)
+    this.nodeList = this.teamService.getNodesByTeams().filter(((nodesInTeam) => nodesInTeam.value != sourceTeam));
     this.external = this.config.data.external;
 
     // show properties only if the source node is a service.
