@@ -201,13 +201,9 @@ export class AnalyserService {
           });
           return true;
         }),
-        tap(_ => this.log(`Send analysis`),
+        tap(_ => console.debug(`Send analysis`),
         ),
         catchError((e: Response) => throwError(e))
       );
-  }
-
-  /** Log a AnalyserService message with the MessageService */
-  private log(message: string) {
   }
 }

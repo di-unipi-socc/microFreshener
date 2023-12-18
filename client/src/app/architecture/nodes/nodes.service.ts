@@ -4,7 +4,6 @@ import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, 
 import { g } from 'jointjs';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { MessageService } from 'primeng/api';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 import { TeamsService } from 'src/app/teams/teams.service';
@@ -18,8 +17,7 @@ export class NodesService {
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
     private permissionsService: PermissionsService,
-    private teamsService: TeamsService,
-    private messageService: MessageService,
+    private teamsService: TeamsService
   ) { }
 
   async addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
@@ -47,10 +45,10 @@ export class NodesService {
           message += `Message Router ${name} added correctly`;
         }
         else
-          this.messageService.add({ severity: 'error', summary: `Node type ${nodeType} not recognized`});
+          return Promise.reject(`Node type ${nodeType} not recognized`);
         break;
       default:
-        this.messageService.add({ severity: 'error', summary: `Type of node '${nodeType}' not found `});
+        return Promise.reject(`Type of node '${nodeType}' not found `);
     }
 
     // If a team has been specified, atomically add the node into it

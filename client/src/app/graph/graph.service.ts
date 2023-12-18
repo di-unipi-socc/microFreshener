@@ -48,11 +48,6 @@ export class GraphService {
 
   // Logging
 
-  // Log a HeroService message with the MessageService
-  private log(message: string) {
-    console.log(`GraphService: ${message}`)
-  }
-
   // Import and Export
 
   // POST: upload the local graph to the server
@@ -73,7 +68,7 @@ export class GraphService {
   dowloadGraph(): Observable<string> {
     return this.http.get<string>(this.graphUrl)
       .pipe(
-        tap(_ => this.log(`fetched graph`)),
+        tap(_ => console.debug(`fetched graph`)),
     );
   }
 
@@ -95,7 +90,7 @@ export class GraphService {
   downloadExample(name: string): Observable<string> {
     let params = new HttpParams().set("name", name);
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
-      tap(_ => this.log(`fetched example ${name}`)),
+      tap(_ => console.debug(`fetched example ${name}`)),
     );
   }
 
