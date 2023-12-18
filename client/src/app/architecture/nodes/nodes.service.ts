@@ -6,6 +6,8 @@ import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { MessageService } from 'primeng/api';
 import { GraphInvoker } from 'src/app/commands/invoker';
+import { PermissionsService } from 'src/app/permissions/permissions.service';
+import { TeamsService } from 'src/app/teams/teams.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +17,15 @@ export class NodesService {
   constructor(
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
+    private permissionsService: PermissionsService,
+    private teamsService: TeamsService,
     private messageService: MessageService,
   ) { }
 
-  addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
+  async addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
+    if(team && !this.permissionsService.writePermissions.isAllowed(team)) {
+      Promise.reject(`You are not allowed to add this in ${team.getName()}.\nPlease contact the product owner or the team leader.`);
+    }
     let addNodeCommand;
     let message: string;
     switch (nodeType) {
@@ -55,11 +62,16 @@ export class NodesService {
       command = addNodeCommand.bind(addToTeamCommand);
     }
 
-    this.graphInvoker.executeCommand(command);
+    return this.graphInvoker.executeCommand(command);
   }
 
-  deleteNode(node) {
-    this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
+  async deleteNode(node) {
+    if(!this.permissionsService.writePermissions.isAllowed(node)) {
+      return Promise.reject(`You are not allowed to delete this.`);
+    } else if(this.teamsService.hasTeamDependencies(node)) {
+      return Promise.reject(`You cannot delete this because other teams interacts with it.`);
+    }
+    return this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
   }
 
   showNode(node: joint.shapes.microtosca.Node) {

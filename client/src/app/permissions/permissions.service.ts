@@ -47,6 +47,8 @@ export class PermissionsService {
                   sourceTeam = this.gs.graph.getTeamOfNode(cell);
                 } else if(cell.isLink()) {
                   sourceTeam = this.gs.graph.getTeamOfNode(cell.getSourceElement());
+                } else if(this.gs.graph.isTeamGroup(cell)) {
+                  sourceTeam = cell;
                 }
                 return sourceTeam && sourceTeam == team;
               } );
@@ -60,13 +62,8 @@ export class PermissionsService {
                     
                     return interactionFromTeamNode || interactionFromExternalUserToTeamNode;
               };
-              this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }
             break;
-          default:
-            this.writePermissions.isAllowed = this.DENY_ALL;
-            this.writePermissions.areLinkable = this.DENY_ALL;
-            this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
       }
   }
 

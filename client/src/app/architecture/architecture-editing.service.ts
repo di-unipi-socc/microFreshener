@@ -16,12 +16,12 @@ export class ArchitectureEditingService {
     private edge: EdgeService
   ) { }
 
-  addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
-    this.nodes.addNode(nodeType, name, position, communicationPatternType, team);
+  async addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
+    return this.nodes.addNode(nodeType, name, position, communicationPatternType, team);
   }
 
-  deleteNode(node) {
-    this.nodes.deleteNode(node);
+  async deleteNode(node) {
+    return this.nodes.deleteNode(node);
   }
 
   showNode(node: joint.shapes.microtosca.Node) {
@@ -54,16 +54,16 @@ export class ArchitectureEditingService {
 
   // Links
 
-  addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
-    this.interactions.addLink(source, target, timeout, circuit_breaker, dynamic_discovery);
+  async addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
+    return this.interactions.addLink(source, target, timeout, circuit_breaker, dynamic_discovery);
   }
 
-  reverseLink(link) {
-    this.interactions.reverseLink(link);
+  async reverseLink(link) {
+    return this.interactions.reverseLink(link);
   }
 
-  removeLink(link: joint.shapes.microtosca.RunTimeLink) {
-    this.interactions.removeLink(link);
+  async removeLink(link: joint.shapes.microtosca.RunTimeLink) {
+    return this.interactions.removeLink(link);
   }
 
   getLinks(): joint.shapes.microtosca.RunTimeLink[] {

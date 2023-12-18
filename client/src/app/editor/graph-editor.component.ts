@@ -158,11 +158,9 @@ export class GraphEditorComponent {
             header: 'Delete node',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.architecture.deleteNode(node);
-                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+                this.architecture.deleteNode(node).then(() => {
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+                });
             }
         });
     }
@@ -177,7 +175,15 @@ export class GraphEditorComponent {
         });
         ref.onClose.subscribe((data) => {
             if (data) {
-                this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery)
+                .then(() => {
+                    this.navigation.getPaper().findViewByModel(data.source).unhighlight();
+                    this.architecture.showNode(data.source);
+                    this.architecture.showNode(data.target);
+                })
+                .catch((error) => {
+                    this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                });
             }
         });
     }
@@ -500,7 +506,9 @@ export class GraphEditorComponent {
                                 }
                                 else {
                                     if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
-                                        this.teams.addMemberToTeam(member, team);
+                                        this.teams.addMemberToTeam(member, team).then(() => {
+                                            this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                        });
                                     }
                                 }
                             }
@@ -513,7 +521,9 @@ export class GraphEditorComponent {
                         var team = this.teams.getTeamOfNode(member);
                         if(team){
                             if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
-                                this.teams.removeMemberFromTeam(member, team);
+                                this.teams.removeMemberFromTeam(member, team).then(() => {
+                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                });
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                             }

@@ -18,33 +18,43 @@ export class GraphInvoker {
         this.redoStack = [];
     }
 
-    executeCommand(command: Command, silent?: boolean) {
-        command.execute();
-        this.undoStack.push(command);
+    async executeCommand(command: Command, silent?: boolean) {
+        try {
+            command.execute();
+            this.undoStack.push(command);
         if(!silent)
             this.invokeSubject.next();
+        } catch (e) {
+            Promise.reject(e);
+        }
     }
 
-    undo() {
+    async undo() {
         if (this.undoStack.length <= 0) {
-            return
+            return Promise.reject("No commands to undo.");
         }
-        let command = this.undoStack.pop()
-        command.unexecute();
-        this.redoStack.push(command);
-
-        this.invokeSubject.next();
+        try {
+            let command = this.undoStack.pop()
+            command.unexecute();
+            this.redoStack.push(command);
+            this.invokeSubject.next();
+        } catch(e) {
+            Promise.reject(e);
+        }
     }
 
-    redo() {
+    async redo() {
         if (this.redoStack.length <= 0) {
-            return
+            return Promise.reject("No commands to redo.");
         }
-        let command = this.redoStack.pop()
-        command.execute();
-        this.undoStack.push(command);
-        
-        this.invokeSubject.next();
+        try {
+            let command = this.redoStack.pop()
+            command.execute();
+            this.undoStack.push(command);
+            this.invokeSubject.next();
+        } catch(e) {
+            Promise.reject(e);
+        }
     }
 
     subscribe(observer) {

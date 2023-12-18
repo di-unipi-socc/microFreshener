@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { EditorNavigationService } from '../../navigation/navigation.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
-import { NodesService } from '../nodes/nodes.service';
 import * as joint from 'jointjs';
+import { PermissionsService } from 'src/app/permissions/permissions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,30 +13,34 @@ export class InteractionsService {
   constructor(
     private graphService: GraphService,
     private graphInvoker: GraphInvoker,
-    private navigation: EditorNavigationService,
-    private nodes: NodesService
+    private permissions: PermissionsService,
   ) { }
 
-  addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
+  async addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
     console.log("selected, new ->", source, target);
-    var command = new AddRunTimeLinkCommand(this.graphService.graph, source.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
-    this.graphInvoker.executeCommand(command);
-    this.navigation.getPaper().findViewByModel(source).unhighlight();
-    this.nodes.showNode(source);
-    this.nodes.showNode(target);
-    console.log("link added");
+    if(!this.permissions.writePermissions.isAllowed(source)) {
+      return Promise.reject("You are not allowed to add an interaction from the selected node.");
+    }
+    let command = new AddRunTimeLinkCommand(this.graphService.graph, source.getName(), target.getName(), timeout, circuit_breaker, dynamic_discovery);
+    return this.graphInvoker.executeCommand(command);
   }
 
-  reverseLink(link) {
+  async reverseLink(link) {
     let source = link.source();
     let target = link.target();
+    if(!this.permissions.writePermissions.isAllowed(source) || !this.permissions.writePermissions.isAllowed(target)) {
+      return Promise.reject("You are not allowed to change this interaction.");
+    }
     link.source(target);
     link.target(source);
+    Promise.resolve();
   }
 
-  removeLink(link: joint.shapes.microtosca.RunTimeLink) {
-    console.log("removing link called");
-    this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.graph, link));
+  async removeLink(link: joint.shapes.microtosca.RunTimeLink) {
+    if(!this.permissions.writePermissions.isAllowed(link.getSourceElement())) {
+      return Promise.reject("You are not allowed to add an interaction from the selected node.");
+    }
+    return this.graphInvoker.executeCommand(new RemoveLinkCommand(this.graphService.graph, link));
   }
 
   getLinks(): joint.shapes.microtosca.RunTimeLink[] {

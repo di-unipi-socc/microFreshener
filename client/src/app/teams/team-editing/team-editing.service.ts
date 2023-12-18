@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
 import { Command } from 'src/app/commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveTeamGroupCommand } from '../team-commands';
@@ -13,8 +12,7 @@ export class TeamEditingService {
 
   constructor(
     private graphService: GraphService,
-    private invoker: GraphInvoker,
-    private messageService: MessageService
+    private invoker: GraphInvoker
   ) { }
 
   getTeams(): joint.shapes.microtosca.SquadGroup[] {
@@ -25,7 +23,7 @@ export class TeamEditingService {
     return this.graphService.graph.getTeam(teamName);
   }
 
-  addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
+  async addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     let commandToExecute;
     if(!selectedNodes) {
       // Add a new empty team
@@ -35,11 +33,11 @@ export class TeamEditingService {
       let createTeamThenMoveSelectedMembersIntoIt = this.buildCreateTeamThenAddNodesCommand(this.graphService.graph, name, selectedNodes);
       commandToExecute = createTeamThenMoveSelectedMembersIntoIt;
     }
-    this.invoker.executeCommand(commandToExecute);
+    return this.invoker.executeCommand(commandToExecute);
   }
 
-  removeTeam(team: joint.shapes.microtosca.SquadGroup) {
-    this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.graph, team));
+  async removeTeam(team: joint.shapes.microtosca.SquadGroup) {
+    return this.invoker.executeCommand(new RemoveTeamGroupCommand(this.graphService.graph, team));
   }
 
   private buildCreateTeamThenAddNodesCommand(graph: Graph, newTeamName: string, selectedNodes: joint.shapes.microtosca.Node[]): Command {
@@ -88,7 +86,7 @@ export class TeamEditingService {
     }
   }
 
-  addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+  async addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     let previousTeam = this.graphService.graph.getTeamOfNode(member);
     let command;
     if(previousTeam) {
@@ -96,14 +94,12 @@ export class TeamEditingService {
     } else {
       command = new AddMemberToTeamGroupCommand(team, member);
     }
-    this.invoker.executeCommand(command);
-    this.messageService.add({ severity: 'success', summary: 'Member added to  team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+    return this.invoker.executeCommand(command);
   }
 
-  removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
+  async removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     var command = new RemoveMemberFromTeamGroupCommand(team, member);
-    this.invoker.executeCommand(command);
-    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+    return this.invoker.executeCommand(command);
   }
 
   getTeamOfNode(node: joint.shapes.microtosca.Node) {
