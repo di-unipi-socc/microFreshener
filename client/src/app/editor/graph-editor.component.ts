@@ -12,7 +12,6 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { PermissionsService } from '../permissions/permissions.service';
 import { EditorNavigationService } from '../navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing.service';
@@ -24,6 +23,7 @@ import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-a
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
+import { PermissionsService } from '../permissions/permissions.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -48,7 +48,6 @@ export class GraphEditorComponent {
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
-        private permissions: PermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,
@@ -268,27 +267,21 @@ export class GraphEditorComponent {
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
         if(this.session.isTeam()) {
-            if(this.permissions.writePermissions.areLinkable(rightClickedNode)) {
-                nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-                if(this.session.isTeam()) {
-                    nodeContextMenuItems.push(
-                        { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                            this.openAddExternalLinkDialog(rightClickedNode);
-                        } });
-                }
-            }
-            if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
-                if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
-                nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
-                    // TODO
-                }});
-            }
-            if(this.permissions.writePermissions.isAllowed(rightClickedNode)) {
-                if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
+            if(this.session.isTeam()) {
                 nodeContextMenuItems.push(
-                    { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
-                );
+                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                        this.openAddExternalLinkDialog(rightClickedNode);
+                    } });
             }
+            if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+            nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
+                // TODO
+            }});
+            if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+            nodeContextMenuItems.push(
+                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+            );
         }
         return nodeContextMenuItems;
     }
@@ -314,12 +307,12 @@ export class GraphEditorComponent {
         let interactionLinkContextMenuItems = [];
         let source = rightClickedInteractionLink.getSourceElement();
         let target = rightClickedInteractionLink.getTargetElement();
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
+        if(this.session.isTeam()) {
             interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
                 this.architecture.reverseLink(rightClickedInteractionLink);
             }});
         }
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target)) {
+        if(this.session.isTeam()) {
             interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
                 //this.editing.removeLink(rightClickedInteractionLink);
                 this.confirmationService.confirm({
@@ -341,7 +334,7 @@ export class GraphEditorComponent {
 
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
-        if(this.permissions.writePermissions.isTeamManagementAllowed()) {
+        if(this.session.isAdmin()) {
             teamContextMenuItems.push({label: "Details", icon: "pi pi-info-circle", command: () => {
                 this.contextMenuAction.emit(new ContextMenuAction("team-details", rightClickedTeam));
             }});
@@ -396,7 +389,7 @@ export class GraphEditorComponent {
         if (this.architecture.isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.architecture.isEdgeGroup(node) || this.permissions.writePermissions.isAllowed(node)) {
+        if (can_select_source_node && this.architecture.isEdgeGroup(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = cellView.model;
             let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
@@ -428,7 +421,7 @@ export class GraphEditorComponent {
         // disable link from communication pattern to Datastore
         if (this.architecture.isCommunicationPattern(this.leftClickSelectedCell) && this.architecture.isDatastore(node))
             add_link = false;
-        if (add_link && this.permissions.writePermissions.areLinkable(this.leftClickSelectedCell, node)) {
+        if (add_link) {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
@@ -505,7 +498,7 @@ export class GraphEditorComponent {
                                     team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
+                                    if(this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team).then(() => {
                                             this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
                                         });
@@ -520,7 +513,7 @@ export class GraphEditorComponent {
                         var member = <joint.shapes.microtosca.Node>cell;
                         var team = this.teams.getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
+                            if(this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team).then(() => {
                                     this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
                                 });

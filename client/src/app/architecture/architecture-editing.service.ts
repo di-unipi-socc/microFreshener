@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { g } from 'jointjs';
 import { NodesService } from './nodes/nodes.service';
-import { InteractionsService } from './interaction-with-links/interactions.service';
+import { InteractionsService } from './interacts-with-links/interactions.service';
 import { EdgeService } from './edge/edge.service';
 
 @Injectable({
