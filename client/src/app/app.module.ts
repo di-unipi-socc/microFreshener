@@ -76,6 +76,8 @@ import { SidebarTeamDetailsComponent } from './teams/sidebar-team-details/sideba
 import { SidebarTeamsRelationsComponent } from './teams/sidebar-teams-relations/sidebar-teams-relations.component';
 import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-team-navigation/subtoolbar-from-team-navigation.component';
 import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
+import { SubtoolbarComputeComponent } from './deployment/subtoolbar-compute/subtoolbar-compute.component';
+import { SidebarSmellComponent } from './refactoring/sidebar-smell/sidebar-smell.component';
 
 @NgModule({
   declarations: [
@@ -100,7 +102,9 @@ import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/su
     SidebarIncomingTeamsComponent,
     SidebarTeamDetailsComponent,
     SidebarTeamsRelationsComponent,
-    SubtoolbarTeamsComponent
+    SubtoolbarTeamsComponent,
+    SubtoolbarComputeComponent,
+    SidebarSmellComponent
   ],
   imports: [
     CommonModule,

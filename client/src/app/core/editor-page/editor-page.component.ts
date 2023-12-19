@@ -17,11 +17,14 @@ export class EditorPageComponent {
 
   selectedTeam;
 
+  selectedSmell;
+
   constructor() {
     this.sidebar = {
       viewIncomingTeams: false,
       viewTeamsInfo: false,
-      viewTeamsRelations: false
+      viewTeamsRelations: false,
+      viewSmell: false
     };
 
     this.viewTeamsInfoConfig = {
@@ -54,6 +57,9 @@ export class EditorPageComponent {
           this.viewTeamsInfoConfig.list = false;
         }
         this.viewTeamsInfoConfig.selectedTeam = <joint.shapes.microtosca.SquadGroup> action.target;
+        break;
+      case "smell-details":
+        this.selectedSmell = action.target;
         break;
     }
   }

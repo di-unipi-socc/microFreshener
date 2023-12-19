@@ -23,7 +23,6 @@ import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-a
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
-import { PermissionsService } from '../permissions/permissions.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -209,7 +208,6 @@ export class GraphEditorComponent {
             console.log("right click cell");
             let cell = cellView.model;
             this.contextMenuItems = [];
-            
             // Add element-specific context menu items
             if(this.architecture.isNode(cell)) {
                 console.debug("node right clicked");
@@ -244,6 +242,7 @@ export class GraphEditorComponent {
     }
 
     getSmellsMenuItem(cell) {
+        console.debug("getSmellsMenuItem", cell.getSmells());
         if(cell.hasSmells()) {
             let smellsMenuItems = [];
             cell.getSmells().forEach((smell: SmellObject) => {
@@ -251,7 +250,8 @@ export class GraphEditorComponent {
                     label: smell.getName(),
                     icon: "pi pi-tag",
                     command: () => {
-                        this._openDialogSmellComponent(cell, smell);
+                        //this._openDialogSmellComponent(cell, smell);
+                        this.contextMenuAction.emit(new ContextMenuAction("smell-details", smell));
                 }});
             });
         

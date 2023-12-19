@@ -13,17 +13,32 @@ declare module 'jointjs' {
             class Root extends joint.dia.Element {
                 setName(name): void;
                 getName(): string;
+            }
+            interface Sniffable {
                 addSmell(smell: ISmell): void;
                 getSmell(name: string): ISmell;
                 getSmells(): ISmell[];
                 hasSmells(): boolean;
+                showSmells(): void;
+                hideSmells(): void;
                 removeSmell(smell: ISmell): void;
                 resetSmells(): void
                 ignoreAlways(smell: ISmell): void;
                 undoIgnoreAlways(smell: ISmell): void;
                 getIgnoreAlwaysSmells(): ISmell[];
             }
-            class Node extends Root {
+            class Node extends Root implements Sniffable {
+                addSmell(smell: ISmell): void;
+                getSmell(name: string): ISmell;
+                getSmells(): ISmell[];
+                hasSmells(): boolean;
+                showSmells(): void;
+                hideSmells(): void;
+                removeSmell(smell: ISmell): void;
+                resetSmells(): void;
+                ignoreAlways(smell: ISmell): void;
+                undoIgnoreAlways(smell: ISmell): void;
+                getIgnoreAlwaysSmells(): ISmell[];
                 show(): void;
                 hide(): void;
             }
@@ -39,7 +54,18 @@ declare module 'jointjs' {
                 getType(): string;
                 getType(): string;
             }
-            class Group extends Root {
+            class Group extends Root implements Sniffable {
+                addSmell(smell: ISmell): void;
+                getSmell(name: string): ISmell;
+                getSmells(): ISmell[];
+                hasSmells(): boolean;
+                showSmells(): void;
+                hideSmells(): void;
+                removeSmell(smell: ISmell): void;
+                resetSmells(): void;
+                ignoreAlways(smell: ISmell): void;
+                undoIgnoreAlways(smell: ISmell): void;
+                getIgnoreAlwaysSmells(): ISmell[];
                 addMember(node:joint.shapes.microtosca.Node): void
                 removeMember(node:joint.shapes.microtosca.Node): void
                 getMembers(): joint.shapes.microtosca.Node[]
