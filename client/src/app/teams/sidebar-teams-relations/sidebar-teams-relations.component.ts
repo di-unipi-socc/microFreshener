@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular
 import * as d3 from 'd3';
 import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
-import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
 import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';

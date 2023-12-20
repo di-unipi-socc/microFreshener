@@ -50,12 +50,20 @@ export class SidebarSmellComponent {
 
   apply() {
     console.debug("selectedCommand changed", this.selectedCommand);
-    this.invoker.executeCommand(this.selectedCommand);
+    this.invoker.executeCommand(this.selectedCommand).then(() => { this.resetSidebar(); this.visible = false; });
+    this.closeSidebar();
   }
 
   resetSidebar() {
     this.actions = [];
     this.selectedCommand = undefined;
+  }
+
+  closeSidebar() {
+    this.resetSidebar();
+    this.smell = undefined;
+    this.visible = false;
+    this.visibleChange.emit(false);
   }
 
   onSidebarOpen() {

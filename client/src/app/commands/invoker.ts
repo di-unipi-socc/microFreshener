@@ -22,11 +22,12 @@ export class GraphInvoker {
         try {
             command.execute();
             this.undoStack.push(command);
-        if(!silent)
-            this.invokeSubject.next();
+            if(!silent)
+                this.invokeSubject.next();
         } catch (e) {
-            Promise.reject(e);
+            return Promise.reject(e);
         }
+        return Promise.resolve();
     }
 
     async undo() {
@@ -38,8 +39,9 @@ export class GraphInvoker {
             command.unexecute();
             this.redoStack.push(command);
             this.invokeSubject.next();
+            return Promise.resolve();
         } catch(e) {
-            Promise.reject(e);
+            return Promise.reject(e);
         }
     }
 
@@ -52,8 +54,9 @@ export class GraphInvoker {
             command.execute();
             this.undoStack.push(command);
             this.invokeSubject.next();
+            return Promise.resolve();
         } catch(e) {
-            Promise.reject(e);
+            return Promise.reject(e);
         }
     }
 
