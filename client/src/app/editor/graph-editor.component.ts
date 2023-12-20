@@ -285,10 +285,7 @@ export class GraphEditorComponent {
     }
 
     getExternalUserContextMenu(rightClickedNode): MenuItem[] {
-        let nodeContextMenuItems = [];
-        if(this.session.isTeam()) {
-            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-        }
+        let nodeContextMenuItems = [this.getAddInteractionElement(rightClickedNode)];
         return nodeContextMenuItems;
     }
 
@@ -303,30 +300,24 @@ export class GraphEditorComponent {
 
     getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
         let interactionLinkContextMenuItems = [];
-        let source = rightClickedInteractionLink.getSourceElement();
-        let target = rightClickedInteractionLink.getTargetElement();
-        if(this.session.isTeam()) {
-            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
-                this.architecture.reverseLink(rightClickedInteractionLink);
-            }});
-        }
-        if(this.session.isTeam()) {
-            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
-                //this.editing.removeLink(rightClickedInteractionLink);
-                this.confirmationService.confirm({
-                    message: 'Do you want to delete the link?',
-                    header: 'Link deletion',
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.architecture.removeLink(rightClickedInteractionLink);
-                        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
-                    },
-                    reject: () => {
-                        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
-                    }
-                });
-            }});
-        }
+        interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
+            this.architecture.reverseLink(rightClickedInteractionLink);
+        }});
+        interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
+            //this.editing.removeLink(rightClickedInteractionLink);
+            this.confirmationService.confirm({
+                message: 'Do you want to delete the link?',
+                header: 'Link deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.architecture.removeLink(rightClickedInteractionLink);
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
+                },
+                reject: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+                }
+            });
+        }});
         return interactionLinkContextMenuItems;
     }
 
