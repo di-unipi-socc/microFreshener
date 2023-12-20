@@ -4,6 +4,7 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser.service';
 import { Smell } from "../../graph/model/smell";
 import { Principle } from '../../graph/model/principles';
+import { SessionService } from 'src/app/core/session/session.service';
 
 interface Orchestrator {
   id?: number,
@@ -25,7 +26,7 @@ export class DialogAnalysisComponent implements OnInit {
   containerOrchestrators: Orchestrator[] = [];
   selectedOrchestrator: Orchestrator;
 
-  constructor(private as: AnalyserService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
+  constructor(private as: AnalyserService, private session: SessionService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
 
     this.containerOrchestrators = [
       { id: 1, name: 'Custom', img: "general.jpeg", resolvedSmells: [] },
@@ -38,6 +39,7 @@ export class DialogAnalysisComponent implements OnInit {
 
   ngOnInit() {
     this.as.getPrinciplesToAnalyse().then(principles => {
+      principles = this.removeTeamSmellsIfTeamMember(principles);
       principles.forEach(principle => {
         principle.smells.forEach(smell => {
           this.selectedSmells.push(smell);
@@ -46,6 +48,15 @@ export class DialogAnalysisComponent implements OnInit {
       this.principles = principles;
     });
 
+  }
+
+  removeTeamSmellsIfTeamMember(principles: Principle[]) {
+    if(this.session.isTeam()) {
+    principles.forEach(principle => {
+      principle.smells = principle.smells.filter(smell => smell.id != 7 && smell.id != 8 && smell.id != 9);
+    });
+    }
+    return principles;
   }
 
   discardSmellsWithIDIn(ids: number[]){
