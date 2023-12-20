@@ -4,6 +4,7 @@ import { SmellObject } from "../smells/smell";
 import { AddServiceCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
+import { RefactoringPolicy } from "./refactoring-policy";
 
 export class AddDataManagerRefactoring implements Refactoring {
 

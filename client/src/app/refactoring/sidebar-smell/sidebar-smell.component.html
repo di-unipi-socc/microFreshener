@@ -9,7 +9,7 @@
         <div *ngIf="smell">
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
-                    <h1>Found {{smell?.name}} on {{jointNodeModel?.getName()}}</h1>
+                    <h1>Found {{smell?.name}} bad smell on {{jointNodeModel?.getName()}}</h1>
                     <br/>
                     <p>{{smell?.getDescription()}}</p>
                 </div>
@@ -18,9 +18,10 @@
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
                     <h3>Refactor</h3>
-                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
+                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand" (onChange)="checkRestrictions()"></p-dropdown>
                     <p *ngIf="selectedCommand"> {{selectedCommand?.getDescription() || 'none'}}</p>
-                    <button *ngIf="selectedCommand" pButton type="button" label="Apply" (click)="apply()"></button>
+                    <button *ngIf="selectedCommand && allowedRefactoring" pButton type="button" label="Apply" (click)="apply()"></button>
+                    <p *ngIf="refactoringWarning" style="color: red; font-weight: bold;">{{refactoringWarning}}</p>
                 </div>
             </div>
 

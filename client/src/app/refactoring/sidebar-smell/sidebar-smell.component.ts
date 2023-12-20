@@ -2,6 +2,9 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command } from '../../commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
+import { MergeServicesPolicy, MergeServicesRefactoring } from '../refactorings/merge-services';
+import { GraphService } from 'src/app/graph/graph.service';
+import { SessionService } from 'src/app/core/session/session.service';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -20,8 +23,13 @@ export class SidebarSmellComponent {
   jointNodeModel;
   @Input() smell: (SmellObject | GroupSmellObject);
 
+  allowedRefactoring: boolean;
+  refactoringWarning: string;
+
   constructor(
     private invoker: GraphInvoker,
+    private graphService: GraphService,
+    private session: SessionService
   ) {
     this.resetSidebar();
   }
@@ -48,8 +56,28 @@ export class SidebarSmellComponent {
     }
   }
 
+  checkRestrictions() {
+    console.debug("checking restrictions");
+    this.allowedRefactoring = true;
+    this.refactoringWarning = undefined;
+    if(this.session.isTeam()) {
+      if(this.selectedCommand instanceof MergeServicesRefactoring) {
+        let graph = this.graphService.graph;
+        let smell = this.smell;
+        let team = graph.findTeamByName(this.session.getTeamName());
+        let policy = new MergeServicesPolicy(graph, <SmellObject> smell, team);
+        this.allowedRefactoring = policy.isAllowed();
+        if(this.allowedRefactoring) {
+          console.debug("Allowed");
+        } else {
+          console.warn("Not allowed");
+          this.refactoringWarning = policy.whyNotAllowed();
+        }
+      }
+    }
+  }
+
   apply() {
-    console.debug("selectedCommand changed", this.selectedCommand);
     this.invoker.executeCommand(this.selectedCommand).then(() => { this.resetSidebar(); this.visible = false; });
     this.closeSidebar();
   }

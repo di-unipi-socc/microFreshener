@@ -9,7 +9,7 @@ import { AddDataManagerRefactoring } from './add-data-manager';
 import { AddMessageBrokerRefactoring } from './add-message-broker';
 import { AddMessageRouterRefactoring } from './add-message-router';
 import { AddServiceDiscoveryRefactoring } from './add-service-discovery';
-import { MergeServicesRefactoring } from './merge-services-refactoring';
+import { MergeServicesRefactoring } from './merge-services';
 import { Refactoring, GroupRefactoring } from './refactoring-command';
 import { SplitDatastoreRefactoring } from './split-datastore';
 import { SplitTeamsByCouplingRefactoring } from './split-teams-by-coupling';
