@@ -99,7 +99,7 @@ export class TeamsAnalyticsService {
     let nodeTeam = this.graphService.graph.getTeamOfNode(node);
     return this.graphService.graph.getIngoingLinks(node)
                                   .map((n) => this.graphService.graph.getTeamOfNode(<joint.shapes.microtosca.Node> n.getSourceElement()))
-                                  .filter((t) => t != nodeTeam).length == 0;
+                                  .filter((t) => t != nodeTeam).length != 0;
   }
 
 }

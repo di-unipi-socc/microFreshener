@@ -67,7 +67,7 @@ export class NodesService {
     if(!this.permissionsService.writePermissions.isAllowed(node)) {
       return Promise.reject(`You are not allowed to delete this.`);
     } else if(this.teamsService.hasTeamDependencies(node)) {
-      return Promise.reject(`You cannot delete this because other teams interacts with it.`);
+      return Promise.reject(`You cannot delete this because other teams interact with it.`);
     }
     return this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
   }
