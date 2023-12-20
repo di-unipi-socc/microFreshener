@@ -7,8 +7,9 @@ export class SingleLayerTeamsSmellObject extends GroupSmellObject {
     }
 
     getDescription(): string {
-        let services = new Set<joint.shapes.microtosca.Root>();
-        this.getLinkBasedCauses().forEach(link => { services.add(<joint.shapes.microtosca.Root>link.getSourceElement()) });
+        let services = new Set<joint.shapes.microtosca.Service>();
+        console.debug("Link based causes are", this.getLinkBasedCauses())
+        this.getLinkBasedCauses().forEach(link => { services.add(<joint.shapes.microtosca.Service>link.getSourceElement()); console.debug(`${(<joint.shapes.microtosca.Node> link.getSourceElement()).getName()} added`) });
         return `Data related to ${Array.from(services).map((service) => service.getName()).join(", ")} is being managed by other teams.\n`;
     }
 }
