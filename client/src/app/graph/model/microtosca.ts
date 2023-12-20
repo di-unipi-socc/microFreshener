@@ -309,29 +309,38 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
 
 
 joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration.builder({
-    size: { width: 75, height: 75 },
+    size: { width: 50, height: 50 },
     attrs: {
         body: {
-            refCx: '50%',
-            refCy: '50%',
-            refR: '50%',
-            //strokeWidth: 8,
-            stroke: '#1CC288',
-            fill: '#1CC288',
-            magnet: false
+            refWidth: '100%',
+            refHeight: '100%',
+            fill: '#74B7C6',
+            magnet: false,
+            points: "50,0 100,50 50,100 0,50",
+            stroke: "black"
         },
         label: {
             textVerticalAnchor: 'middle',
             textAnchor: 'middle',
-            refX: '50%',
-            refY: '100%',
-            refY2: 15,
+            refX: '100%',
+            refY: '200%',
+            refY2: 14,
             fontSize: NODE_LABEL_FONT_SIZE,
-            //refWidth: '75%',
-            //refHeight: '75%',
             fill: 'black',
-            text: '',
+            text: ''
         },
+        type: {
+            textVerticalAnchor: 'middle',
+            textAnchor: 'middle',
+            //visibility: "visible",
+            refX: '100%',
+            refY: '100%',
+            // refY2: 18,
+            fontSize: COMMUNICATION_PATTERN_TYPE_FONT_SIZE,
+            fill: '#333333',
+            text: 'C',
+            cursor: "default"
+        }
         /*MultipleServicesInOneContainer: { // MultipleServicesInOneContainer
             fill: ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER,
             event: 'smell:MultipleServicesInOneContainer:pointerdown',
@@ -347,16 +356,15 @@ joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration
     },
 }, {
         markup: [{
-            tagName: 'circle',
-            selector: 'body',
+            tagName: 'polygon',
+            selector: 'body'
         }, {
             tagName: 'text',
             selector: 'label'
-        }, /*{
-            tagName: 'path',
-            selector: 'MultipleServicesInOneContainer'
-        },*/
-        ],
+        }, {
+            tagName: 'text',
+            selector: 'type'
+        }],
     }).buildName().buildSmells().buildVisibility().build());
 
 
@@ -805,7 +813,7 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfi
             stroke: '#333333',
             strokeWidth: 2,
             strokeLinejoin: 'round',
-            strokeDasharray: "5,10,5",
+            strokeDasharray: "10",
             targetMarker: {
                 type: 'path',
                 d: 'M 10 -5 0 0 10 5 z'
