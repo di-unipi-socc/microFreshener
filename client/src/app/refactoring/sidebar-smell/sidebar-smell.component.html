@@ -1,10 +1,10 @@
 <p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
     <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
-        <h1>Bad smells analysis</h1>
         <div *ngIf="smell">
-            <!--<div class="p-grid p-justify-center p-align-center vertical-container">
+            <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
-                    <h1>Found {{smell?.name}} for {{jointNodeModel?.getName()}}</h1>
+                    <h1>Found {{smell?.name}}<br/>on {{jointNodeModel?.getName()}}</h1>
+                    <br/>
                     <p>{{smell?.getDescription()}}</p>
                 </div>
             </div>
@@ -18,7 +18,7 @@
             </div>
 
             <div class="p-grid p-justify-end">
-            </div>-->
+            </div>
         </div>
 
     </p-scrollPanel>
