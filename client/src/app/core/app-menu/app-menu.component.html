@@ -20,12 +20,11 @@
 
             <div  class="tool-buttons" *ngIf="this.session.isAdmin()">
                 <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
-                <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-teams-management (viewTeamsInfo)="sidebarChange($event)"></app-subtoolbar-teams-management>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-architecture></app-subtoolbar-architecture>
-                <p-divider layout="vertical"></p-divider>
-                <app-subtoolbar-compute></app-subtoolbar-compute>
+                <!--<p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-compute></app-subtoolbar-compute>-->
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-undo></app-subtoolbar-undo>
                 <app-subtoolbar-navigation></app-subtoolbar-navigation>
