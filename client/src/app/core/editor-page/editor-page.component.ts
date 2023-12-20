@@ -34,6 +34,7 @@ export class EditorPageComponent {
   }
 
   onSidebarChange(sidebarUpdate) {
+    console.debug("sidebar update", sidebarUpdate, "name is", sidebarUpdate.name)
     this.sidebar[sidebarUpdate.name] = sidebarUpdate.visible;
 
     switch(sidebarUpdate.name) {
@@ -60,6 +61,7 @@ export class EditorPageComponent {
         break;
       case "smell-details":
         this.selectedSmell = action.target;
+        this.sidebar["viewSmell"] = true;
         break;
     }
   }

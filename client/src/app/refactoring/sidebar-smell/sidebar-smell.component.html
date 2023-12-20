@@ -1,11 +1,11 @@
 <p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
     <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
-
+        <h1>Bad smells analysis</h1>
         <div *ngIf="smell">
-            <div class="p-grid p-justify-center p-align-center vertical-container">
+            <!--<div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
-                    <h1>Found {{smell.name}} for {{jointNodeModel.getName()}}</h1>
-                    <p>{{smell.getDescription()}}</p>
+                    <h1>Found {{smell?.name}} for {{jointNodeModel?.getName()}}</h1>
+                    <p>{{smell?.getDescription()}}</p>
                 </div>
             </div>
 
@@ -13,14 +13,12 @@
                 <div class="p-col-2">
                     <h3>Refactor</h3>
                     <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
-                    <p *ngIf="selectedCommand"> {{selectedCommand.getDescription() || 'none'}}</p>
+                    <p *ngIf="selectedCommand"> {{selectedCommand?.getDescription() || 'none'}}</p>
                 </div>
             </div>
 
             <div class="p-grid p-justify-end">
-                <!--<button class="p-col-2" type="button" pButton (click)="save()" label="Apply" class="ui-button-success">
-                </button>-->
-            </div>
+            </div>-->
         </div>
 
     </p-scrollPanel>

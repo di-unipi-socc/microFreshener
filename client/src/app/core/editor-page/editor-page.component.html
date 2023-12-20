@@ -25,9 +25,9 @@
     </app-sidebar-teams-relations>
 
     <app-sidebar-smell
-        visible="true"
+        [(visible)]="sidebar.viewSmell"
         [(smell)]="selectedSmell"
         class="sidebar">
-    </app-sidebar-smell> <!-- [(visible)]="sidebar.viewSmell" -->
+    </app-sidebar-smell>
 
 </div>

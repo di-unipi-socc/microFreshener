@@ -19,7 +19,7 @@ export class SidebarSmellComponent {
   jointNodeModel;
   @Input() smell: (SmellObject | GroupSmellObject);
 
-  constructor(private graphService: GraphService) {
+  constructor() {
     this.actions = [];
     this.selectedCommand = null;
   }
@@ -28,27 +28,25 @@ export class SidebarSmellComponent {
 
     // Sidebar opening
     if(!change.visible?.previousValue && change.visible?.currentValue) {
-      //this.onSidebarOpen();
+      console.debug("opening sidebar");
+      this.onSidebarOpen();
     }
 
     // Sidebar closing
     if(change.visible?.previousValue && !change.visible?.currentValue) {
+      console.debug("closing sidebar");
       //this.onSidebarClose();
     }
 
-    // From team detail to team list
-    if(!change.list?.previousValue && change.list?.currentValue) {
-      //this.less();
-    }
-
     // If a team has been selected outside the sidebar, open the team details
-    if(change.selectedTeam?.currentValue && change.selectedTeam?.currentValue !== change.selectedTeam?.previousValue) {
-      //this.more(change.selectedTeam.currentValue);
+    if(change.smell?.currentValue && change.smell?.currentValue != change.smell?.previousValue) {
+      console.debug("smell changed", this.smell);
     }
   }
 
-  ngOnInit() {
+  onSidebarOpen() {
     if (this.smell) {
+      console.debug("Smell is", this.smell);
       //this.jointNodeModel = this.config.data.model;
       //this.smell = this.config.data.selectedsmell;
       console.debug("Refactorings:", this.smell.getRefactorings());
