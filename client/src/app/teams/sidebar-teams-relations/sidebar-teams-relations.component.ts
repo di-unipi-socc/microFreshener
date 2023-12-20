@@ -31,7 +31,7 @@ export class SidebarTeamsRelationsComponent {
   private readonly OPACITY_RIBBON = 0.2;
   private readonly OPACITY_HIGHLIGHT = 1;
   private readonly LINK_COLOR = "black";
-  private readonly TEAM_COLOR = "#E5E7E9";
+  private readonly TEAM_COLOR = "white";
 
   private interactingTeamsNames;
   private colors;

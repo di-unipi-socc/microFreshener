@@ -119,7 +119,7 @@ export class SubtoolbarTeamsComponent {
   toggleTeamsInfo() {
     // Show teams when toggle "Team info"
     if(this.showTeamsInfoToggled) {
-      this.toggleShowTeam();
+      //this.toggleShowTeam();
       this.openTeamsInfoSidebar();
     } else {
       this.closeTeamsInfoSidebar();
@@ -144,7 +144,7 @@ export class SubtoolbarTeamsComponent {
 
   toggleTeamsRelations() {
     if(this.showTeamsRelationsToggled) {
-      this.toggleShowTeam(true);
+      //this.toggleShowTeam(true);
       this.openTeamRelationsSidebar();
     } else {
       this.closeTeamRealtionsSidebar();
