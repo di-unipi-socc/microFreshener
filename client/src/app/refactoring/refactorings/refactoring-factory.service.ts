@@ -3,7 +3,7 @@ import { AddNodeCommand } from 'src/app/architecture/node-commands';
 import { Command, CompositeCommand, Sequentiable } from 'src/app/commands/icommand';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { SmellObject, GroupSmellObject } from '../smells/smell';
-import { AddApiGatewayRefactoring } from './add-api-gateway-refactoring-command';
+import { AddApiGatewayRefactoring } from './add-api-gateway';
 import { AddCircuitBreakerRefactoring } from './add-circuit-breaker';
 import { AddDataManagerRefactoring } from './add-data-manager';
 import { AddMessageBrokerRefactoring } from './add-message-broker';

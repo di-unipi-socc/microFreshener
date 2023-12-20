@@ -4,6 +4,7 @@ import { GroupSmellObject } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
+import { GraphService } from "src/app/graph/graph.service";
 
 export class AddApiGatewayRefactoring extends GroupRefactoring {
 
@@ -49,4 +50,14 @@ export class AddApiGatewayRefactoring extends GroupRefactoring {
         return msg;
     }
 
+}
+
+
+export class AddApiGatewayTeamPolicy {
+
+    constructor(private graph: GraphService, private team: joint.shapes.microtosca.SquadGroup) {}
+
+    isAllowed(node: joint.shapes.microtosca.Node, smell: GroupSmellObject): boolean {
+        return smell.getNodeBasedCauses().includes(node) && this.team == this.graph.graph.getTeamOfNode(node);
+    }
 }

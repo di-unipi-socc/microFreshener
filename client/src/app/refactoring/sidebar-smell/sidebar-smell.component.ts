@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command } from '../../commands/icommand';
-import { GraphService } from 'src/app/graph/graph.service';
+import { GraphInvoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -14,12 +14,15 @@ export class SidebarSmellComponent {
   @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   actions: Object[];
-  selectedCommand: Command;
+  @Input() selectedCommand: Command;
+  previousSelectedCommand: Command;
 
   jointNodeModel;
   @Input() smell: (SmellObject | GroupSmellObject);
 
-  constructor() {
+  constructor(
+    private invoker: GraphInvoker,
+  ) {
     this.actions = [];
     this.selectedCommand = null;
   }
@@ -42,6 +45,11 @@ export class SidebarSmellComponent {
     if(change.smell?.currentValue && change.smell?.currentValue != change.smell?.previousValue) {
       console.debug("smell changed", this.smell);
     }
+  }
+
+  apply() {
+    console.debug("selectedCommand changed", this.selectedCommand);
+    this.invoker.executeCommand(this.selectedCommand);
   }
 
   onSidebarOpen() {

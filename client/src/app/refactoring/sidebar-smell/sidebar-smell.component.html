@@ -14,6 +14,7 @@
                     <h3>Refactor</h3>
                     <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
                     <p *ngIf="selectedCommand"> {{selectedCommand?.getDescription() || 'none'}}</p>
+                    <button *ngIf="selectedCommand" pButton type="button" label="Apply" (click)="apply()"></button>
                 </div>
             </div>
 
