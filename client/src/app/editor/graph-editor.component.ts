@@ -266,23 +266,21 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
+        nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
         if(this.session.isTeam()) {
-            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-            if(this.session.isTeam()) {
-                nodeContextMenuItems.push(
-                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                        this.openAddExternalLinkDialog(rightClickedNode);
-                    } });
-            }
-            if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
-            nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
-                // TODO
-            }});
-            if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
             nodeContextMenuItems.push(
-                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
-            );
+                { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                    this.openAddExternalLinkDialog(rightClickedNode);
+                } });
         }
+        if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
+            // TODO
+        }});
+        if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        nodeContextMenuItems.push(
+            { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+        );
         return nodeContextMenuItems;
     }
 
@@ -389,7 +387,7 @@ export class GraphEditorComponent {
         if (this.architecture.isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.architecture.isEdgeGroup(node)) {
+        if (can_select_source_node || this.architecture.isEdgeGroup(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = cellView.model;
             let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
