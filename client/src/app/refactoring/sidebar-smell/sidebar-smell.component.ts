@@ -3,6 +3,7 @@ import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command } from '../../commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
+import { Refactoring } from '../refactorings/refactoring-command';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -15,8 +16,8 @@ export class SidebarSmellComponent {
   @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   actions: Object[];
-  @Input() selectedRefactoring: Command;
-  previousSelectedRefactoring: Command;
+  @Input() selectedRefactoring: Refactoring;
+  previousSelectedRefactoring: Refactoring;
 
   jointNodeModel;
   @Input() smell: (SmellObject | GroupSmellObject);
@@ -50,13 +51,14 @@ export class SidebarSmellComponent {
 
   onRefactoringSelected() {
     if(this.previousSelectedRefactoring) {
-      this.previousSelectedRefactoring.unexecute();
+      // this.previousSelectedRefactoring.unexecute();
       this.previousSelectedRefactoring = undefined;
     }
     if(!(this.selectedRefactoring instanceof NotAllowedRefactoring)) {
-      this.selectedRefactoring.execute();
+      // this.selectedRefactoring.execute();
       this.previousSelectedRefactoring = this.selectedRefactoring;
     }
+    console.debug("Selected refactoring", this.selectedRefactoring.getName(), "previous", this.previousSelectedRefactoring.getName())
   }
 
   canApply()  {

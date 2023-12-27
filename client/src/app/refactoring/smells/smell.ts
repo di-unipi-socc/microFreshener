@@ -59,14 +59,7 @@ export class SmellObject implements ISmell {
     }
 
     getDescription(): string {
-        var descr = "";
-        this.getLinkBasedCauses().forEach(link => {
-            let source = <joint.shapes.microtosca.Root>link.getSourceElement();
-            let target = <joint.shapes.microtosca.Root>link.getTargetElement();
-
-            descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
-        })
-        return descr;
+        return `Node causes are: ${this.getNodeBasedCauses().map((node) => node.getName()).join(", ")}.\nLink causes are ${this.getLinkBasedCauses().map((link) => { (<joint.shapes.microtosca.Node> link?.getSourceElement())?.getName() + " -> " + (<joint.shapes.microtosca.Node> link?.getTargetElement())?.getName()})}`
     }
 }
 

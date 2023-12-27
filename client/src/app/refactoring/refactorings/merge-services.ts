@@ -3,6 +3,8 @@ import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
 import { MergeServicesCommand } from "src/app/architecture/node-commands";
 import { RefactoringPolicy } from "./refactoring-policy";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
+import { Command, ElementCommand } from "src/app/commands/icommand";
 
 
 export class MergeServicesTeamPolicy implements RefactoringPolicy {
@@ -34,7 +36,7 @@ export class MergeServicesTeamPolicy implements RefactoringPolicy {
 
 export class MergeServicesRefactoring implements Refactoring {
 
-    command: MergeServicesCommand;
+    command: ElementCommand<joint.shapes.microtosca.Service>;
 
     public static readonly NAME = "Merge services";
 
@@ -66,12 +68,18 @@ export class MergeServicesRefactoring implements Refactoring {
             build(): MergeServicesRefactoring {
                 // Add the new merged service and link it to the datastore
                 let databaseUsers = this.smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
-                if(this.team)
+                if(this.team) {
                     databaseUsers = databaseUsers.filter((node) => this.graph.getTeamOfNode(node) == this.team);
+                }
                 let position = this.graph.getPointCloseTo(this.smell.getLinkBasedCauses()[0].getTargetElement());
-                let command = new MergeServicesCommand(this.graph, position, ...databaseUsers);
+                let command: ElementCommand<joint.shapes.microtosca.Service> = new MergeServicesCommand(this.graph, position, ...databaseUsers);
                 let refactoring = new MergeServicesRefactoring();
                 refactoring.command = command;
+                if(this.team) {
+                    refactoring.command = refactoring.command.bind(new AddMemberToTeamGroupCommand<joint.shapes.microtosca.Service>(this.team));
+                    let oldGetDescription = refactoring.getDescription;
+                    refactoring.getDescription = () => `${oldGetDescription()}\nRestricted to ${this.team.getName()}'s nodes only.`;
+                }
                 return refactoring;
             }
 

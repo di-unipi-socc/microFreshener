@@ -59,12 +59,13 @@ export class ChangeLinkTargetCommand implements Command {
     constructor(private graph: Graph, private link: joint.dia.Link, private newTargetName: string) {}
 
     execute() {
-        this.oldTarget = this.link.getSourceElement();
+        this.oldTarget = this.link.getTargetElement();
         let newTarget = this.graph.getNode(this.newTargetName);
         this.link.target(newTarget);
     }
 
     unexecute() {
+        console.debug("Undoing ChangeLinkTargetCommand. Old target is", this.oldTarget);
         this.link.target(this.oldTarget);
     }
 }
