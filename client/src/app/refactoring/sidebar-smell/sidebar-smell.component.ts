@@ -2,9 +2,7 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 import { GroupSmellObject, SmellObject } from '../smells/smell';
 import { Command } from '../../commands/icommand';
 import { GraphInvoker } from 'src/app/commands/invoker';
-import { MergeServicesPolicy, MergeServicesRefactoring } from '../refactorings/merge-services';
-import { GraphService } from 'src/app/graph/graph.service';
-import { SessionService } from 'src/app/core/session/session.service';
+import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -17,19 +15,14 @@ export class SidebarSmellComponent {
   @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   actions: Object[];
-  @Input() selectedCommand: Command;
-  previousSelectedCommand: Command;
+  @Input() selectedRefactoring: Command;
+  previousSelectedRefactoring: Command;
 
   jointNodeModel;
   @Input() smell: (SmellObject | GroupSmellObject);
 
-  allowedRefactoring: boolean;
-  refactoringWarning: string;
-
   constructor(
-    private invoker: GraphInvoker,
-    private graphService: GraphService,
-    private session: SessionService
+    private invoker: GraphInvoker
   ) {
     this.resetSidebar();
   }
@@ -45,7 +38,6 @@ export class SidebarSmellComponent {
     // Sidebar closing
     if(change.visible?.previousValue && !change.visible?.currentValue) {
       console.debug("closing sidebar");
-      //this.onSidebarClose();
     }
 
     // If a team has been selected outside the sidebar, open the team details
@@ -56,40 +48,33 @@ export class SidebarSmellComponent {
     }
   }
 
-  checkRestrictions() {
-    console.debug("checking restrictions");
-    this.allowedRefactoring = true;
-    this.refactoringWarning = undefined;
-    if(this.session.isTeam()) {
-      if(this.selectedCommand instanceof MergeServicesRefactoring) {
-        let graph = this.graphService.graph;
-        let smell = this.smell;
-        let team = graph.findTeamByName(this.session.getTeamName());
-        let policy = new MergeServicesPolicy(graph, <SmellObject> smell, team);
-        this.allowedRefactoring = policy.isAllowed();
-        if(this.allowedRefactoring) {
-          console.debug("Allowed");
-        } else {
-          console.warn("Not allowed");
-          this.refactoringWarning = policy.whyNotAllowed();
-        }
-      }
+  onRefactoringSelected() {
+    if(this.previousSelectedRefactoring) {
+      this.previousSelectedRefactoring.unexecute();
+      this.previousSelectedRefactoring = undefined;
+    }
+    if(!(this.selectedRefactoring instanceof NotAllowedRefactoring)) {
+      this.selectedRefactoring.execute();
+      this.previousSelectedRefactoring = this.selectedRefactoring;
     }
   }
 
+  canApply()  {
+    return this.selectedRefactoring && !(this.selectedRefactoring instanceof NotAllowedRefactoring);
+  }
+
   apply() {
-    this.invoker.executeCommand(this.selectedCommand).then(() => { this.resetSidebar(); this.visible = false; });
+    this.invoker.executeCommand(this.selectedRefactoring).then(() => { this.resetSidebar(); this.visible = false; });
     this.closeSidebar();
   }
 
   resetSidebar() {
     this.actions = [];
-    this.selectedCommand = undefined;
+    this.selectedRefactoring = undefined;
   }
 
   closeSidebar() {
     this.resetSidebar();
-    this.smell = undefined;
     this.visible = false;
     this.visibleChange.emit(false);
   }

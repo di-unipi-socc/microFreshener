@@ -1,5 +1,5 @@
 import { Graph } from "src/app/graph/model/graph";
-import { Refactoring } from "./refactoring-command";
+import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { SmellObject } from "../smells/smell";
 import { MergeServicesCommand } from "src/app/architecture/node-commands";
 import { RefactoringPolicy } from "./refactoring-policy";
@@ -22,8 +22,12 @@ export class MergeServicesTeamPolicy implements RefactoringPolicy {
         if(!this.canRefactoringBePerformed) {
             let databaseUsers = this.smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
             let conflicts = databaseUsers.map((node) => this.graph.getTeamOfNode(node)).filter((team) => team != this.team);
-            return `You don't have all the required permissions to perform this refactoring. Please ask ${conflicts.map((c) => c.getName()).join(", ")}.`;
+            return `You can edit less than two involved services. Please ask ${conflicts.map((c) => c.getName()).join(", ")}.`;
         }
+    }
+
+    getRefactoringName(): string {
+        return MergeServicesRefactoring.NAME;
     }
 
 }
@@ -31,6 +35,8 @@ export class MergeServicesTeamPolicy implements RefactoringPolicy {
 export class MergeServicesRefactoring implements Refactoring {
 
     command: MergeServicesCommand;
+
+    public static readonly NAME = "Merge services";
 
     private constructor() {}
 
@@ -43,7 +49,7 @@ export class MergeServicesRefactoring implements Refactoring {
     }
 
     getName() {
-        return "Merge services";
+        return MergeServicesRefactoring.NAME;
     }
 
     getDescription() {
@@ -51,25 +57,10 @@ export class MergeServicesRefactoring implements Refactoring {
     }
 
     static builder() {
-        return new class Builder {
+        return new class Builder extends RefactoringBuilder {
 
-            private graph: Graph;
-            private smell: SmellObject;
-            private team: joint.shapes.microtosca.SquadGroup;
-            
-            setGraph(graph: Graph) {
-                this.graph = graph;
-                return this;
-            }
-
-            setSmell(smell: SmellObject) {
-                this.smell = smell;
-                return this;
-            }
-
-            setTeam(team: joint.shapes.microtosca.SquadGroup) {
-                this.team = team;
-                return this;
+            constructor() {
+                super();
             }
 
             build(): MergeServicesRefactoring {

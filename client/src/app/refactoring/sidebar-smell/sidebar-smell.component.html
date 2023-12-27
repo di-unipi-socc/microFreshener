@@ -18,10 +18,14 @@
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
                     <h3>Refactor</h3>
-                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand" (onChange)="checkRestrictions()"></p-dropdown>
-                    <p *ngIf="selectedCommand"> {{selectedCommand?.getDescription() || 'none'}}</p>
-                    <button *ngIf="selectedCommand && allowedRefactoring" pButton type="button" label="Apply" (click)="apply()"></button>
-                    <p *ngIf="refactoringWarning" style="color: red; font-weight: bold;">{{refactoringWarning}}</p>
+                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring" (onChange)="onRefactoringSelected()"></p-dropdown>
+                    <div *ngIf="canApply()">
+                        <p *ngIf="selectedCommand"> {{selectedRefactoring?.getDescription() || 'none'}}</p>
+                        <button pButton type="button" label="Apply" (click)="apply()"></button>
+                    </div>
+                    <div *ngIf="!canApply()">
+                        <p style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</p>
+                    </div>
                 </div>
             </div>
 
