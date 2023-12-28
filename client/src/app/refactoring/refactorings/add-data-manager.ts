@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 import { AddServiceCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
@@ -10,7 +10,7 @@ export class AddDataManagerRefactoring implements Refactoring {
 
     command: CompositeCommand;
 
-    constructor(graph: Graph, smell: SmellObject) {
+    constructor(graph: Graph, smell: NodeSmell) {
         let cmds = [];
         let databaseManagerName = "DB manager";
         let dbManagerPosition = graph.getPointCloseTo(smell.getLinkBasedCauses()[0]?.getTargetElement());

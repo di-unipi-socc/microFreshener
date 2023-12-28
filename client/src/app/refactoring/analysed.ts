@@ -1,11 +1,11 @@
-import { GroupSmellObject, SmellObject } from './smells/smell';
+import { GroupSmell, NodeSmell } from './smells/smell';
 import * as joint from 'jointjs';
 
 export class Analysed<T extends (joint.shapes.microtosca.Node | joint.shapes.microtosca.Group)> {
 
     private constructor(
         private name: string,
-        private smells: (SmellObject | GroupSmellObject)[],
+        private smells: (NodeSmell | GroupSmell)[],
         private element: T
     ) {}
 
@@ -28,14 +28,14 @@ export class Analysed<T extends (joint.shapes.microtosca.Node | joint.shapes.mic
     static getBuilder<T extends (joint.shapes.microtosca.Node | joint.shapes.microtosca.Group)>() {
         return new class Builder {
             private name: string;
-            private smells: (SmellObject | GroupSmellObject)[];
+            private smells: (NodeSmell | GroupSmell)[];
             private element: T;
 
             constructor() {
                 this.smells = [];
             }
 
-            setSmells(smells: (SmellObject | GroupSmellObject)[]) {
+            setSmells(smells: (NodeSmell | GroupSmell)[]) {
                 this.smells = smells;
                 return this;
             }

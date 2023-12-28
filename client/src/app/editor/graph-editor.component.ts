@@ -4,7 +4,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
-import { SmellObject } from '../refactoring/smells/smell';
+import { NodeSmell } from '../refactoring/smells/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';
@@ -245,7 +245,7 @@ export class GraphEditorComponent {
         console.debug("getSmellsMenuItem", cell.getSmells());
         if(cell.hasSmells()) {
             let smellsMenuItems = [];
-            cell.getSmells().forEach((smell: SmellObject) => {
+            cell.getSmells().forEach((smell: NodeSmell) => {
                 smellsMenuItems.push({
                     label: smell.getName(),
                     icon: "pi pi-tag",
@@ -437,7 +437,7 @@ export class GraphEditorComponent {
         });
     }
 
-    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: SmellObject) {
+    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: NodeSmell) {
         const ref = this.dialogService.open(DialogSmellComponent, {
             data: {
                 model: node,

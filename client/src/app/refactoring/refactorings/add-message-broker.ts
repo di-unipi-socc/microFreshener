@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 import * as joint from "jointjs";
 import { CompositeCommand } from "src/app/commands/icommand";
 import { AddMessageBrokerCommand } from "src/app/architecture/node-commands";
@@ -10,7 +10,7 @@ export class AddMessageBrokerRefactoring implements Refactoring {
     
     command: CompositeCommand;
     
-    constructor(graph: Graph, smell: SmellObject) {
+    constructor(graph: Graph, smell: NodeSmell) {
         let cmds = [];
         // For wobbly service interaction, adding message broker is disable whe the target node is a communication pattern
         let links = smell.getLinkBasedCauses().filter((link) => !(link.getTargetElement() instanceof joint.shapes.microtosca.CommunicationPattern))

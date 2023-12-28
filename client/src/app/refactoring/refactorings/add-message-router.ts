@@ -1,5 +1,5 @@
 import { Graph } from "src/app/graph/model/graph";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand } from "src/app/commands/icommand";
@@ -9,7 +9,7 @@ export class AddMessageRouterRefactoring implements Refactoring {
 
     command: CompositeCommand;
 
-    constructor(graph: Graph, smell: SmellObject) {
+    constructor(graph: Graph, smell: NodeSmell) {
         let links = smell.getLinkBasedCauses();
         let cmds = [];
         links.forEach((link) => {

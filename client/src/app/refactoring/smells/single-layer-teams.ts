@@ -1,6 +1,6 @@
-import { GroupSmellObject } from "./smell";
+import { GroupSmell } from "./smell";
 
-export class SingleLayerTeamsSmellObject extends GroupSmellObject {
+export class SingleLayerTeamsSmellObject extends GroupSmell {
 
     constructor(group:joint.shapes.microtosca.SquadGroup) {
         super("Single-layer teams", group);

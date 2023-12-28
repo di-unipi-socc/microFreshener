@@ -1,6 +1,6 @@
-import { SmellObject } from "./smell";
+import { NodeSmell } from "./smell";
 
-export class MultipleServicesInOneContainerSmellObject extends SmellObject {
+export class MultipleServicesInOneContainerSmellObject extends NodeSmell {
     constructor() {
         super("Multiple services in one container")
     }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SmellObject, GroupSmellObject } from '../smells/smell';
+import { NodeSmell, GroupSmell } from '../smells/smell';
 import { AddApiGatewayRefactoring } from './add-api-gateway';
 import { AddCircuitBreakerRefactoring } from './add-circuit-breaker';
 import { AddDataManagerRefactoring } from './add-data-manager';
@@ -7,7 +7,7 @@ import { AddMessageBrokerRefactoring } from './add-message-broker';
 import { AddMessageRouterRefactoring } from './add-message-router';
 import { AddServiceDiscoveryRefactoring } from './add-service-discovery';
 import { MergeServicesRefactoring, MergeServicesTeamPolicy } from './merge-services';
-import { Refactoring, GroupRefactoring, RefactoringBuilder } from './refactoring-command';
+import { Refactoring, RefactoringBuilder } from './refactoring-command';
 import { SplitDatastoreRefactoring } from './split-datastore';
 import { SplitTeamsByCouplingRefactoring } from './split-teams-by-coupling';
 import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './split-teams-by-service';
@@ -43,19 +43,19 @@ export class RefactoringFactoryService {
     private session: SessionService
   ) {}
 
-  getRefactoring(refactoringName: string, smell: (SmellObject | GroupSmellObject)): Refactoring {
-    if(smell instanceof SmellObject) {
+  getRefactoring(refactoringName: string, smell: (NodeSmell | GroupSmell)): Refactoring {
+    if(smell instanceof NodeSmell) {
       let team;
       if(this.session.isTeam()) {
         team = this.gs.graph.findTeamByName(this.session.getTeamName());
       }
-      return this.getNodeRefactoring(refactoringName, smell, team);
-    } else if(smell instanceof GroupSmellObject && this.session.isAdmin()) {
-      return this.getGroupRefactoring(refactoringName, smell);
+      return this.getNodeSmellRefactoring(refactoringName, smell, team);
+    } else if(smell instanceof GroupSmell && this.session.isAdmin()) {
+      return this.getGroupSmellRefactoring(refactoringName, smell);
     }
   }
 
-  private getNodeRefactoring(refactoringName: string, smell: SmellObject, team?: joint.shapes.microtosca.SquadGroup): Refactoring {
+  private getNodeSmellRefactoring(refactoringName: string, smell: NodeSmell, team?: joint.shapes.microtosca.SquadGroup): Refactoring {
 
     let policy: RefactoringPolicy;
     let refactoringBuilder: RefactoringBuilder;
@@ -105,12 +105,15 @@ export class RefactoringFactoryService {
 
   }
 
-  private getGroupRefactoring(refactoringName: string, smell: GroupSmellObject): GroupRefactoring {
+  private getGroupSmellRefactoring(refactoringName: string, smell: GroupSmell): Refactoring {
     
+    let refactoringBuilder;
+
     switch(refactoringName){
 
       case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_API_GATEWAY:
-        return new AddApiGatewayRefactoring(this.gs.graph, smell);
+        refactoringBuilder = AddApiGatewayRefactoring.builder();
+        break;
 
       case REFACTORING_LIBRARY_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
         return new SplitTeamsByServiceRefactoring(this.gs.graph, smell);

@@ -1,63 +1,73 @@
-import { Graph } from "src/app/graph/model/graph";
-import { GroupRefactoring } from "./refactoring-command";
-import { GroupSmellObject } from "../smells/smell";
+import { Refactoring, RefactoringBuilder } from "./refactoring-command";
+import { GroupSmell } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
-import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
-import { GraphService } from "src/app/graph/graph.service";
+import { CompositeCommand, ElementCommand, Sequentiable } from "src/app/commands/icommand";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
-export class AddApiGatewayRefactoring extends GroupRefactoring {
 
-    smell: GroupSmellObject;
+export class AddApiGatewayRefactoring implements Refactoring {
+
+    smell: GroupSmell;
     command: CompositeCommand;
 
-    constructor(graph: Graph, smell: GroupSmellObject) {
-        super();
-        this.smell = smell;
-        let edgeGroup = <joint.shapes.microtosca.EdgeGroup> smell.getGroup();
-        let commands = [];
-        smell.getNodeBasedCauses().forEach(node => {
-            let gatewayName = "API Gateway " + node.getName();
-            let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(graph, graph.getLinkFromSourceToTarget(<joint.shapes.microtosca.Node> (<unknown> edgeGroup), node)))
-                                    .then(new AddMessageRouterCommand(graph, gatewayName, graph.getPointCloseTo(edgeGroup)))
-                                    .then(new AddRunTimeLinkCommand(graph, edgeGroup.getName(), gatewayName))
-                                    .then(new AddRunTimeLinkCommand(graph, gatewayName, node.getName()))
-            commands.push(addApiGatewayCommand);
-            let name = this.getName();
-            let description = `Add an API Gateway before ${node.getName()}`
-            this.addMemberRefactoring(node, addApiGatewayCommand, name, description);
-        });
-        this.command = CompositeCommand.of(commands);
-    }
+    public static readonly NAME = "Add API Gateway";
+
+    private constructor() {}
 
     execute(): void {
-        this.execute();
+        this.command.execute();
     }
 
     unexecute(): void {
-        this.unexecute();
+        this.command.unexecute();
     }
 
     getName() {
-        return "Add Api Gateway";
+        return AddApiGatewayRefactoring.NAME;
     }
 
     getDescription() {
-        let msg = "Add an Api Gateway from the external user to "
-        this.smell.getNodeBasedCauses().forEach(node =>
-            msg += ` ${node.getName()}`
-        );
-        return msg;
+        return `Add an API Gateway between ${this.smell.getNodeBasedCauses().map((n) => n?.getName()).join(", ")} and the external users.`
     }
 
-}
+    static builder() {
+        return new class Builder extends RefactoringBuilder {
 
+            constructor() {
+                super();
+            }
 
-export class AddApiGatewayTeamPolicy {
+            build(): AddApiGatewayRefactoring {
+                let edgeGroup = <joint.shapes.microtosca.EdgeGroup> (<GroupSmell> this.smell).getGroup();
+                let commands = [];
+                let nodes = this.smell.getNodeBasedCauses();
+                if(this.node) {
+                    nodes = nodes.filter((n) => n == this.node);
+                }
+                if(this.team) {
+                    nodes = nodes.filter((n) => this.graph.getTeamOfNode(n) == this.team);
+                }
+                nodes.forEach(node => {
+                    let gatewayName = "API Gateway " + node.getName();
+                    let addMessageRouterCommandInTeamIfSet: ElementCommand<joint.shapes.microtosca.CommunicationPattern> = new AddMessageRouterCommand(this.graph, gatewayName, this.graph.getPointCloseTo(edgeGroup));
+                    if(this.team)
+                        addMessageRouterCommandInTeamIfSet = addMessageRouterCommandInTeamIfSet.bind(new AddMemberToTeamGroupCommand(this.team));
+                    let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(this.graph, this.graph.getLinkFromSourceToTarget(<joint.shapes.microtosca.Node> (<unknown> edgeGroup), node)))
+                                            .then(addMessageRouterCommandInTeamIfSet)
+                                            .then(new AddRunTimeLinkCommand(this.graph, edgeGroup.getName(), gatewayName))
+                                            .then(new AddRunTimeLinkCommand(this.graph, gatewayName, node.getName()))
+                    commands.push(addApiGatewayCommand);
+                });
+                let refactoring = new AddApiGatewayRefactoring();
+                refactoring.command = CompositeCommand.of(commands);
+                if(this.team) {
+                    refactoring.getDescription = () => `Add an API Gateway between ${nodes.map((n) => n?.getName()).join(", ")} and the external users.`;
+                }
+                return refactoring;
+            }
 
-    constructor(private graph: GraphService, private team: joint.shapes.microtosca.SquadGroup) {}
-
-    isAllowed(node: joint.shapes.microtosca.Node, smell: GroupSmellObject): boolean {
-        return smell.getNodeBasedCauses().includes(node) && this.team == this.graph.graph.getTeamOfNode(node);
+        }
     }
+
 }

@@ -1,5 +1,5 @@
 import { Graph } from "src/app/graph/model/graph";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 
 export class AddCircuitBreakerRefactoring implements Refactoring {
@@ -8,7 +8,7 @@ export class AddCircuitBreakerRefactoring implements Refactoring {
 
     addedSourceTargetCircutBeakers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
 
-    constructor(graph: Graph, smell: SmellObject) {
+    constructor(graph: Graph, smell: NodeSmell) {
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
         this.addedSourceTargetCircutBeakers = [];

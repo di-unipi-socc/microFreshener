@@ -1,12 +1,12 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring } from "./refactoring-command";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 
 export class UseTimeoutRefactoring implements Refactoring {
     links: joint.shapes.microtosca.RunTimeLink[];
     graph: Graph;
 
-    constructor(graph: Graph, smell: SmellObject) {
+    constructor(graph: Graph, smell: NodeSmell) {
         this.links = smell.getLinkBasedCauses();
         this.graph = graph;
     }

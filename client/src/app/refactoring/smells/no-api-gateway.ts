@@ -1,17 +1,17 @@
-import { GroupSmellObject } from "./smell";
+import { GroupSmell } from "./smell";
 
-export class NoApiGatewaySmellObject extends GroupSmellObject {
+export class NoApiGatewaySmellObject extends GroupSmell {
 
     constructor(group:joint.shapes.microtosca.Group) {
-        super("NoAPiGatewaySmell", group);
+        super(group);
+    }
+
+    getName() {
+        return "NoAPiGatewaySmell";
     }
 
     getDescription(){
-        let msg = "The node "
-        this.getNodeBasedCauses().forEach(node=>{
-            msg+= ` ${node.getName()}`
-        })
-        msg += " is accessed by external users without an Api Gateway."
-        return msg;
+        let nodes = this.getNodeBasedCauses().map((n) => n.getName());
+        return `The node${nodes.length != 1 ? "s" : ""} ${nodes.join(", ")} ${nodes.length != 1 ? "are" : "is"} accessed by the external users without an API Gateway.`
     }
 }

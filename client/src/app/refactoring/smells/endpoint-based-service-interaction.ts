@@ -1,6 +1,6 @@
-import { SmellObject } from "./smell";
+import { NodeSmell } from "./smell";
 
-export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
+export class EndpointBasedServiceInteractionSmellObject extends NodeSmell {
 
     constructor() {
         super("EndpointBasedServiceInterationSmell");

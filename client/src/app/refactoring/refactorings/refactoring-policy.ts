@@ -6,6 +6,31 @@ export interface RefactoringPolicy {
     getRefactoringName(): string;
 }
 
+export abstract class RefactoringTeamPolicy {
+
+    private canRefactoringBePerformed = undefined;
+
+    constructor(protected team: joint.shapes.microtosca.SquadGroup) {}
+
+    abstract check(): boolean;
+    abstract reason(): string;
+
+    isAllowed() {
+        if(this.canRefactoringBePerformed == undefined) {
+            this.canRefactoringBePerformed = this.check();
+        }
+        return this.canRefactoringBePerformed;
+    }
+
+    whyNotAllowed() {
+        if(this.canRefactoringBePerformed !== undefined && !this.canRefactoringBePerformed)
+            return this.reason();
+    }
+
+    abstract getRefactoringName(): string;
+
+}
+
 export class NotAllowedRefactoring implements Refactoring {
 
     constructor(private policy: RefactoringPolicy) {

@@ -3,7 +3,7 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser.service';
 import { Smell } from "../../graph/model/smell";
-import { Principle } from '../../graph/model/principles';
+import { PrincipleRequest } from '../principles';
 import { SessionService } from 'src/app/core/session/session.service';
 
 interface Orchestrator {
@@ -20,7 +20,7 @@ interface Orchestrator {
 })
 export class DialogAnalysisComponent implements OnInit {
 
-  principles: Principle[] = [];
+  principles: PrincipleRequest[] = [];
   selectedSmells: Smell[] = [];
 
   containerOrchestrators: Orchestrator[] = [];
@@ -50,7 +50,7 @@ export class DialogAnalysisComponent implements OnInit {
 
   }
 
-  removeTeamSmellsIfTeamMember(principles: Principle[]) {
+  removeTeamSmellsIfTeamMember(principles: PrincipleRequest[]) {
     if(this.session.isTeam()) {
     principles.forEach(principle => {
       principle.smells = principle.smells.filter(smell => smell.id != 7 && smell.id != 8 && smell.id != 9);

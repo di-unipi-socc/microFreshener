@@ -1,6 +1,6 @@
 import { Graph } from "src/app/graph/model/graph";
 import { GroupRefactoring } from "./refactoring-command";
-import { GroupSmellObject } from "../smells/smell";
+import { GroupSmell } from "../smells/smell";
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";
 import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
@@ -10,7 +10,7 @@ export class SplitDatastoreAmongTeamsRefactoring extends GroupRefactoring {
 
     command: CompositeCommand;
 
-    constructor(graph: Graph, smell: GroupSmellObject) {
+    constructor(graph: Graph, smell: GroupSmell) {
         super();
         let cmds = [];
         smell.getLinkBasedCauses().filter((link) => graph.isDatastore(link.getTargetElement())).forEach((link) => {

@@ -1,5 +1,5 @@
 import * as joint from 'jointjs';
-import { ISmell } from 'src/app/refactoring/smells/smell';
+import { Smell } from 'src/app/refactoring/smells/smell';
 
 let NODE_LABEL_FONT_SIZE = 16;
 let COMMUNICATION_PATTERN_TYPE_FONT_SIZE = 18;
@@ -15,30 +15,30 @@ declare module 'jointjs' {
                 getName(): string;
             }
             interface Sniffable {
-                addSmell(smell: ISmell): void;
-                getSmell(name: string): ISmell;
-                getSmells(): ISmell[];
+                addSmell(smell: Smell): void;
+                getSmell(name: string): Smell;
+                getSmells(): Smell[];
                 hasSmells(): boolean;
                 showSmells(): void;
                 hideSmells(): void;
-                removeSmell(smell: ISmell): void;
+                removeSmell(smell: Smell): void;
                 resetSmells(): void
-                ignoreAlways(smell: ISmell): void;
-                undoIgnoreAlways(smell: ISmell): void;
-                getIgnoreAlwaysSmells(): ISmell[];
+                ignoreAlways(smell: Smell): void;
+                undoIgnoreAlways(smell: Smell): void;
+                getIgnoreAlwaysSmells(): Smell[];
             }
             class Node extends Root implements Sniffable {
-                addSmell(smell: ISmell): void;
-                getSmell(name: string): ISmell;
-                getSmells(): ISmell[];
+                addSmell(smell: Smell): void;
+                getSmell(name: string): Smell;
+                getSmells(): Smell[];
                 hasSmells(): boolean;
                 showSmells(): void;
                 hideSmells(): void;
-                removeSmell(smell: ISmell): void;
+                removeSmell(smell: Smell): void;
                 resetSmells(): void;
-                ignoreAlways(smell: ISmell): void;
-                undoIgnoreAlways(smell: ISmell): void;
-                getIgnoreAlwaysSmells(): ISmell[];
+                ignoreAlways(smell: Smell): void;
+                undoIgnoreAlways(smell: Smell): void;
+                getIgnoreAlwaysSmells(): Smell[];
                 show(): void;
                 hide(): void;
             }
@@ -55,17 +55,17 @@ declare module 'jointjs' {
                 getType(): string;
             }
             class Group extends Root implements Sniffable {
-                addSmell(smell: ISmell): void;
-                getSmell(name: string): ISmell;
-                getSmells(): ISmell[];
+                addSmell(smell: Smell): void;
+                getSmell(name: string): Smell;
+                getSmells(): Smell[];
                 hasSmells(): boolean;
                 showSmells(): void;
                 hideSmells(): void;
-                removeSmell(smell: ISmell): void;
+                removeSmell(smell: Smell): void;
                 resetSmells(): void;
-                ignoreAlways(smell: ISmell): void;
-                undoIgnoreAlways(smell: ISmell): void;
-                getIgnoreAlwaysSmells(): ISmell[];
+                ignoreAlways(smell: Smell): void;
+                undoIgnoreAlways(smell: Smell): void;
+                getIgnoreAlwaysSmells(): Smell[];
                 addMember(node:joint.shapes.microtosca.Node): void
                 removeMember(node:joint.shapes.microtosca.Node): void
                 getMembers(): joint.shapes.microtosca.Node[]
@@ -221,16 +221,16 @@ class MicrotoscaElementConfiguration {
         }
         this.prototypeProperties = {
             ...this.prototypeProperties,
-            addSmell: function (smell: ISmell) {
+            addSmell: function (smell: Smell) {
                 if(!this.attributes.alwaysIgnoredSmells.has(smell.getName())) {
                     this.attributes.smells.push(smell);
                     this.showSmells();
                 }
             },
-            getSmells: function (): ISmell[] {
+            getSmells: function (): Smell[] {
                 return this.attributes.smells;
             },
-            getSmell: function (name: string): ISmell {
+            getSmell: function (name: string): Smell {
                 return this.attributes.smells.find(smell => {
                     return name === smell.getName();
                 });
@@ -238,8 +238,8 @@ class MicrotoscaElementConfiguration {
             hasSmells: function ():  boolean {
                 return this.attributes.smells.length > 0;
             },
-            removeSmell: function (smell: ISmell): ISmell {
-                let smells: ISmell[] = this.attributes.smells;
+            removeSmell: function (smell: Smell): Smell {
+                let smells: Smell[] = this.attributes.smells;
                 let smellIndex = smells.indexOf(this.getSmell(smell.getName()));
                 let removingSmell = smells.splice(smellIndex, 1)[0];
                 if(smells.length == 0)
@@ -254,11 +254,11 @@ class MicrotoscaElementConfiguration {
                 this.attr('SmellsFoundTriangle/visibility', 'hidden');
                 this.attr('SmellsFoundExclamation/visibility', 'hidden');
             },
-            ignoreAlways: function(smell: ISmell) {
-                let ignoredSmell: ISmell = this.removeSmell(smell);
+            ignoreAlways: function(smell: Smell) {
+                let ignoredSmell: Smell = this.removeSmell(smell);
                 this.attributes.alwaysIgnoredSmells.add(ignoredSmell.getName());
             },
-            undoIgnoreAlways: function(smell: ISmell) {
+            undoIgnoreAlways: function(smell: Smell) {
                 this.addSmell(smell);
                 this.attributes.alwaysIgnoredSmells.delete(smell.getName());
             },

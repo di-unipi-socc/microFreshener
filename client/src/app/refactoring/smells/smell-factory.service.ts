@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GroupSmellObject, SmellObject } from './smell';
+import { GroupSmell, NodeSmell } from './smell';
 import { GraphService } from '../../graph/graph.service';
 import { SharedPersistencySmellObject } from './shared-persistency';
 import { NoApiGatewaySmellObject } from './no-api-gateway';
@@ -10,8 +10,6 @@ import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-comma
 import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
 import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
 import { WobblyServiceInteractionSmellObject } from './wobbly-service-interaction';
-import { ShareSmellRefactoring } from '../refactorings/share-smell';
-import { IgnoreOnceRefactoring, IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring-commands';
 import * as joint from 'jointjs';
 import { SessionService } from '../../core/session/session.service';
 import { RefactoringFactoryService } from '../refactorings/refactoring-factory.service';
@@ -38,9 +36,8 @@ export class SmellFactoryService {
     private session: SessionService
   ) {}
 
-  getNodeSmell(smellJson, node): SmellObject {
-    let smell: SmellObject;
-    let isAdmin: boolean = this.session.isAdmin();
+  getNodeSmell(smellJson, node): NodeSmell {
+    let smell: NodeSmell;
 
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
@@ -55,38 +52,33 @@ export class SmellFactoryService {
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
         smell = new MultipleServicesInOneContainerSmellObject();
       default:
-        console.warn(`Unsupported smell: ${smellJson.name}`);
+        throw new Error(`Unsupported smell: ${smellJson.name}`);
     }
-
-    if(smell) {
       
-      smellJson['links'].forEach((cause) => {
-        var source = this.gs.graph.findNodeByName(cause['source']);
-        var target = this.gs.graph.findNodeByName(cause['target']);
-        var link = this.gs.graph.getLinkFromSourceToTarget(source, target);
-        smell.addLinkBasedCause(link);
-        smell.addNodeBasedCause(node);
-      });
+    smellJson['links'].forEach((cause) => {
+      var source = this.gs.graph.findNodeByName(cause['source']);
+      var target = this.gs.graph.findNodeByName(cause['target']);
+      var link = this.gs.graph.getLinkFromSourceToTarget(source, target);
+      smell.addLinkBasedCause(link);
+      smell.addNodeBasedCause(node);
+    });
 
-      smellJson['refactorings'].forEach((refactoringJson) => {
-        let refactoringName = refactoringJson['name'];
-        let refactoring: Refactoring = this.refactoring.getRefactoring(refactoringName, smell);
-        if(refactoring)
-          smell.addRefactoring(refactoring);
-      });
+    smellJson['refactorings'].forEach((refactoringJson) => {
+      let refactoringName = refactoringJson['name'];
+      let refactoring: Refactoring = this.refactoring.getRefactoring(refactoringName, smell);
+      if(refactoring)
+        smell.addRefactoring(refactoring);
+    });
 
-      smell.addRefactoring(new ShareSmellRefactoring(node, smell));
-      smell.addRefactoring(new IgnoreOnceRefactoring(node, smell));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(node, smell));
-      return smell;
-    }
+    return smell;
   }
 
-  getGroupSmell(smellJson, group): GroupSmellObject {
+  getGroupSmell(smellJson, group): (GroupSmell | GroupSmell[]) {
     console.debug("Getting smell for", smellJson.name);
     if(!this.session.isAdmin) return;
     
-    let smell: GroupSmellObject;
+    let smell: GroupSmell;
+
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_NO_API_GATEWAY:
         smell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> group);
@@ -101,55 +93,62 @@ export class SmellFactoryService {
         smell = new SharedBoundedContextSmellObject(<joint.shapes.microtosca.SquadGroup> group);
         break;
       default:
-        console.warn(`Unsupported smell: ${smellJson.name}`);
+        throw new Error(`Unsupported smell: ${smellJson.name}`);
     }
-    
 
-    if(smell) {
-      smellJson['nodes'].forEach((node_name) => {
-        let node = this.gs.graph.findNodeByName(node_name);
-        smell.addNodeBasedCause(node);
-      });
-      
-      smellJson['links'].forEach((link_cause) => {
-        let source = this.gs.graph.findNodeByName(link_cause['source']);
-        let target = this.gs.graph.findNodeByName(link_cause['target']);
-        let link = this.gs.graph.getLinkFromSourceToTarget(source, target);
-        smell.addLinkBasedCause(link);
-      });
+    if(smell instanceof NoApiGatewaySmellObject) {
+      return this.getEdgeGroupSmell(smellJson, smell);
+    } else {
+      return this.getWholeGroupSmell(smellJson, smell);
+    }
+  }
 
-      let subSmells = new Map<joint.shapes.microtosca.Node, SmellObject>();
+  private getWholeGroupSmell(smellJson, smell): GroupSmell {
+
+    smellJson['nodes'].forEach((node_name) => {
+      let node = this.gs.graph.findNodeByName(node_name);
+      smell.addNodeBasedCause(node);
+    });
+
+    smellJson['links'].forEach((link_cause) => {
+      let source = this.gs.graph.findNodeByName(link_cause['source']);
+      let target = this.gs.graph.findNodeByName(link_cause['target']);
+      let link = this.gs.graph.getLinkFromSourceToTarget(source, target);
+      smell.addLinkBasedCause(link);
+    });
+
+    smellJson['refactorings'].forEach((refactoringJson) => {
+      let refactoringName = refactoringJson['name'];
+      console.debug("Analysing refactoring", refactoringName);
+      let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
+      smell.addRefactoring(refactoring);
+    });
+
+    return smell;
+
+  }
+
+  private getEdgeGroupSmell(smellJson, edgeGroupSmell): GroupSmell[] {
+
+    let nodes = [];
+
+    smellJson['nodes'].forEach((node_name) => {
+      let node = this.gs.graph.findNodeByName(node_name);
+      nodes.push(node);
+    });
+
+    return nodes.map((node) => {
+      let nodeSmell = new NoApiGatewaySmellObject(edgeGroupSmell);
+      nodeSmell.addNodeBasedCause(node);
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];
         console.debug("Analysing refactoring", refactoringName);
-        let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
-        smell.addRefactoring(refactoring);
-        // Add partial member refactoring to members' smells
-        let membersRefactorings = refactoring?.getMemberRefactorings();
-        membersRefactorings?.forEach((refactorings, member) => {
-            let memberSmell = subSmells.get(member);
-            if(!memberSmell) {
-                memberSmell = new SmellObject(`${smell.getName()} in ${smell.getGroup().getName()}`, smell.getGroup());
-                subSmells.set(member, memberSmell);
-            }
-            console.debug("refactorings", refactorings.map((r) => r.getName()));
-            refactorings.forEach((r) => memberSmell.addRefactoring(r));
-        });
+        let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, nodeSmell);
+        nodeSmell.addRefactoring(refactoring);
       });
-      smell.setSubSmells(subSmells);
+      return nodeSmell;
+    })
 
-      // Add share and ignore operations to smell and its subsmells
-      smell.addRefactoring(new ShareSmellRefactoring(group, smell))
-      smell.addRefactoring(new IgnoreOnceRefactoring(group, smell));
-      smell.addRefactoring(new IgnoreAlwaysRefactoring(group, smell));
-      subSmells.forEach((subSmell, member) => {
-        subSmell.addRefactoring(new ShareSmellRefactoring(member, smell));
-        subSmell.addRefactoring(new IgnoreOnceRefactoring(member, smell));
-        subSmell.addRefactoring(new IgnoreAlwaysRefactoring(member, smell));
-      });
-      
-      return smell;
-    }
   }
 
 }

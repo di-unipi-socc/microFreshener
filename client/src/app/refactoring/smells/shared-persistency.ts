@@ -1,6 +1,6 @@
-import { SmellObject } from "./smell";
+import { NodeSmell } from "./smell";
 
-export class SharedPersistencySmellObject extends SmellObject {
+export class SharedPersistencySmellObject extends NodeSmell {
     constructor() {
         super("Shared persistency");
     }

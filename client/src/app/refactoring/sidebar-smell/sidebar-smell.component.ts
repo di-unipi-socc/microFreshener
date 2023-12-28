@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { GroupSmellObject, SmellObject } from '../smells/smell';
-import { Command } from '../../commands/icommand';
+import { GroupSmell, NodeSmell } from '../smells/smell';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 import { Refactoring } from '../refactorings/refactoring-command';
@@ -20,7 +19,7 @@ export class SidebarSmellComponent {
   previousSelectedRefactoring: Refactoring;
 
   jointNodeModel;
-  @Input() smell: (SmellObject | GroupSmellObject);
+  @Input() smell: (NodeSmell | GroupSmell);
 
   constructor(
     private invoker: GraphInvoker
@@ -58,7 +57,7 @@ export class SidebarSmellComponent {
       // this.selectedRefactoring.execute();
       this.previousSelectedRefactoring = this.selectedRefactoring;
     }
-    console.debug("Selected refactoring", this.selectedRefactoring.getName(), "previous", this.previousSelectedRefactoring.getName())
+    console.debug("Selected refactoring", this.selectedRefactoring?.getName(), "previous", this.previousSelectedRefactoring?.getName())
   }
 
   canApply()  {

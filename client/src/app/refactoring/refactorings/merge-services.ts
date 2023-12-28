@@ -1,31 +1,27 @@
 import { Graph } from "src/app/graph/model/graph";
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { SmellObject } from "../smells/smell";
+import { NodeSmell } from "../smells/smell";
 import { MergeServicesCommand } from "src/app/architecture/node-commands";
-import { RefactoringPolicy } from "./refactoring-policy";
+import { RefactoringTeamPolicy } from "./refactoring-policy";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
-import { Command, ElementCommand } from "src/app/commands/icommand";
+import { ElementCommand } from "src/app/commands/icommand";
 
 
-export class MergeServicesTeamPolicy implements RefactoringPolicy {
+export class MergeServicesTeamPolicy extends RefactoringTeamPolicy {
 
-    private canRefactoringBePerformed: boolean;
-
-    constructor(private graph: Graph, private smell: SmellObject, private team: joint.shapes.microtosca.SquadGroup) {
-        let databaseUsers = smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
-        this.canRefactoringBePerformed = databaseUsers.filter((node) => this.graph.getTeamOfNode(node) == team).length > 1;
+    constructor(private graph: Graph, private smell: NodeSmell, team: joint.shapes.microtosca.SquadGroup) {
+        super(team);
     }
 
-    isAllowed(): boolean {
-        return this.canRefactoringBePerformed
+    check(): boolean {
+        let databaseUsers = this.smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
+        return databaseUsers.filter((node) => this.graph.getTeamOfNode(node) == this.team).length > 1;
     }
 
-    whyNotAllowed(): string {
-        if(!this.canRefactoringBePerformed) {
-            let databaseUsers = this.smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
-            let conflicts = databaseUsers.map((node) => this.graph.getTeamOfNode(node)).filter((team) => team != this.team);
-            return `You can edit less than two involved services. Please ask ${conflicts.map((c) => c.getName()).join(", ")}.`;
-        }
+    reason(): string {
+        let databaseUsers = this.smell.getLinkBasedCauses().map((link) => (<joint.shapes.microtosca.Node> link.getSourceElement()));
+        let conflicts = databaseUsers.map((node) => this.graph.getTeamOfNode(node)).filter((team) => team != this.team);
+        return `You can edit less than two involved services. Please ask ${conflicts.map((c) => c.getName()).join(", ")}.`;
     }
 
     getRefactoringName(): string {

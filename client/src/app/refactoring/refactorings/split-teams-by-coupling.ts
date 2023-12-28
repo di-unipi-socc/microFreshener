@@ -1,5 +1,5 @@
 import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
-import { GroupSmellObject } from "../smells/smell";
+import { GroupSmell } from "../smells/smell";
 import { Graph } from "src/app/graph/model/graph";
 import * as joint from "jointjs";
 import { Command, CompositeCommand, ElementCommand } from "src/app/commands/icommand";
@@ -9,7 +9,7 @@ export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
 
     private command: Command;
 
-    constructor(graph: Graph, smell: GroupSmellObject) {
+    constructor(graph: Graph, smell: GroupSmell) {
         super();
         let cmds: Command[] = [];
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
