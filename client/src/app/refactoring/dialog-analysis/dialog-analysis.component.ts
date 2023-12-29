@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser.service';
-import { Smell } from "../../graph/model/smell";
-import { PrincipleRequest } from '../principles';
+import { PrincipleRequest, SmellRequest } from '../principles';
 import { SessionService } from 'src/app/core/session/session.service';
 
 interface Orchestrator {
@@ -21,7 +20,7 @@ interface Orchestrator {
 export class DialogAnalysisComponent implements OnInit {
 
   principles: PrincipleRequest[] = [];
-  selectedSmells: Smell[] = [];
+  selectedSmells: SmellRequest[] = [];
 
   containerOrchestrators: Orchestrator[] = [];
   selectedOrchestrator: Orchestrator;
@@ -60,7 +59,7 @@ export class DialogAnalysisComponent implements OnInit {
   }
 
   discardSmellsWithIDIn(ids: number[]){
-    let selectedSmells: Smell[] = [];
+    let selectedSmells: SmellRequest[] = [];
     this.principles.forEach(principle=>{
       principle.smells.forEach(smell => {
         if(! ids.includes(smell.id)){

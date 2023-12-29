@@ -1,7 +1,7 @@
 export interface SmellRequest {
     id?: number;
     name?: string;
-    descrition?: string;
+    description?: string;
 }
 
 export interface PrincipleRequest {
