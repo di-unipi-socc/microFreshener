@@ -69,3 +69,51 @@ export class ChangeLinkTargetCommand implements Command {
         this.link.target(this.oldTarget);
     }
 }
+
+export class AddDynamicDiscoveryCommand implements Command {
+    
+        previousStatus;
+
+        constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+    
+        execute() {
+            this.previousStatus = this.link.hasDynamicDiscovery();
+            this.link.setDynamicDiscovery(true);
+        }
+    
+        unexecute() {
+            this.link.setDynamicDiscovery(this.previousStatus);
+        }
+}
+
+export class AddCircuitBreakerCommand implements Command {
+    
+    previousStatus;
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasDynamicDiscovery();
+        this.link.setCircuitBreaker(true);
+    }
+
+    unexecute() {
+        this.link.setCircuitBreaker(this.previousStatus);
+    }
+}
+
+export class AddTimeoutCommand implements Command {
+    
+    previousStatus;
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasTimeout();
+        this.link.setTimedout(true);
+    }
+
+    unexecute() {
+        this.link.setTimedout(this.previousStatus);
+    }
+}

@@ -1,33 +1,48 @@
 import { Graph } from "src/app/graph/model/graph";
-import { Refactoring } from "./refactoring-command";
+import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { NodeSmell } from "../smells/smell";
+import { Command, CompositeCommand } from "src/app/commands/icommand";
+import { AddTimeoutCommand } from "src/app/architecture/link-commands";
 
 export class UseTimeoutRefactoring implements Refactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
 
-    constructor(graph: Graph, smell: NodeSmell) {
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-    }
+    command: Command;
+
+    private constructor() {}
 
     execute() {
-        this.links.forEach(link => {
-            link.setTimedout(true);
-        });
+        this.command.execute();
     }
 
     unexecute() {
-        this.links.forEach(link => {
-            link.setTimedout(false);
-        });
+        this.command.unexecute();
     }
 
     getName() {
         return "Use timeout";
     }
 
-    getDescription() {
-        return "Use timeout";
+    getDescription(): string {
+        throw Error("This should be implemented in the builder.");
     }
+
+    static builder() {
+        return new class Builder extends RefactoringBuilder {
+
+            build(): UseTimeoutRefactoring {
+                let links = this.smell.getLinkBasedCauses();
+                if(this.team) {
+                    links = links.filter((l) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) == this.team);
+                }
+                let command = CompositeCommand.of(links.map((l) => new AddTimeoutCommand(l)));
+                let refactoring = new UseTimeoutRefactoring();
+                refactoring.command = command;
+                refactoring.getDescription = () => {
+                    return "Use a timeout with the interactions of " + links.map((l) => (<joint.shapes.microtosca.Node> l.getSourceElement())?.getName() + " towards " + (<joint.shapes.microtosca.Node> l.getTargetElement())?.getName()).join(", ") + ".";
+                }
+                return refactoring;
+            }
+        }
+    }
+
 }

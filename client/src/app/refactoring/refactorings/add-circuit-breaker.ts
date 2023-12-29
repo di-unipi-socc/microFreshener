@@ -1,37 +1,46 @@
-import { Graph } from "src/app/graph/model/graph";
-import { NodeSmell } from "../smells/smell";
-import { Refactoring } from "./refactoring-command";
+import { AddCircuitBreakerCommand } from "src/app/architecture/link-commands";
+import { Refactoring, RefactoringBuilder } from "./refactoring-command";
+import { Command, CompositeCommand } from "src/app/commands/icommand";
 
 export class AddCircuitBreakerRefactoring implements Refactoring {
-    links: joint.shapes.microtosca.RunTimeLink[];
-    graph: Graph;
 
-    addedSourceTargetCircutBeakers: [joint.shapes.microtosca.Node, joint.shapes.microtosca.Node, joint.shapes.microtosca.CommunicationPattern][];
+    command: Command;
 
-    constructor(graph: Graph, smell: NodeSmell) {
-        this.links = smell.getLinkBasedCauses();
-        this.graph = graph;
-        this.addedSourceTargetCircutBeakers = [];
-    }
+    private constructor() {}
 
     execute() {
-        this.links.forEach(link => {
-            link.setCircuitBreaker(true);
-        })
+        this.command.execute();
     }
 
     unexecute() {
-        this.links.forEach(link => {
-            link.setCircuitBreaker(false);
-        })
+        this.command.unexecute();
     }
 
     getName() {
         return "Add circuit breaker";
     }
 
-    getDescription() {
-        return "Add circuit breaker between two services";
+    getDescription(): string {
+        throw Error("This should be implemented in the builder.");
+    }
+
+    static builder() {
+        return new class Builder extends RefactoringBuilder {
+
+            build(): AddCircuitBreakerRefactoring {
+                let links = this.smell.getLinkBasedCauses();
+                if(this.team) {
+                    links = links.filter((l) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) == this.team);
+                }
+                let command = CompositeCommand.of(links.map((l) => new AddCircuitBreakerCommand(l)));
+                let refactoring = new AddCircuitBreakerRefactoring();
+                refactoring.command = command;
+                refactoring.getDescription = () => {
+                    return "Add circuit breaker to the interactions of " + links.map((l) => (<joint.shapes.microtosca.Node> l.getSourceElement())?.getName() + " towards " + (<joint.shapes.microtosca.Node> l.getTargetElement())?.getName()).join(", ") + ".";
+                }
+                return refactoring;
+            }
+        }
     }
 
 }

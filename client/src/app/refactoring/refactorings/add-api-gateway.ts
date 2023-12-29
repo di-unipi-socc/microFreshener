@@ -1,5 +1,5 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { GroupSmell } from "../smells/smell";
+import { GroupSmell, Smell } from "../smells/smell";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand, ElementCommand, Sequentiable } from "src/app/commands/icommand";
@@ -8,12 +8,11 @@ import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 export class AddApiGatewayRefactoring implements Refactoring {
 
-    smell: GroupSmell;
     command: CompositeCommand;
 
     public static readonly NAME = "Add API Gateway";
 
-    private constructor() {}
+    private constructor(private smell: Smell) {}
 
     execute(): void {
         this.command.execute();
@@ -59,7 +58,7 @@ export class AddApiGatewayRefactoring implements Refactoring {
                                             .then(new AddRunTimeLinkCommand(this.graph, gatewayName, node.getName()))
                     commands.push(addApiGatewayCommand);
                 });
-                let refactoring = new AddApiGatewayRefactoring();
+                let refactoring = new AddApiGatewayRefactoring(this.smell);
                 refactoring.command = CompositeCommand.of(commands);
                 if(this.team) {
                     refactoring.getDescription = () => `Add an API Gateway between ${nodes.map((n) => n?.getName()).join(", ")} and the external users.`;

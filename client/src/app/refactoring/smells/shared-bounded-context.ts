@@ -3,7 +3,11 @@ import { GroupSmell } from "./smell";
 export class SharedBoundedContextSmellObject extends GroupSmell {
 
     constructor(group:joint.shapes.microtosca.SquadGroup) {
-        super("Shared bounded context", group);
+        super(group);
+    }
+
+    getName(): string {
+        return "Shared bounded context";
     }
 
     getDescription(): string {

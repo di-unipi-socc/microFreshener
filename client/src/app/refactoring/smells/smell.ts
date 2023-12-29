@@ -2,6 +2,11 @@ import * as joint from 'jointjs';
 import { Refactoring } from '../refactorings/refactoring-command';
 
 export interface Smell {
+    getName(): string;
+    getDescription(): string;
+    getNodeBasedCauses(): joint.shapes.microtosca.Node[];
+    getLinkBasedCauses(): joint.shapes.microtosca.RunTimeLink[];
+    getRefactorings(): Refactoring[];
 }
 
 abstract class SmellObject implements Smell {
