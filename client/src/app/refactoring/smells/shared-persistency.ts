@@ -1,8 +1,6 @@
 import { NodeSmell } from "./smell";
 
 export class SharedPersistencySmellObject extends NodeSmell {
-    
-    private constructor() { super(); }
 
     getName(): string {
         return "Shared persistency";
