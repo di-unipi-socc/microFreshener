@@ -9,7 +9,6 @@ import { GraphService } from '../graph/graph.service';
 import { PrincipleRequest, SmellRequest } from './principles';
 
 import { SmellFactoryService } from './smells/smell-factory.service';
-import { Analysed } from './analysed';
 import { GroupSmell } from './smells/smell';
 import * as _ from 'lodash';
 
@@ -22,6 +21,7 @@ export class AnalyserService {
 
 
   private analysisUrl = environment.serverUrl + '/api/analyse';
+  private smellsCount: number = 0;
 
   constructor(
     private http: HttpClient,
@@ -30,55 +30,19 @@ export class AnalyserService {
   ) { }
 
   getSmellsCount(){
-    var num_smells = 0;
-    this.nodesWithSmells.forEach((anode)=> {
-      num_smells +=  anode.getSmells().length;
-    });
-    this.groupsWithSmells.forEach((agroup)=> {
-      num_smells +=  agroup.getSmells().length;
-    });
-
-    return num_smells
+    return this.smellsCount;
   }
   
   showSmells() {
-    this.showNodeSmells();
-    this.showGroupSmells();
-  }
-
-  private showNodeSmells() {
-    this.nodesWithSmells.forEach((anode) => {
-      let n = this.gs.graph.getNode(anode.getName());
-      anode.getSmells().forEach((smell) => {
-        n.addSmell(smell);
-      })
-    })
-  }
-
-  private showGroupSmells() {
-    this.groupsWithSmells.forEach((agroup) => {
-      let g = this.gs.graph.getGroup(agroup.getName());
-      agroup.getSmells().forEach((smell) => {
-          g.addSmell(smell);
-      })
-    })
-
-    this.groupMembersCausingSmells.forEach((anode) => {
-      let n = this.gs.graph.getNode(anode.getName());
-      anode.getSmells().forEach((smell) => {
-        n.addSmell(smell);
-      })
-    })
+    this.gs.graph.getNodes().forEach((node) => { node.showSmells(); });
+    this.gs.graph.getTeamGroups().forEach((group) => { group.showSmells(); });
   }
 
   // Remove the "smells" icons in the nodes and groups
   clearSmells() {
-    this.gs.graph.getNodes().forEach(node => {
-      node.resetSmells();
-    });
-    this.gs.graph.getGroups().forEach(group => {
-      group.resetSmells();
-    });
+    this.smellsCount = 0;
+    this.gs.graph.getNodes().forEach(node => { node.resetSmells(); });
+    this.gs.graph.getTeamGroups().forEach(group => { group.resetSmells(); });
   }
 
   getPrinciplesToAnalyse() {
@@ -89,8 +53,6 @@ export class AnalyserService {
   }
 
   runRemoteAnalysis(smells: SmellRequest[]): Observable<Boolean> {
-
-    this.clearSmells();
 
     let smells_ids: number[] = []; 
     smells_ids = smells.map(smell => smell.id);
@@ -113,9 +75,12 @@ export class AnalyserService {
             // Build the smells of the group
             let group = this.gs.graph.findGroupByName(groupJson['name']);
             if(this.gs.graph.isEdgeGroup(group)) {
-
+              let edgeNodesSmells: GroupSmell[] = groupJson['smells'].flatMap((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
+              edgeNodesSmells.forEach((smell) => smell.getNodeBasedCauses().forEach((node) => node.addSmell(smell)));
+            } else {
+              let groupSmells: GroupSmell[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
+              groupSmells.forEach((smell) => group.addSmell(smell));
             }
-            let groupSmells: GroupSmell[] = groupJson['smells'].map((smellJson) => this.smellFactory.getGroupSmell(smellJson, group));
           });
           return true;
         }),
