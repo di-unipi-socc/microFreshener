@@ -1,7 +1,8 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { AddServiceCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
-import { CompositeCommand } from "src/app/commands/icommand";
+import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 export class AddDataManagerRefactoring implements Refactoring {
 
@@ -34,10 +35,10 @@ export class AddDataManagerRefactoring implements Refactoring {
                 let links = this.smell.getLinkBasedCauses();
                 let databaseManagerName = "DB manager";
                 let dbManagerPosition = this.graph.getPointCloseTo(this.smell.getLinkBasedCauses()[0]?.getTargetElement());
-                cmds.push(new AddServiceCommand(this.graph, databaseManagerName, dbManagerPosition));
-                if(this.team) {
-                    links = links.filter((l) => this.graph.getTeamOfNode((<joint.shapes.microtosca.Node> l.getSourceElement())) == this.team);
-                }
+                let addServiceInTeamIfAny: ElementCommand<joint.shapes.microtosca.Service> = new AddServiceCommand(this.graph, databaseManagerName, dbManagerPosition);
+                if(this.team) addServiceInTeamIfAny = addServiceInTeamIfAny.bind(new AddMemberToTeamGroupCommand(this.team));
+                cmds.push(addServiceInTeamIfAny);
+                if(this.team) links = links.filter((l) => this.graph.getTeamOfNode((<joint.shapes.microtosca.Node> l.getSourceElement())) == this.team);
                 links.forEach(link => {
                     cmds.push(new AddRunTimeLinkCommand(this.graph, (<joint.shapes.microtosca.Node> link.getSourceElement()).getName(), databaseManagerName));
                     cmds.push(new RemoveLinkCommand(this.graph, link));

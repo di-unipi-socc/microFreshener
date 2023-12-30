@@ -17,7 +17,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { MergeTeamsRefactoring } from './merge-teams';
 import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
 import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
-import { AnyInteractionFromTeamPolicy, AnyTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy } from './refactoring-policy-teams';
+import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy } from './refactoring-policy-teams';
 
 enum REFACTORING_LIBRARY_NAMES {
   ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -111,7 +111,7 @@ export class RefactoringFactoryService {
       
       case REFACTORING_LIBRARY_NAMES.ADD_DATA_MANAGER:
         if(team)
-          policy = new AnyInteractionFromTeamPolicy(team, AddDataManagerRefactoring.NAME, this.gs.graph, smell);
+          policy = new SomeInteractionsFromTeamPolicy(2, team, AddDataManagerRefactoring.NAME, this.gs.graph, smell);
         refactoringBuilder = AddDataManagerRefactoring.builder();
     }
 

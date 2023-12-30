@@ -1,7 +1,8 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { AddDatastoreCommand, RemoveNodeCommand } from "src/app/architecture/node-commands";
-import { CompositeCommand } from "src/app/commands/icommand";
+import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
@@ -38,11 +39,16 @@ export class SplitDatastoreRefactoring implements Refactoring {
                 links.forEach((link) => {
                     let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
                     let newDatastoreName = "DB " + sourceNode.getName();
-                    cmds.push(new AddDatastoreCommand(this.graph, newDatastoreName, this.graph.getPointCloseTo(sourceNode)));
+                    let addDatastoreInTeamIfAny: ElementCommand<joint.shapes.microtosca.Datastore> = new AddDatastoreCommand(this.graph, newDatastoreName, this.graph.getPointCloseTo(sourceNode));
+                    if(this.team)
+                        addDatastoreInTeamIfAny = addDatastoreInTeamIfAny.bind(new AddMemberToTeamGroupCommand(this.team));
+                    cmds.push(addDatastoreInTeamIfAny);
                     cmds.push(new ChangeLinkTargetCommand(this.graph, link, newDatastoreName));
                 });
-                if(this.graph.getConnectedLinks(this.smell.getNodeBasedCauses()[0]).length) {
-                    cmds.push(new RemoveNodeCommand(this.graph, this.smell.getNodeBasedCauses()[0]));
+                // If the datastore won't be used after the application of the refactoring, remove it
+                let datastore = this.smell.getNodeBasedCauses()[0];
+                if(this.graph.getConnectedLinks(datastore).length - links.length == 0) {
+                    cmds.push(new RemoveNodeCommand(this.graph, datastore));
                 }
                 let command = CompositeCommand.of(cmds);
                 let refactoring = new SplitDatastoreRefactoring();
