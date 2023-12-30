@@ -4,6 +4,8 @@ import { AddDynamicDiscoveryCommand } from "src/app/architecture/link-commands";
 
 export class AddServiceDiscoveryRefactoring implements Refactoring {
 
+    public static readonly NAME = "Add service discovery";
+
     command: Command;
 
     private constructor() {}

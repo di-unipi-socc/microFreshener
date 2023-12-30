@@ -1,10 +1,10 @@
-import { Graph } from "src/app/graph/model/graph";
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { NodeSmell } from "../smells/smell";
 import { Command, CompositeCommand } from "src/app/commands/icommand";
 import { AddTimeoutCommand } from "src/app/architecture/link-commands";
 
 export class UseTimeoutRefactoring implements Refactoring {
+
+    public static readonly NAME = "Use timeout";
 
     command: Command;
 

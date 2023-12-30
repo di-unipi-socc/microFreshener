@@ -5,6 +5,8 @@ import { CompositeCommand } from "src/app/commands/icommand";
 
 export class AddDataManagerRefactoring implements Refactoring {
 
+    public static readonly NAME = "Add data manager";
+
     command: CompositeCommand;
 
     private constructor() {}
@@ -25,7 +27,7 @@ export class AddDataManagerRefactoring implements Refactoring {
         throw Error("This should be implemented in the builder.");
     }
 
-    builder() {
+    static builder() {
         return new class Builder extends RefactoringBuilder {
             build(): AddDataManagerRefactoring {
                 let cmds = [];

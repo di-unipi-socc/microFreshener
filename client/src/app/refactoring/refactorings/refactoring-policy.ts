@@ -6,29 +6,19 @@ export interface RefactoringPolicy {
     getRefactoringName(): string;
 }
 
-export abstract class RefactoringTeamPolicy {
+export class NeverAllowedRefactoringPolicy implements RefactoringPolicy {
 
-    private canRefactoringBePerformed = undefined;
+    constructor(private refactoringName: string, private reason: string) {}
 
-    constructor(protected team: joint.shapes.microtosca.SquadGroup) {}
-
-    abstract check(): boolean;
-    abstract reason(): string;
-
-    isAllowed() {
-        if(this.canRefactoringBePerformed == undefined) {
-            this.canRefactoringBePerformed = this.check();
-        }
-        return this.canRefactoringBePerformed;
+    isAllowed(): boolean {
+        return false;
     }
-
-    whyNotAllowed() {
-        if(this.canRefactoringBePerformed !== undefined && !this.canRefactoringBePerformed)
-            return this.reason();
+    whyNotAllowed(): string {
+        return this.reason;
     }
-
-    abstract getRefactoringName(): string;
-
+    getRefactoringName(): string {
+        return this.refactoringName;
+    }
 }
 
 export class NotAllowedRefactoring implements Refactoring {
@@ -54,5 +44,22 @@ export class NotAllowedRefactoring implements Refactoring {
     getDescription(): string {
         return this.policy.whyNotAllowed();
     }
+}
 
+export class AlwaysAllowedRefactoringPolicy implements RefactoringPolicy {
+
+    constructor(private refactoringName?: string) {}
+
+    isAllowed(): boolean {
+        return true;
+    }
+    whyNotAllowed(): string {
+        throw new Error("This refactoring is always allowed.");
+    }
+    getRefactoringName(): string {
+        if(this.refactoringName)
+            return this.refactoringName;
+        else
+            throw Error("Undefined name");
+    }
 }

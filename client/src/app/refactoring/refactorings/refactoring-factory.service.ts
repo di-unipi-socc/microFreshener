@@ -6,7 +6,7 @@ import { AddDataManagerRefactoring } from './add-data-manager';
 import { AddMessageBrokerRefactoring } from './add-message-broker';
 import { AddMessageRouterRefactoring } from './add-message-router';
 import { AddServiceDiscoveryRefactoring } from './add-service-discovery';
-import { MergeServicesRefactoring, MergeServicesTeamPolicy } from './merge-services';
+import { MergeServicesRefactoring } from './merge-services';
 import { Refactoring, RefactoringBuilder } from './refactoring-command';
 import { SplitDatastoreRefactoring } from './split-datastore';
 import { SplitTeamsByCouplingRefactoring } from './split-teams-by-coupling';
@@ -16,21 +16,22 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
 import { MergeTeamsRefactoring } from './merge-teams';
 import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
-import { NotAllowedRefactoring, RefactoringPolicy } from './refactoring-policy';
+import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
+import { AnyInteractionFromTeamPolicy, AnyTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy } from './refactoring-policy-teams';
 
 enum REFACTORING_LIBRARY_NAMES {
-  REFACTORING_ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
-  REFACTORING_ADD_MESSAGE_ROUTER = 'Add-message-router',
-  REFACTORING_ADD_MESSAGE_BROKER = 'Add-message-broker',
-  REFACTORING_ADD_CIRCUIT_BREAKER = 'Add-circuit-breaker',
-  REFACTORING_USE_TIMEOUT = "Use-timeout",
-  REFACTORING_MERGE_SERVICES = "Merge-service",
-  REFACTORING_SPLIT_DATASTORE = "Split-Datastore",
-  REFACTORING_ADD_DATA_MANAGER = "Add-data-manager",
-  REFACTORING_ADD_API_GATEWAY = "Add-api-gateway",
-  REFACTORING_SPLIT_TEAMS_BY_SERVICE = "Split-teams-by-service",
-  REFACTORING_SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling",
-  REFACTORING_MERGE_TEAMS = "Merge-teams"
+  ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
+  ADD_MESSAGE_ROUTER = 'Add-message-router',
+  ADD_MESSAGE_BROKER = 'Add-message-broker',
+  ADD_CIRCUIT_BREAKER = 'Add-circuit-breaker',
+  USE_TIMEOUT = "Use-timeout",
+  MERGE_SERVICES = "Merge-service",
+  SPLIT_DATASTORE = "Split-Datastore",
+  ADD_DATA_MANAGER = "Add-data-manager",
+  ADD_API_GATEWAY = "Add-api-gateway",
+  SPLIT_TEAMS_BY_SERVICE = "Split-teams-by-service",
+  SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling",
+  MERGE_TEAMS = "Merge-teams"
 }
 
 @Injectable({
@@ -60,33 +61,57 @@ export class RefactoringFactoryService {
     let policy: RefactoringPolicy;
     let refactoringBuilder: RefactoringBuilder;
 
+    if(this.session.isAdmin())
+      policy = new AlwaysAllowedRefactoringPolicy();
+
     switch (refactoringName) {
 
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_MESSAGE_ROUTER:
-        return new AddMessageRouterRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.ADD_MESSAGE_ROUTER:
+        if(team)
+          policy = new AnyInteractionFromTeamPolicy(team, AddMessageRouterRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = AddMessageRouterRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_MESSAGE_BROKER:
-        return new AddMessageBrokerRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.ADD_MESSAGE_BROKER:
+        if(team)
+          policy = new AnyTeamInternalInteractionPolicy(team, AddMessageBrokerRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = AddMessageBrokerRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_SERVICE_DISCOVERY:
-        return new AddServiceDiscoveryRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.ADD_SERVICE_DISCOVERY:
+        if(team)
+          policy = new AnyInteractionFromTeamPolicy(team, AddServiceDiscoveryRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = AddServiceDiscoveryRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_CIRCUIT_BREAKER:
-        return new AddCircuitBreakerRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.ADD_CIRCUIT_BREAKER:
+        if(team)
+          policy = new AnyInteractionFromTeamPolicy(team, AddCircuitBreakerRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = AddCircuitBreakerRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_USE_TIMEOUT:
-        return new UseTimeoutRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.USE_TIMEOUT:
+        if(team)
+          policy = new AnyInteractionFromTeamPolicy(team, UseTimeoutRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = UseTimeoutRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_MERGE_SERVICES:
-        policy = new MergeServicesTeamPolicy(this.gs.graph, smell, team);
+      case REFACTORING_LIBRARY_NAMES.MERGE_SERVICES:
+        if(team)
+          policy = new SomeInteractionsFromTeamPolicy(2, team, MergeServicesRefactoring.NAME, this.gs.graph, smell);
         refactoringBuilder = MergeServicesRefactoring.builder();
         break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_SPLIT_DATASTORE:
-        return new SplitDatastoreRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.SPLIT_DATASTORE:
+        if(team)
+          policy = new AnyTeamInternalInteractionPolicy(team, SplitDatastoreRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = SplitDatastoreRefactoring.builder();
+        break;
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_DATA_MANAGER:
-        return new AddDataManagerRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.ADD_DATA_MANAGER:
+        if(team)
+          policy = new AnyInteractionFromTeamPolicy(team, AddDataManagerRefactoring.NAME, this.gs.graph, smell);
+        refactoringBuilder = AddDataManagerRefactoring.builder();
     }
 
     if(!policy || !refactoringBuilder) {
@@ -106,25 +131,40 @@ export class RefactoringFactoryService {
   }
 
   private getGroupSmellRefactoring(refactoringName: string, smell: GroupSmell): Refactoring {
-    
-    let refactoringBuilder;
 
     switch(refactoringName){
 
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_ADD_API_GATEWAY:
-        refactoringBuilder = AddApiGatewayRefactoring.builder();
-        break;
+      case REFACTORING_LIBRARY_NAMES.ADD_API_GATEWAY:
+        let team;
+        if(this.session.isTeam())
+          team = this.gs.graph.findTeamByName(this.session.getTeamName());
+        return AddApiGatewayRefactoring.builder()
+                                        .setGraph(this.gs.graph)
+                                        .setSmell(smell)
+                                        .setTeam(team)
+                                        .build();
+      default:
+        return this.getTeamSmellRefactoring(refactoringName, smell);
+    }
+  }
 
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_SPLIT_TEAMS_BY_SERVICE:
+  private getTeamSmellRefactoring(refactoringName: string, smell: GroupSmell): Refactoring {
+
+    if(!this.session.isAdmin()) {
+      return new NotAllowedRefactoring(new NeverAllowedRefactoringPolicy(refactoringName, "Only admins can manage teams."));
+    }
+
+    switch(refactoringName) {
+      case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_SERVICE:
         return new SplitTeamsByServiceRefactoring(this.gs.graph, smell);
       
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_SPLIT_TEAMS_BY_COUPLING:
+      case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.graph, smell);
 
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_SPLIT_DATASTORE:
+      case REFACTORING_LIBRARY_NAMES.SPLIT_DATASTORE:
         return new SplitDatastoreAmongTeamsRefactoring(this.gs.graph, smell);
 
-      case REFACTORING_LIBRARY_NAMES.REFACTORING_MERGE_TEAMS:
+      case REFACTORING_LIBRARY_NAMES.MERGE_TEAMS:
         return new MergeTeamsRefactoring(this.gs.graph, smell);
     }
   }

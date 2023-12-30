@@ -5,6 +5,8 @@ import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
 
 export class SplitDatastoreRefactoring implements Refactoring {
 
+    public static readonly NAME = "Split datastore";
+
     command: CompositeCommand;
 
     private constructor() {}
@@ -25,7 +27,7 @@ export class SplitDatastoreRefactoring implements Refactoring {
         throw Error("This should be implemented in the builder.");
     }
 
-    builder() {
+    static builder() {
         return new class Builder extends RefactoringBuilder {
             build(): SplitDatastoreRefactoring {
                 let cmds = [];

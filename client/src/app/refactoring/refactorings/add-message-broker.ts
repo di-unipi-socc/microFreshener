@@ -6,6 +6,8 @@ import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/l
 
 export class AddMessageBrokerRefactoring implements Refactoring {
     
+    public static readonly NAME = "Add message broker";
+
     command: CompositeCommand;
     
     private constructor() {}

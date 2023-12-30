@@ -3,7 +3,10 @@ import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/l
 import { CompositeCommand } from "src/app/commands/icommand";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
 
+
 export class AddMessageRouterRefactoring implements Refactoring {
+
+    public static readonly NAME = "Add message router";
 
     command: CompositeCommand;
 

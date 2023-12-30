@@ -4,6 +4,8 @@ import { Command, CompositeCommand } from "src/app/commands/icommand";
 
 export class AddCircuitBreakerRefactoring implements Refactoring {
 
+    public static readonly NAME = "Add circuit breaker";
+
     command: Command;
 
     private constructor() {}
