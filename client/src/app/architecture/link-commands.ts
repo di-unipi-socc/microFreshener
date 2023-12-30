@@ -72,18 +72,20 @@ export class ChangeLinkTargetCommand implements Command {
 
 export class AddDynamicDiscoveryCommand implements Command {
     
-        previousStatus;
+    previousStatus;
 
-        constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
-    
-        execute() {
-            this.previousStatus = this.link.hasDynamicDiscovery();
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasDynamicDiscovery();
+        if(!this.previousStatus)
             this.link.setDynamicDiscovery(true);
-        }
-    
-        unexecute() {
+    }
+
+    unexecute() {
+        if(!this.previousStatus)
             this.link.setDynamicDiscovery(this.previousStatus);
-        }
+    }
 }
 
 export class AddCircuitBreakerCommand implements Command {
@@ -93,12 +95,14 @@ export class AddCircuitBreakerCommand implements Command {
     constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
 
     execute() {
-        this.previousStatus = this.link.hasDynamicDiscovery();
-        this.link.setCircuitBreaker(true);
+        this.previousStatus = this.link.hasCircuitBreaker();
+        if(!this.previousStatus)
+            this.link.setCircuitBreaker(true);
     }
 
     unexecute() {
-        this.link.setCircuitBreaker(this.previousStatus);
+        if(!this.previousStatus)
+            this.link.setCircuitBreaker(this.previousStatus);
     }
 }
 
@@ -110,10 +114,12 @@ export class AddTimeoutCommand implements Command {
 
     execute() {
         this.previousStatus = this.link.hasTimeout();
-        this.link.setTimedout(true);
+        if(!this.previousStatus)
+            this.link.setTimedout(true);
     }
 
     unexecute() {
-        this.link.setTimedout(this.previousStatus);
+        if(!this.previousStatus)
+            this.link.setTimedout(this.previousStatus);
     }
 }

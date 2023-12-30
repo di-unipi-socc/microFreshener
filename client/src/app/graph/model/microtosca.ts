@@ -655,75 +655,43 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
         }
     },
 
-    timeout: false,
-    circuit_breaker: false,
-    dynamic_discovery: false
+    timeout: undefined,
+    circuit_breaker: undefined,
+    dynamic_discovery: undefined
 }, {
-        // markup: [{
-        //     tagName: 'path',
-        //     selector: 'wrapper',
-        //     attributes: {
-        //         'fill': 'none',
-        //         'cursor': 'pointer',
-        //         'stroke': 'transparent'
-        //     }
-        // }, {
-        //     tagName: 'path',
-        //     selector: 'line',
-        //     attributes: {
-        //         'fill': 'none',
-        //         'pointer-events': 'none'
-        //     }
-        // }],
         setTimedout: function (value: boolean) {
-            this.timeout = value;
-            if (this.timeout)
+            if (value)
                 this._showTimeout();
             else
                 this._hideTimeout()
         },
         setCircuitBreaker: function (value: boolean) {
-            this.circuit_breaker = value;
-            if (this.circuit_breaker)
+            if (value)
                 this._showCircuitBreaker()
             else
                 this._hideCircuitBreaker()
         },
         setDynamicDiscovery: function (value: boolean) {
-            this.dynamic_discovery = value;
-            if (this.dynamic_discovery)
+            if (value)
                 this._showDynamicDiscovery();
             else {
                 this._hideDynamicDiscovery();
             }
         },
-        hasTimeout: function () {
-            return this.timeout;
+        hasTimeout: function (): boolean {
+            return this.timeout == true;
         },
-        hasDynamicDiscovery: function () {
-            return this.dynamic_discovery;
+        hasDynamicDiscovery: function(): boolean {
+            return this.dynamic_discovery == true;
         },
-        hasCircuitBreaker: function () {
-            return this.circuit_breaker;
+        hasCircuitBreaker: function(): boolean {
+            return this.circuit_breaker == true;
         },
-        _showTimeout: function () {
-            this.insertLabel(0, {
-/*                markup: [
-                    {
-                        tagName: 'path',
-                        selector: 'clock'
-                    },
-                ],
-                position: .5, // place it halfway on the link (0-1)
-                attrs: {
-                    clock: {
-                        d: "M11.088,2.542c0.063-0.146,0.103-0.306,0.103-0.476c0-0.657-0.534-1.19-1.19-1.19c-0.657,0-1.19,0.533-1.19,1.19c0,0.17,0.038,0.33,0.102,0.476c-4.085,0.535-7.243,4.021-7.243,8.252c0,4.601,3.73,8.332,8.332,8.332c4.601,0,8.331-3.73,8.331-8.332C18.331,6.562,15.173,3.076,11.088,2.542z M10,1.669c0.219,0,0.396,0.177,0.396,0.396S10.219,2.462,10,2.462c-0.22,0-0.397-0.177-0.397-0.396S9.78,1.669,10,1.669z M10,18.332c-4.163,0-7.538-3.375-7.538-7.539c0-4.163,3.375-7.538,7.538-7.538c4.162,0,7.538,3.375,7.538,7.538C17.538,14.957,14.162,18.332,10,18.332z M10.386,9.26c0.002-0.018,0.011-0.034,0.011-0.053V5.24c0-0.219-0.177-0.396-0.396-0.396c-0.22,0-0.397,0.177-0.397,0.396v3.967c0,0.019,0.008,0.035,0.011,0.053c-0.689,0.173-1.201,0.792-1.201,1.534c0,0.324,0.098,0.625,0.264,0.875c-0.079,0.014-0.155,0.043-0.216,0.104l-2.244,2.244c-0.155,0.154-0.155,0.406,0,0.561s0.406,0.154,0.561,0l2.244-2.242c0.061-0.062,0.091-0.139,0.104-0.217c0.251,0.166,0.551,0.264,0.875,0.264c0.876,0,1.587-0.711,1.587-1.587C11.587,10.052,11.075,9.433,10.386,9.26z M10,11.586c-0.438,0-0.793-0.354-0.793-0.792c0-0.438,0.355-0.792,0.793-0.792c0.438,0,0.793,0.355,0.793,0.792C10.793,11.232,10.438,11.586,10,11.586z",
-                        fill: 'none',
-                        stroke: '#0E343D',
-                        strokeWidth: 0.5,
 
-                    },
-                }*/
+        _showTimeout: function () {
+            if(this.timeout)
+                this.removeLabel(this.timeout);
+            this.timeout = this.insertLabel(0, {
                 attrs: {
                     text: {
                         text: 'timeout',
@@ -735,24 +703,17 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
                 }
             });
         },
-        _showCircuitBreaker: function () {
-            this.insertLabel(1, {
-                /*markup: [
-                    {
-                        tagName: 'path',
-                        selector: 'clock'
-                    },
-                ],
-                position: .35,
-                attrs: {
-                    clock: {
-                        d: "M9.634,10.633c0.116,0.113,0.265,0.168,0.414,0.168c0.153,0,0.308-0.06,0.422-0.177l4.015-4.111c0.229-0.235,0.225-0.608-0.009-0.836c-0.232-0.229-0.606-0.222-0.836,0.009l-3.604,3.689L6.35,5.772C6.115,5.543,5.744,5.55,5.514,5.781C5.285,6.015,5.29,6.39,5.522,6.617L9.634,10.633z",
-                        fill: 'none',
-                        stroke: '#0E343D',
-                        strokeWidth: 0.5,
+        _hideTimeout: function () {
+            if(this.timeout) {
+                this.removeLabel(this.timeout);
+                this.timeout = undefined;
+            }
+        },
 
-                    },
-                }*/
+        _showCircuitBreaker: function () {
+            if(this.circuit_breaker)
+                this.removeLabel(this.circuit_breaker);
+            this.circuit_breaker = this.insertLabel(1, {
                 attrs: {
                     text: {
                         text: 'circuit\nbreaker',
@@ -765,25 +726,15 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
             });
         },
         _hideCircuitBreaker: function () {
-            this.removeLabel(1);
+            if(this.circuit_breaker) {
+                this.removeLabel(this.circuit_breaker);
+                this.circuit_breaker = undefined;
+            }
         },
         _showDynamicDiscovery: function () {
-            this.insertLabel(2, {
-                /*markup: [
-                    {
-                        tagName: 'path',
-                        selector: 'clock'
-                    },
-                ],
-                position: .20,
-                attrs: {
-                    clock: {
-                        d: "M16.85,7.275l-3.967-0.577l-1.773-3.593c-0.208-0.423-0.639-0.69-1.11-0.69s-0.902,0.267-1.11,0.69L7.116,6.699L3.148,7.275c-0.466,0.068-0.854,0.394-1,0.842c-0.145,0.448-0.023,0.941,0.314,1.27l2.871,2.799l-0.677,3.951c-0.08,0.464,0.112,0.934,0.493,1.211c0.217,0.156,0.472,0.236,0.728,0.236c0.197,0,0.396-0.048,0.577-0.143l3.547-1.864l3.548,1.864c0.18,0.095,0.381,0.143,0.576,0.143c0.256,0,0.512-0.08,0.729-0.236c0.381-0.277,0.572-0.747,0.492-1.211l-0.678-3.951l2.871-2.799c0.338-0.329,0.459-0.821,0.314-1.27C17.705,7.669,17.316,7.343,16.85,7.275z M13.336,11.754l0.787,4.591l-4.124-2.167l-4.124,2.167l0.788-4.591L3.326,8.5l4.612-0.67l2.062-4.177l2.062,4.177l4.613,0.67L13.336,11.754z",
-                        fill: 'none',
-                        stroke: '#0E343D',
-                        strokeWidth: 0.5,
-                    },
-                }*/
+            if(this.dynamic_discovery)
+                this.removeLabel(this.dynamic_discovery);
+            this.dynamic_discovery = this.insertLabel(2, {
                 attrs: {
                     text: {
                         text: 'dynamic\ndiscovery',
@@ -797,15 +748,15 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
 
         },
         _hideDynamicDiscovery: function () {
-            this.removeLabel(2);
+            if(this.dynamic_discovery) {
+                this.removeLabel(this.dynamic_discovery);
+                this.dynamic_discovery = undefined;
+            }
         },
-        _hideTimeout: function () {
-            this.removeLabel(0);
-        }
 
     }).build());
 
-// MicroTosca DeployemntTime Link
+// MicroTosca DeploymentTime Link
 joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfiguration.builder({
     attrs: {
         line: {
