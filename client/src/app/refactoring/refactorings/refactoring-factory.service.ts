@@ -45,14 +45,15 @@ export class RefactoringFactoryService {
   ) {}
 
   getRefactoring(refactoringName: string, smell: (NodeSmell | GroupSmell)): Refactoring {
+    let team;
+    if(this.session.isTeam()) {
+      team = this.gs.graph.findTeamByName(this.session.getTeamName());
+    }
+
     if(smell instanceof NodeSmell) {
-      let team;
-      if(this.session.isTeam()) {
-        team = this.gs.graph.findTeamByName(this.session.getTeamName());
-      }
       return this.getNodeSmellRefactoring(refactoringName, smell, team);
-    } else if(smell instanceof GroupSmell && this.session.isAdmin()) {
-      return this.getGroupSmellRefactoring(refactoringName, smell);
+    } else if(smell instanceof GroupSmell) {
+      return this.getGroupSmellRefactoring(refactoringName, smell, team);
     }
   }
 
@@ -123,21 +124,18 @@ export class RefactoringFactoryService {
     }
 
     refactoringBuilder.setGraph(this.gs.graph).setSmell(smell);
-    if(this.session.isTeam()) {
+    if(team) {
       refactoringBuilder.setTeam(team);
     }
     return refactoringBuilder.build();
 
   }
 
-  private getGroupSmellRefactoring(refactoringName: string, smell: GroupSmell): Refactoring {
+  private getGroupSmellRefactoring(refactoringName: string, smell: GroupSmell, team?: joint.shapes.microtosca.SquadGroup): Refactoring {
 
     switch(refactoringName){
 
       case REFACTORING_LIBRARY_NAMES.ADD_API_GATEWAY:
-        let team;
-        if(this.session.isTeam())
-          team = this.gs.graph.findTeamByName(this.session.getTeamName());
         return AddApiGatewayRefactoring.builder()
                                         .setGraph(this.gs.graph)
                                         .setSmell(smell)

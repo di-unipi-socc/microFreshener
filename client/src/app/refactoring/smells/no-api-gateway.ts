@@ -2,7 +2,7 @@ import { GroupSmell } from "./smell";
 
 export class NoApiGatewaySmellObject extends GroupSmell {
 
-    constructor(group:joint.shapes.microtosca.Group) {
+    constructor(group: joint.shapes.microtosca.EdgeGroup) {
         super(group);
     }
 

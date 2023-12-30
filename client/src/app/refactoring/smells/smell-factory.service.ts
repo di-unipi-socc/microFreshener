@@ -73,7 +73,7 @@ export class SmellFactoryService {
     return smell;
   }
 
-  getGroupSmell(smellJson, group): (GroupSmell | GroupSmell[]) {
+  getGroupSmell(smellJson, group: joint.shapes.microtosca.Group): (GroupSmell | GroupSmell[]) {
     console.debug("Getting smell for", smellJson.name);
     if(!this.session.isAdmin) return;
     
@@ -138,7 +138,7 @@ export class SmellFactoryService {
     });
 
     return nodes.map((node) => {
-      let nodeSmell = new NoApiGatewaySmellObject(edgeGroupSmell);
+      let nodeSmell = new NoApiGatewaySmellObject(<joint.shapes.microtosca.EdgeGroup> edgeGroupSmell.getGroup());
       nodeSmell.addNodeBasedCause(node);
       smellJson['refactorings'].forEach((refactoringJson) => {
         let refactoringName = refactoringJson['name'];

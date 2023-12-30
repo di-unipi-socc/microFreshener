@@ -38,7 +38,8 @@ export class AddApiGatewayRefactoring implements Refactoring {
             }
 
             build(): AddApiGatewayRefactoring {
-                let edgeGroup = <joint.shapes.microtosca.EdgeGroup> (<GroupSmell> this.smell).getGroup();
+                let edgeGroup = (<GroupSmell> this.smell).getGroup();
+                console.debug("Edge group: ", edgeGroup)
                 let commands = [];
                 let nodes = this.smell.getNodeBasedCauses();
                 if(this.node) {
@@ -49,7 +50,7 @@ export class AddApiGatewayRefactoring implements Refactoring {
                 }
                 nodes.forEach(node => {
                     let gatewayName = "API Gateway " + node.getName();
-                    let addMessageRouterCommandInTeamIfSet: ElementCommand<joint.shapes.microtosca.CommunicationPattern> = new AddMessageRouterCommand(this.graph, gatewayName, this.graph.getPointCloseTo(edgeGroup));
+                    let addMessageRouterCommandInTeamIfSet: ElementCommand<joint.shapes.microtosca.CommunicationPattern> = new AddMessageRouterCommand(this.graph, gatewayName, this.graph.getPointCloseTo(node));
                     if(this.team)
                         addMessageRouterCommandInTeamIfSet = addMessageRouterCommandInTeamIfSet.bind(new AddMemberToTeamGroupCommand(this.team));
                     let addApiGatewayCommand = Sequentiable.of(new RemoveLinkCommand(this.graph, this.graph.getLinkFromSourceToTarget(<joint.shapes.microtosca.Node> (<unknown> edgeGroup), node)))
