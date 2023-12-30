@@ -24,7 +24,7 @@ export class SidebarSmellComponent {
   constructor(
     private invoker: GraphInvoker
   ) {
-    this.resetSidebar();
+    this.actions = [];
   }
 
   ngOnChanges(change: SimpleChanges) {
@@ -38,12 +38,13 @@ export class SidebarSmellComponent {
     // Sidebar closing
     if(change.visible?.previousValue && !change.visible?.currentValue) {
       console.debug("closing sidebar");
+      this.resetSidebar();
     }
 
-    // If a team has been selected outside the sidebar, open the team details
+    // Smell change with open sidebar
     if(change.smell?.currentValue && change.smell?.currentValue != change.smell?.previousValue) {
       console.debug("smell changed", this.smell);
-      this.resetSidebar();
+      this.resetSidebar(this.smell);
       this.onSidebarOpen();
     }
   }
@@ -65,17 +66,21 @@ export class SidebarSmellComponent {
   }
 
   apply() {
-    this.invoker.executeCommand(this.selectedRefactoring).then(() => { this.resetSidebar(); this.visible = false; });
-    this.closeSidebar();
+    let refactoring = this.selectedRefactoring;
+    this.resetSidebar();
+    this.invoker.executeCommand(refactoring);
   }
 
-  resetSidebar() {
+  resetSidebar(smell?) {
     this.actions = [];
+    this.previousSelectedRefactoring = undefined;
     this.selectedRefactoring = undefined;
+    this.jointNodeModel = undefined;
+    if(!smell)
+      this.smell = undefined;
   }
 
   closeSidebar() {
-    this.resetSidebar();
     this.visible = false;
     this.visibleChange.emit(false);
   }

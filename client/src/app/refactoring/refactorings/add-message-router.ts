@@ -1,7 +1,8 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
-import { CompositeCommand } from "src/app/commands/icommand";
+import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 
 export class AddMessageRouterRefactoring implements Refactoring {
@@ -41,7 +42,10 @@ export class AddMessageRouterRefactoring implements Refactoring {
                     let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
                     let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
                     let messageRouterName = `${sourceNode.getName()} ${targetNode.getName()}`;
-                    cmds.push(new AddMessageRouterCommand(this.graph, messageRouterName, this.graph.getPointCloseTo(sourceNode)));
+                    let addMessageRouterInTeamIfAny: ElementCommand<joint.shapes.microtosca.Node> = new AddMessageRouterCommand(this.graph, messageRouterName, this.graph.getPointCloseTo(sourceNode));
+                    if(this.team)
+                        addMessageRouterInTeamIfAny = addMessageRouterInTeamIfAny.bind(new AddMemberToTeamGroupCommand(this.team));
+                    cmds.push(addMessageRouterInTeamIfAny);
                     cmds.push(new AddRunTimeLinkCommand(this.graph, sourceNode.getName(), messageRouterName));
                     cmds.push(new AddRunTimeLinkCommand(this.graph, messageRouterName, targetNode.getName()));
                 });

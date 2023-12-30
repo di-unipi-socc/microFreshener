@@ -6,6 +6,9 @@
         </div>
     </ng-template>
     <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
+        <div *ngIf="!smell">
+            <h1>Select a smell to show the details.</h1>
+        </div>
         <div *ngIf="smell">
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">

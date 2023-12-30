@@ -1,8 +1,10 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import * as joint from "jointjs";
-import { CompositeCommand } from "src/app/commands/icommand";
+import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { AddMessageBrokerCommand } from "src/app/architecture/node-commands";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
+import { CommunicationPattern } from "src/app/graph/model/communicationpattern";
 
 export class AddMessageBrokerRefactoring implements Refactoring {
     
@@ -41,7 +43,10 @@ export class AddMessageBrokerRefactoring implements Refactoring {
                     let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
                     let targetNode = <joint.shapes.microtosca.Node>link.getTargetElement();
                     let messageRouterName = `${sourceNode.getName()} ${targetNode.getName()}`;
-                    cmds.push(new AddMessageBrokerCommand(this.graph, messageRouterName, this.graph.getPointCloseTo(sourceNode)));
+                    let addMessageBrokerInTeamIfAny: ElementCommand<joint.shapes.microtosca.Node> = new AddMessageBrokerCommand(this.graph, messageRouterName, this.graph.getPointCloseTo(sourceNode));
+                    if(this.team)
+                        addMessageBrokerInTeamIfAny = addMessageBrokerInTeamIfAny.bind(new AddMemberToTeamGroupCommand(this.team));
+                    cmds.push(addMessageBrokerInTeamIfAny);
                     cmds.push(new RemoveLinkCommand(this.graph, link));
                     cmds.push(new AddRunTimeLinkCommand(this.graph, sourceNode.getName(), messageRouterName));
                     cmds.push(new AddRunTimeLinkCommand(this.graph, targetNode.getName(), messageRouterName));
