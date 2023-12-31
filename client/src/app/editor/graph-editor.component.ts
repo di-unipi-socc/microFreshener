@@ -25,6 +25,7 @@ import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 import { DeploymentService } from '../deployment/deployment.service';
 import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
+import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on/dialog-deploy-on.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -189,6 +190,20 @@ export class GraphEditorComponent {
         });
     }
 
+    openAddDeploymentLinkDialog(selectedNode) {
+        const ref = this.dialogService.open(DialogDeployOnComponent, {
+            header: 'Add a deployment',
+            data: {
+                deploying: selectedNode
+            }
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.deployments.addDeploymentLink(selectedNode, data.compute);
+            }
+        });
+    }
+
     openAddComputeDialog(position?) {
         const ref = this.dialogService.open(DialogAddComputeComponent, {
             header: 'Add a compute',
@@ -305,8 +320,8 @@ export class GraphEditorComponent {
                 } });
         }
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
-        nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
-            // TODO
+        nodeContextMenuItems.push({ label: "Deploy on compute", icon: "pi pi-download", command: () => {
+            this.openAddDeploymentLinkDialog(rightClickedNode);
         }});
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
         nodeContextMenuItems.push(

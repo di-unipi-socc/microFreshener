@@ -49,4 +49,8 @@ export class ComputeService {
     return this.graphService.graph.isCompute(cell);
   }
 
+  getComputes() {
+    return this.graphService.graph.getComputes();
+  }
+
 }

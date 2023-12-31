@@ -23,6 +23,10 @@ export class DeploymentService {
     return this.computes.deleteNode(node);
   }
 
+  getComputes() {
+    return this.computes.getComputes();
+  }
+
   showComputes() {
     this.computes.showComputes();
   }
