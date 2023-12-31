@@ -79,7 +79,7 @@ import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/su
 import { SubtoolbarComputeComponent } from './deployment/subtoolbar-compute/subtoolbar-compute.component';
 import { SidebarSmellComponent } from './refactoring/sidebar-smell/sidebar-smell.component';
 import { DialogAddComputeComponent } from './deployment/dialog-add-compute/dialog-add-compute.component';
-import { DialogDeployOnComponent } from './deployment/dialog-deploy-on/dialog-deploy-on/dialog-deploy-on.component';
+import { DialogDeployOnComponent } from './deployment/dialog-deploy-on/dialog-deploy-on.component';
 
 @NgModule({
   declarations: [

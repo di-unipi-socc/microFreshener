@@ -25,7 +25,7 @@ import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 import { DeploymentService } from '../deployment/deployment.service';
 import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
-import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on/dialog-deploy-on.component';
+import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on.component';
 
 @Component({
     selector: 'app-graph-editor',

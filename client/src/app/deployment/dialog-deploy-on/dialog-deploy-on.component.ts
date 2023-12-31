@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { DeploymentService } from '../../deployment.service';
+import { DeploymentService } from '../deployment.service';
 
 @Component({
   selector: 'app-dialog-deploy-on',

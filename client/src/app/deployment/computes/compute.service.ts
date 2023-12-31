@@ -36,6 +36,9 @@ export class ComputeService {
     this.graphService.graph.getComputes().forEach(compute => {
       compute.show();
     });
+    this.graphService.graph.getDeploymentLinks().forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
+      link.show();
+    })
   }
 
   hideComputes() {
@@ -43,6 +46,9 @@ export class ComputeService {
     this.graphService.graph.getComputes().forEach(compute => {
       compute.hide();
     });
+    this.graphService.graph.getDeploymentLinks().forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
+      link.hide();
+    })
   }
 
   isCompute(cell): boolean {

@@ -80,6 +80,8 @@ declare module 'jointjs' {
                 hide(): void;
             }
             class RunTimeLink extends joint.dia.Link {
+                show(): void;
+                hide(): void;
                 setTimedout(boolean): void;
                 setCircuitBreaker(boolean): void;
                 setDynamicDiscovery(boolean): void;
@@ -88,6 +90,8 @@ declare module 'jointjs' {
                 hasCircuitBreaker(): boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
+                show(): void;
+                hide(): void;
                 /*hasTimeout(): boolean
                 setTimedout(boolean): void;*/
             }
@@ -754,7 +758,7 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
             }
         },
 
-    }).build());
+    }).buildVisibility().build());
 
 // MicroTosca DeploymentTime Link
 joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfiguration.builder({
@@ -802,7 +806,7 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfi
             return this.timeout;
         },
     }
-).build());
+).buildVisibility().build());
 
 
 // demonstrate creating a custom dummy view for the app.CustomRect

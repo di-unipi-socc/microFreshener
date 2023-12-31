@@ -34,7 +34,7 @@ export class RemoveComputeCommand extends ElementCommand<joint.shapes.microtosca
         let compute = this.get();
         
         let links = this.graph.getConnectedLinks(compute);
-        let preprocessing = links.map((link) => new RemoveDeploymentLinkCommand(this.graph, link));
+        let preprocessing = links.map((link) => new RemoveDeploymentLinkCommand(this.graph, <joint.shapes.microtosca.DeploymentTimeLink> link));
         this.removeNodeFromEverything = CompositeCommand.of(preprocessing);
         this.removeNodeFromEverything.execute();
 

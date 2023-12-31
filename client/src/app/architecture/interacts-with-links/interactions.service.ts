@@ -44,7 +44,7 @@ export class InteractionsService {
   }
 
   getLinks(): joint.shapes.microtosca.RunTimeLink[] {
-    return this.graphService.graph.getLinks();
+    return this.graphService.graph.getRuntimeLinks();
   }
 
   getIngoingLinks(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink[] {
