@@ -588,7 +588,7 @@ export class Graph extends joint.dia.Graph {
             data['nodes'].push(dnode);
         })
         // Add links for interactions
-        this.getLinks().filter((link) => this.isInteractionLink(link)).forEach((link: joint.shapes.microtosca.RunTimeLink) => {
+        this.getRuntimeLinks().forEach((link: joint.shapes.microtosca.RunTimeLink) => {
             console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link?.getSourceElement())?.getName()} and ${(<joint.shapes.microtosca.Node>link?.getTargetElement())?.getName()}`);
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
@@ -606,19 +606,19 @@ export class Graph extends joint.dia.Graph {
             data['links'].push(dlink);
         })
         // Add links for deployments
-        /*this.getLinks().filter((link) => this.isDeploymentLink(link)).forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
-            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link.getSourceElement()).getName()} and ${(<joint.shapes.microtosca.Node>link.getTargetElement()).getName()}`);
+        this.getDeploymentLinks().forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
+            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link.getSourceElement()).getName()} and ${(<joint.shapes.microtosca.Compute>link.getTargetElement()).getName()}`);
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName()
             }
 
-            if (link instanceof joint.shapes.microtosca.RunTimeLink)
+            if (link instanceof joint.shapes.microtosca.DeploymentTimeLink)
                 dlink['type'] = "deployment";
             else
                 throw new Error(`Link type of ${link} not recognized`);
             data['links'].push(dlink);
-        })*/
+        })
         // Add EdgeGroups
         this.getEdgeGroups().forEach(node => {
             var edgeGroup = { 'name': node.getName(), 'type': 'edgegroup', "members": [] }; // 'id': node.get('id'),
