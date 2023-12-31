@@ -140,15 +140,15 @@ export class Graph extends joint.dia.Graph {
     }
 
     getOutgoingLinks(node: joint.shapes.microtosca.Node) {
-        return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { outbound: true });
+        return <joint.shapes.microtosca.RunTimeLink[]>this.getConnectedLinks(node, { outbound: true }).filter((link) => link instanceof joint.shapes.microtosca.RunTimeLink);
     }
 
     getIngoingLinks(node: joint.shapes.microtosca.Node) {
-        return <joint.shapes.microtosca.RunTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
+        return <joint.shapes.microtosca.RunTimeLink[]>(this.getConnectedLinks(node, { inbound: true })).filter((link) => link instanceof joint.shapes.microtosca.RunTimeLink);
     }
 
     getComputeDeploymentLinks(node: joint.shapes.microtosca.Node) {
-        return <joint.shapes.microtosca.DeploymentTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
+        return <joint.shapes.microtosca.DeploymentTimeLink[]>(this.getConnectedLinks(node, { inbound: true })).filter((link) => link instanceof joint.shapes.microtosca.DeploymentTimeLink);
     }
 
     getOutgoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
@@ -481,12 +481,12 @@ export class Graph extends joint.dia.Graph {
     getInternalLinksOfTeam(team: joint.shapes.microtosca.SquadGroup): joint.shapes.microtosca.RunTimeLink[] {
         var links = [];
         team.getMembers().forEach(node => {
-            this.getConnectedLinks(node, { outbound: true }).forEach(link => {
+            this.getConnectedLinks(node, { outbound: true }).filter((link) => link instanceof joint.shapes.microtosca.RunTimeLink).forEach(link => {
                 if (link.getTargetElement().isEmbeddedIn(team)) {
                     links.push(link);
                 }
             })
-            this.getConnectedLinks(node, { inbound: true }).forEach(link => {
+            this.getConnectedLinks(node, { inbound: true }).filter((link) => link instanceof joint.shapes.microtosca.RunTimeLink).forEach(link => {
                 if (link.getSourceElement().isEmbeddedIn(team)) {
                     links.push(link);
                 }

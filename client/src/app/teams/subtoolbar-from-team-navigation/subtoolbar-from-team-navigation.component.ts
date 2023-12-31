@@ -25,7 +25,6 @@ export class SubtoolbarFromTeamNavigationComponent {
   constructor(
     private session: SessionService,
     private teams: TeamsService,
-    private graphService: GraphService,
     private commands: GraphInvoker
   ) {
     this.showDependencies = false;
