@@ -7,7 +7,7 @@ export class MultipleServicesInOneContainerSmellObject extends NodeSmell {
     }
 
     getDescription() {
-        // TODO
+        return `${this.getLinkBasedCauses().map((link) => <joint.shapes.microtosca.Node> link.getSourceElement()).map((node) => node.getName()).join(", ")} share their container with other nodes.`;
     }
     
 }

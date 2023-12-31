@@ -78,6 +78,8 @@ import { SubtoolbarFromTeamNavigationComponent } from './teams/subtoolbar-from-t
 import { SubtoolbarTeamsComponent } from './teams/subtoolbar-teams-management/subtoolbar-teams-management.component';
 import { SubtoolbarComputeComponent } from './deployment/subtoolbar-compute/subtoolbar-compute.component';
 import { SidebarSmellComponent } from './refactoring/sidebar-smell/sidebar-smell.component';
+import { DialogAddComputeComponent } from './deployment/dialog-add-compute/dialog-add-compute.component';
+import { DialogDeployOnComponent } from './deployment/dialog-deploy-on/dialog-deploy-on.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +106,9 @@ import { SidebarSmellComponent } from './refactoring/sidebar-smell/sidebar-smell
     SidebarTeamsRelationsComponent,
     SubtoolbarTeamsComponent,
     SubtoolbarComputeComponent,
-    SidebarSmellComponent
+    SidebarSmellComponent,
+    DialogAddComputeComponent,
+    DialogDeployOnComponent
   ],
   imports: [
     CommonModule,

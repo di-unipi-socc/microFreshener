@@ -40,6 +40,7 @@ export class DialogAnalysisComponent implements OnInit {
     this.as.getPrinciplesToAnalyse().then(principles => {
       principles = this.removeTeamSmellsIfTeamMember(principles);
       principles.forEach(principle => {
+        console.debug("Adding", principle.name)
         principle.smells.forEach(smell => {
           this.selectedSmells.push(smell);
         })

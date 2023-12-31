@@ -1,9 +1,9 @@
-import { Command, CompositeCommand, ElementCommand } from '../commands/icommand';
+import { Command, CompositeCommand, ElementCommand } from '../../commands/icommand';
 import * as joint from 'jointjs';
 import { g } from 'jointjs';
-import { Graph } from "../graph/model/graph";
-import { RemoveMemberFromTeamGroupCommand } from '../teams/team-commands';
-import { AddRunTimeLinkCommand, ChangeLinkTargetCommand, RemoveLinkCommand } from './link-commands';
+import { Graph } from "../../graph/model/graph";
+import { RemoveMemberFromTeamGroupCommand } from '../../teams/team-commands';
+import { AddRunTimeLinkCommand, ChangeLinkTargetCommand, RemoveLinkCommand } from '../interacts-with-links/interaction-with-commands';
 
 
 export abstract class AddNodeCommand<T extends joint.shapes.microtosca.Node> extends ElementCommand<T> {

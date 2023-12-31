@@ -1,10 +1,10 @@
 import { Graph } from "src/app/graph/model/graph";
 import { GroupRefactoring } from "./refactoring-command";
 import { GroupSmell } from "../smells/smell";
-import { AddDatastoreCommand } from "src/app/architecture/node-commands";
+import { AddDatastoreCommand } from "src/app/architecture/nodes/node-commands";
 import { CompositeCommand, Sequentiable } from "src/app/commands/icommand";
-import { ChangeLinkTargetCommand } from "src/app/architecture/link-commands";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
+import { ChangeLinkTargetCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 
 export class SplitDatastoreAmongTeamsRefactoring extends GroupRefactoring {
 

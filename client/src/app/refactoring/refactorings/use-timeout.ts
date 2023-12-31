@@ -1,6 +1,6 @@
+import { AddTimeoutCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { Command, CompositeCommand } from "src/app/commands/icommand";
-import { AddTimeoutCommand } from "src/app/architecture/link-commands";
 
 export class UseTimeoutRefactoring implements Refactoring {
 
@@ -30,7 +30,7 @@ export class UseTimeoutRefactoring implements Refactoring {
         return new class Builder extends RefactoringBuilder {
 
             build(): UseTimeoutRefactoring {
-                let links = this.smell.getLinkBasedCauses();
+                let links = <joint.shapes.microtosca.RunTimeLink[]> this.smell.getLinkBasedCauses();
                 if(this.team) {
                     links = links.filter((l) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) == this.team);
                 }

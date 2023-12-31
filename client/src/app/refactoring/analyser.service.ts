@@ -48,8 +48,7 @@ export class AnalyserService {
   getPrinciplesToAnalyse() {
     return this.http.get<any>('assets/data/principles.json')
       .toPromise()
-      .then(res => (<PrincipleRequest[]>res.data)
-      .filter(principle => principle.id != 1))
+      .then(res => (<PrincipleRequest[]>res.data));
   }
 
   runRemoteAnalysis(smells: SmellRequest[]): Observable<Boolean> {

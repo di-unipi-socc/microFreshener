@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from './interaction-with-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import * as joint from 'jointjs';
@@ -18,6 +18,9 @@ export class InteractionsService {
 
   async addLink(source, target, timeout?, circuit_breaker?, dynamic_discovery?) {
     console.log("selected, new ->", source, target);
+    if(this.graphService.graph.isCompute(target)) {
+      return Promise.reject("You cannot add an interaction to a compute node.");
+    }
     if(!this.permissions.writePermissions.isAllowed(source)) {
       return Promise.reject("You are not allowed to add an interaction from the selected node.");
     }
@@ -44,7 +47,7 @@ export class InteractionsService {
   }
 
   getLinks(): joint.shapes.microtosca.RunTimeLink[] {
-    return this.graphService.graph.getLinks();
+    return this.graphService.graph.getRuntimeLinks();
   }
 
   getIngoingLinks(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink[] {

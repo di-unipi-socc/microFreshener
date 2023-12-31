@@ -23,6 +23,9 @@ import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-a
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
+import { DeploymentService } from '../deployment/deployment.service';
+import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
+import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -46,6 +49,7 @@ export class GraphEditorComponent {
         private toolSelection: ToolSelectionService, // Editor tool selection
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
+        private deployments: DeploymentService, // Compute-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
         private session: SessionService, // User data
         private dialogService: DialogService,
@@ -186,19 +190,59 @@ export class GraphEditorComponent {
         });
     }
 
+    openAddDeploymentLinkDialog(selectedNode) {
+        const ref = this.dialogService.open(DialogDeployOnComponent, {
+            header: 'Add a deployment',
+            data: {
+                deploying: selectedNode
+            }
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.deployments.addDeploymentLink(selectedNode, data.compute);
+            }
+        });
+    }
+
+    openAddComputeDialog(position?) {
+        const ref = this.dialogService.open(DialogAddComputeComponent, {
+            header: 'Add a compute',
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.deployments.addCompute(data.name, position);
+            }
+        });
+    }
+
+    openDeleteComputeDialog(selectedCompute) {
+        this.confirmationService.confirm({
+            message: `Do you want to delete the compute?`,
+            header: 'Delete compute',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.deployments.deleteCompute(selectedCompute).then(() => {
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Compute ${selectedCompute.getName()} deleted succesfully` });
+                }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
+            }
+        });
+    }
+
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
             if (this.leftClickSelectedCell) {
                 this.stopAddingLink();
-            }
-
-            let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
-            console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
-            
-            if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.teams.getTeam(this.session.getTeamName()) : undefined;
-                this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
+            } else {
+                let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
+                console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
+                
+                if(this.deployments.areComputesVisible()) {
+                    this.openAddComputeDialog(position);
+                } else if (this.toolSelection.isAddNodeEnabled()) {
+                    let team = this.session.isTeam ? this.teams.getTeam(this.session.getTeamName()) : undefined;
+                    this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
+                }
             }
         });
     }
@@ -209,8 +253,15 @@ export class GraphEditorComponent {
             let cell = cellView.model;
             this.contextMenuItems = [];
             // Add element-specific context menu items
-            if(this.architecture.isNode(cell)) {
+            if(this.deployments.isCompute(cell)) {
                 console.debug("node right clicked");
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+                this.contextMenuItems = this.contextMenuItems.concat(this.getComputeContextMenu(cell));
+            } else if(this.architecture.isNode(cell)) {
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
                     this.contextMenuItems.push(smellsMenuItem);
@@ -226,6 +277,8 @@ export class GraphEditorComponent {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(this.architecture.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
+            } else if(this.deployments.isDeploymentLink(cell)) {
+                this.contextMenuItems = this.contextMenuItems.concat(this.getDeploymentLinkContextMenu(cell));
             } else if(this.architecture.isEdgeGroup(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getExternalUserContextMenu(cell));
             }
@@ -274,8 +327,8 @@ export class GraphEditorComponent {
                 } });
         }
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
-        nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
-            // TODO
+        nodeContextMenuItems.push({ label: "Deploy on compute", icon: "pi pi-download", command: () => {
+            this.openAddDeploymentLinkDialog(rightClickedNode);
         }});
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
         nodeContextMenuItems.push(
@@ -284,9 +337,35 @@ export class GraphEditorComponent {
         return nodeContextMenuItems;
     }
 
+    getComputeContextMenu(rightClickedCompute): MenuItem[] {
+        let computeContextMenuItems = [];
+        computeContextMenuItems.push(
+            { label: "Delete compute", icon: "pi pi-trash", command: () => { this.openDeleteComputeDialog(rightClickedCompute); } }
+        );
+        return computeContextMenuItems;
+    }
+
     getExternalUserContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [this.getAddInteractionElement(rightClickedNode)];
         return nodeContextMenuItems;
+    }
+
+    getDeploymentLinkContextMenu(rightClickedDeploymentLink): MenuItem[] {
+        return [{label: "Delete link", icon: "pi pi-trash", command: () => {
+            //this.editing.removeLink(rightClickedInteractionLink);
+            this.confirmationService.confirm({
+                message: 'Do you want to delete this deployment?',
+                header: 'Deployment deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.deployments.removeDeploymentLink(rightClickedDeploymentLink);
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Deployment deleted succesfully` });
+                },
+                reject: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Deployment not deleted` });
+                }
+            });
+        }}];
     }
 
     getAddInteractionElement(rightClickedNode) {
@@ -338,14 +417,19 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
             console.debug("clicked", cellView);
             console.log("click on cell");
+            if(this.deployments.isCompute(cellView.model) || this.deployments.isDeploymentLink(cellView.model)) {
+                if(this.leftClickSelectedCell)
+                    this.stopAddingLink();
+                return;
+            }
             evt.preventDefault();
-            evt.stopPropagation()
+            evt.stopPropagation();
             let element = cellView.model;
             // team clicked
             if (this.teams.isTeamGroup(element)) {
                 console.debug("team clicked", cellView);
+                let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                 if(this.toolSelection.isAddNodeEnabled()) {
-                    let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
                         team = this.teams.getTeam(this.session.getTeamName())
@@ -420,8 +504,11 @@ export class GraphEditorComponent {
             });
             ref.onClose.subscribe((data) => {
                 if (data) {
-                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
+                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery)
+                    .catch((error) => {
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                    });
                 }
             });
         } else {
@@ -466,6 +553,7 @@ export class GraphEditorComponent {
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                 !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                !this.deployments.isCompute(cell) && // Computes can't be in a squad
                 !this.teams.isTeamGroup(cell)) {
                 console.debug("clicked", cellView);
                 var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
@@ -490,7 +578,7 @@ export class GraphEditorComponent {
                                     if(this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team).then(() => {
                                             this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
-                                        });
+                                        }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
                                     }
                                 }
                             }

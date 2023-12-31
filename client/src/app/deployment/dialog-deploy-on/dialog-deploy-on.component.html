@@ -1,0 +1,11 @@
+<div class="p-grid p-justify-center">
+    <div class="p-col-18">
+        <h2>Deploy {{deployingNode.getName()}}<span *ngIf="selectedCompute"> on {{selectedCompute.name}}</span></h2>
+    </div>
+</div>
+
+<p-listbox [options]="computes" [(ngModel)]="selectedCompute" optionLabel="name" [filter]="true" [style]="{ width: '50rem' }" [listStyle]="{'max-height': '400px'}"></p-listbox>
+
+<div class="p-grid p-justify-end">
+    <p-button label="Add" icon="pi pi-check" (onClick)="save()" autofocus [disabled]="!selectedCompute"></p-button>
+</div>

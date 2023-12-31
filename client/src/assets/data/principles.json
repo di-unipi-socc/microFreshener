@@ -2,7 +2,7 @@
     "data": [
         {
             "id": 1,
-            "name": "IndependentDeployability",
+            "name": "Independent Deployability",
             "smells": [
                 {
                     "id": 1,
@@ -13,7 +13,7 @@
         },
         {
             "id": 2,
-            "name": "HorizontalScalability",
+            "name": "Horizontal Scalability",
             "smells": [
                 {
                     "id": 2,
@@ -29,7 +29,7 @@
         },
         {
             "id": 3,
-            "name": "IsolateFailure",
+            "name": "Isolate Failure",
             "smells": [
                 {
                     "id": 4,

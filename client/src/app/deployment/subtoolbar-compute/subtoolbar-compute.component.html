@@ -1,1 +1,10 @@
-<p>subtoolbar-compute works!</p>
+<p-toggleButton
+    onIcon="pi pi-fw pi-stop"
+    offIcon="pi pi-fw pi-stop"
+    styleClass="p-button-text p-button-lg p-button-compute"
+    pTooltip="Add compute"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="computeToggledState"
+    (onChange)="toggleCompute()">
+</p-toggleButton>

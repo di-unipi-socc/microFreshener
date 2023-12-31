@@ -1,8 +1,8 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
 import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
-import { AddMessageRouterCommand } from "src/app/architecture/node-commands";
+import { AddMessageRouterCommand } from "src/app/architecture/nodes/node-commands";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 
 
 export class AddMessageRouterRefactoring implements Refactoring {

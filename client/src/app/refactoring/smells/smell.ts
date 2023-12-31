@@ -5,7 +5,7 @@ export interface Smell {
     getName(): string;
     getDescription(): string;
     getNodeBasedCauses(): joint.shapes.microtosca.Node[];
-    getLinkBasedCauses(): joint.shapes.microtosca.RunTimeLink[];
+    getLinkBasedCauses(): joint.dia.Link[];
     getRefactorings(): Refactoring[];
 }
 
@@ -13,7 +13,7 @@ abstract class SmellObject implements Smell {
 
     protected name: string;
     protected refactorings: Refactoring[];
-    protected linksCause: joint.shapes.microtosca.RunTimeLink[];
+    protected linksCause: joint.dia.Link[];
     protected nodesCause: joint.shapes.microtosca.Node[];
 
     constructor() {

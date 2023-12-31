@@ -1,6 +1,6 @@
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { AddServiceCommand } from "src/app/architecture/node-commands";
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddServiceCommand } from "src/app/architecture/nodes/node-commands";
 import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 

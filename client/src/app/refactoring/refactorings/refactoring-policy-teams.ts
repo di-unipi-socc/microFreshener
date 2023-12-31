@@ -26,7 +26,7 @@ export abstract class RefactoringTeamPolicy {
 
 }
 
-export class SomeInteractionsFromTeamPolicy extends RefactoringTeamPolicy {
+class SomeLinksFromTeamPolicy extends RefactoringTeamPolicy {
 
     constructor(
         private minimumRequiredInteractions: number,
@@ -34,7 +34,7 @@ export class SomeInteractionsFromTeamPolicy extends RefactoringTeamPolicy {
         private refactoringName: string,
         private graph: Graph,
         private smell: Smell,
-        reason?: (links: joint.shapes.microtosca.RunTimeLink[]) => string
+        reason?: (links: joint.dia.Link[]) => string
     ) {
         super(team);
         if(reason) {
@@ -65,12 +65,42 @@ export class SomeInteractionsFromTeamPolicy extends RefactoringTeamPolicy {
 
 }
 
-export class AnyInteractionFromTeamPolicy extends SomeInteractionsFromTeamPolicy {
+export class SomeInteractionsFromTeamPolicy extends SomeLinksFromTeamPolicy {
+    constructor(
+        minimumRequiredInteractions: number,
+        team: joint.shapes.microtosca.SquadGroup,
+        refactoringName: string,
+        graph: Graph,
+        smell: Smell,
+        reason?: (links: joint.shapes.microtosca.RunTimeLink[]) => string
+    ) {
+        super(minimumRequiredInteractions, team, refactoringName, graph, smell, reason);
+    }
+}
 
+export class AnyInteractionFromTeamPolicy extends SomeInteractionsFromTeamPolicy {
     constructor(team: joint.shapes.microtosca.SquadGroup, refactoringName: string, graph: Graph, smell: Smell, reason?: (links: joint.shapes.microtosca.RunTimeLink[]) => string) {
         super(1, team, refactoringName, graph, smell, reason);
     }
+}
 
+export class SomeDeploymentsFromTeamPolicy extends SomeLinksFromTeamPolicy {
+    constructor(
+        minimumRequiredInteractions: number,
+        team: joint.shapes.microtosca.SquadGroup,
+        refactoringName: string,
+        graph: Graph,
+        smell: Smell,
+        reason?: (links: joint.shapes.microtosca.DeploymentTimeLink[]) => string
+    ) {
+        super(minimumRequiredInteractions, team, refactoringName, graph, smell, reason);
+    }
+}
+
+export class AnyDeploymentFromTeamPolicy extends SomeDeploymentsFromTeamPolicy {
+    constructor(team: joint.shapes.microtosca.SquadGroup, refactoringName: string, graph: Graph, smell: Smell, reason?: (links: joint.shapes.microtosca.DeploymentTimeLink[]) => string) {
+        super(1, team, refactoringName, graph, smell, reason);
+    }
 }
 
 export class SomeTeamInternalInteractionPolicy extends RefactoringTeamPolicy {
@@ -85,7 +115,7 @@ export class SomeTeamInternalInteractionPolicy extends RefactoringTeamPolicy {
     ) {
         super(team);
         if(reason) {
-            this.reason = () => reason(smell.getLinkBasedCauses());
+            this.reason = () => reason(<joint.shapes.microtosca.RunTimeLink[]> smell.getLinkBasedCauses());
         }
     }
 
