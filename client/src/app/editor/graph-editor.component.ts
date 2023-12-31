@@ -215,13 +215,13 @@ export class GraphEditorComponent {
         });
     }
 
-    openDeleteDeploymentDialog(selectedCompute) {
+    openDeleteComputeDialog(selectedCompute) {
         this.confirmationService.confirm({
             message: `Do you want to delete the compute?`,
             header: 'Delete compute',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.deployments.deleteNode(selectedCompute).then(() => {
+                this.deployments.deleteCompute(selectedCompute).then(() => {
                     this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Compute ${selectedCompute.getName()} deleted succesfully` });
                 }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
             }
@@ -272,6 +272,8 @@ export class GraphEditorComponent {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(this.architecture.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
+            } else if(this.deployments.isDeploymentLink(cell)) {
+                this.contextMenuItems = this.contextMenuItems.concat(this.getDeploymentLinkContextMenu(cell));
             } else if(this.architecture.isEdgeGroup(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getExternalUserContextMenu(cell));
             }
@@ -333,7 +335,7 @@ export class GraphEditorComponent {
     getComputeContextMenu(rightClickedCompute): MenuItem[] {
         let computeContextMenuItems = [];
         computeContextMenuItems.push(
-            { label: "Delete compute", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedCompute); } }
+            { label: "Delete compute", icon: "pi pi-trash", command: () => { this.openDeleteComputeDialog(rightClickedCompute); } }
         );
         return computeContextMenuItems;
     }
@@ -341,6 +343,24 @@ export class GraphEditorComponent {
     getExternalUserContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [this.getAddInteractionElement(rightClickedNode)];
         return nodeContextMenuItems;
+    }
+
+    getDeploymentLinkContextMenu(rightClickedDeploymentLink): MenuItem[] {
+        return [{label: "Delete link", icon: "pi pi-trash", command: () => {
+            //this.editing.removeLink(rightClickedInteractionLink);
+            this.confirmationService.confirm({
+                message: 'Do you want to delete this deployment?',
+                header: 'Deployment deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.deployments.removeDeploymentLink(rightClickedDeploymentLink);
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Deployment deleted succesfully` });
+                },
+                reject: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Deployment not deleted` });
+                }
+            });
+        }}];
     }
 
     getAddInteractionElement(rightClickedNode) {

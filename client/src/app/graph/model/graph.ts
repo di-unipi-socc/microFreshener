@@ -147,6 +147,10 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.RunTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
     }
 
+    getComputeDeploymentLinks(node: joint.shapes.microtosca.Node) {
+        return <joint.shapes.microtosca.DeploymentTimeLink[]>(this.getConnectedLinks(node, { inbound: true }));
+    }
+
     getOutgoingLinksOfATeamFrontier(team: joint.shapes.microtosca.SquadGroup) {
         return this.getFrontierOfATeam(team)
                           .map((fnode) => this.getIngoingLinks(fnode) // Map frontier nodes to their ingoing links
@@ -361,8 +365,12 @@ export class Graph extends joint.dia.Graph {
         return node.attr('type/text')=="MR";
     }
 
-    isInteractionLink(node: joint.dia.Cell) {
-        return node.attributes['type'] == "microtosca.RunTimeLink";
+    isInteractionLink(cell: joint.dia.Cell) {
+        return cell.attributes['type'] == "microtosca.RunTimeLink";
+    }
+
+    isDeploymentLink(cell: joint.dia.Cell) {
+        return cell.attributes['type'] == "microtosca.DeploymentTimeLink";
     }
 
     getSubgraphFromNodes(nodes: joint.dia.Cell[]) {

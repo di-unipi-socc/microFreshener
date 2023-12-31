@@ -19,8 +19,8 @@ export class DeploymentService {
     return this.computes.addCompute(name, position);
   }
 
-  async deleteNode(node) {
-    return this.computes.deleteNode(node);
+  async deleteCompute(node) {
+    return this.computes.deleteCompute(node);
   }
 
   getComputes() {
@@ -51,6 +51,14 @@ export class DeploymentService {
 
   removeDeploymentLink(link) {
     return this.links.removeDeploymentLink(link);
+  }
+
+  isDeploymentLink(cell) {
+    return this.links.isDeploymentLink(cell);
+  }
+
+  getDeploymentLinks(compute) {
+    return this.links.getDeploymentLinks(compute);
   }
 
 }

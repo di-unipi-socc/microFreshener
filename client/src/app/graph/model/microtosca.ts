@@ -647,15 +647,9 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
     attrs: {
         line: {
             cursor: 'default',
-    //     //     connection: true,
-    //     //     stroke: '#0E343D',
-    //     //     strokeWidth: 2,
         },
         wrapper: {
             cursor: 'default',
-    //     //     // connection: true,
-    //     //     strokeWidth: 10,
-    //     //     strokeLinejoin: 'round'
         }
     },
 
@@ -764,6 +758,7 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
 joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfiguration.builder({
     attrs: {
         line: {
+            cursor: 'default',
             connection: true,
             stroke: '#333333',
             strokeWidth: 2,
@@ -775,6 +770,7 @@ joint.dia.Link.define('microtosca.DeploymentTimeLink', ...MicrotoscaElementConfi
             }
         },
         wrapper: {
+            cursor: 'default',
             connection: true,
             strokeWidth: 10,
             strokeLinejoin: 'round'

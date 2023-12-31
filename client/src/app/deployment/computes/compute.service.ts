@@ -3,6 +3,8 @@ import { g } from 'jointjs';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { GraphService } from 'src/app/graph/graph.service';
 import { AddComputeCommand, RemoveComputeCommand } from './compute-commands';
+import { DeployedOnService } from '../deployed-on-links/deployed-on.service';
+import { PermissionsService } from 'src/app/permissions/permissions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +15,9 @@ export class ComputeService {
 
   constructor(
     private graphService: GraphService,
-    private graphInvoker: GraphInvoker
+    private graphInvoker: GraphInvoker,
+    private permissions: PermissionsService,
+    private deploymentLinks: DeployedOnService,
   ) {
     this.computesVisible = false;
   }
@@ -23,8 +27,11 @@ export class ComputeService {
     return this.graphInvoker.executeCommand(command);
   }
 
-  async deleteNode(node) {
-    return this.graphInvoker.executeCommand(new RemoveComputeCommand(this.graphService.graph, node));
+  async deleteCompute(compute: joint.shapes.microtosca.Compute) {
+      if(this.getDeployedNodes(compute).filter((node) => !this.permissions.writePermissions.isAllowed(node)).length > 0) {
+        return Promise.reject("Cannot delete this compute because other team nodes are deployed on it.");
+      }
+    return this.graphInvoker.executeCommand(new RemoveComputeCommand(this.graphService.graph, compute));
   }
 
   areComputesVisible() {
@@ -37,8 +44,10 @@ export class ComputeService {
       compute.show();
     });
     this.graphService.graph.getDeploymentLinks().forEach((link: joint.shapes.microtosca.DeploymentTimeLink) => {
-      link.show();
-    })
+      if(this.permissions.writePermissions.isAllowed(link.getSourceElement())) {
+        link.show();
+      }
+    });
   }
 
   hideComputes() {
@@ -57,6 +66,10 @@ export class ComputeService {
 
   getComputes() {
     return this.graphService.graph.getComputes();
+  }
+
+  getDeployedNodes(compute: joint.shapes.microtosca.Compute): joint.shapes.microtosca.Node[] {
+    return this.deploymentLinks.getDeploymentLinks(compute).map((deployment) => deployment.getSourceElement() as joint.shapes.microtosca.Node);
   }
 
 }
