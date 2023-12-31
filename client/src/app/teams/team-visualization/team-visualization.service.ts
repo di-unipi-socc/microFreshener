@@ -12,7 +12,7 @@ export class TeamVisualizationService {
   constructor(
     private graphService: GraphService
   ) {
-    this.visibleTeams = false;
+    this.visibleTeams = true;
   }
 
   showTeams() {

@@ -548,6 +548,7 @@ export class GraphEditorComponent {
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                 !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                !this.deployments.isCompute(cell) && // Computes can't be in a squad
                 !this.teams.isTeamGroup(cell)) {
                 console.debug("clicked", cellView);
                 var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
@@ -572,7 +573,7 @@ export class GraphEditorComponent {
                                     if(this.teams.areVisible()) {
                                         this.teams.addMemberToTeam(member, team).then(() => {
                                             this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
-                                        });
+                                        }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
                                     }
                                 }
                             }
