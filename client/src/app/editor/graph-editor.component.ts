@@ -24,7 +24,7 @@ import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-a
 import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 import { DeploymentService } from '../deployment/deployment.service';
-import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute/dialog-add-compute.component';
+import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -238,7 +238,9 @@ export class GraphEditorComponent {
             let cell = cellView.model;
             this.contextMenuItems = [];
             // Add element-specific context menu items
-            if(this.architecture.isNode(cell)) {
+            if(this.deployments.isCompute(cell)) {
+                this.contextMenuItems = this.contextMenuItems.concat(this.getComputeContextMenu(cell));
+            } else if(this.architecture.isNode(cell)) {
                 console.debug("node right clicked");
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
@@ -311,6 +313,14 @@ export class GraphEditorComponent {
             { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
         );
         return nodeContextMenuItems;
+    }
+
+    getComputeContextMenu(rightClickedCompute): MenuItem[] {
+        let computeContextMenuItems = [];
+        computeContextMenuItems.push(
+            { label: "Delete compute", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedCompute); } }
+        );
+        return computeContextMenuItems;
     }
 
     getExternalUserContextMenu(rightClickedNode): MenuItem[] {

@@ -35,6 +35,10 @@ export class DeploymentService {
     return this.computes.areComputesVisible();
   }
 
+  isCompute(cell) {
+    return this.computes.isCompute(cell);
+  }
+
   // DeployedOn
 
   addDeploymentLink(source, target) {

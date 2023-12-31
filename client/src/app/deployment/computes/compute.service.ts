@@ -45,4 +45,8 @@ export class ComputeService {
     });
   }
 
+  isCompute(cell): boolean {
+    return this.graphService.graph.isCompute(cell);
+  }
+
 }
