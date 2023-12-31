@@ -254,9 +254,14 @@ export class GraphEditorComponent {
             this.contextMenuItems = [];
             // Add element-specific context menu items
             if(this.deployments.isCompute(cell)) {
+                console.debug("node right clicked");
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getComputeContextMenu(cell));
             } else if(this.architecture.isNode(cell)) {
-                console.debug("node right clicked");
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
                     this.contextMenuItems.push(smellsMenuItem);
