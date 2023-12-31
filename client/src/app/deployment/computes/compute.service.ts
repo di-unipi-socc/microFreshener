@@ -9,10 +9,14 @@ import { AddComputeCommand, RemoveComputeCommand } from './compute-commands';
 })
 export class ComputeService {
 
+  computesVisible: boolean;
+
   constructor(
     private graphService: GraphService,
     private graphInvoker: GraphInvoker
-  ) { }
+  ) {
+    this.computesVisible = false;
+  }
 
   async addCompute(name: string, position?: g.Point) {
     let command = new AddComputeCommand(this.graphService.graph, name, position);
@@ -23,13 +27,19 @@ export class ComputeService {
     return this.graphInvoker.executeCommand(new RemoveComputeCommand(this.graphService.graph, node));
   }
 
+  areComputesVisible() {
+    return this.computesVisible;
+  }
+
   showComputes() {
+    this.computesVisible = true;
     this.graphService.graph.getComputes().forEach(compute => {
       compute.show();
     });
   }
 
   hideComputes() {
+    this.computesVisible = false;
     this.graphService.graph.getComputes().forEach(compute => {
       compute.hide();
     });

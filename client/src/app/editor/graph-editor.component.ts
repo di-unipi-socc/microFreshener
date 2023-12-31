@@ -23,6 +23,8 @@ import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-a
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
 import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
+import { DeploymentService } from '../deployment/deployment.service';
+import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute/dialog-add-compute.component';
 
 @Component({
     selector: 'app-graph-editor',
@@ -46,6 +48,7 @@ export class GraphEditorComponent {
         private toolSelection: ToolSelectionService, // Editor tool selection
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
+        private deployments: DeploymentService, // Compute-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
         private session: SessionService, // User data
         private dialogService: DialogService,
@@ -186,19 +189,45 @@ export class GraphEditorComponent {
         });
     }
 
+    openAddComputeDialog(position?) {
+        const ref = this.dialogService.open(DialogAddComputeComponent, {
+            header: 'Add a compute',
+        });
+        ref.onClose.subscribe((data) => {
+            if (data) {
+                this.deployments.addCompute(data.name, position);
+            }
+        });
+    }
+
+    openDeleteDeploymentDialog(selectedCompute) {
+        this.confirmationService.confirm({
+            message: `Do you want to delete the compute?`,
+            header: 'Delete compute',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.deployments.deleteNode(selectedCompute).then(() => {
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Compute ${selectedCompute.getName()} deleted succesfully` });
+                }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
+            }
+        });
+    }
+
     bindSingleClickBlank() {
         this.navigation.getPaper().on("blank:pointerclick", (evt) => {
             
             if (this.leftClickSelectedCell) {
                 this.stopAddingLink();
-            }
-
-            let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
-            console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
-            
-            if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.teams.getTeam(this.session.getTeamName()) : undefined;
-                this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
+            } else {
+                let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
+                console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
+                
+                if(this.deployments.areComputesVisible()) {
+                    this.openAddComputeDialog(position);
+                } else if (this.toolSelection.isAddNodeEnabled()) {
+                    let team = this.session.isTeam ? this.teams.getTeam(this.session.getTeamName()) : undefined;
+                    this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
+                }
             }
         });
     }
@@ -344,8 +373,8 @@ export class GraphEditorComponent {
             // team clicked
             if (this.teams.isTeamGroup(element)) {
                 console.debug("team clicked", cellView);
+                let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                 if(this.toolSelection.isAddNodeEnabled()) {
-                    let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
                         team = this.teams.getTeam(this.session.getTeamName())
