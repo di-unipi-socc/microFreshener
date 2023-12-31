@@ -41,3 +41,20 @@ export class RemoveDeploymentLinkCommand implements Command {
         this.link.addTo(this.graph);
     }
 }
+
+export class ChangeDeploymentLinkTargetCommand implements Command {
+
+    oldTarget;
+
+    constructor(private graph: Graph, private link: joint.shapes.microtosca.DeploymentTimeLink, private newTargetName: string) {}
+
+    execute() {
+        this.oldTarget = this.link.getTargetElement();
+        let newTarget = this.graph.getNode(this.newTargetName);
+        this.link.target(newTarget);
+    }
+
+    unexecute() {
+        this.link.target(this.oldTarget);
+    }
+}

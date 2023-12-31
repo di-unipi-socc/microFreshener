@@ -18,6 +18,7 @@ import { MergeTeamsRefactoring } from './merge-teams';
 import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
 import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
 import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy } from './refactoring-policy-teams';
+import { SplitServiceInTwoPods } from './split-service-in-two-pods';
 
 enum REFACTORING_LIBRARY_NAMES {
   ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -31,7 +32,8 @@ enum REFACTORING_LIBRARY_NAMES {
   ADD_API_GATEWAY = "Add-api-gateway",
   SPLIT_TEAMS_BY_SERVICE = "Split-teams-by-service",
   SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling",
-  MERGE_TEAMS = "Merge-teams"
+  MERGE_TEAMS = "Merge-teams",
+  SPLIT_SERVICE_IN_TWO_PODS = "Split-service-in-two-pods"
 }
 
 @Injectable({
@@ -113,6 +115,12 @@ export class RefactoringFactoryService {
         if(team)
           policy = new SomeInteractionsFromTeamPolicy(2, team, AddDataManagerRefactoring.NAME, this.gs.graph, smell);
         refactoringBuilder = AddDataManagerRefactoring.builder();
+        break;
+
+        case REFACTORING_LIBRARY_NAMES.SPLIT_SERVICE_IN_TWO_PODS:
+          if(team)
+            policy = new AnyInteractionFromTeamPolicy(team, SplitServiceInTwoPods.NAME, this.gs.graph, smell);
+          break;
     }
 
     if(!policy || !refactoringBuilder) {

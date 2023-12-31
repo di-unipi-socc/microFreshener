@@ -7,7 +7,7 @@ export class MultipleServicesInOneContainerSmellObject extends NodeSmell {
     }
 
     getDescription() {
-        // TODO
+        return `${this.getNodeBasedCauses().map((node) => node.getName()).join(", ")} share their container.`;
     }
     
 }

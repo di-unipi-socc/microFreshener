@@ -56,7 +56,7 @@ export class ChangeLinkTargetCommand implements Command {
 
     oldTarget;
 
-    constructor(private graph: Graph, private link: joint.dia.Link, private newTargetName: string) {}
+    constructor(private graph: Graph, private link: joint.shapes.microtosca.RunTimeLink, private newTargetName: string) {}
 
     execute() {
         this.oldTarget = this.link.getTargetElement();

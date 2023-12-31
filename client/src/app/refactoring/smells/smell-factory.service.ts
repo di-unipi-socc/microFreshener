@@ -51,6 +51,7 @@ export class SmellFactoryService {
         break;
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
         smell = new MultipleServicesInOneContainerSmellObject();
+        break;
       default:
         throw new Error(`Unsupported smell: ${smellJson.name}`);
     }
