@@ -412,8 +412,13 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
             console.debug("clicked", cellView);
             console.log("click on cell");
+            if(this.deployments.isCompute(cellView.model) || this.deployments.isDeploymentLink(cellView.model)) {
+                if(this.leftClickSelectedCell)
+                    this.stopAddingLink();
+                return;
+            }
             evt.preventDefault();
-            evt.stopPropagation()
+            evt.stopPropagation();
             let element = cellView.model;
             // team clicked
             if (this.teams.isTeamGroup(element)) {
@@ -494,8 +499,11 @@ export class GraphEditorComponent {
             });
             ref.onClose.subscribe((data) => {
                 if (data) {
-                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
+                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery)
+                    .catch((error) => {
+                        this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                    });
                 }
             });
         } else {
