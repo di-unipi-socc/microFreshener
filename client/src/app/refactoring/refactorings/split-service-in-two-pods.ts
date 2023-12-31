@@ -31,10 +31,11 @@ export class SplitServiceInTwoPods implements Refactoring {
         return new class Builder extends RefactoringBuilder {
             build(): SplitServiceInTwoPods {
                 let cmds = [];
-                let links = this.smell.getLinkBasedCauses();
+                let links = <joint.shapes.microtosca.DeploymentTimeLink[]> this.smell.getLinkBasedCauses();
                 if(this.team) {
                     links = links.filter((link) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> link.getSourceElement()) == this.team);
                 }
+                console.debug("Split service in two pods", "LinkBasedCauses", this.smell.getLinkBasedCauses(), "NodeBasedCauses", this.smell.getNodeBasedCauses());
                 links.forEach((link) => {
                     let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
                     let newComputeName = sourceNode.getName() + " container";

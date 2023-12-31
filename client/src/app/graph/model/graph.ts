@@ -71,8 +71,8 @@ export class Graph extends joint.dia.Graph {
         return <joint.shapes.microtosca.RunTimeLink[]>super.getLinks().filter(link => (link instanceof joint.shapes.microtosca.RunTimeLink) && !this.isGroup(link.getSourceElement()));
     }
 
-    getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.shapes.microtosca.RunTimeLink {
-        return (this.getRuntimeLinks()).find(link => {
+    getLinkFromSourceToTarget(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node): joint.dia.Link {
+        return (this.getLinks()).find(link => {
             var s: string = (<joint.shapes.microtosca.Node>link.getSourceElement())?.getName();
             var t: string = (<joint.shapes.microtosca.Node>link.getTargetElement())?.getName();
             return s === source.getName() && t === target.getName();
@@ -290,7 +290,7 @@ export class Graph extends joint.dia.Graph {
 
     addRunTimeInteraction(source: joint.shapes.microtosca.Node, target: joint.shapes.microtosca.Node, timedout: boolean = false, with_circuit_breaker: boolean = false, with_dynamic_discovery: boolean = false): joint.shapes.microtosca.RunTimeLink {
 
-        let alredyExistingLink = this.getLinkFromSourceToTarget(source, target);
+        let alredyExistingLink = <joint.shapes.microtosca.RunTimeLink> this.getLinkFromSourceToTarget(source, target);
         if (alredyExistingLink)
             return alredyExistingLink;
         else {

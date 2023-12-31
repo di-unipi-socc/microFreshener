@@ -17,7 +17,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { MergeTeamsRefactoring } from './merge-teams';
 import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
 import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
-import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy } from './refactoring-policy-teams';
+import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy, AnyDeploymentFromTeamPolicy } from './refactoring-policy-teams';
 import { SplitServiceInTwoPods } from './split-service-in-two-pods';
 
 enum REFACTORING_LIBRARY_NAMES {
@@ -119,12 +119,13 @@ export class RefactoringFactoryService {
 
         case REFACTORING_LIBRARY_NAMES.SPLIT_SERVICE_IN_TWO_PODS:
           if(team)
-            policy = new AnyInteractionFromTeamPolicy(team, SplitServiceInTwoPods.NAME, this.gs.graph, smell);
+            policy = new AnyDeploymentFromTeamPolicy(team, SplitServiceInTwoPods.NAME, this.gs.graph, smell);
+          refactoringBuilder = SplitServiceInTwoPods.builder();
           break;
     }
 
     if(!policy || !refactoringBuilder) {
-      throw new Error("Refactoring not supported");
+      throw Error(`Refactoring not supported: ${refactoringName}`);
     }
 
     if(!policy.isAllowed()) {

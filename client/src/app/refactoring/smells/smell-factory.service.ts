@@ -55,11 +55,15 @@ export class SmellFactoryService {
       default:
         throw new Error(`Unsupported smell: ${smellJson.name}`);
     }
-      
+
     smellJson['links'].forEach((cause) => {
+      if(smellJson.name == SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER)
+        console.debug("Analysing link cause msioc", cause)
       var source = this.gs.graph.findNodeByName(cause['source']);
       var target = this.gs.graph.findNodeByName(cause['target']);
       var link = this.gs.graph.getLinkFromSourceToTarget(source, target);
+      if(smellJson.name == SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER)
+        console.debug("Retrieved link", link)
       smell.addLinkBasedCause(link);
       smell.addNodeBasedCause(node);
     });
