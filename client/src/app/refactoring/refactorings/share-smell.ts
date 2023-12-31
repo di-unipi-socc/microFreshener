@@ -1,9 +1,9 @@
-import { ISmell } from "../smells/smell";
+import { Smell } from "../smells/smell";
 import { Refactoring } from "./refactoring-command";
 
 export class ShareSmellRefactoring implements Refactoring {
 
-    constructor(private element: joint.shapes.microtosca.Root, private smell: ISmell) {}
+    constructor(private element: joint.shapes.microtosca.Root, private smell: Smell) {}
 
     execute() {
         let name = `Found smell ${this.smell.getName()}`;

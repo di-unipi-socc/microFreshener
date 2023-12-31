@@ -573,7 +573,7 @@ export class Graph extends joint.dia.Graph {
         })
         // Add links for interactions
         this.getLinks().filter((link) => this.isInteractionLink(link)).forEach((link: joint.shapes.microtosca.RunTimeLink) => {
-            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link.getSourceElement()).getName()} and ${(<joint.shapes.microtosca.Node>link.getTargetElement()).getName()}`);
+            console.debug(`Checking link from ${(<joint.shapes.microtosca.Node>link?.getSourceElement())?.getName()} and ${(<joint.shapes.microtosca.Node>link?.getTargetElement())?.getName()}`);
             var dlink = {
                 'source': (<joint.shapes.microtosca.Node>link.getSourceElement()).getName(),
                 'target': (<joint.shapes.microtosca.Node>link.getTargetElement()).getName(),

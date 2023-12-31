@@ -59,12 +59,67 @@ export class ChangeLinkTargetCommand implements Command {
     constructor(private graph: Graph, private link: joint.dia.Link, private newTargetName: string) {}
 
     execute() {
-        this.oldTarget = this.link.getSourceElement();
+        this.oldTarget = this.link.getTargetElement();
         let newTarget = this.graph.getNode(this.newTargetName);
         this.link.target(newTarget);
     }
 
     unexecute() {
+        console.debug("Undoing ChangeLinkTargetCommand. Old target is", this.oldTarget);
         this.link.target(this.oldTarget);
+    }
+}
+
+export class AddDynamicDiscoveryCommand implements Command {
+    
+    previousStatus;
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasDynamicDiscovery();
+        if(!this.previousStatus)
+            this.link.setDynamicDiscovery(true);
+    }
+
+    unexecute() {
+        if(!this.previousStatus)
+            this.link.setDynamicDiscovery(this.previousStatus);
+    }
+}
+
+export class AddCircuitBreakerCommand implements Command {
+    
+    previousStatus;
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasCircuitBreaker();
+        if(!this.previousStatus)
+            this.link.setCircuitBreaker(true);
+    }
+
+    unexecute() {
+        if(!this.previousStatus)
+            this.link.setCircuitBreaker(this.previousStatus);
+    }
+}
+
+export class AddTimeoutCommand implements Command {
+    
+    previousStatus;
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    execute() {
+        this.previousStatus = this.link.hasTimeout();
+        if(!this.previousStatus)
+            this.link.setTimedout(true);
+    }
+
+    unexecute() {
+        if(!this.previousStatus)
+            this.link.setTimedout(this.previousStatus);
     }
 }

@@ -1,11 +1,15 @@
 import * as joint from 'jointjs';
-import { GroupSmellObject } from './smell';
+import { GroupSmell } from './smell';
 
 
-export class TightlyCoupledTeamsSmellObject extends GroupSmellObject {
+export class TightlyCoupledTeamsSmellObject extends GroupSmell {
 
     constructor(group: joint.shapes.microtosca.SquadGroup) {
-        super("Tightly coupled teams", group);
+        super(group);
+    }
+
+    getName() {
+        return "Tightly coupled teams";
     }
 
     getDescription(): string {

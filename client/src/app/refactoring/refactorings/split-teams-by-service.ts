@@ -3,15 +3,15 @@ import { RemoveLinkCommand, AddRunTimeLinkCommand } from "src/app/architecture/l
 import { AddDatastoreCommand } from "src/app/architecture/node-commands";
 import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { Graph } from "src/app/graph/model/graph";
-import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams-management/team-commands";
-import { GroupSmellObject } from "../smells/smell";
+import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
+import { GroupSmell } from "../smells/smell";
 import { GroupRefactoring } from "./refactoring-command";
 
 export class SplitTeamsByService extends GroupRefactoring {
     
     command: Command;
 
-    constructor(graph: Graph, smell: GroupSmellObject) {
+    constructor(graph: Graph, smell: GroupSmell) {
         super();
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let cmds: Command[] = [];

@@ -62,6 +62,7 @@ p-sidebar .p-sidebar-right {
     border-right: none;
     border-left: 5px solid #f4f4f4;
     position: relative;
+    z-index: 500;
 }
 
 .p-card {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as joint from 'jointjs';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';
 
@@ -32,7 +33,7 @@ export class PermissionsService {
             break;
         case UserRole.TEAM:
             console.info("TEAM privileges have been set.");
-            let team = this.gs.getGraph().findTeamByName(teamName);
+            let team = this.gs.graph.getTeam(teamName);
             if(!team) {
               // The team doesn't exist in the graph, so block everything
               this.writePermissions.isAllowed = this.DENY_ALL;
@@ -42,30 +43,27 @@ export class PermissionsService {
               // The team exists, so set the consequent permissions
               this.writePermissions.isAllowed = ( (cell) => {
                 let sourceTeam;
-                if(this.gs.getGraph().isNode(cell)) {
-                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell);
+                if(this.gs.graph.isNode(cell)) {
+                  sourceTeam = this.gs.graph.getTeamOfNode(cell);
                 } else if(cell.isLink()) {
-                  sourceTeam = this.gs.getGraph().getTeamOfNode(cell.getSourceElement());
+                  sourceTeam = this.gs.graph.getTeamOfNode(cell.getSourceElement());
+                } else if(this.gs.graph.isTeamGroup(cell)) {
+                  sourceTeam = cell;
                 }
                 return sourceTeam && sourceTeam == team;
               } );
               this.writePermissions.areLinkable = (n: joint.shapes.microtosca.Node, n2?: joint.shapes.microtosca.Node): boolean => {
                     let interactionFromTeamNode: boolean =
                             this.writePermissions.isAllowed(n)
-                            && !this.gs.getGraph().isDatastore(n)
-                            && !this.gs.getGraph().isMessageBroker(n);
+                            && !this.gs.graph.isDatastore(n)
+                            && !this.gs.graph.isMessageBroker(n);
                     let interactionFromExternalUserToTeamNode: boolean =
-                            n2 && this.gs.getGraph().isEdgeGroup(n) && this.writePermissions.isAllowed(n2);
+                            n2 && this.gs.graph.isEdgeGroup(n) && this.writePermissions.isAllowed(n2);
                     
                     return interactionFromTeamNode || interactionFromExternalUserToTeamNode;
               };
-              this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             }
             break;
-          default:
-            this.writePermissions.isAllowed = this.DENY_ALL;
-            this.writePermissions.areLinkable = this.DENY_ALL;
-            this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
       }
   }
 

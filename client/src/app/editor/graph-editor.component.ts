@@ -4,8 +4,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 import { DialogSmellComponent } from '../refactoring/dialog-smell/dialog-smell.component';
-import { GraphService } from "../graph/graph.service";
-import { SmellObject } from '../refactoring/smells/smell';
+import { NodeSmell } from '../refactoring/smells/smell';
 
 import * as joint from 'jointjs';
 import 'src/app/graph/model/microtosca';
@@ -13,11 +12,10 @@ import * as _ from 'lodash';
 import { g } from 'jointjs';
 import * as $ from 'jquery';
 
-import { PermissionsService } from '../permissions/permissions.service';
-import { EditorNavigationService } from './navigation/navigation.service';
+import { EditorNavigationService } from '../navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
-import { ArchitectureEditingService } from '../architecture/architecture-editing/architecture-editing.service';
-import { TeamsService } from '../teams-management/teams.service';
+import { ArchitectureEditingService } from '../architecture/architecture-editing.service';
+import { TeamsService } from '../teams/teams.service';
 import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
@@ -37,7 +35,7 @@ export class GraphEditorComponent {
     @ViewChild('jointjsgraph') jointJsGraph: ElementRef;
 
     addingLink: joint.shapes.microtosca.RunTimeLink;
-    leftClickSelectedCell: joint.dia.Cell;
+    leftClickSelectedCell: joint.shapes.microtosca.Node;
 
     @ViewChild('contextMenu') contextMenu;
     contextMenuItems;
@@ -46,11 +44,9 @@ export class GraphEditorComponent {
     constructor(
         private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
         private toolSelection: ToolSelectionService, // Editor tool selection
-        private editing: ArchitectureEditingService, // Editing operations business logic
-        private graph: GraphService, // Injectable JointJS graph singleton
+        private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
-        private permissions: PermissionsService, // Privilege manager
         private session: SessionService, // User data
         private dialogService: DialogService,
         private messageService: MessageService,
@@ -70,7 +66,7 @@ export class GraphEditorComponent {
         this.bindEvents();
 
         // enable interactions
-        this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.navigation.getPaper());
+        // this.bindInteractionEvents(this.adjustVertices, this.graph.getGraph(), this.navigation.getPaper());
     }
 
     bindEvents() {
@@ -85,36 +81,9 @@ export class GraphEditorComponent {
         this.bindTeamMinimize();
         this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
-        this.bindChangeTeamEvents();
 
        this.bindDragNavigation();
        this.bindWheelZoom();
-    }
-
-    bindChangeTeamEvents(){
-        this.graph.getGraph().on('change:embeds',(element, newEmbeds, opt) =>{
-
-        })
-    }
-
-    bindGraphEvents() {
-        this.graph.getGraph().on('add', cell => {
-            if (cell.isElement())
-                this.messageService.add({ severity: 'success', summary: "Node added succesfully", detail: "Node  [" + cell.getName() + "] added." });
-            else if (cell.isLink()) {
-                var source = (<joint.shapes.microtosca.Node>cell.getSourceElement());
-                var target = (<joint.shapes.microtosca.Node>cell.getTargetElement());
-                this.messageService.add({ severity: 'success', summary: "Link added succesfully", detail: "Link  from  [" + source.getName() + "] to  [" + target.getName() + "] added." });
-            }
-
-        })
-        this.graph.getGraph().on('remove', cell => {
-            if (cell.isElement())
-                this.messageService.add({ severity: 'success', summary: "Node removed  succesfully.", detail: "Node  [" + cell.getName() + "] removed from the model." });
-            else if (cell.isLink()) {
-                this.messageService.add({ severity: 'success', summary: "Link removed  succesfully." }); //detail: "Link  from  ["+ source.getName() + "] to  ["+ target.getName() +"] removed."});
-            }
-        })
     }
 
     bindKeyboardEvents() {
@@ -164,22 +133,32 @@ export class GraphEditorComponent {
         ref.onClose.subscribe((data) => {
             // Create the AddNodeCommand
             if(data) {
-                this.editing.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+                this.architecture.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
             }
         });
     }
 
     openDeleteNodeDialog(node) {
+        let interactors = this.architecture.getIngoingLinks(node).map((l) => l.getSourceElement());
+        let isEdgeNode: boolean = interactors.filter((n) => this.architecture.isEdgeGroup(n)).length > 0;
+        let team = this.teams.getTeamOfNode(node);
+        let nodeInteractingWithDeletingNode = interactors.filter((n) => !this.architecture.isEdgeGroup(n)).filter((n) => this.teams.getTeamOfNode(<joint.shapes.microtosca.Node> n) != team)
+        .map((interactor) => {
+            let node = <joint.shapes.microtosca.Node> interactor;
+            let name = node.getName();
+            let team = this.teams.getTeamOfNode(node)?.getName();
+            return team ? `${team}'s ${name}` : "" + name;
+        });
+        let edgeMessage = isEdgeNode ? `${node.getName()} is an edge node.\n` : "";
+        let interactionMessage = nodeInteractingWithDeletingNode.length > 0 ? `${nodeInteractingWithDeletingNode.join(", ")} interact${nodeInteractingWithDeletingNode.length > 0 ? "s" : ""} with ${node.getName()}.\n` : "";
         this.confirmationService.confirm({
-            message: 'Do you want to delete this node?',
-            header: 'Node Deletion Confirmation',
+            message: `${edgeMessage + interactionMessage}\nDo you want to delete this node?`,
+            header: 'Delete node',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.editing.deleteNode(node);
-                this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Node ${node.getName()} not deleted` });
+                this.architecture.deleteNode(node).then(() => {
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+                }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
             }
         });
     }
@@ -194,7 +173,15 @@ export class GraphEditorComponent {
         });
         ref.onClose.subscribe((data) => {
             if (data) {
-                this.editing.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery)
+                .then(() => {
+                    this.navigation.getPaper().findViewByModel(data.source).unhighlight();
+                    this.architecture.showNode(data.source);
+                    this.architecture.showNode(data.target);
+                })
+                .catch((error) => {
+                    this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                });
             }
         });
     }
@@ -210,7 +197,7 @@ export class GraphEditorComponent {
             console.log("click on blank (%d,%d) - offset (%d, %d)", position.x, position.y, evt.offsetX, evt.offsetY);
             
             if (this.toolSelection.isAddNodeEnabled()) {
-                let team = this.session.isTeam ? this.graph.getGraph().findTeamByName(this.session.getTeamName()) : undefined;
+                let team = this.session.isTeam ? this.teams.getTeam(this.session.getTeamName()) : undefined;
                 this.openAddNodeDialog(this.toolSelection.getSelected(), position, team);
             }
         });
@@ -220,11 +207,9 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on('cell:contextmenu', (cellView, evt, x, y) => {
             console.log("right click cell");
             let cell = cellView.model;
-            let graph = this.graph.getGraph();
             this.contextMenuItems = [];
-            
             // Add element-specific context menu items
-            if(graph.isNode(cell)) {
+            if(this.architecture.isNode(cell)) {
                 console.debug("node right clicked");
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
@@ -232,16 +217,16 @@ export class GraphEditorComponent {
                     this.contextMenuItems.push({separator: true});
                 }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getNodeContextMenu(cell));
-            } else if(graph.isTeamGroup(cell)) {
+            } else if(this.teams.isTeamGroup(cell)) {
                 let smellsMenuItem = this.getSmellsMenuItem(cell);
                 if(smellsMenuItem) {
                     this.contextMenuItems.push(smellsMenuItem);
                     this.contextMenuItems.push({separator: true});
                 }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
-            } else if(graph.isInteractionLink(cell)) {
+            } else if(this.architecture.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
-            } else if(graph.isEdgeGroup(cell)) {
+            } else if(this.architecture.isEdgeGroup(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getExternalUserContextMenu(cell));
             }
 
@@ -257,14 +242,16 @@ export class GraphEditorComponent {
     }
 
     getSmellsMenuItem(cell) {
+        console.debug("getSmellsMenuItem", cell.getSmells());
         if(cell.hasSmells()) {
             let smellsMenuItems = [];
-            cell.getSmells().forEach((smell: SmellObject) => {
+            cell.getSmells().forEach((smell: NodeSmell) => {
                 smellsMenuItems.push({
                     label: smell.getName(),
                     icon: "pi pi-tag",
                     command: () => {
-                        this._openDialogSmellComponent(cell, smell);
+                        //this._openDialogSmellComponent(cell, smell);
+                        this.contextMenuAction.emit(new ContextMenuAction("smell-details", smell));
                 }});
             });
         
@@ -279,28 +266,26 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(rightClickedNode)) {
-            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-            if(this.session.isTeam()) {
-                nodeContextMenuItems.push(
-                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                        this.openAddExternalLinkDialog(rightClickedNode);
-                    } });
-            }
-        }
-        if(this.session.isTeam() && this.permissions.writePermissions.isAllowed(rightClickedNode)) {
+        nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
+        if(this.session.isTeam()) {
             nodeContextMenuItems.push(
-                { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
-            );
+                { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                    this.openAddExternalLinkDialog(rightClickedNode);
+                } });
         }
+        if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        nodeContextMenuItems.push({ label: "Add deployment on compute", icon: "pi pi-download", command: () => {
+            // TODO
+        }});
+        if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        nodeContextMenuItems.push(
+            { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
+        );
         return nodeContextMenuItems;
     }
 
     getExternalUserContextMenu(rightClickedNode): MenuItem[] {
-        let nodeContextMenuItems = [];
-        if(this.session.isTeam()) {
-            nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-        }
+        let nodeContextMenuItems = [this.getAddInteractionElement(rightClickedNode)];
         return nodeContextMenuItems;
     }
 
@@ -315,36 +300,30 @@ export class GraphEditorComponent {
 
     getInteractionLinkContextMenu(rightClickedInteractionLink): MenuItem[] {
         let interactionLinkContextMenuItems = [];
-        let source = rightClickedInteractionLink.getSourceElement();
-        let target = rightClickedInteractionLink.getTargetElement();
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target) && this.permissions.writePermissions.areLinkable(target, source)) {
-            interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
-                this.editing.reverseLink(rightClickedInteractionLink);
-            }});
-        }
-        if(this.session.isTeam() && this.permissions.writePermissions.areLinkable(source, target)) {
-            interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
-                //this.editing.removeLink(rightClickedInteractionLink);
-                this.confirmationService.confirm({
-                    message: 'Do you want to delete the link?',
-                    header: 'Link deletion',
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.editing.removeLink(rightClickedInteractionLink);
-                        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
-                    },
-                    reject: () => {
-                        this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
-                    }
-                });
-            }});
-        }
+        interactionLinkContextMenuItems.push({label: "Reverse link direction", icon: "pi pi-arrow-left", command: () => {
+            this.architecture.reverseLink(rightClickedInteractionLink);
+        }});
+        interactionLinkContextMenuItems.push({label: "Delete link", icon: "pi pi-trash", command: () => {
+            //this.editing.removeLink(rightClickedInteractionLink);
+            this.confirmationService.confirm({
+                message: 'Do you want to delete the link?',
+                header: 'Link deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.architecture.removeLink(rightClickedInteractionLink);
+                    this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Link deleted succesfully` });
+                },
+                reject: () => {
+                    this.messageService.add({ severity: 'info', summary: 'Rejected', detail: `Link not deleted` });
+                }
+            });
+        }});
         return interactionLinkContextMenuItems;
     }
 
     getTeamContextMenu(rightClickedTeam): MenuItem[] {
         let teamContextMenuItems = [];
-        if(this.permissions.writePermissions.isTeamManagementAllowed()) {
+        if(this.session.isAdmin()) {
             teamContextMenuItems.push({label: "Details", icon: "pi pi-info-circle", command: () => {
                 this.contextMenuAction.emit(new ContextMenuAction("team-details", rightClickedTeam));
             }});
@@ -362,15 +341,14 @@ export class GraphEditorComponent {
             evt.preventDefault();
             evt.stopPropagation()
             let element = cellView.model;
-            let graph = this.graph.getGraph();
             // team clicked
-            if (graph.isTeamGroup(element)) {
+            if (this.teams.isTeamGroup(element)) {
                 console.debug("team clicked", cellView);
                 if(this.toolSelection.isAddNodeEnabled()) {
                     let position: g.Point = this.navigation.getPaper().clientToLocalPoint(evt.clientX, evt.clientY);
                     let team;
                     if(this.session.isTeam()) {
-                        team = this.graph.getGraph().findTeamByName(this.session.getTeamName())
+                        team = this.teams.getTeam(this.session.getTeamName())
                      } else {
                         team = cellView.model;
                      }
@@ -393,31 +371,25 @@ export class GraphEditorComponent {
         // selecting source node
         let can_select_source_node = true;
         // message broker cannot be source for a link
-        if (this.graph.getGraph().isMessageBroker(node)) {
+        if (this.architecture.isMessageBroker(node)) {
             can_select_source_node = false;
         }
         // message broker cannot be source for a link
-        if (this.graph.getGraph().isDatastore(node)) {
+        if (this.architecture.isDatastore(node)) {
             can_select_source_node = false;
         }
-        if (can_select_source_node && this.graph.getGraph().isEdgeGroup(node) || this.permissions.writePermissions.isAllowed(node)) {
+        if (can_select_source_node || this.architecture.isEdgeGroup(node)) {
             cellView.highlight();
             this.leftClickSelectedCell = cellView.model;
             let node = <joint.shapes.microtosca.Node> this.leftClickSelectedCell;
             let position = node.position();
-            let addingLink = new joint.shapes.microtosca.RunTimeLink({
-                source: { id: node.id },
-                target: { x: position.x, y: position.y }
-            });
-            addingLink.attr('path/pointer-events', 'none');
-            this.addingLink = addingLink;
-            addingLink.addTo(this.graph.getGraph());
+            this.addingLink = this.architecture.createAddingLink(node.id, position);
             this.jointJsGraph.nativeElement.onmousemove = ((evt) => {
                 let mousePosition = this.navigation.getPaper().clientToLocalPoint(evt.x, evt.y);
                 let d = 0;
                 let dx = mousePosition.x > node.position().x ? -d : d;
                 let dy = mousePosition.y > node.position().y ? -d : d;
-                addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
+                this.addingLink.target({x: mousePosition.x+dx, y: mousePosition.y+dy});
             });
         }
         else {
@@ -428,17 +400,17 @@ export class GraphEditorComponent {
     private linkWithHighlighted(node) {
         let add_link = true;
         // disable link from <any> to datastore
-        if (this.graph.getGraph().isEdgeGroup(node)) {
+        if (this.architecture.isEdgeGroup(node)) {
             add_link = false;
         }
         // disable link from edge to datastore
-        if (this.graph.getGraph().isEdgeGroup(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node)) {
+        if (this.architecture.isEdgeGroup(this.leftClickSelectedCell) && this.architecture.isDatastore(node)) {
             add_link = false;
         }
         // disable link from communication pattern to Datastore
-        if (this.graph.getGraph().isCommunicationPattern(this.leftClickSelectedCell) && this.graph.getGraph().isDatastore(node))
+        if (this.architecture.isCommunicationPattern(this.leftClickSelectedCell) && this.architecture.isDatastore(node))
             add_link = false;
-        if (add_link && this.permissions.writePermissions.areLinkable(this.leftClickSelectedCell, node)) {
+        if (add_link) {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
@@ -448,7 +420,7 @@ export class GraphEditorComponent {
             });
             ref.onClose.subscribe((data) => {
                 if (data) {
-                    this.editing.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
+                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery);
                     this.stopAddingLink();
                 }
             });
@@ -465,7 +437,7 @@ export class GraphEditorComponent {
         });
     }
 
-    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: SmellObject) {
+    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: NodeSmell) {
         const ref = this.dialogService.open(DialogSmellComponent, {
             data: {
                 model: node,
@@ -493,8 +465,8 @@ export class GraphEditorComponent {
             var cell = cellView.model;
             if (
                 !cell.isLink() && // otherwise Error when cell.getBBox() is called.
-                !this.graph.getGraph().isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
-                !this.graph.getGraph().isGroup(cell)) {
+                !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                !this.teams.isTeamGroup(cell)) {
                 console.debug("clicked", cellView);
                 var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
 
@@ -504,19 +476,21 @@ export class GraphEditorComponent {
                     // Prevent recursive embedding
                     if (cellViewBelow) {
                         // embed element only into Team Cell, otherwise it embeds node inside other nodes.
-                        if (this.graph.getGraph().isTeamGroup(cellViewBelow.model)) {
+                        if (this.teams.isTeamGroup(cellViewBelow.model)) {
                             // check if the elment below has the parent equal to the cell
                             if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
                                 var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
                                 var member = <joint.shapes.microtosca.Node>cell;
-                                var memberTeam = this.graph.getGraph().getTeamOfNode(member);
+                                var memberTeam = this.teams.getTeamOfNode(member);
                                 // do not embed on the same team
                                 if(team && memberTeam && team.getName() == memberTeam.getName() ){
                                     team.fitEmbeds({ padding: Graph.TEAM_PADDING });
                                 }
                                 else {
-                                    if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
-                                        this.teams.addMemberToTeam(member, team);
+                                    if(this.teams.areVisible()) {
+                                        this.teams.addMemberToTeam(member, team).then(() => {
+                                            this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                        });
                                     }
                                 }
                             }
@@ -526,10 +500,12 @@ export class GraphEditorComponent {
                         // click on blank paper
                         console.log("not cell view Below defined");
                         var member = <joint.shapes.microtosca.Node>cell;
-                        var team = this.graph.getGraph().getTeamOfNode(member);
+                        var team = this.teams.getTeamOfNode(member);
                         if(team){
-                            if(this.permissions.writePermissions.isTeamManagementAllowed() && this.teams.areVisible()) {
-                                this.teams.removeMemberFromTeam(member, team);
+                            if(this.teams.areVisible()) {
+                                this.teams.removeMemberFromTeam(member, team).then(() => {
+                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                });
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                             }
@@ -559,80 +535,50 @@ export class GraphEditorComponent {
         })
     }
 
-    bindTeamToCoverChildren() {
-
-        this.graph.getGraph().on('change:size', function (cell, newPosition, opt) {
-
-            if (opt.skipParentHandler) return;
-
-            if (cell.get('embeds') && cell.get('embeds').length) {
-                // If we're manipulating a parent element, let's store
-                // it's original size to a special property so that
-                // we can shrink the parent element back while manipulating
-                // its children.
-                cell.set('originalSize', cell.get('size'));
+    bindDragNavigation() {
+        let movingStatus = { isMoving: false, x: undefined, y: undefined };
+        this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
+            if(!movingStatus.isMoving) {
+                movingStatus.isMoving = true;
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
             }
         });
 
-        this.graph.getGraph().on('change:position', (cell, newPosition, opt) => {
-
-            if (opt.skipParentHandler) return;
-
-            if (cell.get('embeds') && cell.get('embeds').length) {
-                // If we're manipulating a parent element, let's store
-                // it's original position to a special property so that
-                // we can shrink the parent element back while manipulating
-                // its children.
-                cell.set('originalPosition', cell.get('position'));
+        this.navigation.getPaper().on("blank:pointermove", (evt, x, y) => {
+            if(movingStatus.isMoving) {
+                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
+                let dx = this.navigation.getPaper().options.origin.x + paperPoint.x - movingStatus.x;
+                let dy = this.navigation.getPaper().options.origin.y + paperPoint.y - movingStatus.y;
+                this.navigation.move(dx, dy);
+                movingStatus.x = paperPoint.x;
+                movingStatus.y = paperPoint.y;
             }
+        });
 
-            // DIDO
-            // var parentId = cell.get('parent');
-            // console.log(cell.attr);
-            // if (!parentId) return;
-
-            // var parent = this.gs.getGraph().getCell(parentId);
-            /// DIDO
-            var parent = cell.getParentCell();
-
-            if (!parent) return;
-
-            var parentBbox = parent.getBBox();
-            // var parentBbox = this.gs.getGraph().getBBox([parent]);
-
-            if (!parent.get('originalPosition')) parent.set('originalPosition', parent.get('position'));
-            if (!parent.get('originalSize')) parent.set('originalSize', parent.get('size'));
-
-            var originalPosition = parent.get('originalPosition');
-            var originalSize = parent.get('originalSize');
-
-            var newX = originalPosition.x;
-            var newY = originalPosition.y;
-            var newCornerX = originalPosition.x + originalSize.width;
-            var newCornerY = originalPosition.y + originalSize.height;
-
-            _.each(parent.getEmbeddedCells(), (child) => {
-                var childBbox = (<joint.dia.Element>child).getBBox();
-                // var childBbox = this.gs.getGraph().getCell(child);
-
-                if (childBbox.x < newX) { newX = childBbox.x; }
-                if (childBbox.y < newY) { newY = childBbox.y; }
-                if (childBbox.corner().x > newCornerX) { newCornerX = childBbox.corner().x; }
-                if (childBbox.corner().y > newCornerY) { newCornerY = childBbox.corner().y; }
-            });
-
-            // Note that we also pass a flag so that we know we shouldn't adjust the
-            // `originalPosition` and `originalSize` in our handlers as a reaction
-            // on the following `set()` call.
-            parent.set({
-                position: { x: newX, y: newY },
-                size: { width: newCornerX - newX, height: newCornerY - newY }
-            }, { skipParentHandler: true });
-
+        this.navigation.getPaper().on("blank:pointerup", () => {
+            if(movingStatus.isMoving) {
+                movingStatus.isMoving = false;
+            }
         });
     }
 
-    bindInteractionEvents(adjustVertices, graph, paper) {
+    bindWheelZoom() {
+        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
+        this.navigation.getPaper().on("blank:mousewheel", function(evt, x, y, delta) {
+            console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
+            evt.preventDefault();
+            wheelAction(x, y, evt, delta);
+        });
+
+        this.navigation.getPaper().on("cell:mousewheel", function(cellView, evt, x, y, delta) {
+            evt.preventDefault();
+            wheelAction(x, y, evt, delta);
+        });
+    }
+
+    /*bindInteractionEvents(adjustVertices, graph, paper) {
 
         // bind `graph` to the `adjustVertices` function
         var adjustGraphVertices = _.partial(adjustVertices, graph);
@@ -645,17 +591,6 @@ export class GraphEditorComponent {
 
         // adjust vertices when the user stops interacting with an element
         paper.on('cell:pointerup', adjustGraphVertices);
-    }
-
-    applyDirectedGraphLayout() {
-        // Directed graph layout
-        joint.layout.DirectedGraph.layout(this.graph.getGraph(), {
-            nodeSep: 50,
-            edgeSep: 80,
-            rankDir: "TB", // TB
-            // ranker: "tight-tree",
-            setVertices: false,
-        });
     }
 
     adjustVertices = (graph, cell) => {
@@ -769,49 +704,6 @@ export class GraphEditorComponent {
                 });
             }
         }
-    }
-
-    bindDragNavigation() {
-        let movingStatus = { isMoving: false, x: undefined, y: undefined };
-        this.navigation.getPaper().on("blank:pointerdown", (evt, x, y) => {
-            if(!movingStatus.isMoving) {
-                movingStatus.isMoving = true;
-                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
-                movingStatus.x = paperPoint.x;
-                movingStatus.y = paperPoint.y;
-            }
-        });
-
-        this.navigation.getPaper().on("blank:pointermove", (evt, x, y) => {
-            if(movingStatus.isMoving) {
-                let paperPoint = this.navigation.getPaper().localToPaperPoint(x, y);
-                let dx = this.navigation.getPaper().options.origin.x + paperPoint.x - movingStatus.x;
-                let dy = this.navigation.getPaper().options.origin.y + paperPoint.y - movingStatus.y;
-                this.navigation.move(dx, dy);
-                movingStatus.x = paperPoint.x;
-                movingStatus.y = paperPoint.y;
-            }
-        });
-
-        this.navigation.getPaper().on("blank:pointerup", () => {
-            if(movingStatus.isMoving) {
-                movingStatus.isMoving = false;
-            }
-        });
-    }
-
-    bindWheelZoom() {
-        let wheelAction = (x, y, evt, delta) => {this.navigation.zoom(x, y, evt.offsetX, evt.offsetY, delta)};
-        this.navigation.getPaper().on("blank:mousewheel", function(evt, x, y, delta) {
-            console.log("offset %d, %d paper %d, %d", evt.offsetX, evt.offsetY, x, y)
-            evt.preventDefault();
-            wheelAction(x, y, evt, delta);
-        });
-
-        this.navigation.getPaper().on("cell:mousewheel", function(cellView, evt, x, y, delta) {
-            evt.preventDefault();
-            wheelAction(x, y, evt, delta);
-        });
-    }
+    }*/
 
 }

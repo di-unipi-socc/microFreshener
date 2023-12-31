@@ -8,17 +8,6 @@
     (onChange)="toggle(ADD_SERVICE)"
 ></p-toggleButton>
 
-<!--<p-toggleButton
-    onIcon="pi pi-fw pi-arrow-right"
-    offIcon="pi pi-fw pi-arrow-right"
-    styleClass="p-button-text p-button-lg"
-    pTooltip="Add link"
-    showDelay="1000"
-    tooltipPosition="bottom"
-    [(ngModel)]="toggledButtonsStatus[ADD_LINK]"
-    (onChange)="toggle(ADD_LINK)"
-></p-toggleButton>-->
-
 <p-toggleButton
     onIcon="pi pi-fw pi-database"
     offIcon="pi pi-fw pi-database"
@@ -44,10 +33,30 @@
 <p-toggleButton
     onLabel="MB"
     offLabel="MB"
-    styleClass="p-button-text p-button-lg p-button-messagebroker"
+    styleClass="p-button-text p-button-lg"
     pTooltip="Add message broker"
     showDelay="1000"
     tooltipPosition="bottom"
     [(ngModel)]="toggledButtonsStatus[ADD_MESSAGE_BROKER]"
     (onChange)="toggle(ADD_MESSAGE_BROKER)"
 ></p-toggleButton>
+
+<p-toggleButton
+    onIcon="pi pi-fw pi-stop"
+    offIcon="pi pi-fw pi-stop"
+    styleClass="p-button-text p-button-lg p-button-compute"
+    pTooltip="Add compute"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="toggledButtonsStatus[ADD_COMPUTE]"
+    (onChange)="toggle(ADD_COMPUTE)">
+</p-toggleButton>
+
+<p-toggleButton
+    onIcon="pi pi-fw pi-th-large"
+    offIcon="pi pi-fw pi-th-large"
+    styleClass="p-button-text p-button-lg p-button-compute"
+    pTooltip="Show computes"
+    showDelay="1000"
+    tooltipPosition="bottom">
+</p-toggleButton>

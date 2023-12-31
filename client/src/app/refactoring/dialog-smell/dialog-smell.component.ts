@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { GroupSmellObject, SmellObject } from '../smells/smell';
+import { GroupSmell, NodeSmell } from '../smells/smell';
 import { Command } from '../../commands/icommand';
 import { GraphService } from 'src/app/graph/graph.service';
 
@@ -15,7 +15,7 @@ export class DialogSmellComponent implements OnInit {
   selectedCommand: Command;
 
   jointNodeModel;
-  smell: (SmellObject | GroupSmellObject);
+  smell: (NodeSmell | GroupSmell);
 
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig, private graphService: GraphService) {
     this.actions = [];

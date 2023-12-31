@@ -8,8 +8,8 @@ import { DialogImportComponent } from '../dialog-import/dialog-import.component'
 // import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
-import { EditorNavigationService } from 'src/app/editor/navigation/navigation.service';
-import { TeamsService } from 'src/app/teams-management/teams.service';
+import { EditorNavigationService } from '../../navigation/navigation.service';
+import { TeamsService } from 'src/app/teams/teams.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -74,17 +74,17 @@ export class SessionService {
   }
 
   newFile() {
-    this.gs.getGraph().clearGraph();
+    this.gs.clearGraph();
     this.navigation.fitContent(400);
     this.modelName = "";
-    this.gs.getGraph().setName(this.modelName);
+    this.gs.setName(this.modelName);
     this.documentReady = true;
   }
 
   rename() {
-      this.gs.getGraph().setName(this.modelName);
+      this.gs.setName(this.modelName);
       this.messageService.clear();
-      this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
+      this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getName() + "]" });
   }
 
   save() {
@@ -132,25 +132,25 @@ export class SessionService {
 
   loadGraph(graphJson) {
     this.gs.load(graphJson);
-    this.modelName = this.gs.getGraph().getName();
-    console.debug("Loaded graph", this.gs.getGraph().getName());
+    this.modelName = this.gs.getName();
+    console.debug("Loaded graph", this.gs.getName());
     let role = this.getRole();
     switch(role) {
       case UserRole.TEAM:
         let teamName = this.getTeamName();
-        let team = this.gs.getGraph().getTeam(teamName);
-        this.gs.getGraph().showOnlyTeam(team);
+        let team = this.teams.getTeam(teamName);
+        this.teams.showOnlyTeam(team);
         this.messageService.add({ severity: 'success', summary: "One team show", detail: ` Team ${team.getName()} shown` });
         this.permissions.updatePermissions(role, teamName);
         break;
       default:
         this.permissions.updatePermissions(role);
     }
-    this.gs.getGraph().applyLayout("LR");
+    this.navigation.applyLayout("LR");
   }
 
   closeDocument() {
-    this.gs.getGraph().hideGraph();
+    this.navigation.hideGraph();
     this.documentReady = false;
   }
 

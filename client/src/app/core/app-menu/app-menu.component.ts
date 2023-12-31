@@ -159,7 +159,7 @@ export class AppMenuComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.modelName = this.gs.getGraph().getName();
+        this.modelName = this.gs.getName();
         
         this.updatePreDocumentLoadMenu();
 
@@ -217,9 +217,9 @@ export class AppMenuComponent implements OnInit {
     }
 
     rename() {
-        this.gs.getGraph().setName(this.modelName);
+        this.gs.setName(this.modelName);
         this.messageService.clear();
-        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getGraph().getName() + "]" });
+        this.messageService.add({ severity: 'success', summary: 'Renamed correctly', detail: "New name [" + this.gs.getName() + "]" });
         this.renaming = false;
     }
 

@@ -1,0 +1,40 @@
+<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
+    <ng-template pTemplate="header">
+        <div class="smell-header">
+        <!-- 'Less info' button -->
+            <p-button icon="pi pi-times" styleClass="p-button-secondary p-button-text" (click)="closeSidebar()"></p-button>
+        </div>
+    </ng-template>
+    <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
+        <div *ngIf="!smell">
+            <h1>Select a smell to show the details.</h1>
+        </div>
+        <div *ngIf="smell">
+            <div class="p-grid p-justify-center p-align-center vertical-container">
+                <div class="p-col-2">
+                    <h1>Found {{smell?.name}} bad smell</h1><!-- on {{jointNodeModel?.getName()}}</h1>-->
+                    <br/>
+                    <p>{{smell?.getDescription()}}</p>
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-center p-align-center vertical-container">
+                <div class="p-col-2">
+                    <h3>Refactor</h3>
+                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring" (onChange)="onRefactoringSelected()"></p-dropdown>
+                    <div *ngIf="canApply()">
+                        <p *ngIf="selectedCommand"> {{selectedRefactoring?.getDescription() || 'none'}}</p>
+                        <button pButton type="button" label="Apply" (click)="apply()"></button>
+                    </div>
+                    <div *ngIf="!canApply()">
+                        <p style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid p-justify-end">
+            </div>
+        </div>
+
+    </p-scrollPanel>
+</p-sidebar>

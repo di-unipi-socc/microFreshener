@@ -18,7 +18,7 @@ const httpOptions = {
 })
 export class GraphService {
 
-  private graph: Graph;
+  graph: Graph;
 
   private graphUrl = environment.serverUrl + '/api/model?format=json';
   // private graphUrl = environment.serverUrl + '/microtosca/'
@@ -33,17 +33,20 @@ export class GraphService {
   constructor(private http: HttpClient) {
     this.graph = new Graph('');
   }
-  
-  getGraph(): Graph {
-    return this.graph;
+
+  getName() {
+    return this.graph.getName();
+  }
+
+  setName(name) {
+    this.graph.setName(name);
+  }
+
+  clearGraph() {
+    this.graph.clearGraph();
   }
 
   // Logging
-
-  // Log a HeroService message with the MessageService
-  private log(message: string) {
-    console.log(`GraphService: ${message}`)
-  }
 
   // Import and Export
 
@@ -65,7 +68,7 @@ export class GraphService {
   dowloadGraph(): Observable<string> {
     return this.http.get<string>(this.graphUrl)
       .pipe(
-        tap(_ => this.log(`fetched graph`)),
+        tap(_ => console.debug(`fetched graph`)),
     );
   }
 
@@ -87,7 +90,7 @@ export class GraphService {
   downloadExample(name: string): Observable<string> {
     let params = new HttpParams().set("name", name);
     return this.http.get<string>(this.graphUrlExamples, { params: params }).pipe(
-      tap(_ => this.log(`fetched example ${name}`)),
+      tap(_ => console.debug(`fetched example ${name}`)),
     );
   }
 

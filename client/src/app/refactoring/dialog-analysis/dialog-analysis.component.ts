@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { AnalyserService } from '../analyser.service';
-import { Smell } from "../../graph/model/smell";
-import { Principle } from '../../graph/model/principles';
+import { PrincipleRequest, SmellRequest } from '../principles';
+import { SessionService } from 'src/app/core/session/session.service';
 
 interface Orchestrator {
   id?: number,
@@ -19,13 +19,13 @@ interface Orchestrator {
 })
 export class DialogAnalysisComponent implements OnInit {
 
-  principles: Principle[] = [];
-  selectedSmells: Smell[] = [];
+  principles: PrincipleRequest[] = [];
+  selectedSmells: SmellRequest[] = [];
 
   containerOrchestrators: Orchestrator[] = [];
   selectedOrchestrator: Orchestrator;
 
-  constructor(private as: AnalyserService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
+  constructor(private as: AnalyserService, private session: SessionService, public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
 
     this.containerOrchestrators = [
       { id: 1, name: 'Custom', img: "general.jpeg", resolvedSmells: [] },
@@ -38,6 +38,7 @@ export class DialogAnalysisComponent implements OnInit {
 
   ngOnInit() {
     this.as.getPrinciplesToAnalyse().then(principles => {
+      principles = this.removeTeamSmellsIfTeamMember(principles);
       principles.forEach(principle => {
         principle.smells.forEach(smell => {
           this.selectedSmells.push(smell);
@@ -48,8 +49,17 @@ export class DialogAnalysisComponent implements OnInit {
 
   }
 
+  removeTeamSmellsIfTeamMember(principles: PrincipleRequest[]) {
+    if(this.session.isTeam()) {
+    principles.forEach(principle => {
+      principle.smells = principle.smells.filter(smell => smell.id != 7 && smell.id != 8 && smell.id != 9);
+    });
+    }
+    return principles;
+  }
+
   discardSmellsWithIDIn(ids: number[]){
-    let selectedSmells: Smell[] = [];
+    let selectedSmells: SmellRequest[] = [];
     this.principles.forEach(principle=>{
       principle.smells.forEach(smell => {
         if(! ids.includes(smell.id)){

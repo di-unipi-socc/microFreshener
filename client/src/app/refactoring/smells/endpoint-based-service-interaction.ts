@@ -1,18 +1,18 @@
-import { SmellObject } from "./smell";
+import { NodeSmell } from "./smell";
 
-export class EndpointBasedServiceInteractionSmellObject extends SmellObject {
+export class EndpointBasedServiceInteractionSmellObject extends NodeSmell {
 
-    constructor() {
-        super("EndpointBasedServiceInterationSmell");
+    getName() {
+        return "EndpointBasedServiceInterationSmell"
     }
 
     getDescription(): string {
         var descr = "";
         this.getLinkBasedCauses().forEach(link => {
-            let source = <joint.shapes.microtosca.Root>link.getSourceElement();
-            let target = <joint.shapes.microtosca.Root>link.getTargetElement();
+            let source = <joint.shapes.microtosca.Node>link.getSourceElement();
+            let target = <joint.shapes.microtosca.Node>link.getTargetElement();
 
-            descr += `Interaction from ${source.getName()} to ${target.getName()}.\n`;
+            descr += `The interaction from ${source.getName()} to ${target.getName()} is based on endpoints.\n`;
         })
         return descr;
     }

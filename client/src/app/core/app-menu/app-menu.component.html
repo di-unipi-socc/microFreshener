@@ -16,23 +16,27 @@
             </div>
         </div>
 
-        <div class="ui-toolbar-group-center" *ngIf="this.session.isDocumentReady()">
+        <div *ngIf="this.session.isDocumentReady()" class="ui-toolbar-group-center">
 
             <div  class="tool-buttons" *ngIf="this.session.isAdmin()">
                 <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
-                <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-teams-management (viewTeamsInfo)="sidebarChange($event)"></app-subtoolbar-teams-management>
+                <p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-architecture></app-subtoolbar-architecture>
+                <!--<p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-compute></app-subtoolbar-compute>-->
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-undo></app-subtoolbar-undo>
                 <app-subtoolbar-navigation></app-subtoolbar-navigation>
-                <!--<p-divider layout="vertical"></p-divider>
-                <app-subtoolbar-architecture></app-subtoolbar-architecture>-->
             </div>
 
             <div *ngIf="this.session.isTeam()" class="tool-buttons">
                 <app-subtoolbar-refactoring></app-subtoolbar-refactoring>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-architecture></app-subtoolbar-architecture>
+                <!--<p-divider layout="vertical"></p-divider>
+                <app-subtoolbar-compute></app-subtoolbar-compute>-->
+                <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-from-team-navigation (viewIncomingTeams)="sidebarChange($event)"></app-subtoolbar-from-team-navigation>
                 <p-divider layout="vertical"></p-divider>
                 <app-subtoolbar-undo></app-subtoolbar-undo>
