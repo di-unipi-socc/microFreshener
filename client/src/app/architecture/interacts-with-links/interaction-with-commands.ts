@@ -1,6 +1,6 @@
-import { Command } from '../commands/icommand';
+import { Command } from '../../commands/icommand';
 import * as joint from 'jointjs';
-import { Graph } from "../graph/model/graph";
+import { Graph } from "../../graph/model/graph";
 
 
 export class AddRunTimeLinkCommand implements Command {

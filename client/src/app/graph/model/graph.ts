@@ -83,7 +83,7 @@ export class Graph extends joint.dia.Graph {
         return this.getNodes().filter(node => this.isService(node));
     }
 
-    getComputes(): joint.dia.Cell[] {
+    getComputes(): joint.shapes.microtosca.Compute[] {
         return this.getNodes().filter(node => this.isCompute(node))
     }
 
@@ -222,10 +222,14 @@ export class Graph extends joint.dia.Graph {
         return service;
     }
 
-    addCompute(name: string): joint.shapes.microtosca.Compute {
+    addCompute(name: string, position?: g.Point): joint.shapes.microtosca.Compute {
         let compute = new joint.shapes.microtosca.Compute();
         compute.setName(name);
         compute.addTo(this);
+        if(position) {
+            let center = this.getCenteredPoint(compute, position);
+            compute.position(center.x, center.y);
+        }
         return compute;
     }
 

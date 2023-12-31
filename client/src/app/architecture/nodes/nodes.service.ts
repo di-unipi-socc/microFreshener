@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveNodeCommand } from '../node-commands';
+import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, AddServiceCommand, RemoveNodeCommand } from './node-commands';
 import { g } from 'jointjs';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';

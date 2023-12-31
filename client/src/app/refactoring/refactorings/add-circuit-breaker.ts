@@ -1,4 +1,4 @@
-import { AddCircuitBreakerCommand } from "src/app/architecture/link-commands";
+import { AddCircuitBreakerCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import { Command, CompositeCommand } from "src/app/commands/icommand";
 

@@ -1,10 +1,9 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
 import * as joint from "jointjs";
 import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
-import { AddMessageBrokerCommand } from "src/app/architecture/node-commands";
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/link-commands";
+import { AddMessageBrokerCommand } from "src/app/architecture/nodes/node-commands";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
-import { CommunicationPattern } from "src/app/graph/model/communicationpattern";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 
 export class AddMessageBrokerRefactoring implements Refactoring {
     

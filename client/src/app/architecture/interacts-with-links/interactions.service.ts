@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from '../link-commands';
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from './interaction-with-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import * as joint from 'jointjs';

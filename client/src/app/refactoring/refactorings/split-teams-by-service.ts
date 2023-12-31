@@ -1,11 +1,11 @@
 import * as joint from "jointjs";
-import { RemoveLinkCommand, AddRunTimeLinkCommand } from "src/app/architecture/link-commands";
-import { AddDatastoreCommand } from "src/app/architecture/node-commands";
+import { AddDatastoreCommand } from "src/app/architecture/nodes/node-commands";
 import { Command, CompositeCommand, Sequentiable } from "src/app/commands/icommand";
 import { Graph } from "src/app/graph/model/graph";
 import { AddMemberToTeamGroupCommand, RemoveMemberFromTeamGroupCommand } from "src/app/teams/team-commands";
 import { GroupSmell } from "../smells/smell";
 import { GroupRefactoring } from "./refactoring-command";
+import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 
 export class SplitTeamsByService extends GroupRefactoring {
     

@@ -1,5 +1,5 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { MergeServicesCommand } from "src/app/architecture/node-commands";
+import { MergeServicesCommand } from "src/app/architecture/nodes/node-commands";
 import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 import { ElementCommand } from "src/app/commands/icommand";
 

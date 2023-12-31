@@ -88,8 +88,8 @@ declare module 'jointjs' {
                 hasCircuitBreaker(): boolean;
             }
             class DeploymentTimeLink extends joint.dia.Link {
-                hasTimeout(): boolean
-                setTimedout(boolean): void;
+                /*hasTimeout(): boolean
+                setTimedout(boolean): void;*/
             }
         }
     }
