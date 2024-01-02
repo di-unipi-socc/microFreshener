@@ -198,7 +198,7 @@ export class Graph extends joint.dia.Graph {
     addEdgeGroup(name: string, nodes: joint.shapes.microtosca.Node[]) {
         let g = new joint.shapes.microtosca.EdgeGroup();
         g.setName(name);
-        g.setExternalUserName("Ext user"); // default name for the external user node
+        g.setExternalUserName("External users"); // default name for the external user node
         g.addTo(this);
         nodes.forEach(node => {
             this.addRunTimeInteraction(<joint.shapes.microtosca.Node> (<unknown> g), node);
@@ -537,6 +537,7 @@ export class Graph extends joint.dia.Graph {
                 throw new Error(`Link type of ${link.type} not recognized`);
 
         });
+        let edgeAdded = false;
         json['groups'].forEach(group => {
             let group_name = group['name'];
             let group_type = group['type'];
@@ -546,6 +547,7 @@ export class Graph extends joint.dia.Graph {
                     nodes.push(this.getNode(member))
                 });
                 this.addEdgeGroup(group_name, nodes);
+                let edgeAdded = true;
             }
             else if (group_type == "squadgroup") {
                 let nodes: joint.shapes.microtosca.Node[] = [];
@@ -564,6 +566,9 @@ export class Graph extends joint.dia.Graph {
             else
                 throw new Error(`Group type ${group_type} not recognized`);
         })
+        if(!edgeAdded) {
+            this.addEdgeGroup("Edge", []);
+        }
 
         return this.name;
     }
@@ -644,7 +649,7 @@ export class Graph extends joint.dia.Graph {
 
     clearGraph(){
         this.clear();
-        this.addEdgeGroup("adad",[]);
+        this.addEdgeGroup("Edge",[]);
     }
 
     applyLayout(rankdir: string) {

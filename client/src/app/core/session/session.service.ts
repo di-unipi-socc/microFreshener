@@ -120,7 +120,6 @@ export class SessionService {
       });
       ref.onClose.subscribe((data) => {
           if (data.msg) {
-              console.log(data);
               this.loadGraph(data.graph);
               this.navigation.fitContent();
               this.documentReady = true;
