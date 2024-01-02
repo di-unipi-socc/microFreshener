@@ -547,7 +547,7 @@ export class Graph extends joint.dia.Graph {
                     nodes.push(this.getNode(member))
                 });
                 this.addEdgeGroup(group_name, nodes);
-                let edgeAdded = true;
+                edgeAdded = true;
             }
             else if (group_type == "squadgroup") {
                 let nodes: joint.shapes.microtosca.Node[] = [];
