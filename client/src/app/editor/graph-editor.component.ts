@@ -505,8 +505,9 @@ export class GraphEditorComponent {
             ref.onClose.subscribe((data) => {
                 if (data) {
                     this.stopAddingLink();
-                    this.architecture.addLink(this.leftClickSelectedCell, node, data.timeout, data.circuit_breaker, data.dynamic_discovery)
+                    this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery)
                     .catch((error) => {
+                        console.error(error);
                         this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
                     });
                 }
