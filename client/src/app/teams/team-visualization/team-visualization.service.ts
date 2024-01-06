@@ -1,57 +1,86 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
+import { EditorNavigationService } from 'src/app/navigation/navigation.service';
+import { Graph } from 'src/app/graph/model/graph';
 
 @Injectable({
   providedIn: 'root'// TeamsService
 })
 export class TeamVisualizationService {
 
-  visibleTeams: boolean;
+  private allTeamsVisible: boolean;
+  private activeFilter: (graph: Graph) => void;
+  private showTeamDependenciesFilter;
 
   constructor(
-    private graphService: GraphService
+    private graphService: GraphService,
+    private navigationService: EditorNavigationService
   ) {
-    this.visibleTeams = true;
+    this.allTeamsVisible = true;
+    this.showTeamDependenciesFilter = undefined;
+  }
+
+  areAllTeamsVisible(): boolean {
+    return this.allTeamsVisible;
+  }
+
+  private unsetTeamVisualizationFilter() {
+    if(this.activeFilter) {
+      this.navigationService.removeFilter(this.activeFilter);
+      this.activeFilter = undefined;
+    }
+  }
+
+  private setTeamVisualizationFilter(filter: (graph: Graph) => void) {
+    this.unsetTeamVisualizationFilter();
+    this.activeFilter = filter;
+    this.navigationService.addFilter(this.activeFilter);
+    this.allTeamsVisible = false;
   }
 
   showTeams() {
-    this.graphService.graph.showAllTeamBoxes();
-    this.visibleTeams = true;
+      this.unsetTeamVisualizationFilter();
+      this.graphService.graph.showAllTeamBoxes();
+      this.allTeamsVisible = true;
   }
 
   hideTeams() {
-    this.graphService.graph.hideAllTeamBoxes();
-    this.visibleTeams = false;
+    this.setTeamVisualizationFilter((graph) => { graph.hideAllTeamBoxes() });
   }
 
-  areTeamsVisible(): boolean {
-    return this.visibleTeams;
+  showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
+    this.setTeamVisualizationFilter((graph) => { graph.showOnlyTeam(team) });
   }
 
   showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
-    this.graphService.graph.showTeamBox(team);
-    this.graphService.graph.getOutgoingLinksOfATeamFrontier(team)
-        .forEach((link) => {
-          this.setVisibilityOfLinkAndRespectiveNodesAndGroups(link, true, "#007ad9");
-        });
+    if(!this.showTeamDependenciesFilter) {
+      this.showTeamDependenciesFilter = (graph) => {
+        graph.showTeamBox(team);
+        graph.getOutgoingLinksOfATeamFrontier(team)
+            .forEach((link) => {
+              this.setVisibilityOfLinkAndRespectiveNodesAndGroups(link, true);
+            });
+      };
+      this.navigationService.addFilter(this.showTeamDependenciesFilter);
+    }
   }
 
   hideTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
-    let graph = this.graphService.graph;
-    graph.hideTeamBox(team);
-    graph.getOutgoingLinksOfATeamFrontier(team)
+    this.navigationService.removeFilter(this.showTeamDependenciesFilter);
+    this.showTeamDependenciesFilter = undefined;
+    this.graphService.graph.hideTeamBox(team);
+    this.graphService.graph.getOutgoingLinksOfATeamFrontier(team)
         .forEach((link) => {
           this.setVisibilityOfLinkAndRespectiveNodesAndGroups(link, false);
         });
+    
   }
 
-  private setVisibilityOfLinkAndRespectiveNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean, linkColor?: string) {
+  private setVisibilityOfLinkAndRespectiveNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean) {
     let node = <joint.shapes.microtosca.Node> link.getTargetElement();
     let visibility = visible ? "visible" : "hidden";
     link.attr("./visibility", visibility);
-    /*if(linkColor)
-      link.attr("line/stroke", linkColor);*/
     if(visibility == "visible")
       node.show();
     else
@@ -66,46 +95,6 @@ export class TeamVisualizationService {
       } else { 
         graph.hideTeamBox(team);
       }
-  }
-
-  getNodesByTeam() {
-    let graph = this.graphService.graph;
-    let nodes: joint.shapes.microtosca.Node[] = graph.getNodes();
-    // Group nodes by squad
-    let nodesGroupedBySquads: Map<joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.Node[]> = nodes
-      .map(node => [graph.getTeamOfNode(node), node])
-      .reduce((map, [team, node]) => {
-        let array = map.get(team);
-        if(!array) map.set(team, [node])
-        else array.push(node);
-        return map;
-      }, new Map());
-    // Make the SelectItemGroup elements for the menu out of the grouped nodes
-    let NO_TEAM_LABEL: string  = "Nodes owned by no one";
-    let nodeList = Array.from(nodesGroupedBySquads
-      .keys()).map((team) => {
-      let items = nodesGroupedBySquads.get(team);
-      return {
-        label: team ? team.getName() : NO_TEAM_LABEL,
-        value: team,
-        items: (items ? items.map(node => ({ label: node.getName(), value: node })) : undefined)
-      };
-    });
-    // Put unassigned nodes at the beginning of the list
-    nodeList.sort((tA, tB) => {
-      if(tA.label === NO_TEAM_LABEL)
-        return -1;
-      else if(tB.label === NO_TEAM_LABEL)
-        return 1;
-      else
-        return 0;
-    });
-
-    return nodeList;
-  }
-
-  showOnlyTeam(team: joint.shapes.microtosca.SquadGroup) {
-    this.graphService.graph.showOnlyTeam(team);
   }
 
 }

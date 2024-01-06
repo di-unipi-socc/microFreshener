@@ -56,10 +56,9 @@ export class SidebarSmellComponent {
       header: 'Ignore smell',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.
-          this.architecture.deleteNode(node).then(() => {
+          /*this.architecture.deleteNode(node).then(() => {
               this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-          }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
+          }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));*/
       }
   });
 

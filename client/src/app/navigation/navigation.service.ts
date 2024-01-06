@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
+import { GraphInvoker } from '../commands/invoker';
+import { Graph } from '../graph/model/graph';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +13,16 @@ export class EditorNavigationService {
 
   private readonly FIT_CONTENT_PADDING = 150;
 
+  private filters: ((Graph) => void)[] = [];
+
   constructor(
-    private graphService: GraphService
-  ) {}
+    private graphService: GraphService,
+    private graphInvoker: GraphInvoker
+  ) {
+    this.graphInvoker.subscribe(() => {
+      this.applyFilters();
+    });
+  }
 
   // Paper
 
@@ -54,6 +63,7 @@ export class EditorNavigationService {
   }
 
   // Move
+
   mousewheel
   move(dx: number, dy: number) {
     this.paper.translate(dx, dy);
@@ -108,10 +118,22 @@ export class EditorNavigationService {
     this.paper.scaleContentToFit({ padding: padding });
   }
 
-  // Visibility
+  // Filters
 
-  hideGraph() {
-    this.graphService.graph.hideGraph();
+  applyFilters() {
+    this.filters.forEach(f => f(this.graphService.graph));
+  }
+
+  addFilter(filter: (Graph) => void) {
+    this.filters.push(filter);
+    this.applyFilters();
+  }
+
+  removeFilter(filter: (Graph) => void) {
+    console.debug("Filters", this.filters, this.filters.length, this.filters.includes(filter));
+    this.filters = this.filters.filter(f => f != filter);
+    console.debug("New filters", this.filters, this.filters.length);
+    this.applyFilters();
   }
 
 }

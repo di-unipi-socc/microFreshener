@@ -24,7 +24,7 @@ export class TeamsService {
   }
 
   areVisible(): boolean {
-    return this.visualization.areTeamsVisible();
+    return this.visualization.areAllTeamsVisible();
   }
 
   getTeams(): joint.shapes.microtosca.SquadGroup[] {
@@ -32,7 +32,7 @@ export class TeamsService {
   }
 
   getNodesByTeams() {
-    return this.visualization.getNodesByTeam();
+    return this.analytics.getNodesByTeam();
   }
 
   getTeamOfNode(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.SquadGroup {

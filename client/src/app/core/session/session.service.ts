@@ -149,7 +149,7 @@ export class SessionService {
   }
 
   closeDocument() {
-    this.navigation.hideGraph();
+    this.gs.graph.clearGraph();
     this.documentReady = false;
   }
 
