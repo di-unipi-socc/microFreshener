@@ -3,6 +3,7 @@ import { GroupSmell, NodeSmell } from '../smells/smell';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 import { Refactoring } from '../refactorings/refactoring-command';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -16,13 +17,13 @@ export class SidebarSmellComponent {
 
   actions: Object[];
   @Input() selectedRefactoring: Refactoring;
-  previousSelectedRefactoring: Refactoring;
 
   jointNodeModel;
   @Input() smell: (NodeSmell | GroupSmell);
 
   constructor(
-    private invoker: GraphInvoker
+    private invoker: GraphInvoker,
+    private confirmationService: ConfirmationService
   ) {
     this.actions = [];
   }
@@ -49,16 +50,18 @@ export class SidebarSmellComponent {
     }
   }
 
-  onRefactoringSelected() {
-    if(this.previousSelectedRefactoring) {
-      // this.previousSelectedRefactoring.unexecute();
-      this.previousSelectedRefactoring = undefined;
-    }
-    if(!(this.selectedRefactoring instanceof NotAllowedRefactoring)) {
-      // this.selectedRefactoring.execute();
-      this.previousSelectedRefactoring = this.selectedRefactoring;
-    }
-    console.debug("Selected refactoring", this.selectedRefactoring?.getName(), "previous", this.previousSelectedRefactoring?.getName())
+  openIgnoreDialog() {
+    this.confirmationService.confirm({
+      message: `Do you want to ignore this smell from the analysis? It won't be displayed anymore.`,
+      header: 'Ignore smell',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          /*this.architecture.deleteNode(node).then(() => {
+              this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
+          }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));*/
+      }
+  });
+
   }
 
   canApply()  {
@@ -73,7 +76,6 @@ export class SidebarSmellComponent {
 
   resetSidebar(smell?) {
     this.actions = [];
-    this.previousSelectedRefactoring = undefined;
     this.selectedRefactoring = undefined;
     this.jointNodeModel = undefined;
     if(!smell)

@@ -1,116 +1,48 @@
-tosca_definitions_version: micro_tosca_yaml_1.1
-description: micro.tosca
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: For testing the Multiple Service in One Container smell
+
 imports:
-- micro: https://di-unipi-socc.github.io/microTOSCA/1.1/microTOSCA.yaml
+  - micro: ../../data/micro-tosca-types.yml
+
 topology_template:
   node_templates:
-    front-end:
+    # Test Compute node with no incoming edges
+    c0:
+      type: micro.nodes.Compute
+
+    # Test one Service deployed on one Compute
+    s1:
       type: micro.nodes.Service
       requirements:
-      - interaction: orders
-      - interaction: user
-      - interaction: carts
-      - interaction: catalogue
-    orders:
+        - deployed_on: c1
+    c1:
+      type: micro.nodes.Compute
+
+    # Test multiple Services deployed on the same Compute
+    s2:
       type: micro.nodes.Service
       requirements:
-      - interaction: orders-db
-      - interaction: user
-      - interaction: payment
-      - interaction: carts
-      - interaction: shipping
-    orders-db:
-      type: micro.nodes.Datastore
-    payment:
-      type: micro.nodes.Service
-    user:
+        - deployed_on: c23
+    s3:
       type: micro.nodes.Service
       requirements:
-      - interaction: user-db
-    carts:
+        - deployed_on: c23
+    c23:
+      type: micro.nodes.Compute
+
+    # Test multiple Services deployed on the same Compute
+    s4:
       type: micro.nodes.Service
       requirements:
-      - interaction: carts-db
-    carts-db:
-      type: micro.nodes.Datastore
-    catalogue-db:
-      type: micro.nodes.Datastore
-    catalogue:
+        - deployed_on: c456
+    s5:
       type: micro.nodes.Service
       requirements:
-      - interaction: catalogue-db
-    user-db:
-      type: micro.nodes.Datastore
-    shipping:
+        - deployed_on: c456
+    s6:
       type: micro.nodes.Service
       requirements:
-      - interaction: rabbitmq
-    rabbitmq:
-      type: micro.nodes.MessageBroker
-    queue-master:
-      type: micro.nodes.Service
-      requirements:
-      - interaction: rabbitmq
-    edge-router:
-      type: micro.nodes.MessageRouter
-      requirements:
-      - interaction: front-end
-  groups:
-    edgenodes:
-      type: micro.groups.Edge
-      members:
-      - edge-router
-    CustomerTeam:
-      type: micro.groups.Team
-      members:
-      - edge-router
-      - front-end
-      - carts
-      - orders
-      - carts-db
-    BackOfficeTeam:
-      type: micro.groups.Team
-      members:
-      - shipping
-      - rabbitmq
-      - queue-master
-      - orders-db
-      - payment
-      - user
-      - user-db
-      - catalogue
-      - catalogue-db
-  relationship_templates:
-    t:
-      type: micro.relationships.InteractsWith
-      properties:
-        timeout: true
-    c:
-      type: micro.relationships.InteractsWith
-      properties:
-        circuit_breaker: true
-    d:
-      type: micro.relationships.InteractsWith
-      properties:
-        dynamic_discovery: true
-    tc:
-      type: micro.relationships.InteractsWith
-      properties:
-        timeout: true
-        circuit_breaker: true
-    td:
-      type: micro.relationships.InteractsWith
-      properties:
-        timeout: true
-        dynamic_discovery: true
-    cd:
-      type: micro.relationships.InteractsWith
-      properties:
-        circuit_breaker: true
-        dynamic_discovery: true
-    tcd:
-      type: micro.relationships.InteractsWith
-      properties:
-        timeout: true
-        circuit_breaker: true
-        dynamic_discovery: true
+        - deployed_on: c456
+    c456:
+      type: micro.nodes.Compute

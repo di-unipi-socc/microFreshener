@@ -15,15 +15,16 @@
                     <h1>Found {{smell?.name}} bad smell</h1><!-- on {{jointNodeModel?.getName()}}</h1>-->
                     <br/>
                     <p>{{smell?.getDescription()}}</p>
+                    <p-button icon="pi pi-times" styleClass="p-button-secondary p-button-text" label="Ignore this smell" (click)="openIgnoreDialog()"></p-button>
                 </div>
             </div>
 
-            <div class="p-grid p-justify-center p-align-center vertical-container">
+            <div class="p-grid p-justify-center p-align-center vertical-container" *ngIf="actions.length > 0">
                 <div class="p-col-2">
-                    <h3>Refactor</h3>
-                    <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring" (onChange)="onRefactoringSelected()"></p-dropdown>
+                    <h3>Available refactorings</h3>
+                    <p-listbox appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring"></p-listbox>
                     <div *ngIf="canApply()">
-                        <p *ngIf="selectedCommand"> {{selectedRefactoring?.getDescription() || 'none'}}</p>
+                        <p> {{selectedRefactoring.getDescription()}}</p>
                         <button pButton type="button" label="Apply" (click)="apply()"></button>
                     </div>
                     <div *ngIf="!canApply()">

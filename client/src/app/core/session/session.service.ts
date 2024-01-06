@@ -120,7 +120,6 @@ export class SessionService {
       });
       ref.onClose.subscribe((data) => {
           if (data.msg) {
-              console.log(data);
               this.loadGraph(data.graph);
               this.navigation.fitContent();
               this.documentReady = true;
@@ -150,7 +149,7 @@ export class SessionService {
   }
 
   closeDocument() {
-    this.navigation.hideGraph();
+    this.gs.graph.clearGraph();
     this.documentReady = false;
   }
 
