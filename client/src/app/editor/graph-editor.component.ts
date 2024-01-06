@@ -82,8 +82,6 @@ export class GraphEditorComponent {
 
         this.bindSingleRightClickCell();
 
-        this.bindTeamMinimize();
-        this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
 
        this.bindDragNavigation();
@@ -549,61 +547,56 @@ export class GraphEditorComponent {
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
         this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
-            console.debug("cell:pointerup", cellView);
-            var cell = cellView.model;
-            if (
-                !cell.isLink() && // otherwise Error when cell.getBBox() is called.
-                !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
-                !this.deployments.isCompute(cell) && // Computes can't be in a squad
-                !this.teams.isTeamGroup(cell)) {
-                console.debug("clicked", cellView);
-                var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
+                console.debug("cell:pointerup", cellView);
+                var cell = cellView.model;
+                if (
+                    !cell.isLink() && // otherwise Error when cell.getBBox() is called.
+                    !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                    !this.deployments.isCompute(cell) && // Computes can't be in a squad
+                    !this.teams.isTeamGroup(cell)) {
+                    console.debug("clicked", cellView);
+                    var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
 
-                if (cellViewsBelow.length) {
-                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
-                    var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
-                    // Prevent recursive embedding
-                    if (cellViewBelow) {
-                        // embed element only into Team Cell, otherwise it embeds node inside other nodes.
-                        if (this.teams.isTeamGroup(cellViewBelow.model)) {
-                            // check if the elment below has the parent equal to the cell
-                            if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                                var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
-                                var member = <joint.shapes.microtosca.Node>cell;
-                                var memberTeam = this.teams.getTeamOfNode(member);
-                                // do not embed on the same team
-                                if(team && memberTeam && team.getName() == memberTeam.getName() ){
-                                    team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-                                }
-                                else {
-                                    if(this.teams.areVisible()) {
-                                        this.teams.addMemberToTeam(member, team).then(() => {
-                                            this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
-                                        }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
+                    if (cellViewsBelow.length) {
+                        // Note that the findViewsFromPoint() returns the view for the `cell` itself.
+                        var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
+                        // Prevent recursive embedding
+                        if (cellViewBelow) {
+                            // embed element only into Team Cell, otherwise it embeds node inside other nodes.
+                            if (this.teams.isTeamGroup(cellViewBelow.model)) {
+                                // check if the elment below has the parent equal to the cell
+                                if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
+                                    var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
+                                    var member = <joint.shapes.microtosca.Node>cell;
+                                    var memberTeam = this.teams.getTeamOfNode(member);
+                                    // do not embed on the same team
+                                    if(!team || !memberTeam || team.getName() != memberTeam.getName()) {
+                                        if(this.teams.areVisible()) {
+                                            this.teams.addMemberToTeam(member, team).then(() => {
+                                                this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
+                                            }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
+                                        }
                                     }
                                 }
                             }
-                        }
-                        
-                    } else {
-                        // click on blank paper
-                        console.log("not cell view Below defined");
-                        var member = <joint.shapes.microtosca.Node>cell;
-                        var team = this.teams.getTeamOfNode(member);
-                        if(team){
-                            if(this.teams.areVisible()) {
-                                this.teams.removeMemberFromTeam(member, team).then(() => {
-                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
-                                });
-                            } else {
-                                team.fitEmbeds({ padding: Graph.TEAM_PADDING })
+                            
+                        } else {
+                            // click on blank paper
+                            console.log("not cell view Below defined");
+                            var member = <joint.shapes.microtosca.Node>cell;
+                            var team = this.teams.getTeamOfNode(member);
+                            if(team){
+                                if(this.teams.areVisible()) {
+                                    this.teams.removeMemberFromTeam(member, team).then(() => {
+                                        this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                    });
+                                }
                             }
+                            
                         }
-                        
                     }
                 }
-            }
-
+                team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         });
     }
 
