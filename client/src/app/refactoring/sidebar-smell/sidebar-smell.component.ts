@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { GroupSmell, NodeSmell } from '../smells/smell';
+import { GroupSmell, NodeSmell, Smell } from '../smells/smell';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 import { Refactoring } from '../refactorings/refactoring-command';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring';
+import { Command } from 'src/app/commands/icommand';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -17,13 +19,15 @@ export class SidebarSmellComponent {
 
   actions: Object[];
   @Input() selectedRefactoring: Refactoring;
+  ignoreAction: Command;
 
   jointNodeModel;
   @Input() smell: (NodeSmell | GroupSmell);
 
   constructor(
     private invoker: GraphInvoker,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     this.actions = [];
   }
@@ -56,12 +60,15 @@ export class SidebarSmellComponent {
       header: 'Ignore smell',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-          /*this.architecture.deleteNode(node).then(() => {
-              this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-          }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));*/
+        this.invoker.executeCommand(this.ignoreAction)
+        .then(() => {
+          let smell = this.smell;
+          this.resetSidebar();
+          this.messageService.add({ severity: 'success', summary: 'Smell ignored', detail: `${smell.getName()} will be ignored.` });
+        })
+        .catch((reason) => this.messageService.add({ severity: 'error', summary: 'Smell cannot be ignored', detail: reason }));
       }
-  });
-
+    });
   }
 
   canApply()  {
@@ -94,20 +101,12 @@ export class SidebarSmellComponent {
       //this.smell = this.config.data.selectedsmell;
       console.debug("Refactorings:", this.smell.getRefactorings());
       this.smell.getRefactorings().forEach(refactoring => {
-        this.actions.push({ "label": refactoring?.getName(), "description": refactoring?.getDescription(), "value": refactoring });
+        if(!(refactoring instanceof IgnoreAlwaysRefactoring)) {
+          this.actions.push({ "label": refactoring?.getName(), "description": refactoring?.getDescription(), "value": refactoring });
+        } else {
+          this.ignoreAction = refactoring;
+        }
       });
-      this.moveIgnoreActionsToButtonInDropdownMenu();
-    }
-  }
-
-  moveIgnoreActionsToButtonInDropdownMenu() {
-    let ignoreActions = this.actions.filter(action => action["label"] === "Ignore Once" || action["label"] === "Ignore Always");
-    if (ignoreActions.length > 0) {
-      for(let action of ignoreActions) {
-        let index = this.actions.indexOf(action);
-        this.actions.splice(index, 1);
-        this.actions.push(action);
-      }
     }
   }
 

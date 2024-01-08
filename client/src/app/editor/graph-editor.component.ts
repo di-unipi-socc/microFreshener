@@ -22,7 +22,6 @@ import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
-import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 import { DeploymentService } from '../deployment/deployment.service';
 import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
 import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on.component';
@@ -534,10 +533,9 @@ export class GraphEditorComponent {
 
         ref.onClose.subscribe((refactoringCommand) => {
             if (refactoringCommand) {
-                let silent: boolean;
-                silent = refactoringCommand instanceof IgnoreOnceRefactoring || refactoringCommand instanceof IgnoreAlwaysRefactoring;
-                this.graphInvoker.executeCommand(refactoringCommand, silent);
-                this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
+                this.graphInvoker.executeCommand(refactoringCommand).then(() => {
+                    this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
+                });
             }
         });
     }
@@ -570,7 +568,10 @@ export class GraphEditorComponent {
                                     var member = <joint.shapes.microtosca.Node>cell;
                                     var memberTeam = this.teams.getTeamOfNode(member);
                                     // do not embed on the same team
-                                    if(!team || !memberTeam || team.getName() != memberTeam.getName()) {
+                                    if(team && memberTeam && team.getName() == memberTeam.getName() ){
+                                        team.fitEmbeds({ padding: Graph.TEAM_PADDING });
+                                    }
+                                    else {
                                         if(this.teams.areVisible()) {
                                             this.teams.addMemberToTeam(member, team).then(() => {
                                                 this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
@@ -590,13 +591,14 @@ export class GraphEditorComponent {
                                     this.teams.removeMemberFromTeam(member, team).then(() => {
                                         this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
                                     });
+                                } else {
+                                    team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                                 }
                             }
                             
                         }
                     }
                 }
-                team.fitEmbeds({ padding: Graph.TEAM_PADDING });
         });
     }
 
