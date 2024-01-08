@@ -81,6 +81,16 @@ export class SidebarSmellComponent {
     this.invoker.executeCommand(refactoring);
   }
 
+  copy() {
+    navigator.clipboard.writeText(this.selectedRefactoring.getDescription())
+    .then(() => {
+      this.messageService.add({ severity: 'success', summary: 'Copied', detail: "Message copied to clipboard." });
+    })
+    .catch((error) => {
+      this.messageService.add({ severity: 'error', summary: 'Impossible to copy', detail: "Unable to copy to clipboard." });
+    });
+  }
+
   resetSidebar(smell?) {
     this.actions = [];
     this.selectedRefactoring = undefined;

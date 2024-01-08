@@ -28,7 +28,7 @@
                         <button pButton type="button" label="Apply" (click)="apply()"></button>
                     </div>
                     <div *ngIf="!canApply()">
-                        <p style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</p>
+                        <span style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</span> <p-button icon="pi pi-copy" (click)="copy()" styleClass="p-button-text"></p-button>
                     </div>
                 </div>
             </div>
