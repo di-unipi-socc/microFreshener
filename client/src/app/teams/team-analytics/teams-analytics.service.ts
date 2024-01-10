@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 
 @Injectable({
-  providedIn: 'root'// TeamsService
+  providedIn: 'root'
 })
 export class TeamsAnalyticsService {
 

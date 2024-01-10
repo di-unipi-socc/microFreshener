@@ -69,6 +69,18 @@ export class TeamsService {
     return this.editing.removeMemberFromTeam(member, team);
   }
 
+  hoverTeam(team: joint.shapes.microtosca.SquadGroup, enlarge?: boolean) {
+    this.visualization.hoverTeam(team, enlarge);
+  }
+
+  unhoverTeam(team: joint.shapes.microtosca.SquadGroup, shrink?: boolean) {
+    this.visualization.unhoverTeam(team, shrink);
+  }
+
+  unhoverAllTeams() {
+    this.visualization.unhoverAllTeams();
+  }
+
   // POV: team member
 
   showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {

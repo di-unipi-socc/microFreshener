@@ -6,7 +6,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
 
 @Injectable({
-  providedIn: 'root'// TeamsService
+  providedIn: 'root'
 })
 export class TeamEditingService {
 
@@ -91,6 +91,7 @@ export class TeamEditingService {
 
   async addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     let previousTeam = this.graphService.graph.getTeamOfNode(member);
+    console.debug(member.getName(), "is coming from team", previousTeam?.getName());
     let command;
     if(previousTeam) {
       command = this.buildMoveNodeCommand(member, previousTeam, team);

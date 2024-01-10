@@ -5,7 +5,7 @@ import { EditorNavigationService } from 'src/app/navigation/navigation.service';
 import { Graph } from 'src/app/graph/model/graph';
 
 @Injectable({
-  providedIn: 'root'// TeamsService
+  providedIn: 'root'
 })
 export class TeamVisualizationService {
 
@@ -53,6 +53,23 @@ export class TeamVisualizationService {
     this.setTeamVisualizationFilter((graph) => { graph.showOnlyTeam(team) });
   }
 
+  hoverTeam(team: joint.shapes.microtosca.SquadGroup, enlarge?: boolean) {
+    team.attr("body/fill", "#007ad9");
+    if(enlarge) team.fitEmbeds({ padding: Graph.TEAM_PADDING * 1.5 });
+  }
+
+  unhoverTeam(team: joint.shapes.microtosca.SquadGroup, shrink?: boolean) {
+    team.attr("body/fill", "#ffffff");
+    if(shrink) team.fitEmbeds({ padding: Graph.TEAM_PADDING });
+  }
+
+  unhoverAllTeams() {
+    this.graphService.graph.getTeamGroups().forEach((team) => {
+      team.attr("body/fill", "#ffffff");
+      team.fitEmbeds({ padding: Graph.TEAM_PADDING });
+    });
+  }
+
   showTeamDependencies(team: joint.shapes.microtosca.SquadGroup) {
     if(!this.showTeamDependenciesFilter) {
       this.showTeamDependenciesFilter = (graph) => {
@@ -74,7 +91,6 @@ export class TeamVisualizationService {
         .forEach((link) => {
           this.setVisibilityOfLinkAndRespectiveNodesAndGroups(link, false);
         });
-    
   }
 
   private setVisibilityOfLinkAndRespectiveNodesAndGroups(link: joint.shapes.microtosca.RunTimeLink, visible: boolean) {
