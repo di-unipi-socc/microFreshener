@@ -24,6 +24,9 @@ export class NodesService {
     if(team && !this.permissionsService.writePermissions.isAllowed(team)) {
       Promise.reject(`You are not allowed to add this in ${team.getName()}.\nPlease contact the product owner or the team leader.`);
     }
+    if(this.graphService.graph.findNodeByName(name)) {
+      return Promise.reject(`${name} already exists.`);
+    }
     let addNodeCommand;
     let message: string;
     switch (nodeType) {

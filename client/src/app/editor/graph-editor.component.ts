@@ -134,7 +134,8 @@ export class GraphEditorComponent {
         ref.onClose.subscribe((data) => {
             // Create the AddNodeCommand
             if(data) {
-                this.architecture.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+                this.architecture.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team)
+                .catch((error) => this.messageService.add({ severity: 'error', detail: error }));
             }
         });
     }

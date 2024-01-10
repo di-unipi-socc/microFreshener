@@ -84,8 +84,9 @@ export class SubtoolbarTeamsComponent {
       });
       ref.onClose.subscribe((data) => {
         if(data) {
-          this.teams.addTeam(data.name, data.nodes);
-          this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` });
+          this.teams.addTeam(data.name, data.nodes)
+          .then(() => { this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` }); })
+          .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
           this.resetLists();
           this.teams.showTeams();
         }

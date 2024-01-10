@@ -24,6 +24,9 @@ export class TeamEditingService {
   }
 
   async addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
+    if(this.graphService.graph.findGroupByName(name)) {
+      return Promise.reject(`A group called ${name} already exists.`);
+    }
     let commandToExecute;
     if(!selectedNodes) {
       // Add a new empty team
