@@ -559,7 +559,7 @@ export class GraphEditorComponent {
                 console.debug("team?", team?.getName());
                 if(team) {
                     this.hoveredTeam = team;
-                    this.teams.hoverTeam(team, false);
+                    this.teams.hoverTeam(team, true);
                 }
             }
         }));
@@ -572,8 +572,16 @@ export class GraphEditorComponent {
                     // Note that the findViewsFromPoint() returns the view for the `cell` itself.
                     let cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
                     // Prevent recursive embedding. Embed element only into Team Cell, otherwise it embeds node inside other nodes.
+                    let team;
                     if (cellViewBelow && this.teams.isTeamGroup(cellViewBelow.model)) {
-                        let team = <joint.shapes.microtosca.SquadGroup> cellViewBelow.model;
+                        // if the mouse is over a team, embed into that team
+                        team = <joint.shapes.microtosca.SquadGroup> cellViewBelow.model;
+                    } else if(cellViewBelow && this.architecture.isNode(cellViewBelow.model)) {
+                        // If the mouse is over another node, embed into the team of that node
+                        let node = <joint.shapes.microtosca.Node> cellViewBelow.model;
+                        team = this.teams.getTeamOfNode(node);
+                    }
+                    if(team) {
                         if(!this.hoveredTeam) {
                             this.hoveredTeam = team;
                             this.teams.hoverTeam(team, this.hoveredTeam != this.teams.getTeamOfNode(cell));
