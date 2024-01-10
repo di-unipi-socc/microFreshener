@@ -7,6 +7,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 import { TeamsService } from 'src/app/teams/teams.service';
+import { SessionService } from 'src/app/core/session/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class NodesService {
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
     private permissionsService: PermissionsService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private session: SessionService
   ) { }
 
   async addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
@@ -69,7 +71,8 @@ export class NodesService {
   async deleteNode(node) {
     if(!this.permissionsService.writePermissions.isAllowed(node)) {
       return Promise.reject(`You are not allowed to delete this.`);
-    } else if(this.teamsService.hasTeamDependencies(node)) {
+    }
+    if(this.session.isTeam() && this.teamsService.hasTeamDependencies(node)) {
       return Promise.reject(`You cannot delete this because other teams interact with it.`);
     }
     return this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
