@@ -55,17 +55,20 @@ export class TeamVisualizationService {
 
   hoverTeam(team: joint.shapes.microtosca.SquadGroup, enlarge?: boolean) {
     team.attr("body/fill", "#007ad9");
+    team.attr("body/fillOpacity", "0.1");
     if(enlarge) team.fitEmbeds({ padding: Graph.TEAM_PADDING * 1.5 });
   }
 
   unhoverTeam(team: joint.shapes.microtosca.SquadGroup, shrink?: boolean) {
     team.attr("body/fill", "#ffffff");
+    team.attr("body/fillOpacity", "0.4");
     if(shrink) team.fitEmbeds({ padding: Graph.TEAM_PADDING });
   }
 
   unhoverAllTeams() {
     this.graphService.graph.getTeamGroups().forEach((team) => {
       team.attr("body/fill", "#ffffff");
+      team.attr("body/fillOpacity", "0.4");
       team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     });
   }
