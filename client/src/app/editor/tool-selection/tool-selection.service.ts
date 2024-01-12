@@ -37,7 +37,7 @@ export class ToolSelectionService {
     }
   }
 
-  isAddNodeEnabled(cell?): boolean {
+  isAddNodeEnabled(): boolean {
     return this.enabledActions[ToolSelectionService.SERVICE] ||
             this.enabledActions[ToolSelectionService.DATASTORE] ||
             this.enabledActions[ToolSelectionService.MESSAGE_BROKER] ||
