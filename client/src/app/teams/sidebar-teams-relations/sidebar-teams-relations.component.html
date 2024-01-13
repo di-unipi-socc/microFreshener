@@ -1,4 +1,4 @@
-<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
+<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false" [autoZIndex]="false">
     <!-- No enough data titles -->
     <h2 *ngIf="teams.length == 0 || !interactingTeamsExist">Interactions among teams cannot be drawn because
     <span *ngIf="teams.length == 0"> there are no teams to display.</span>
