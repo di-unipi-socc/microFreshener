@@ -33,10 +33,10 @@ export class AddMessageBrokerRefactoring implements Refactoring {
         return new class Builder extends RefactoringBuilder {
             build(): AddMessageBrokerRefactoring {
                 let cmds = [];
-                // For wobbly service interaction, adding message broker is disable whe the target node is a communication pattern
+                // For wobbly service interaction, adding message broker is disabled when the target node is a communication pattern
                 let links = this.smell.getLinkBasedCauses().filter((link) => !(link.getTargetElement() instanceof joint.shapes.microtosca.CommunicationPattern));
                 if(this.team) {
-                    links = links.filter((l) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) == this.team);
+                    links = links.filter((l) => this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getSourceElement()) == this.team && this.graph.getTeamOfNode(<joint.shapes.microtosca.Node> l.getTargetElement()) == this.team);
                 }
                 links.forEach((link) => {
                     let sourceNode = <joint.shapes.microtosca.Node>link.getSourceElement();
