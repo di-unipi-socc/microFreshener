@@ -382,7 +382,10 @@ export class Graph extends joint.dia.Graph {
         this.hideGraph();
         console.log("in showOnlyTeam team is " + team);
         console.log("got members: " + team.getMembers());
-        let cells = this.getSubgraphFromNodes(team.getMembers().concat(<joint.shapes.microtosca.Node> (<unknown> this.getEdgeGroups())));
+        let cells = this.getSubgraphFromNodes(team.getMembers()
+                        .concat(<joint.shapes.microtosca.Node> (<unknown> this.getEdgeGroups())))
+                        .concat(this.getNodes().filter(node => this.isCompute(node)))
+                        .concat(this.getDeploymentLinks().filter(link => link.getSourceElement().isEmbeddedIn(team)));
         console.log("in showOnlyTeam cells is " + cells);
         cells.forEach(cell => cell.attr("./visibility","visible")); // cell.set("hidden", false));
         //this.showTeamBox(team);
