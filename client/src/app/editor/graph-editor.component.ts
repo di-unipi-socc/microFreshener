@@ -182,11 +182,10 @@ export class GraphEditorComponent {
                 this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery)
                 .then(() => {
                     this.navigation.getPaper().findViewByModel(data.source).unhighlight();
-                    this.architecture.showNode(data.source);
-                    this.architecture.showNode(data.target);
+                    this.messageService.add({ severity: 'success', summary: `Interaction from ${data?.source?.getName()} to ${data?.target?.getName()} added.` });
                 })
                 .catch((error) => {
-                    this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                    this.messageService.add({ severity: 'error', summary: 'Error while adding the interaction.', detail: error });
                 });
             }
         });
