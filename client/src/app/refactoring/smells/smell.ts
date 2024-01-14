@@ -52,8 +52,17 @@ abstract class SmellObject implements Smell {
 }
 
 export abstract class NodeSmell extends SmellObject {
+
+    constructor(protected node:joint.shapes.microtosca.Node) {
+        super();
+    }
+
     abstract getName();
     abstract getDescription();
+
+    getNode():joint.shapes.microtosca.Node{
+        return this.node;
+    }
 }
 
 export abstract class GroupSmell extends SmellObject {

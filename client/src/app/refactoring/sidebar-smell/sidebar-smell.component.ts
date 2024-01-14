@@ -6,6 +6,8 @@ import { Refactoring } from '../refactorings/refactoring-command';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring';
 import { Command } from 'src/app/commands/icommand';
+import { AnalyserService } from '../analyser.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -22,14 +24,48 @@ export class SidebarSmellComponent {
   ignoreAction: Command;
 
   jointNodeModel;
-  @Input() smell: (NodeSmell | GroupSmell);
+  @Input() smell: Smell;
+
+  private invokerSubscription: Subscription;
+  private analysisSubscription: Subscription;
+  private lastSmellName: string;
+  private lastOdorousName: string;
 
   constructor(
     private invoker: GraphInvoker,
+    private analysis: AnalyserService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
     this.actions = [];
+  }
+
+  ngOnInit() {
+    this.invokerSubscription = this.invoker.subscribe(() => {
+      if(this.smell) {
+        this.lastSmellName = this.smell.getName();
+        if(this.smell instanceof NodeSmell) {
+          this.lastOdorousName = this.smell.getNode().getName();
+        }
+        if(this.smell instanceof GroupSmell) {
+          this.lastOdorousName = this.smell.getGroup().getName();
+        }
+      }
+      this.resetSidebar();
+    });
+    this.analysisSubscription = this.analysis.subscribe(() => {
+      if(this.lastSmellName) {
+        let newSmell = this.analysis.findSmell(this.lastOdorousName, this.lastSmellName);
+        if(newSmell) {
+          this.smell = newSmell;
+          this.updateSmell();
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.analysisSubscription.unsubscribe();
   }
 
   ngOnChanges(change: SimpleChanges) {
@@ -37,7 +73,7 @@ export class SidebarSmellComponent {
     // Sidebar opening
     if(!change.visible?.previousValue && change.visible?.currentValue) {
       console.debug("opening sidebar");
-      this.onSidebarOpen();
+      this.updateSmell();
     }
 
     // Sidebar closing
@@ -50,7 +86,7 @@ export class SidebarSmellComponent {
     if(change.smell?.currentValue && change.smell?.currentValue != change.smell?.previousValue) {
       console.debug("smell changed", this.smell);
       this.resetSidebar(this.smell);
-      this.onSidebarOpen();
+      this.updateSmell();
     }
   }
 
@@ -64,7 +100,7 @@ export class SidebarSmellComponent {
         .then(() => {
           let smell = this.smell;
           this.resetSidebar();
-          this.messageService.add({ severity: 'success', summary: 'Smell ignored', detail: `${smell.getName()} will be ignored.` });
+          this.messageService.add({ severity: 'success', summary: 'Smell ignored', detail: `${smell?.getName()} will be ignored.` });
         })
         .catch((reason) => this.messageService.add({ severity: 'error', summary: 'Smell cannot be ignored', detail: reason }));
       }
@@ -104,7 +140,7 @@ export class SidebarSmellComponent {
     this.visibleChange.emit(false);
   }
 
-  onSidebarOpen() {
+  updateSmell() {
     if (this.smell) {
       console.debug("Smell is", this.smell);
       //this.jointNodeModel = this.config.data.model;

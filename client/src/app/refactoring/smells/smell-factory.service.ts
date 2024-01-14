@@ -41,16 +41,16 @@ export class SmellFactoryService {
 
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
-        smell = new EndpointBasedServiceInteractionSmellObject();
+        smell = new EndpointBasedServiceInteractionSmellObject(node);
         break;
       case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
-        smell = new WobblyServiceInteractionSmellObject();
+        smell = new WobblyServiceInteractionSmellObject(node);
         break;
       case SMELL_NAMES.SMELL_SHARED_PERSISTENCY:
-        smell = new SharedPersistencySmellObject();
+        smell = new SharedPersistencySmellObject(node);
         break;
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
-        smell = new MultipleServicesInOneContainerSmellObject();
+        smell = new MultipleServicesInOneContainerSmellObject(node);
         break;
       default:
         throw new Error(`Unsupported smell: ${smellJson.name}`);

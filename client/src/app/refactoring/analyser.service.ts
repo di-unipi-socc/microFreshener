@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { tap, map, catchError } from 'rxjs/operators';
 
@@ -9,7 +9,7 @@ import { GraphService } from '../graph/graph.service';
 import { PrincipleRequest, SmellRequest } from './principles';
 
 import { SmellFactoryService } from './smells/smell-factory.service';
-import { GroupSmell } from './smells/smell';
+import { GroupSmell, NodeSmell, Smell } from './smells/smell';
 import * as _ from 'lodash';
 
 
@@ -19,9 +19,11 @@ import * as _ from 'lodash';
 
 export class AnalyserService {
 
-
   private analysisUrl = environment.serverUrl + '/api/analyse';
   private smellsCount: number = 0;
+
+  private analysisSubject: Subject<void> = new Subject<void>();
+  private observableAnalysis: Observable<void> = this.analysisSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -81,12 +83,25 @@ export class AnalyserService {
               groupSmells.forEach((smell) => group.addSmell(smell));
             }
           });
+          // Send the event that a new analysis has been done
+          this.analysisSubject.next();
           return true;
         }),
         tap(_ => console.debug(`Sending analysis`),
         ),
         catchError((e: Response) => throwError(e))
       );
+  }
+
+  subscribe(observer) {
+    return this.observableAnalysis.subscribe(observer);
+  }
+
+  findSmell(odorousName: string, smellName: string): Smell {
+    let node = this.gs.graph.findNodeByName(odorousName);
+    if(node) {
+      return node.getSmells().find(smell => smell.getName() == smellName);
+    }
   }
 
 }
