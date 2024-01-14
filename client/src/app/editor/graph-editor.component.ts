@@ -123,6 +123,7 @@ export class GraphEditorComponent {
         }
         this.jointJsGraph.nativeElement.onmousemove = null;
         this.addingLink.remove();
+        this.addingLink = undefined;
     }
 
     openAddNodeDialog(nodeType, position, team?) {
