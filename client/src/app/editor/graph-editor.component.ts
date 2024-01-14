@@ -548,6 +548,7 @@ export class GraphEditorComponent {
     private cleanHover() {
         this.teams.unhoverAllTeams();
         this.draggingNode = false;
+        this.hoveredTeam = undefined;
     }
 
     bindTeamEmbedNodes() {
@@ -613,12 +614,13 @@ export class GraphEditorComponent {
                         let member = <joint.shapes.microtosca.Node>cell;
                         let oldTeam = this.teams.getTeamOfNode(member);
                         // do not embed on the same team
-                        if(oldTeam && this.hoveredTeam == oldTeam ){
+                        if(oldTeam && this.hoveredTeam == oldTeam){
                             oldTeam.fitEmbeds({ padding: Graph.TEAM_PADDING });
                         } else if(this.teams.areVisible()) {
-                                this.teams.addMemberToTeam(member, this.hoveredTeam).then(() => {
-                                    this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${this.hoveredTeam.getName()}] team` });
-                                }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
+                            let newTeam = this.hoveredTeam;
+                            this.teams.addMemberToTeam(member, newTeam).then(() => {
+                                this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `${member?.getName()} added to ${newTeam?.getName()}` });
+                            }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
                         }
                     } else {
                         // click on blank paper
@@ -628,7 +630,7 @@ export class GraphEditorComponent {
                         if(team){
                             if(this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team).then(() => {
-                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `${member.getName()} removed from ${team.getName()}` });
                                 });
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })

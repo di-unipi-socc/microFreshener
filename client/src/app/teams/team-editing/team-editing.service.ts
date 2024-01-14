@@ -58,7 +58,7 @@ export class TeamEditingService {
               selectedNodes
               .map((node) => [node, graph.getTeamOfNode(node)])
               .map(([node, previousTeam]: [joint.shapes.microtosca.Node, joint.shapes.microtosca.SquadGroup]) => {
-                    if(previousTeam) { console.log("previousTeam: node, team", node.getName(), previousTeam.getName()); return buildMoveNodeCommand(node, previousTeam, newTeam); }
+                    if(previousTeam) { console.log("previousTeam: node, team", node?.getName(), previousTeam?.getName()); return buildMoveNodeCommand(node, previousTeam, newTeam); }
                     else { return new AddMemberToTeamGroupCommand(newTeam, node); } });
         this.addOrMoveMembersToNewTeamCommands.forEach((cmd) => cmd.execute());
       }
@@ -91,7 +91,7 @@ export class TeamEditingService {
 
   async addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     let previousTeam = this.graphService.graph.getTeamOfNode(member);
-    console.debug(member.getName(), "is coming from team", previousTeam?.getName());
+    //console.debug(member?.getName(), "is coming from team", previousTeam?.getName());
     let command;
     if(previousTeam) {
       command = this.buildMoveNodeCommand(member, previousTeam, team);
