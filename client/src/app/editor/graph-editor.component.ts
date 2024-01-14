@@ -551,7 +551,7 @@ export class GraphEditorComponent {
 
     bindTeamEmbedNodes() {
         this.navigation.getPaper().on('cell:pointerdown', ((cellView, evt, x, y) => {
-            if(this.architecture.isNode(cellView.model) && !this.deployments.isCompute(cellView.model)) {
+            if(!this.addingLink && this.architecture.isNode(cellView.model) && !this.deployments.isCompute(cellView.model)) {
                 let node = cellView.model;
                 this.draggingNode = true;
                 let team = this.teams.getTeamOfNode(node);
