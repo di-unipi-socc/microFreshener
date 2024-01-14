@@ -46,7 +46,7 @@ export class SubtoolbarTeamsComponent {
     private navigation: EditorNavigationService,
     private messageService: MessageService
   ) {
-    this.PAPER_EVENTS_LABELS = 'cell:pointerclick';
+    this.PAPER_EVENTS_LABELS = 'cell:pointerup';
     this.paperListener = (cellView, evt, x, y) => {this.nodeToBeAddedClicked(cellView)};
     this.nodeList = [];
     this.selectedNodes = [];
