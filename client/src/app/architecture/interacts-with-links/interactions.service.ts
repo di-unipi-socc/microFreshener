@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AddRunTimeLinkCommand, RemoveLinkCommand } from './interaction-with-commands';
+import { AddRunTimeLinkCommand, RemoveLinkCommand, ReverseLinkCommand } from './interaction-with-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import * as joint from 'jointjs';
@@ -34,9 +34,7 @@ export class InteractionsService {
     if(!this.permissions.writePermissions.isAllowed(source) || !this.permissions.writePermissions.isAllowed(target)) {
       return Promise.reject("You are not allowed to change this interaction.");
     }
-    link.source(target);
-    link.target(source);
-    Promise.resolve();
+    return this.graphInvoker.executeCommand(new ReverseLinkCommand(link));
   }
 
   async removeLink(link: joint.shapes.microtosca.RunTimeLink) {
