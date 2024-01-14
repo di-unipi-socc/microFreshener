@@ -109,11 +109,13 @@ export class SidebarTeamsRelationsComponent {
     // Compute a dense matrix from the weighted links in data.
     this.interactingTeamsNames = teams.map((t) => t.getName());
     this.index = new Map(this.interactingTeamsNames.map((name, i) => [name, i]));
-    let matrix = Array.from(this.index, () => new Array(this.interactingTeamsNames.length).fill(0));
+    let dataMatrix = Array.from(this.index, () => new Array(this.interactingTeamsNames.length).fill(0));
+    let cappedDataMatrix = Array.from(this.index, () => new Array(this.interactingTeamsNames.length).fill(0));
     data.forEach(([source, target, value]) => {
+      cappedDataMatrix[this.index.get(source)][this.index.get(target)] += value;
       // Cap the value at 20 interactions
-      value = Math.min(value, 20);
-      matrix[this.index.get(source)][this.index.get(target)] += value;
+      let possiblyCappedValue = Math.min(value, 20);
+      cappedDataMatrix[this.index.get(source)][this.index.get(target)] += possiblyCappedValue;
     });
 
     let chord = d3any.chordDirected()
@@ -131,7 +133,7 @@ export class SidebarTeamsRelationsComponent {
 
     this.colors = d3any.schemeCategory10;
 
-    let chords = chord(matrix);
+    let chords = chord(cappedDataMatrix);
 
     let textCount = 0;
     let getUid = () => {
@@ -161,7 +163,8 @@ export class SidebarTeamsRelationsComponent {
         .on("mouseover", (event, d) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
-          this.description = `${d.source.value} interaction${d.source.value!=1 ? 's' : ''} from nodes owned by ${this.interactingTeamsNames[d.source.index]} to nodes owned by ${this.interactingTeamsNames[d.target.index]}`;
+          let nInteractions = dataMatrix[d.source.index][d.target.index];
+          this.description = `${nInteractions} interaction${nInteractions!=1 ? 's' : ''} from nodes owned by ${this.interactingTeamsNames[d.source.index]} to nodes owned by ${this.interactingTeamsNames[d.target.index]}`;
         })
         .on("mouseout", (event) => {
           let ribbonId = event.target.id;
