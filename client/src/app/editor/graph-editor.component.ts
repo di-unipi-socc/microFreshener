@@ -620,7 +620,7 @@ export class GraphEditorComponent {
                             let newTeam = this.hoveredTeam;
                             this.teams.addMemberToTeam(member, newTeam).then(() => {
                                 this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `${member?.getName()} added to ${newTeam?.getName()}` });
-                            }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
+                            }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding node to team', detail: error })});
                         }
                     } else {
                         // click on blank paper
@@ -630,7 +630,7 @@ export class GraphEditorComponent {
                         if(team){
                             if(this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team).then(() => {
-                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `${member.getName()} removed from ${team.getName()}` });
+                                    this.messageService.add({ severity: 'success', summary: 'Node removed from team', detail: `${member.getName()} removed from ${team.getName()}` });
                                 });
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })

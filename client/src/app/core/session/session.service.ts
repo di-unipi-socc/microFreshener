@@ -3,7 +3,6 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
 
 import { GraphService } from "../../graph/graph.service";
-import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 
 // import { environment } from '../../../environments/environment';
 import { UserRole } from '../user-role';
@@ -113,20 +112,11 @@ export class SessionService {
           });
   }
 
-  import() {
-      const ref = this.dialogService.open(DialogImportComponent, {
-          header: 'Import MicroTosca',
-          width: '70%'
-      });
-      ref.onClose.subscribe((data) => {
-          if (data.msg) {
-              this.loadGraph(data.graph);
-              this.navigation.fitContent();
-              this.documentReady = true;
-              this.messageService.add({ severity: 'success', summary: 'Graph uploaded correctly', detail: data.msg });
-          }
-      });
-
+  import(graph) {
+      this.loadGraph(graph);
+      this.navigation.fitContent();
+      this.documentReady = true;
+      this.messageService.add({ severity: 'success', summary: 'Graph loaded correctly' });
   }
 
   loadGraph(graphJson) {
