@@ -110,16 +110,20 @@ export class SidebarTeamsRelationsComponent {
     this.interactingTeamsNames = teams.map((t) => t.getName());
     this.index = new Map(this.interactingTeamsNames.map((name, i) => [name, i]));
     let matrix = Array.from(this.index, () => new Array(this.interactingTeamsNames.length).fill(0));
-    data.forEach( ([source, target, value]) => { matrix[this.index.get(source)][this.index.get(target)] += value });
+    data.forEach(([source, target, value]) => {
+      // Cap the value at 20 interactions
+      value = Math.min(value, 20);
+      matrix[this.index.get(source)][this.index.get(target)] += value;
+    });
 
     let chord = d3any.chordDirected()
-        .padAngle(12 / innerRadius)
+        .padAngle(400/(innerRadius*(this.interactingTeamsNames.length-1)^2))
         .sortSubgroups(d3any.descending)
         .sortChords(d3any.descending);
 
     let arc = d3any.arc()
         .innerRadius(innerRadius)
-        .outerRadius(outerRadius);
+        .outerRadius(outerRadius)     
 
     let ribbon = d3any.ribbonArrow()
         .radius(innerRadius - 20)
