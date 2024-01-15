@@ -131,9 +131,10 @@ export class GraphEditorComponent {
         // Ask for node required data
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: `Add ${nodeType}`,
+            draggable: true,
             data: {
                 clickPosition: position,
-                nodeType: nodeType
+                nodeType: nodeType,
             }
         });
         ref.onClose.subscribe((data) => {
@@ -174,9 +175,10 @@ export class GraphEditorComponent {
         const ref = this.dialogService.open(DialogAddLinkComponent, {
             data: {
                 source: selectedNode,
-                external: true
+                external: true,
             },
             header: 'Add an external interaction',
+            draggable: true
         });
         ref.onClose.subscribe((data) => {
             if (data) {
@@ -195,8 +197,9 @@ export class GraphEditorComponent {
     openAddDeploymentLinkDialog(selectedNode) {
         const ref = this.dialogService.open(DialogDeployOnComponent, {
             header: 'Add a deployment',
+            draggable: true,
             data: {
-                deploying: selectedNode
+                deploying: selectedNode,
             }
         });
         ref.onClose.subscribe((data) => {
@@ -209,6 +212,7 @@ export class GraphEditorComponent {
     openAddComputeDialog(position?) {
         const ref = this.dialogService.open(DialogAddComputeComponent, {
             header: 'Add a compute',
+            draggable: true
         });
         ref.onClose.subscribe((data) => {
             if (data) {
@@ -500,9 +504,10 @@ export class GraphEditorComponent {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
-                    target: node
+                    target: node,
                 },
                 header: 'Add a link',
+                draggable: true
             });
             ref.onClose.subscribe((data) => {
                 if (data) {
@@ -534,6 +539,7 @@ export class GraphEditorComponent {
                 selectedsmell: smell
             },
             header: `Smell details`,
+            draggable: true
         });
 
         ref.onClose.subscribe((refactoringCommand) => {

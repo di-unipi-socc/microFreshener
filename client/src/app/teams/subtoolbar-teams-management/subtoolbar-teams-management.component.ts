@@ -78,6 +78,7 @@ export class SubtoolbarTeamsComponent {
       const ref = this.dialogService.open(DialogAddTeamComponent, {
         header: 'Add Team',
         width: '50%',
+        draggable: true,
         data: {
           selectedNodes: this.selectedNodes
         }

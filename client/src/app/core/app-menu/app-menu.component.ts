@@ -70,7 +70,8 @@ export class AppMenuComponent implements OnInit {
             command: () => {
                 const ref = this.dialogService.open(DialogImportComponent, {
                     header: 'Import MicroTosca',
-                    width: '70%'
+                    width: '70%',
+                    draggable: true
                 });
                 ref.onClose.subscribe((data) => {
                     if(data.msg) {

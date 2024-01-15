@@ -49,7 +49,8 @@ export class SubtoolbarRefactoringComponent {
     async startMonitoring() {
         const ref = this.dialogService.open(DialogAnalysisComponent, {
             header: 'Check the principles to analyse',
-            width: '70%'
+            width: '70%',
+            draggable: true
         });
         ref.onClose.subscribe((data) => {
             if (data?.selected_smells) {
