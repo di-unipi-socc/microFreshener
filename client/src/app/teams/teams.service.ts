@@ -53,6 +53,10 @@ export class TeamsService {
 
   // POV: admin
 
+  teamExists(name: string): boolean {
+    return this.editing.teamExists(name);
+  }
+
   async addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     return this.editing.addTeam(name, selectedNodes);
   }
@@ -63,6 +67,10 @@ export class TeamsService {
 
   async addMemberToTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     return this.editing.addMemberToTeam(member, team);
+  }
+
+  async addMembersToTeam(members: joint.shapes.microtosca.Node[], team: joint.shapes.microtosca.SquadGroup) {
+    return this.editing.addMembersToTeam(members, team);
   }
 
   async removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {

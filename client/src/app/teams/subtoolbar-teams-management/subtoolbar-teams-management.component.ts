@@ -85,12 +85,19 @@ export class SubtoolbarTeamsComponent {
       });
       ref.onClose.subscribe((data) => {
         if(data) {
-          this.teams.addTeam(data.name, data.nodes)
-          .then(() => { this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` }); })
-          .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
-          this.resetLists();
-          this.teams.showTeams();
+          if(!this.teams.teamExists(data.name) || data.nodes?.length == 0) {
+            this.teams.addTeam(data.name, data.nodes)
+            .then(() => { this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` }); })
+            .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
+          } else {
+            let team = this.teams.getTeam(data.name);
+            this.teams.addMembersToTeam(data.nodes, team)
+            .then(() => { this.messageService.add({ severity: 'success', summary: `${data.nodes.map((n) => n?.getName()).join(", ")} ${data.nodes.length == 1 ? "is" : "are"} now owned by ${data.name}` }); })
+            .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
+          }
         }
+        this.resetLists();
+        this.teams.showTeams();
       });
     }
   }
