@@ -4,7 +4,7 @@
     </div>
 </div>
 
-<p-dropdown *ngIf="external" [options]="nodeList" [(ngModel)]="selectedNode" placeholder="Select a node" [group]="true">
+<p-dropdown *ngIf="external" [options]="nodeList" [(ngModel)]="selectedNode" placeholder="Select a node" [group]="true" appendTo="body">
     <ng-template let-group pTemplate="group">
         <div class="flex align-items-center">
             <span>{{ group.label }}</span>
