@@ -52,7 +52,7 @@ export class SubtoolbarTeamsComponent {
     this.selectedNodes = [];
   }
 
-  toggleShowTeam(show?: boolean) {
+  /*toggleShowTeam(show?: boolean) {
     if(show) {
       this.showTeamToggled = true;
     }
@@ -61,44 +61,49 @@ export class SubtoolbarTeamsComponent {
     } else {
       this.teams.hideTeams();
     }
+  }*/
+
+  stopAddingTeamWithoutSaving() {
+    this.addTeamToggled = false;
+    this.toggleAddTeam({ withoutSaving: true });
   }
 
-  toggleAddTeam() {
+  toggleAddTeam(options?: { withoutSaving?: boolean }) {
+    console.debug("toggleAddTeam. options: ", options)
     if(this.addTeamToggled) {
       // Toggle on
       this.updateAddTeamNodeList();
       this.invokerSubscription = this.commands.subscribe((cellView, evt, x, y) => {this.updateAddTeamNodeList()});
       this.navigation.getPaper().on(this.PAPER_EVENTS_LABELS, this.paperListener);
-      // Show teams on 'add team' toggle
-      this.toggleShowTeam(true);
     } else {
       // Toggle off
       this.invokerSubscription.unsubscribe();
       this.navigation.getPaper().off(this.PAPER_EVENTS_LABELS, this.paperListener);
-      const ref = this.dialogService.open(DialogAddTeamComponent, {
-        header: 'Add Team',
-        width: '50%',
-        draggable: true,
-        data: {
-          selectedNodes: this.selectedNodes
-        }
-      });
-      ref.onClose.subscribe((data) => {
-        if(data) {
-          if(!this.teams.teamExists(data.name) || data.nodes?.length == 0) {
-            this.teams.addTeam(data.name, data.nodes)
-            .then(() => { this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` }); })
-            .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
-          } else {
-            let team = this.teams.getTeam(data.name);
-            this.teams.addMembersToTeam(data.nodes, team)
-            .then(() => { this.messageService.add({ severity: 'success', summary: `${data.nodes.map((n) => n?.getName()).join(", ")} ${data.nodes.length == 1 ? "is" : "are"} now owned by ${data.name}` }); })
-            .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
+      if(!options?.withoutSaving) {
+        const ref = this.dialogService.open(DialogAddTeamComponent, {
+          header: 'Add Team',
+          width: '50%',
+          draggable: true,
+          data: {
+            selectedNodes: this.selectedNodes
           }
-        }
-        this.resetLists();
-        this.teams.showTeams();
-      });
+        });
+        ref.onClose.subscribe((data) => {
+          if(data) {
+            if(!this.teams.teamExists(data.name) || data.nodes?.length == 0) {
+              this.teams.addTeam(data.name, data.nodes)
+              .then(() => { this.messageService.add({ severity: 'success', summary: `Team ${data.name} created correctly` }); })
+              .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
+            } else {
+              let team = this.teams.getTeam(data.name);
+              this.teams.addMembersToTeam(data.nodes, team)
+              .then(() => { this.messageService.add({ severity: 'success', summary: `${data.nodes.map((n) => n?.getName()).join(", ")} ${data.nodes.length == 1 ? "is" : "are"} now owned by ${data.name}` }); })
+              .catch((error) => { this.messageService.add({ severity: 'error', summary: error }); });
+            }
+            this.resetLists();
+          }
+        });
+      }
     }
   }
 

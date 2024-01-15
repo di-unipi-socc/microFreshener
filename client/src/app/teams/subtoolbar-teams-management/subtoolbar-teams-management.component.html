@@ -37,6 +37,15 @@
     [(ngModel)]="addTeamToggled"
     (onChange)="toggleAddTeam()"
 ></p-toggleButton>
+<p-button
+    icon="pi pi-times"
+    styleClass="p-button-lg"
+    pTooltip="Close without saving"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    *ngIf="addTeamToggled"
+    (click)="stopAddingTeamWithoutSaving()"
+></p-button>
 
 <!-- Team details list -->
 <p-toggleButton
