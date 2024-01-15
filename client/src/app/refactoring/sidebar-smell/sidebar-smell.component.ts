@@ -66,6 +66,7 @@ export class SidebarSmellComponent {
 
   ngOnDestroy() {
     this.analysisSubscription.unsubscribe();
+    this.invokerSubscription.unsubscribe();
   }
 
   ngOnChanges(change: SimpleChanges) {
@@ -79,7 +80,7 @@ export class SidebarSmellComponent {
     // Sidebar closing
     if(change.visible?.previousValue && !change.visible?.currentValue) {
       console.debug("closing sidebar");
-      this.resetSidebar();
+      //this.resetSidebar();
     }
 
     // Smell change with open sidebar
@@ -107,8 +108,8 @@ export class SidebarSmellComponent {
     });
   }
 
-  canApply()  {
-    return this.selectedRefactoring && !(this.selectedRefactoring instanceof NotAllowedRefactoring);
+  canApply(selectedRefactoring: Refactoring)  {
+    return selectedRefactoring && !(selectedRefactoring instanceof NotAllowedRefactoring);
   }
 
   apply() {

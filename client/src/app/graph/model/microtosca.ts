@@ -271,6 +271,9 @@ class MicrotoscaElementConfiguration {
             },
             getIgnoreAlwaysSmells: function() {
                 return this.attributes.alwaysIgnoredSmells;
+            },
+            isSniffable: function() {
+                return true;
             }
         }
     }

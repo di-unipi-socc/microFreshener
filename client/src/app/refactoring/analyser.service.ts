@@ -48,6 +48,7 @@ export class AnalyserService {
   }
 
   isSniffable(node): boolean {
+    console.debug("isSniffable", node.isSniffable);
     if(node?.isSniffable) {
       return node.isSniffable();
     }

@@ -12,7 +12,7 @@ export class ShareSmellRefactoring implements Refactoring {
         let nodeCausesMsg = nodeCauses.length > 0 ? `The nodes causing this smell are ${nodeCauses.map((n) => n.getName()).join(", ")}` : "There no nodes causing this smell.";
         let linkCauses = this.smell.getLinkBasedCauses();
         let linkCausesMsg = linkCauses.length > 0 ? `The links causing this smell are ${linkCauses.map((l) => `${(<joint.shapes.microtosca.Node> l.getSourceElement()).getName()} -> ${(<joint.shapes.microtosca.Node> l.getTargetElement()).getName()}`).join(", ")}` : "There are no links causing this smell.";
-        navigator.clipboard.writeText(name + "\n" + desc + "\n" + nodeCausesMsg + "\n" + linkCausesMsg);
+        navigator?.clipboard?.writeText(name + "\n" + desc + "\n" + nodeCausesMsg + "\n" + linkCausesMsg);
     }
 
     unexecute() {}

@@ -23,11 +23,11 @@
                 <div class="p-col-2">
                     <h3>Available refactorings</h3>
                     <p-listbox appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring"></p-listbox>
-                    <div *ngIf="canApply()">
+                    <div *ngIf="canApply(selectedRefactoring)">
                         <p> {{selectedRefactoring?.getDescription()}}</p>
                         <button pButton type="button" label="Apply" (click)="apply()"></button>
                     </div>
-                    <div *ngIf="!canApply()">
+                    <div *ngIf="selectedRefactoring && !canApply(selectedRefactoring)">
                         <span style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</span> <p-button icon="pi pi-copy" (click)="copy()" styleClass="p-button-text"></p-button>
                     </div>
                 </div>
