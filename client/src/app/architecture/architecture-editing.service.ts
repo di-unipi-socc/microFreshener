@@ -48,6 +48,10 @@ export class ArchitectureEditingService {
     return this.nodes.isMessageBroker(node);
   }
 
+  isMessageRouter(node: joint.shapes.microtosca.Node): boolean {
+    return this.nodes.isMessageRouter(node);
+  }
+
   isDatastore(node: joint.shapes.microtosca.Node): boolean {
     return this.nodes.isDatastore(node);
   }

@@ -26,6 +26,7 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
+                isSniffable(): boolean;
             }
             class Node extends Root implements Sniffable {
                 addSmell(smell: Smell): void;
@@ -39,6 +40,7 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
+                isSniffable(): boolean;
                 show(): void;
                 hide(): void;
             }
@@ -66,10 +68,11 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
-                addMember(node:joint.shapes.microtosca.Node): void
-                removeMember(node:joint.shapes.microtosca.Node): void
-                getMembers(): joint.shapes.microtosca.Node[]
-                getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
+                isSniffable(): boolean;
+                addMember(node:joint.shapes.microtosca.Node): void;
+                removeMember(node:joint.shapes.microtosca.Node): void;
+                getMembers(): joint.shapes.microtosca.Node[];
+                getInternalLinks(): joint.shapes.microtosca.RunTimeLink[];
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;

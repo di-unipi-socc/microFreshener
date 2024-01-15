@@ -25,6 +25,7 @@ import { ContextMenuAction } from './context-menu-action';
 import { DeploymentService } from '../deployment/deployment.service';
 import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
 import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on.component';
+import { AnalyserService } from '../refactoring/analyser.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -52,6 +53,7 @@ export class GraphEditorComponent {
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
         private deployments: DeploymentService, // Compute-related operations business logic
+        private analyser: AnalyserService, // Smell-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
         private session: SessionService, // User data
         private dialogService: DialogService,
@@ -259,27 +261,19 @@ export class GraphEditorComponent {
             let cell = cellView.model;
             this.contextMenuItems = [];
             // Add element-specific context menu items
+            if(this.analyser.isSniffable(cell)) {
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+            }
             if(this.deployments.isCompute(cell)) {
                 console.debug("node right clicked");
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getComputeContextMenu(cell));
             } else if(this.architecture.isNode(cell)) {
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getNodeContextMenu(cell));
             } else if(this.teams.isTeamGroup(cell)) {
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(this.architecture.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
@@ -325,21 +319,29 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
+        
+        // Datastores and message brokers cannot begin interactions
+        if(this.architecture.isService(rightClickedNode) || this.architecture.isMessageRouter(rightClickedNode)) {
         nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-        if(this.session.isTeam()) {
-            nodeContextMenuItems.push(
-                { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                    this.openAddExternalLinkDialog(rightClickedNode);
-                } });
+            // Team members have a special option for interactions going to nodes external to their team
+            if(this.session.isTeam()) {
+                nodeContextMenuItems.push(
+                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                        this.openAddExternalLinkDialog(rightClickedNode);
+                    } });
+            }
         }
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        // Add deployment menu
         nodeContextMenuItems.push({ label: "Deploy on compute", icon: "pi pi-download", command: () => {
             this.openAddDeploymentLinkDialog(rightClickedNode);
         }});
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        // Add delete menu
         nodeContextMenuItems.push(
             { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
         );
+
         return nodeContextMenuItems;
     }
 

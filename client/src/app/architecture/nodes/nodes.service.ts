@@ -102,6 +102,10 @@ export class NodesService {
     return this.graphService.graph.isMessageBroker(node);
   }
 
+  isMessageRouter(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isMessageRouter(node);
+  }
+
   isDatastore(node: joint.shapes.microtosca.Node) {
     return this.graphService.graph.isDatastore(node);
   }

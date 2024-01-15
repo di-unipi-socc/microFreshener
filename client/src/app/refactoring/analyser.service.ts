@@ -47,6 +47,13 @@ export class AnalyserService {
     this.gs.graph.getTeamGroups().forEach(group => { group.resetSmells(); });
   }
 
+  isSniffable(node): boolean {
+    if(node?.isSniffable) {
+      return node.isSniffable();
+    }
+    return false;
+  }
+
   getPrinciplesToAnalyse() {
     return this.http.get<any>('assets/data/principles.json')
       .toPromise()
