@@ -4,6 +4,7 @@ import { TeamsService } from '../teams.service';
 import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-subtoolbar-from-team-navigation',
@@ -21,11 +22,13 @@ export class SubtoolbarFromTeamNavigationComponent {
   @Output() viewIncomingTeams: EventEmitter<{}> = new EventEmitter();
  
   private invokerSubscription: Subscription;
+  private stickyHelp;
 
   constructor(
     private session: SessionService,
     private teams: TeamsService,
-    private commands: GraphInvoker
+    private commands: GraphInvoker,
+    private messageService: MessageService
   ) {
     this.showDependencies = false;
     this.showIncomingTeams = false;
@@ -39,7 +42,10 @@ export class SubtoolbarFromTeamNavigationComponent {
       this.invokerSubscription = this.commands.subscribe(() => {
         this.teams.showTeamDependencies(team);
       });
+      this.stickyHelp = { severity: 'info', detail: 'You can add interactions to nodes other teams own by right-clicking the node you own that starts the interaction.', sticky: true };
+      this.messageService.add(this.stickyHelp);
     } else {
+      this.messageService.clear();
       this.invokerSubscription?.unsubscribe();
       this.teams.hideTeamDependencies(team);
     }
