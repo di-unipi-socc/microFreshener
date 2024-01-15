@@ -111,17 +111,14 @@ export class SubtoolbarTeamsComponent {
     if(this.architecture.isNode(cell)) {
       console.log("cellView.model", cell);
       let node = <joint.shapes.microtosca.Node> cell;
-      if((this.architecture.isService(node) || this.architecture.isCommunicationPattern(node) || this.architecture.isDatastore(node))
+      if((this.architecture.isService(node)
+        || this.architecture.isCommunicationPattern(node)
+        || this.architecture.isDatastore(node))
         && !this.selectedNodes.includes(node)) {
         this.selectedNodes.push(node);
         this.addTeam.hide();
         this.messageService.add({ severity: 'success', summary: node.getName() + " added to creating team list."});
       }
-    } else if(this.teams.isTeamGroup(cell)) {
-      console.log("adding members of a team")
-      let team = <joint.shapes.microtosca.SquadGroup> cell;
-      this.selectedNodes = this.selectedNodes.concat(team.getMembers().filter(node => !this.selectedNodes.includes(node)));
-      this.messageService.add({ severity: 'success', summary: `Nodes added from team ${team.getName()}.`});
     }
   }
 
