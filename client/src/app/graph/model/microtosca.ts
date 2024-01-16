@@ -291,8 +291,9 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
                 refCx: '50%',
                 refCy: '50%',
                 refR: '50%',
-                stroke: '#1B6879',
-                fill: '#1B6879',
+                stroke: "black",
+                strokeWidth: 2,
+                fill: '#0A6372',
                 magnet: false
             },
             label: {
@@ -324,10 +325,12 @@ joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            fill: '#74B7C6',
+            fill: '#52B38E',
             magnet: false,
             points: "50,0 100,50 50,100 0,50",
-            stroke: "black"
+            stroke: "black",
+            strokeWidth: 2,
+            fontWeight: '500'
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -388,7 +391,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaEleme
         body: {
             magnet: false,
             lateralArea: "10%",
-            fill: '#1BCBD6',
+            fill: '#6DB4BF',
             stroke: '#333333',
             strokeWidth: 2
         },
@@ -397,7 +400,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaEleme
             cy: 100,
             refRx: '50%',
             ry: 100,
-            fill: '#9BCBD6',
+            fill: '#A9D3D9',
             stroke: '#333333',
             strokeWidth: 2
         },
@@ -445,8 +448,10 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            fill: '#74B7C6',
+            fill: '#D3E8EE',
+            stroke: 'black',
             magnet: false,
+            strokeWidth: 2
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -468,6 +473,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
             fontSize: COMMUNICATION_PATTERN_TYPE_FONT_SIZE,
             fill: '#333333',
             text: '',
+            fontWeight: '500',
             cursor: "default"
         }
     }

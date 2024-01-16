@@ -269,11 +269,11 @@ export class Graph extends joint.dia.Graph {
 
 
     addMessageRouter(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MR", position);
+        return this.addCommunicationPattern(name, "mR", position);
     }
 
     addMessageBroker(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
-        return this.addCommunicationPattern(name, "MB", position);
+        return this.addCommunicationPattern(name, "mB", position);
     }
 
     addApiGateway(name: string, position?: g.Point): joint.shapes.microtosca.CommunicationPattern {
@@ -354,15 +354,15 @@ export class Graph extends joint.dia.Graph {
 
     isMessageBroker(node: joint.shapes.microtosca.Node) {
         //return node instanceof joint.shapes.microtosca.Co;
-        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MB";
+        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "mB";
    
-         return node.attr('type/text')== "MB"; //microtosca.CommunicationPattern";
+         return node.attr('type/text')== "mB"; //microtosca.CommunicationPattern";
     }
 
     isMessageRouter(node: joint.dia.Cell) {
-        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "MR";
-        //  return node.attributes['type'] == "MR"; //microtosca.CommunicationPattern";
-        return node.attr('type/text')=="MR";
+        // return (<joint.shapes.microtosca.CommunicationPattern>node).getType() == "mR";
+        //  return node.attributes['type'] == "mR"; //microtosca.CommunicationPattern";
+        return node.attr('type/text')=="mR";
     }
 
     isInteractionLink(cell: joint.dia.Cell) {
