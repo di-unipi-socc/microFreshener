@@ -8,6 +8,7 @@ import { IgnoreAlwaysRefactoring } from '../refactorings/ignore-refactoring';
 import { Command } from 'src/app/commands/icommand';
 import { AnalyserService } from '../analyser.service';
 import { Subscription } from 'rxjs';
+import { NoApiGatewaySmellObject } from '../smells/no-api-gateway';
 
 @Component({
   selector: 'app-sidebar-smell',
@@ -23,7 +24,6 @@ export class SidebarSmellComponent {
   @Input() selectedRefactoring: Refactoring;
   ignoreAction: Command;
 
-  jointNodeModel;
   @Input() smell: Smell;
 
   private invokerSubscription: Subscription;
@@ -40,16 +40,22 @@ export class SidebarSmellComponent {
     this.actions = [];
   }
 
+  private setSniffedElement() {
+    this.lastSmellName = this.smell.getName();
+    if(this.smell instanceof NodeSmell) {
+      this.lastOdorousName = this.smell.getNode()?.getName();
+    }
+    if(this.smell instanceof NoApiGatewaySmellObject) {
+      this.lastOdorousName = this.smell.getNode()?.getName();
+    } else if(this.smell instanceof GroupSmell) {
+      this.lastOdorousName = this.smell.getGroup()?.getName();
+    }
+  }
+
   ngOnInit() {
     this.invokerSubscription = this.invoker.subscribe(() => {
       if(this.smell) {
-        this.lastSmellName = this.smell.getName();
-        if(this.smell instanceof NodeSmell) {
-          this.lastOdorousName = this.smell.getNode().getName();
-        }
-        if(this.smell instanceof GroupSmell) {
-          this.lastOdorousName = this.smell.getGroup().getName();
-        }
+        this.setSniffedElement();
       }
       this.resetSidebar();
     });
@@ -114,8 +120,10 @@ export class SidebarSmellComponent {
 
   apply() {
     let refactoring = this.selectedRefactoring;
+    this.invoker.executeCommand(refactoring)
+    .then(() => this.messageService.add({ severity: 'success', summary: 'Refactoring applied', detail: `${refactoring?.getName()} applied successfully.` }))
+    .catch((err) => this.messageService.add({ severity: 'error', summary: 'Unable to apply refactoring', detail: `An error occurred while applying ${refactoring?.getName()}: ${err}` }));
     this.resetSidebar();
-    this.invoker.executeCommand(refactoring);
   }
 
   copy() {
@@ -131,7 +139,6 @@ export class SidebarSmellComponent {
   resetSidebar(smell?) {
     this.actions = [];
     this.selectedRefactoring = undefined;
-    this.jointNodeModel = undefined;
     if(!smell)
       this.smell = undefined;
   }
@@ -154,6 +161,7 @@ export class SidebarSmellComponent {
           this.ignoreAction = refactoring;
         }
       });
+      this.setSniffedElement();
     }
   }
 

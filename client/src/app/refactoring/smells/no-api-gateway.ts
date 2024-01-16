@@ -10,6 +10,10 @@ export class NoApiGatewaySmellObject extends GroupSmell {
         return "NoAPiGatewaySmell";
     }
 
+    getNode() {
+        return undefined;
+    }
+
     getDescription(){
         let nodes = this.getNodeBasedCauses().map((n) => n.getName());
         return `The node${nodes.length != 1 ? "s" : ""} ${nodes.join(", ")} ${nodes.length != 1 ? "are" : "is"} accessed by the external users without an API Gateway.`

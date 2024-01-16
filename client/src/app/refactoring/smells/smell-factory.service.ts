@@ -154,6 +154,7 @@ export class SmellFactoryService {
         nodeSmell.addRefactoring(refactoring);
       });
       nodeSmell.addRefactoring(this.refactoring.getIgnoreRefactoring(node, nodeSmell));
+      nodeSmell.getNode = () => node;
       return nodeSmell;
     })
 

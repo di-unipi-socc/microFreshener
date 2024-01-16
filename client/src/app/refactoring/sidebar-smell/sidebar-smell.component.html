@@ -12,7 +12,7 @@
         <div *ngIf="smell">
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
-                    <h1>Found {{smell?.getName()}}</h1><!-- on {{jointNodeModel?.getName()}}</h1>-->
+                    <h1>Found {{smell?.getName()}} on {{lastOdorousName}}</h1>
                     <br/>
                     <p>{{smell?.getDescription()}}</p>
                     <p-button styleClass="p-button-secondary p-button-text" label="Ignore this smell" (click)="openIgnoreDialog()"></p-button>
