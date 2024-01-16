@@ -25,11 +25,9 @@ export class SidebarTeamDetailsComponent {
   private invokerSubscription: Subscription;
 
   public charts: {
-    serviceVsNonService: {},
-    teamInteractions: {}
+    teamInteractions
   };
   private documentStyle;
-  private doughnutCutout;
   
   constructor(
     private teamService: TeamsService,
@@ -75,7 +73,6 @@ export class SidebarTeamDetailsComponent {
       });
     // Set chart styling
     this.documentStyle = getComputedStyle(document.documentElement);
-    this.doughnutCutout = '25%';
 
     // If selectedTeam has been received as input
     if(this.selectedTeam)
@@ -132,37 +129,10 @@ export class SidebarTeamDetailsComponent {
 
   updateCharts() {
     this.charts = {
-      serviceVsNonService: this.getServiceVsNonServiceChart(),
       teamInteractions: this.getTeamInteractionsChart(),
     };
   }
 
-  getServiceVsNonServiceChart() {
-    let nServices = this.selectedTeamInfo.services.length;
-    let nOtherNodes = this.selectedTeamInfo.nodesQuantity - nServices;
-    return {
-      data: {
-        labels: ['Services', 'Other nodes'],
-        datasets: [
-            {
-              data: [nServices, nOtherNodes],
-              backgroundColor: [this.documentStyle.getPropertyValue('--blue-500'), this.documentStyle.getPropertyValue('--pink-500')],
-            }
-          ]
-        },
-
-        options: {
-          cutout: this.doughnutCutout,
-          plugins: {
-            legend: {
-                labels: {
-                    color: 'black'
-                }
-            }
-        }
-        }
-      }
-  }
 
   getTeamInteractionsChart() {
     let ingoingInteractions: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][] = this.selectedTeamInfo.teamInteractions.ingoing;
@@ -171,7 +141,6 @@ export class SidebarTeamDetailsComponent {
     console.log(ingoingInteractions);
     ingoingInteractions.sort(([s1, ls1], [s2, ls2]) => Math.sign(ls2.length - ls1.length)).forEach(([n, ls]) => {console.log("ingoing squad is", n); ingoingLabels.push(n ? n.getName() : "unassigned nodes"); ingoingInteractionsData.push(ls.length); });
     console.log("sorted", ingoingInteractions);
-
     let outgoingInteractions: [joint.shapes.microtosca.SquadGroup, joint.shapes.microtosca.RunTimeLink[]][] = this.selectedTeamInfo.teamInteractions.outgoing;
     let outgoingLabels: string[] = [];
     let outgoingInteractionsData: number[] = [];
@@ -188,7 +157,8 @@ export class SidebarTeamDetailsComponent {
                   label: 'Interactions from ' + selectedTeamName,
                   backgroundColor: this.documentStyle.getPropertyValue('--pink-500'),
                   borderColor: this.documentStyle.getPropertyValue('--pink-500'),
-                  data: outgoingInteractionsData
+                  data: outgoingInteractionsData,
+                  maxBarThickness: 40
               }
             ]
         },
@@ -196,8 +166,7 @@ export class SidebarTeamDetailsComponent {
         options: {
             indexAxis: 'y',
             maintainAspectRatio: true,
-            responsive: true,
-            aspectRatio: 3,
+            aspectRatio: 4,
             plugins: {
               legend: {
                 display: false
@@ -206,7 +175,7 @@ export class SidebarTeamDetailsComponent {
                 callbacks: {
                     title: () => '' // Disable tooltip title
                 }
-              }
+              },
             },
             scales: {
               x: {
@@ -234,7 +203,8 @@ export class SidebarTeamDetailsComponent {
                     label: 'Interactions towards ' + selectedTeamName,
                     backgroundColor: this.documentStyle.getPropertyValue('--blue-500'),
                     borderColor: this.documentStyle.getPropertyValue('--blue-500'),
-                    data: ingoingInteractionsData
+                    data: ingoingInteractionsData,
+                    maxBarThickness: 40
                 }
               ]
           },
@@ -242,8 +212,7 @@ export class SidebarTeamDetailsComponent {
           options: {
             indexAxis: 'y',
             maintainAspectRatio: true,
-            responsive: true,
-            aspectRatio: 3,
+            aspectRatio: 4,
             plugins: {
               legend: {
                 display: false
