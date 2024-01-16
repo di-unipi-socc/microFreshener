@@ -95,11 +95,11 @@ export class TeamsAnalyticsService {
     return this.getEdgeIngoingLinks(team).map((l) => <joint.shapes.microtosca.Node> l.getTargetElement());
   }
 
-  hasTeamDependencies(node: joint.shapes.microtosca.Node): boolean {
+  getDependingTeams(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.SquadGroup[] {
     let nodeTeam = this.graphService.graph.getTeamOfNode(node);
     return this.graphService.graph.getIngoingLinks(node)
                                   .map((n) => this.graphService.graph.getTeamOfNode(<joint.shapes.microtosca.Node> n.getSourceElement()))
-                                  .filter((t) => t != nodeTeam).length != 0;
+                                  .filter((t) => t != nodeTeam);
   }
 
   getNodesByTeam() {

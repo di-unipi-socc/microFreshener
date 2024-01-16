@@ -118,8 +118,8 @@ export class TeamsService {
     return this.analytics.getTeamEdgeNodes(team);
   }
 
-  hasTeamDependencies(node: joint.shapes.microtosca.Node): boolean {
-    return this.analytics.hasTeamDependencies(node);
+  getDependingTeams(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.SquadGroup[] {
+    return this.analytics.getDependingTeams(node);
   }
 
 }

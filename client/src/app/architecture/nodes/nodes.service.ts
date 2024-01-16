@@ -72,8 +72,11 @@ export class NodesService {
     if(!this.permissionsService.writePermissions.isAllowed(node)) {
       return Promise.reject(`You are not allowed to delete this.`);
     }
-    if(this.session.isTeam() && this.teamsService.hasTeamDependencies(node)) {
-      return Promise.reject(`You cannot delete this because other teams interact with it.`);
+    if(this.session.isTeam()) {
+      let dependingTeams = this.teamsService.getDependingTeams(node);
+      if(dependingTeams.length > 0) {
+        return Promise.reject(`You cannot delete this because other teams interact with it. Please coordinate with ${dependingTeams.map((t) => t?.getName()).join(", ")}.`);
+      }
     }
     return this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
   }
