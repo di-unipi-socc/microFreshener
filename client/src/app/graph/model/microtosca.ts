@@ -689,13 +689,13 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
             }
         },
         hasTimeout: function (): boolean {
-            return this.timeout == true;
+            return this.timeout ? true : false;
         },
         hasDynamicDiscovery: function(): boolean {
-            return this.dynamic_discovery == true;
+            return this.dynamic_discovery ? true : false;
         },
         hasCircuitBreaker: function(): boolean {
-            return this.circuit_breaker == true;
+            return this.circuit_breaker ? true : false;
         },
 
         _showTimeout: function () {
