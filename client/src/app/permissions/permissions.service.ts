@@ -38,10 +38,12 @@ export class PermissionsService {
               // The team doesn't exist in the graph, so block everything
               this.writePermissions.isAllowed = this.DENY_ALL;
               this.writePermissions.areLinkable = this.DENY_ALL;
-              this.writePermissions.isTeamManagementAllowed = this.ALLOW_ALL;
+              this.writePermissions.isTeamManagementAllowed = this.DENY_ALL;
             } else {
               // The team exists, so set the consequent permissions
               this.writePermissions.isAllowed = ( (cell) => {
+                if(this.gs.graph.isEdgeGroup(cell)) return true;
+
                 let sourceTeam;
                 if(this.gs.graph.isNode(cell)) {
                   sourceTeam = this.gs.graph.getTeamOfNode(cell);
