@@ -123,3 +123,24 @@ export class AddTimeoutCommand implements Command {
             this.link.setTimedout(this.previousStatus);
     }
 }
+
+
+export class ReverseLinkCommand implements Command {
+
+    constructor(private link: joint.shapes.microtosca.RunTimeLink) {}
+
+    private reverse() {
+        let source = this.link.source();
+        let target = this.link.target();
+        this.link.source(target);
+        this.link.target(source);
+    }
+
+    execute() {
+        this.reverse();
+    }
+
+    unexecute() {
+        this.reverse();
+    }
+}

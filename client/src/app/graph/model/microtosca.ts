@@ -26,6 +26,7 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
+                isSniffable(): boolean;
             }
             class Node extends Root implements Sniffable {
                 addSmell(smell: Smell): void;
@@ -39,6 +40,7 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
+                isSniffable(): boolean;
                 show(): void;
                 hide(): void;
             }
@@ -66,10 +68,11 @@ declare module 'jointjs' {
                 ignoreAlways(smell: Smell): void;
                 undoIgnoreAlways(smell: Smell): void;
                 getIgnoreAlwaysSmells(): Smell[];
-                addMember(node:joint.shapes.microtosca.Node): void
-                removeMember(node:joint.shapes.microtosca.Node): void
-                getMembers(): joint.shapes.microtosca.Node[]
-                getInternalLinks(): joint.shapes.microtosca.RunTimeLink[]
+                isSniffable(): boolean;
+                addMember(node:joint.shapes.microtosca.Node): void;
+                removeMember(node:joint.shapes.microtosca.Node): void;
+                getMembers(): joint.shapes.microtosca.Node[];
+                getInternalLinks(): joint.shapes.microtosca.RunTimeLink[];
             }
             class EdgeGroup extends Group {
                 setExternalUserName(name: string): void;
@@ -268,6 +271,9 @@ class MicrotoscaElementConfiguration {
             },
             getIgnoreAlwaysSmells: function() {
                 return this.attributes.alwaysIgnoredSmells;
+            },
+            isSniffable: function() {
+                return true;
             }
         }
     }
@@ -285,8 +291,9 @@ joint.dia.Element.define('microtosca.Service', ...MicrotoscaElementConfiguration
                 refCx: '50%',
                 refCy: '50%',
                 refR: '50%',
-                stroke: '#1B6879',
-                fill: '#1B6879',
+                stroke: "black",
+                strokeWidth: 2,
+                fill: '#0A6372',
                 magnet: false
             },
             label: {
@@ -318,10 +325,12 @@ joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            fill: '#74B7C6',
+            fill: '#52B38E',
             magnet: false,
             points: "50,0 100,50 50,100 0,50",
-            stroke: "black"
+            stroke: "black",
+            strokeWidth: 2,
+            fontWeight: '500'
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -382,7 +391,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaEleme
         body: {
             magnet: false,
             lateralArea: "10%",
-            fill: '#1BCBD6',
+            fill: '#6DB4BF',
             stroke: '#333333',
             strokeWidth: 2
         },
@@ -391,7 +400,7 @@ joint.shapes.standard.Cylinder.define('microtosca.Datastore', ...MicrotoscaEleme
             cy: 100,
             refRx: '50%',
             ry: 100,
-            fill: '#9BCBD6',
+            fill: '#A9D3D9',
             stroke: '#333333',
             strokeWidth: 2
         },
@@ -439,8 +448,10 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
         body: {
             refWidth: '100%',
             refHeight: '100%',
-            fill: '#74B7C6',
+            fill: '#D3E8EE',
+            stroke: 'black',
             magnet: false,
+            strokeWidth: 2
         },
         label: {
             textVerticalAnchor: 'middle',
@@ -462,6 +473,7 @@ joint.dia.Element.define('microtosca.CommunicationPattern', ...MicrotoscaElement
             fontSize: COMMUNICATION_PATTERN_TYPE_FONT_SIZE,
             fill: '#333333',
             text: '',
+            fontWeight: '500',
             cursor: "default"
         }
     }
@@ -677,13 +689,13 @@ joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElement
             }
         },
         hasTimeout: function (): boolean {
-            return this.timeout == true;
+            return this.timeout ? true : false;
         },
         hasDynamicDiscovery: function(): boolean {
-            return this.dynamic_discovery == true;
+            return this.dynamic_discovery ? true : false;
         },
         hasCircuitBreaker: function(): boolean {
-            return this.circuit_breaker == true;
+            return this.circuit_breaker ? true : false;
         },
 
         _showTimeout: function () {

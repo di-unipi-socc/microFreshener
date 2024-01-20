@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NodeSmell, GroupSmell } from '../smells/smell';
+import { NodeSmell, GroupSmell, Smell } from '../smells/smell';
 import { AddApiGatewayRefactoring } from './add-api-gateway';
 import { AddCircuitBreakerRefactoring } from './add-circuit-breaker';
 import { AddDataManagerRefactoring } from './add-data-manager';
@@ -19,6 +19,7 @@ import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-tea
 import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
 import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy, AnyDeploymentFromTeamPolicy } from './refactoring-policy-teams';
 import { SplitServiceInTwoPods } from './split-service-in-two-pods';
+import { IgnoreAlwaysRefactoring } from './ignore-refactoring';
 
 enum REFACTORING_LIBRARY_NAMES {
   ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -45,6 +46,10 @@ export class RefactoringFactoryService {
     private gs: GraphService,
     private session: SessionService
   ) {}
+
+  getIgnoreRefactoring(element: joint.shapes.microtosca.Sniffable, nodeSmell: Smell) {
+    return new IgnoreAlwaysRefactoring(element, nodeSmell);
+  }
 
   getRefactoring(refactoringName: string, smell: (NodeSmell | GroupSmell)): Refactoring {
     let team;

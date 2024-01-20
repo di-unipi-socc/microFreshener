@@ -22,10 +22,10 @@ import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
 import { DialogAddLinkComponent } from '../architecture/dialog-add-link/dialog-add-link.component';
 import { ContextMenuAction } from './context-menu-action';
-import { IgnoreAlwaysRefactoring, IgnoreOnceRefactoring } from '../refactoring/refactorings/ignore-refactoring-commands';
 import { DeploymentService } from '../deployment/deployment.service';
 import { DialogAddComputeComponent } from '../deployment/dialog-add-compute/dialog-add-compute.component';
 import { DialogDeployOnComponent } from '../deployment/dialog-deploy-on/dialog-deploy-on.component';
+import { AnalyserService } from '../refactoring/analyser.service';
 
 @Component({
     selector: 'app-graph-editor',
@@ -40,6 +40,9 @@ export class GraphEditorComponent {
     addingLink: joint.shapes.microtosca.RunTimeLink;
     leftClickSelectedCell: joint.shapes.microtosca.Node;
 
+    draggingNode: boolean;
+    hoveredTeam: joint.shapes.microtosca.SquadGroup;
+
     @ViewChild('contextMenu') contextMenu;
     contextMenuItems;
     @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
@@ -50,6 +53,7 @@ export class GraphEditorComponent {
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
         private deployments: DeploymentService, // Compute-related operations business logic
+        private analyser: AnalyserService, // Smell-related operations business logic
         private navigation: EditorNavigationService, // Visualization operations business logic and injectable paper
         private session: SessionService, // User data
         private dialogService: DialogService,
@@ -57,6 +61,7 @@ export class GraphEditorComponent {
         private confirmationService: ConfirmationService
     ) {
         this.contextMenuItems = [];
+        this.draggingNode = false;
     }
 
     ngAfterViewInit() {
@@ -82,8 +87,6 @@ export class GraphEditorComponent {
 
         this.bindSingleRightClickCell();
 
-        this.bindTeamMinimize();
-        this.bindTeamMaximize();
         this.bindTeamEmbedNodes();
 
        this.bindDragNavigation();
@@ -122,6 +125,7 @@ export class GraphEditorComponent {
         }
         this.jointJsGraph.nativeElement.onmousemove = null;
         this.addingLink.remove();
+        this.addingLink = undefined;
     }
 
     openAddNodeDialog(nodeType, position, team?) {
@@ -129,15 +133,17 @@ export class GraphEditorComponent {
         // Ask for node required data
         const ref = this.dialogService.open(DialogAddNodeComponent, {
             header: `Add ${nodeType}`,
+            draggable: true,
             data: {
                 clickPosition: position,
-                nodeType: nodeType
+                nodeType: nodeType,
             }
         });
         ref.onClose.subscribe((data) => {
             // Create the AddNodeCommand
             if(data) {
-                this.architecture.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team);
+                this.architecture.addNode(data.nodeType, data.name, data.position, data.communicationPatternType, team)
+                .catch((error) => this.messageService.add({ severity: 'error', detail: error }));
             }
         });
     }
@@ -162,7 +168,7 @@ export class GraphEditorComponent {
             accept: () => {
                 this.architecture.deleteNode(node).then(() => {
                     this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: `Node ${node.getName()} deleted succesfully` });
-                }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason }));
+                }).catch((reason) => this.messageService.add({ severity: 'error', summary: 'Error on deletion', detail: reason, sticky: true }));
             }
         });
     }
@@ -171,20 +177,20 @@ export class GraphEditorComponent {
         const ref = this.dialogService.open(DialogAddLinkComponent, {
             data: {
                 source: selectedNode,
-                external: true
+                external: true,
             },
             header: 'Add an external interaction',
+            draggable: true
         });
         ref.onClose.subscribe((data) => {
             if (data) {
                 this.architecture.addLink(data.source, data.target, data.timeout, data.circuit_breaker, data.dynamic_discovery)
                 .then(() => {
                     this.navigation.getPaper().findViewByModel(data.source).unhighlight();
-                    this.architecture.showNode(data.source);
-                    this.architecture.showNode(data.target);
+                    this.messageService.add({ severity: 'success', summary: `Interaction from ${data?.source?.getName()} to ${data?.target?.getName()} added.` });
                 })
                 .catch((error) => {
-                    this.messageService.add({ severity: 'error', summary: 'Error adding link', detail: error });
+                    this.messageService.add({ severity: 'error', summary: 'Error while adding the interaction.', detail: error });
                 });
             }
         });
@@ -193,8 +199,9 @@ export class GraphEditorComponent {
     openAddDeploymentLinkDialog(selectedNode) {
         const ref = this.dialogService.open(DialogDeployOnComponent, {
             header: 'Add a deployment',
+            draggable: true,
             data: {
-                deploying: selectedNode
+                deploying: selectedNode,
             }
         });
         ref.onClose.subscribe((data) => {
@@ -207,6 +214,7 @@ export class GraphEditorComponent {
     openAddComputeDialog(position?) {
         const ref = this.dialogService.open(DialogAddComputeComponent, {
             header: 'Add a compute',
+            draggable: true
         });
         ref.onClose.subscribe((data) => {
             if (data) {
@@ -253,27 +261,19 @@ export class GraphEditorComponent {
             let cell = cellView.model;
             this.contextMenuItems = [];
             // Add element-specific context menu items
+            if(this.analyser.isSniffable(cell)) {
+                let smellsMenuItem = this.getSmellsMenuItem(cell);
+                if(smellsMenuItem) {
+                    this.contextMenuItems.push(smellsMenuItem);
+                    this.contextMenuItems.push({separator: true});
+                }
+            }
             if(this.deployments.isCompute(cell)) {
                 console.debug("node right clicked");
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getComputeContextMenu(cell));
             } else if(this.architecture.isNode(cell)) {
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getNodeContextMenu(cell));
             } else if(this.teams.isTeamGroup(cell)) {
-                let smellsMenuItem = this.getSmellsMenuItem(cell);
-                if(smellsMenuItem) {
-                    this.contextMenuItems.push(smellsMenuItem);
-                    this.contextMenuItems.push({separator: true});
-                }
                 this.contextMenuItems = this.contextMenuItems.concat(this.getTeamContextMenu(cell));
             } else if(this.architecture.isInteractionLink(cell)) {
                 this.contextMenuItems = this.contextMenuItems.concat(this.getInteractionLinkContextMenu(cell));
@@ -319,21 +319,29 @@ export class GraphEditorComponent {
 
     getNodeContextMenu(rightClickedNode): MenuItem[] {
         let nodeContextMenuItems = [];
+        
+        // Datastores and message brokers cannot begin interactions
+        if(this.architecture.isService(rightClickedNode) || this.architecture.isMessageRouter(rightClickedNode)) {
         nodeContextMenuItems.push(this.getAddInteractionElement(rightClickedNode));
-        if(this.session.isTeam()) {
-            nodeContextMenuItems.push(
-                { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
-                    this.openAddExternalLinkDialog(rightClickedNode);
-                } });
+            // Team members have a special option for interactions going to nodes external to their team
+            if(this.session.isTeam()) {
+                nodeContextMenuItems.push(
+                    { label: "Add interaction with an external node", icon: "pi pi-external-link", command: () => {
+                        this.openAddExternalLinkDialog(rightClickedNode);
+                    } });
+            }
         }
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        // Add deployment menu
         nodeContextMenuItems.push({ label: "Deploy on compute", icon: "pi pi-download", command: () => {
             this.openAddDeploymentLinkDialog(rightClickedNode);
         }});
         if(nodeContextMenuItems.length > 0) nodeContextMenuItems.push({separator: true});
+        // Add delete menu
         nodeContextMenuItems.push(
             { label: "Delete node", icon: "pi pi-trash", command: () => { this.openDeleteNodeDialog(rightClickedNode); } }
         );
+
         return nodeContextMenuItems;
     }
 
@@ -498,9 +506,10 @@ export class GraphEditorComponent {
             const ref = this.dialogService.open(DialogAddLinkComponent, {
                 data: {
                     source: this.leftClickSelectedCell,
-                    target: node
+                    target: node,
                 },
                 header: 'Add a link',
+                draggable: true
             });
             ref.onClose.subscribe((data) => {
                 if (data) {
@@ -532,78 +541,112 @@ export class GraphEditorComponent {
                 selectedsmell: smell
             },
             header: `Smell details`,
+            draggable: true
         });
 
         ref.onClose.subscribe((refactoringCommand) => {
             if (refactoringCommand) {
-                let silent: boolean;
-                silent = refactoringCommand instanceof IgnoreOnceRefactoring || refactoringCommand instanceof IgnoreAlwaysRefactoring;
-                this.graphInvoker.executeCommand(refactoringCommand, silent);
-                this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
+                this.graphInvoker.executeCommand(refactoringCommand).then(() => {
+                    this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
+                });
             }
         });
     }
 
+    private cleanHover() {
+        this.teams.unhoverAllTeams();
+        this.draggingNode = false;
+        this.hoveredTeam = undefined;
+    }
 
     bindTeamEmbedNodes() {
+        this.navigation.getPaper().on('cell:pointerdown', ((cellView, evt, x, y) => {
+            if(!this.addingLink && this.architecture.isNode(cellView.model) && !this.deployments.isCompute(cellView.model)) {
+                let node = cellView.model;
+                this.draggingNode = true;
+                let team = this.teams.getTeamOfNode(node);
+                console.debug("team?", team?.getName());
+                if(team) {
+                    this.hoveredTeam = team;
+                    this.teams.hoverTeam(team, true);
+                }
+            }
+        }));
+        this.navigation.getPaper().on('cell:pointermove', ((cellView, evt, x, y) => {
+            let cell = cellView.model;
+            if(this.architecture.isNode(cellView.model)){
+                let cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
+                let keepHovering: boolean = false;
+                if(this.draggingNode && cellViewsBelow.length) {
+                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
+                    let cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
+                    // Prevent recursive embedding. Embed element only into Team Cell, otherwise it embeds node inside other nodes.
+                    let team;
+                    if (cellViewBelow && this.teams.isTeamGroup(cellViewBelow.model)) {
+                        // if the mouse is over a team, embed into that team
+                        team = <joint.shapes.microtosca.SquadGroup> cellViewBelow.model;
+                    } else if(cellViewBelow && this.architecture.isNode(cellViewBelow.model)) {
+                        // If the mouse is over another node, embed into the team of that node
+                        let node = <joint.shapes.microtosca.Node> cellViewBelow.model;
+                        team = this.teams.getTeamOfNode(node);
+                    }
+                    if(team) {
+                        if(!this.hoveredTeam) {
+                            this.hoveredTeam = team;
+                            this.teams.hoverTeam(team, this.hoveredTeam != this.teams.getTeamOfNode(cell));
+                        }
+                        keepHovering = true;
+                    }
+                }
+        
+                if(this.hoveredTeam && !keepHovering) {
+                    this.teams.unhoverTeam(this.hoveredTeam, this.hoveredTeam != this.teams.getTeamOfNode(cell));
+                    this.hoveredTeam = undefined;
+                }
+            }
+        }));
         // When the dragged cell is dropped over another cell, let it become a child of the
         // element below.
         this.navigation.getPaper().on('cell:pointerup', (cellView, evt, x, y) => {
-            console.debug("cell:pointerup", cellView);
-            var cell = cellView.model;
-            if (
-                !cell.isLink() && // otherwise Error when cell.getBBox() is called.
-                !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
-                !this.deployments.isCompute(cell) && // Computes can't be in a squad
-                !this.teams.isTeamGroup(cell)) {
-                console.debug("clicked", cellView);
-                var cellViewsBelow = this.navigation.getPaper().findViewsFromPoint(cell.getBBox().center());
+                let cell = cellView.model;
+                if (
+                    !cell.isLink() && // otherwise Error when cell.getBBox() is called.
+                    !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
+                    !this.deployments.isCompute(cell) && // Computes can't be in a squad
+                    !this.teams.isTeamGroup(cell) &&
+                    this.draggingNode)
+                {
+                    console.debug("clicked", cellView);
 
-                if (cellViewsBelow.length) {
-                    // Note that the findViewsFromPoint() returns the view for the `cell` itself.
-                    var cellViewBelow = _.find(cellViewsBelow, function (c) { return c.model.id !== cell.id });
-                    // Prevent recursive embedding
-                    if (cellViewBelow) {
-                        // embed element only into Team Cell, otherwise it embeds node inside other nodes.
-                        if (this.teams.isTeamGroup(cellViewBelow.model)) {
-                            // check if the elment below has the parent equal to the cell
-                            if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
-                                var team = <joint.shapes.microtosca.SquadGroup>cellViewBelow.model;
-                                var member = <joint.shapes.microtosca.Node>cell;
-                                var memberTeam = this.teams.getTeamOfNode(member);
-                                // do not embed on the same team
-                                if(team && memberTeam && team.getName() == memberTeam.getName() ){
-                                    team.fitEmbeds({ padding: Graph.TEAM_PADDING });
-                                }
-                                else {
-                                    if(this.teams.areVisible()) {
-                                        this.teams.addMemberToTeam(member, team).then(() => {
-                                            this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `Node [${member.getName()}] added to [${team.getName()}] team` });
-                                        }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding member to team', detail: error })});
-                                    }
-                                }
-                            }
+                    if (this.hoveredTeam && this.hoveredTeam.get('parent') !== cell.id) {
+                        let member = <joint.shapes.microtosca.Node>cell;
+                        let oldTeam = this.teams.getTeamOfNode(member);
+                        // do not embed on the same team
+                        if(oldTeam && this.hoveredTeam == oldTeam){
+                            oldTeam.fitEmbeds({ padding: Graph.TEAM_PADDING });
+                        } else if(this.teams.areVisible()) {
+                            let newTeam = this.hoveredTeam;
+                            this.teams.addMemberToTeam(member, newTeam).then(() => {
+                                this.messageService.add({ severity: 'success', summary: 'Member added to team', detail: `${member?.getName()} added to ${newTeam?.getName()}` });
+                            }).catch((error) => {this.messageService.add({ severity: 'error', summary: 'Error adding node to team', detail: error })});
                         }
-                        
                     } else {
                         // click on blank paper
                         console.log("not cell view Below defined");
-                        var member = <joint.shapes.microtosca.Node>cell;
-                        var team = this.teams.getTeamOfNode(member);
+                        let member = <joint.shapes.microtosca.Node>cell;
+                        let team = this.teams.getTeamOfNode(member);
                         if(team){
                             if(this.teams.areVisible()) {
                                 this.teams.removeMemberFromTeam(member, team).then(() => {
-                                    this.messageService.add({ severity: 'success', summary: 'Member removed from team', detail: `Node [${member.getName()}] removed to [${team.getName()}] team` });
+                                    this.messageService.add({ severity: 'success', summary: 'Node removed from team', detail: `${member.getName()} removed from ${team.getName()}` });
                                 });
                             } else {
                                 team.fitEmbeds({ padding: Graph.TEAM_PADDING })
                             }
                         }
-                        
                     }
-                }
+                    this.cleanHover();
             }
-
         });
     }
 

@@ -41,16 +41,16 @@ export class SmellFactoryService {
 
     switch (smellJson.name) {
       case SMELL_NAMES.SMELL_ENDPOINT_BASED_SERVICE_INTERACTION:
-        smell = new EndpointBasedServiceInteractionSmellObject();
+        smell = new EndpointBasedServiceInteractionSmellObject(node);
         break;
       case SMELL_NAMES.SMELL_WOBBLY_SERVICE_INTERACTION_SMELL:
-        smell = new WobblyServiceInteractionSmellObject();
+        smell = new WobblyServiceInteractionSmellObject(node);
         break;
       case SMELL_NAMES.SMELL_SHARED_PERSISTENCY:
-        smell = new SharedPersistencySmellObject();
+        smell = new SharedPersistencySmellObject(node);
         break;
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
-        smell = new MultipleServicesInOneContainerSmellObject();
+        smell = new MultipleServicesInOneContainerSmellObject(node);
         break;
       default:
         throw new Error(`Unsupported smell: ${smellJson.name}`);
@@ -74,6 +74,7 @@ export class SmellFactoryService {
       if(refactoring)
         smell.addRefactoring(refactoring);
     });
+    smell.addRefactoring(this.refactoring.getIgnoreRefactoring(node, smell));
 
     return smell;
   }
@@ -104,11 +105,11 @@ export class SmellFactoryService {
     if(smell instanceof NoApiGatewaySmellObject) {
       return this.getEdgeGroupSmell(smellJson, smell);
     } else {
-      return this.getWholeGroupSmell(smellJson, smell);
+      return this.getWholeGroupSmell(<joint.shapes.microtosca.SquadGroup> group, smellJson, smell);
     }
   }
 
-  private getWholeGroupSmell(smellJson, smell): GroupSmell {
+  private getWholeGroupSmell(group: joint.shapes.microtosca.SquadGroup, smellJson, smell): GroupSmell {
 
     smellJson['nodes'].forEach((node_name) => {
       let node = this.gs.graph.findNodeByName(node_name);
@@ -128,6 +129,7 @@ export class SmellFactoryService {
       let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
       smell.addRefactoring(refactoring);
     });
+    smell.addRefactoring(this.refactoring.getIgnoreRefactoring(group, smell));
 
     return smell;
 
@@ -151,6 +153,8 @@ export class SmellFactoryService {
         let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, nodeSmell);
         nodeSmell.addRefactoring(refactoring);
       });
+      nodeSmell.addRefactoring(this.refactoring.getIgnoreRefactoring(node, nodeSmell));
+      nodeSmell.getNode = () => node;
       return nodeSmell;
     })
 

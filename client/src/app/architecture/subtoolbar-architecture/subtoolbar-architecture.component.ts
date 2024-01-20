@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { GraphService } from '../../graph/graph.service';
 import { ToolSelectionService } from '../../editor/tool-selection/tool-selection.service';
+import { GraphInvoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-subtoolbar-architecture',
@@ -16,10 +17,12 @@ export class SubtoolbarArchitectureComponent {
   public readonly ADD_COMPUTE = ToolSelectionService.COMPUTE;
 
   public toggledButtonsStatus;
+  private diagramChangeSubscription;
 
   constructor(
     public gs: GraphService,
-    public toolSelection: ToolSelectionService
+    public toolSelection: ToolSelectionService,
+    private invoker: GraphInvoker
   ) {
     this.toggledButtonsStatus = {};
     this.toggledButtonsStatus[this.ADD_SERVICE] = false;
@@ -29,6 +32,11 @@ export class SubtoolbarArchitectureComponent {
     this.toggledButtonsStatus[this.ADD_COMPUTE] = false;
   }
 
+  ngOnInit() {
+    if(!this.diagramChangeSubscription)
+      this.diagramChangeSubscription = this.invoker.subscribe(() => this.unselectOthersThan());
+  }
+
   toggle(name: string) {
     this.toolSelection.enable(name, this.toggledButtonsStatus[name]);
     if(this.toggledButtonsStatus[name]) {
@@ -36,15 +44,22 @@ export class SubtoolbarArchitectureComponent {
     }
   }
 
-  unselectOthersThan(newActive: string) {
+  unselectOthersThan(newActive?: string) {
     Object.keys(this.toggledButtonsStatus)
       // Get the other toggled(s)
-      .filter((name) => name != newActive && this.toggledButtonsStatus[name])
+      .filter((name) => (newActive ? name != newActive : true) && this.toggledButtonsStatus[name])
       // Untoggle
       .forEach((untoggling) => {
         this.toggledButtonsStatus[untoggling] = false;
         this.toolSelection.enable(untoggling, false);
       });
+  }
+
+  ngOnDestroy() {
+    if(this.diagramChangeSubscription) {
+      this.diagramChangeSubscription.unsubscribe();
+      this.diagramChangeSubscription = undefined;
+    }
   }
 
 }

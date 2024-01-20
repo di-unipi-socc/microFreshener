@@ -7,6 +7,7 @@ import { GraphService } from 'src/app/graph/graph.service';
 import { GraphInvoker } from 'src/app/commands/invoker';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 import { TeamsService } from 'src/app/teams/teams.service';
+import { SessionService } from 'src/app/core/session/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +18,16 @@ export class NodesService {
     private graphInvoker: GraphInvoker,
     private graphService: GraphService,
     private permissionsService: PermissionsService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private session: SessionService
   ) { }
 
   async addNode(nodeType: string, name: string, position?: g.Point, communicationPatternType?, team?: joint.shapes.microtosca.SquadGroup) {
     if(team && !this.permissionsService.writePermissions.isAllowed(team)) {
       Promise.reject(`You are not allowed to add this in ${team.getName()}.\nPlease contact the product owner or the team leader.`);
+    }
+    if(this.graphService.graph.findNodeByName(name)) {
+      return Promise.reject(`${name} already exists.`);
     }
     let addNodeCommand;
     let message: string;
@@ -66,8 +71,12 @@ export class NodesService {
   async deleteNode(node) {
     if(!this.permissionsService.writePermissions.isAllowed(node)) {
       return Promise.reject(`You are not allowed to delete this.`);
-    } else if(this.teamsService.hasTeamDependencies(node)) {
-      return Promise.reject(`You cannot delete this because other teams interact with it.`);
+    }
+    if(this.session.isTeam()) {
+      let dependingTeams = this.teamsService.getDependingTeams(node);
+      if(dependingTeams.length > 0) {
+        return Promise.reject(`You cannot delete this because other teams interact with it. Please coordinate with ${dependingTeams.map((t) => t?.getName()).join(", ")}.`);
+      }
     }
     return this.graphInvoker.executeCommand(new RemoveNodeCommand(this.graphService.graph, node));
   }
@@ -94,6 +103,10 @@ export class NodesService {
 
   isMessageBroker(node: joint.shapes.microtosca.Node) {
     return this.graphService.graph.isMessageBroker(node);
+  }
+
+  isMessageRouter(node: joint.shapes.microtosca.Node) {
+    return this.graphService.graph.isMessageRouter(node);
   }
 
   isDatastore(node: joint.shapes.microtosca.Node) {

@@ -33,6 +33,22 @@ export class AddMemberToTeamGroupCommand<T extends joint.shapes.microtosca.Node>
 
     execute() {
         this.team.addMember(this.get());
+
+        let members = this.team.getMembers();
+        let currentMember = this.get();
+        let factor = 500;
+
+        members.forEach((member) => {
+            if (member !== currentMember) {
+                let angle = Math.atan2(member.position().y - currentMember.position().y, member.position().x - currentMember.position().x);
+                let currentDistance = Math.sqrt(Math.pow(member.position().x - currentMember.position().x, 2) + Math.pow(member.position().y - currentMember.position().y, 2));
+                let distance = factor/Math.max(1, Math.log(currentDistance)); // Kind of magic number, may be improved
+                let dx = Math.cos(angle) * distance;
+                let dy = Math.sin(angle) * distance;
+                member.translate(dx, dy);
+            }
+        });
+
         this.team.fitEmbeds({ padding: Graph.TEAM_PADDING });
     }
 

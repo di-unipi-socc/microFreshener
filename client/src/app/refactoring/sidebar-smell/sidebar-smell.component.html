@@ -1,4 +1,4 @@
-<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
+<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false" [autoZIndex]="false">
     <ng-template pTemplate="header">
         <div class="smell-header">
         <!-- 'Less info' button -->
@@ -12,10 +12,10 @@
         <div *ngIf="smell">
             <div class="p-grid p-justify-center p-align-center vertical-container">
                 <div class="p-col-2">
-                    <h1>Found {{smell?.name}} bad smell</h1><!-- on {{jointNodeModel?.getName()}}</h1>-->
+                    <h1>Found {{smell?.getName()}} on {{lastOdorousName}}</h1>
                     <br/>
                     <p>{{smell?.getDescription()}}</p>
-                    <p-button icon="pi pi-times" styleClass="p-button-secondary p-button-text" label="Ignore this smell" (click)="openIgnoreDialog()"></p-button>
+                    <p-button styleClass="p-button-secondary p-button-text" label="Ignore this smell" (click)="openIgnoreDialog()"></p-button>
                 </div>
             </div>
 
@@ -23,12 +23,12 @@
                 <div class="p-col-2">
                     <h3>Available refactorings</h3>
                     <p-listbox appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedRefactoring"></p-listbox>
-                    <div *ngIf="canApply()">
-                        <p> {{selectedRefactoring.getDescription()}}</p>
+                    <div *ngIf="canApply(selectedRefactoring)">
+                        <p> {{selectedRefactoring?.getDescription()}}</p>
                         <button pButton type="button" label="Apply" (click)="apply()"></button>
                     </div>
-                    <div *ngIf="!canApply()">
-                        <p style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</p>
+                    <div *ngIf="selectedRefactoring && !canApply(selectedRefactoring)">
+                        <span style="color: red; font-weight: bold;">{{selectedRefactoring?.getDescription()}}</span> <p-button icon="pi pi-copy" (click)="copy()" styleClass="p-button-text"></p-button>
                     </div>
                 </div>
             </div>

@@ -53,6 +53,10 @@ export class TeamsService {
 
   // POV: admin
 
+  teamExists(name: string): boolean {
+    return this.editing.teamExists(name);
+  }
+
   async addTeam(name: string, selectedNodes?: joint.shapes.microtosca.Node[]) {
     return this.editing.addTeam(name, selectedNodes);
   }
@@ -65,8 +69,24 @@ export class TeamsService {
     return this.editing.addMemberToTeam(member, team);
   }
 
+  async addMembersToTeam(members: joint.shapes.microtosca.Node[], team: joint.shapes.microtosca.SquadGroup) {
+    return this.editing.addMembersToTeam(members, team);
+  }
+
   async removeMemberFromTeam(member: joint.shapes.microtosca.Node, team: joint.shapes.microtosca.SquadGroup) {
     return this.editing.removeMemberFromTeam(member, team);
+  }
+
+  hoverTeam(team: joint.shapes.microtosca.SquadGroup, enlarge?: boolean) {
+    this.visualization.hoverTeam(team, enlarge);
+  }
+
+  unhoverTeam(team: joint.shapes.microtosca.SquadGroup, shrink?: boolean) {
+    this.visualization.unhoverTeam(team, shrink);
+  }
+
+  unhoverAllTeams() {
+    this.visualization.unhoverAllTeams();
   }
 
   // POV: team member
@@ -98,8 +118,8 @@ export class TeamsService {
     return this.analytics.getTeamEdgeNodes(team);
   }
 
-  hasTeamDependencies(node: joint.shapes.microtosca.Node): boolean {
-    return this.analytics.hasTeamDependencies(node);
+  getDependingTeams(node: joint.shapes.microtosca.Node): joint.shapes.microtosca.SquadGroup[] {
+    return this.analytics.getDependingTeams(node);
   }
 
 }

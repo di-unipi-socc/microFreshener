@@ -8,6 +8,7 @@ import { GraphService } from "../../graph/graph.service";
 
 import { environment } from '../../../environments/environment';
 import { SessionService } from '../session/session.service';
+import { DialogImportComponent } from '../dialog-import/dialog-import.component';
 //import { RefineService } from 'src/app/refine/refine.service';
 
 @Component({
@@ -67,8 +68,17 @@ export class AppMenuComponent implements OnInit {
             label: 'Import',
             icon: 'pi pi-fw pi-download',
             command: () => {
-                this.session.import()
-                this.updatePostDocumentLoadMenu();
+                const ref = this.dialogService.open(DialogImportComponent, {
+                    header: 'Import MicroTosca',
+                    width: '70%',
+                    draggable: true
+                });
+                ref.onClose.subscribe((data) => {
+                    if(data.msg) {
+                        this.session.import(data.graph);
+                        this.updatePostDocumentLoadMenu();
+                    }
+                });
             }
         };
         this.examplesMenuItem = {

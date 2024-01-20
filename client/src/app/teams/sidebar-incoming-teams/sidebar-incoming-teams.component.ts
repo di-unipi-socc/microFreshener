@@ -34,7 +34,7 @@ export class SidebarIncomingTeamsComponent {
     // Get the groups and relative interacting nodes
     this.updateIngoingRequestGroups();
     // Refresh at every graph update
-    this.invokerSubscription = this.commands.subscribe(this.updateIngoingRequestGroups);
+    this.invokerSubscription = this.commands.subscribe(() => this.updateIngoingRequestGroups());
   }
 
   ngOnDestroy() {

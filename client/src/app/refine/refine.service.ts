@@ -14,7 +14,8 @@ export class RefineService {
   refine() {
   const ref = this.dialogService.open(DialogRefineComponent, {
       header: 'Refine the model',
-      width: '70%'
+      width: '70%',
+      draggable: true
   });
   ref.onClose.subscribe((data) => {
 

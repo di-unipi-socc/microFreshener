@@ -1,4 +1,10 @@
-<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false">
+<p-sidebar
+    [visible]="visible"
+    position="right"
+    [modal]="false"
+    [showCloseIcon]="false"
+    [autoZIndex]="false"
+    [baseZIndex]="0">
     <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
         <h2 *ngIf="teamsInfo.length == 0">No team to display</h2>
         <p-card *ngFor="let info of teamsInfo" class="team-details-card" [class.team-details-card-large] = "teamSelected === true">
@@ -26,9 +32,9 @@
                 <p><span class="node-quantity-number">{{info.nodesQuantity}}</span> total owned nodes</p>
                 <br/>
                 <h1 *ngIf="info.services.length!=0">{{info.team.getName()}}'s dependencies</h1>
-                <p-chart type="bar" [data]="charts.teamInteractions.outgoing.data" [options]="charts.teamInteractions.outgoing.options"></p-chart>
+                <p-chart type="bar" [data]="charts.teamInteractions.outgoing.data" height="400" [options]="charts.teamInteractions.outgoing.options"></p-chart>
                 <h1 *ngIf="info.services.length!=0">Teams depending on {{info.team.getName()}}</h1>
-                <p-chart type="bar" [data]="charts.teamInteractions.ingoing.data" [options]="charts.teamInteractions.ingoing.options"></p-chart>
+                <p-chart type="bar" [data]="charts.teamInteractions.ingoing.data" height="400" [options]="charts.teamInteractions.ingoing.options"></p-chart>
             </div>
         </p-card>
     </p-scrollPanel>

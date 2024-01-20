@@ -9,8 +9,6 @@
 
     <app-sidebar-incoming-teams
         *ngIf="sidebar.viewIncomingTeams"
-        [autoZIndex]="false"
-        [baseZIndex]="0"
         [modal]="false"
         class="sidebar">
     </app-sidebar-incoming-teams>
@@ -19,20 +17,17 @@
         [(visible)]="sidebar.viewTeamsInfo"
         [(selectedTeam)]="viewTeamsInfoConfig.selectedTeam"
         [list]="viewTeamsInfoConfig.list"
-        baseZIndex="10"
         class="sidebar">
     </app-sidebar-team-details>
 
     <app-sidebar-teams-relations
         [(visible)]="sidebar.viewTeamsRelations"
-        baseZIndex="10"
         class="sidebar">
     </app-sidebar-teams-relations>
 
     <app-sidebar-smell
         [(visible)]="sidebar.viewSmell"
         [(smell)]="selectedSmell"
-        baseZIndex="10"
         class="sidebar">
     </app-sidebar-smell>
 
