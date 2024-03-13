@@ -8,7 +8,7 @@ import { TightlyCoupledTeamsSmellObject } from './tightly-coupled-teams';
 import { SharedBoundedContextSmellObject } from './shared-bounded-context';
 import { GroupRefactoring, Refactoring } from '../refactorings/refactoring-command';
 import { EndpointBasedServiceInteractionSmellObject } from './endpoint-based-service-interaction';
-import { MultipleServicesInOneContainerSmellObject } from './multiple-services-in-one-container';
+import { MultipleServicesPerDeploymentUnitSmellObject } from './multiple-services-in-one-container';
 import { WobblyServiceInteractionSmellObject } from './wobbly-service-interaction';
 import * as joint from 'jointjs';
 import { SessionService } from '../../core/session/session.service';
@@ -50,7 +50,7 @@ export class SmellFactoryService {
         smell = new SharedPersistencySmellObject(node);
         break;
       case SMELL_NAMES.SMELL_MULTIPLE_SERVICES_IN_ONE_CONTAINER:
-        smell = new MultipleServicesInOneContainerSmellObject(node);
+        smell = new MultipleServicesPerDeploymentUnitSmellObject(node);
         break;
       default:
         throw new Error(`Unsupported smell: ${smellJson.name}`);

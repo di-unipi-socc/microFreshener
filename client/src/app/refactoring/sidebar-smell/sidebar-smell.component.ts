@@ -127,13 +127,17 @@ export class SidebarSmellComponent {
   }
 
   copy() {
-    navigator.clipboard.writeText(this.selectedRefactoring.getDescription())
-    .then(() => {
-      this.messageService.add({ severity: 'success', summary: 'Copied', detail: "Message copied to clipboard." });
-    })
-    .catch((error) => {
-      this.messageService.add({ severity: 'error', summary: 'Impossible to copy', detail: "Unable to copy to clipboard." });
-    });
+    if(navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(this.selectedRefactoring.getDescription())
+      .then(() => {
+        this.messageService.add({ severity: 'info', summary: 'Copied', detail: "Message copied to clipboard." });
+      })
+      .catch((error) => {
+        this.messageService.add({ severity: 'error', summary: 'Impossible to copy', detail: "Unable to copy to clipboard." });
+      });
+    } else {
+      this.messageService.add({ severity: 'info', summary: 'Team coordination needed', detail: this.selectedRefactoring?.getDescription(), sticky: true });
+    }
   }
 
   resetSidebar(smell?) {
