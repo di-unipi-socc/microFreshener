@@ -19,7 +19,6 @@ export class SplitTeamsByService extends GroupRefactoring {
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
             let targetNode = link.getTargetElement();
             if(graph.isDatastore(targetNode)) {
-                let datastore = <joint.shapes.microtosca.Datastore> targetNode;
                 // Service in one team -> Datastore in another team
                 let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
@@ -28,11 +27,6 @@ export class SplitTeamsByService extends GroupRefactoring {
                     .then(new AddRunTimeLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);
-                let name = this.getName();
-                let datastoreTeam = graph.getTeamOfNode(datastore);
-                let description = `Split datastore among ${team.getName()} and ${datastoreTeam.getName()}`;
-                this.addMemberRefactoring(service, splitDatastore, name, description);
-                this.addMemberRefactoring(datastore, splitDatastore, name, description);
             } else if(graph.isCommunicationPattern) {
                 console.debug("SLT - Communication pattern found");
                 // Service in one team -> Communication pattern in another team which is not used by any service of its team
@@ -42,10 +36,6 @@ export class SplitTeamsByService extends GroupRefactoring {
                                                 .bind(new AddMemberToTeamGroupCommand(team));
                 // Add to global command and single nodes
                 cmds.push(moveCommunicationPattern);
-                let name = this.getName();
-                let description = `Split datastore among ${team.getName()} and ${communicationPatternTeam.getName()}`;
-                this.addMemberRefactoring(service, moveCommunicationPattern, name, description);
-                this.addMemberRefactoring(communicationPattern, moveCommunicationPattern, name, description);
             }
         });
         this.command = CompositeCommand.of(cmds);

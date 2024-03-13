@@ -163,7 +163,7 @@ export class SidebarTeamsRelationsComponent {
         .on("mouseover", (event, d) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
-          let nInteractions = dataMatrix[d.source.index][d.target.index];
+          let nInteractions = d.source.value;
           this.description = `${nInteractions} interaction${nInteractions!=1 ? 's' : ''} from nodes owned by ${this.interactingTeamsNames[d.source.index]} to nodes owned by ${this.interactingTeamsNames[d.target.index]}`;
         })
         .on("mouseout", (event) => {

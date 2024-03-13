@@ -41,14 +41,6 @@ export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
                     moveIfPossibleElseJustRemoveFromTeam = moveIfPossibleElseJustRemoveFromTeam.bind(new AddMemberToTeamGroupCommand(maxTeams[0]));
                 }
                 cmds.push(moveIfPossibleElseJustRemoveFromTeam);
-                // Node-specific refactoring: add a refactoring for each max-coupled team
-                maxTeams.forEach((newTeam) => {
-                    let moveNodeCommand = new RemoveMemberFromTeamGroupCommand(team, n)
-                                        .bind(new AddMemberToTeamGroupCommand(newTeam));
-                    let name = `Change ownership to ${newTeam.getName()}'s`;
-                    let description = `Move ${n.getName()} under ${newTeam.getName()}'s ownership`;
-                    this.addMemberRefactoring(n, moveNodeCommand, name, description);
-                });
             }
         });
         this.command = CompositeCommand.of(cmds);
