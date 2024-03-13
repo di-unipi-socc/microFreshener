@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Command, CompositeCommand } from 'src/app/commands/icommand';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { AddMemberToTeamGroupCommand, AddTeamGroupCommand, RemoveMemberFromTeamGroupCommand, RemoveTeamGroupCommand } from '../team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
 import { Graph } from 'src/app/graph/model/graph';
@@ -12,7 +12,7 @@ export class TeamEditingService {
 
   constructor(
     private graphService: GraphService,
-    private invoker: GraphInvoker
+    private invoker: Invoker
   ) { }
 
   getTeams(): joint.shapes.microtosca.SquadGroup[] {

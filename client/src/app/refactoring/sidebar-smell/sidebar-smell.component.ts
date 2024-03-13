@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GroupSmell, NodeSmell, Smell } from '../smells/smell';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 import { Refactoring } from '../refactorings/refactoring-command';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -32,7 +32,7 @@ export class SidebarSmellComponent {
   private lastOdorousName: string;
 
   constructor(
-    private invoker: GraphInvoker,
+    private invoker: Invoker,
     private analysis: AnalyserService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService

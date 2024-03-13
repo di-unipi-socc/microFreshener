@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { GraphService } from '../../graph/graph.service';
 import { ToolSelectionService } from '../../editor/tool-selection/tool-selection.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-subtoolbar-architecture',
@@ -22,7 +22,7 @@ export class SubtoolbarArchitectureComponent {
   constructor(
     public gs: GraphService,
     public toolSelection: ToolSelectionService,
-    private invoker: GraphInvoker
+    private invoker: Invoker
   ) {
     this.toggledButtonsStatus = {};
     this.toggledButtonsStatus[this.ADD_SERVICE] = false;

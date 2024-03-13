@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddDeploymentLinkCommand, RemoveDeploymentLinkCommand } from './deployed-on-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class DeployedOnService {
 
   constructor(
     private graphService: GraphService,
-    private graphInvoker: GraphInvoker,
+    private graphInvoker: Invoker,
     private permissionsService: PermissionsService
   ) { }
 

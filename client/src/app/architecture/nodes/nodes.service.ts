@@ -4,7 +4,7 @@ import { AddDatastoreCommand, AddMessageBrokerCommand, AddMessageRouterCommand, 
 import { g } from 'jointjs';
 import { AddMemberToTeamGroupCommand } from 'src/app/teams/team-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 import { TeamsService } from 'src/app/teams/teams.service';
 import { SessionService } from 'src/app/core/session/session.service';
@@ -15,7 +15,7 @@ import { SessionService } from 'src/app/core/session/session.service';
 export class NodesService {
 
   constructor(
-    private graphInvoker: GraphInvoker,
+    private graphInvoker: Invoker,
     private graphService: GraphService,
     private permissionsService: PermissionsService,
     private teamsService: TeamsService,

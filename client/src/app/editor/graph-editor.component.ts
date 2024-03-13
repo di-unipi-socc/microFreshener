@@ -16,7 +16,7 @@ import { EditorNavigationService } from '../navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing.service';
 import { TeamsService } from '../teams/teams.service';
-import { GraphInvoker } from '../commands/invoker';
+import { Invoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
@@ -48,7 +48,7 @@ export class GraphEditorComponent {
     @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
 
     constructor(
-        private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
+        private graphInvoker: Invoker, // Executes the commands and manages the undo/redo
         private toolSelection: ToolSelectionService, // Editor tool selection
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic

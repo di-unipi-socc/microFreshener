@@ -5,7 +5,7 @@ import { Observable, Subject } from "rxjs";
 @Injectable({
     providedIn: 'root'
 })
-export class GraphInvoker {
+export class Invoker {
     undoStack: Command[];
     redoStack: Command[];
 

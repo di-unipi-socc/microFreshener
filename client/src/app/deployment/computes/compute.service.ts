@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { g } from 'jointjs';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { GraphService } from 'src/app/graph/graph.service';
 import { AddComputeCommand, RemoveComputeCommand } from './compute-commands';
 import { DeployedOnService } from '../deployed-on-links/deployed-on.service';
@@ -15,7 +15,7 @@ export class ComputeService {
 
   constructor(
     private graphService: GraphService,
-    private graphInvoker: GraphInvoker,
+    private graphInvoker: Invoker,
     private permissions: PermissionsService,
     private deploymentLinks: DeployedOnService,
   ) {

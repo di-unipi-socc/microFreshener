@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddRunTimeLinkCommand, RemoveLinkCommand, ReverseLinkCommand } from './interaction-with-commands';
 import { GraphService } from 'src/app/graph/graph.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import * as joint from 'jointjs';
 import { PermissionsService } from 'src/app/permissions/permissions.service';
 
@@ -12,7 +12,7 @@ export class InteractionsService {
 
   constructor(
     private graphService: GraphService,
-    private graphInvoker: GraphInvoker,
+    private graphInvoker: Invoker,
     private permissions: PermissionsService,
   ) { }
 

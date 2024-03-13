@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
-import { GraphInvoker } from '../commands/invoker';
+import { Invoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class EditorNavigationService {
 
   constructor(
     private graphService: GraphService,
-    private graphInvoker: GraphInvoker
+    private graphInvoker: Invoker
   ) {
     this.graphInvoker.subscribe(() => {
       this.applyFilters();
