@@ -42,6 +42,7 @@ export class SessionService {
         this.role = UserRole.TEAM;
     }
     this.teamName = username;
+    this.permissions.updatePermissions(this.role);
   }
 
   logout() {

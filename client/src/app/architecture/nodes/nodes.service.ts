@@ -69,6 +69,7 @@ export class NodesService {
   }
 
   async deleteNode(node) {
+    console.debug(this.permissionsService.writePermissions);
     if(!this.permissionsService.writePermissions.isAllowed(node)) {
       return Promise.reject(`You are not allowed to delete this.`);
     }
