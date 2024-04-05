@@ -512,7 +512,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', ...MicrotoscaElementConfigurati
             refX: '0%',
             refY: '100%',
             fontSize: NODE_LABEL_FONT_SIZE,
-            text: name != undefined ? name : '',
+            text: name != undefined ? name : ''
         },
     },
     groupName: '', // groupName of the group. each nodes connected to this node is considered memeber of the EdgeGroup
@@ -643,7 +643,7 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
 // joint.dia.Link
 joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElementConfiguration.builder({
     // joint.dia.Link.define('microtosca.RunTimeLink', {
-    smooth: true,
+    smooth: true, // false,
     attrs: {
         line: {
             cursor: 'default',

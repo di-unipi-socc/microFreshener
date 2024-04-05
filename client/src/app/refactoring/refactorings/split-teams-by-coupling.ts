@@ -5,12 +5,11 @@ import * as joint from "jointjs";
 import { Command, CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { GroupRefactoring } from "./refactoring-command";
 
-export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
+export class SplitTeamsByCouplingRefactoring implements GroupRefactoring {
 
     private command: Command;
 
     constructor(graph: Graph, smell: GroupSmell) {
-        super();
         let cmds: Command[] = [];
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         smell.getNodeBasedCauses().forEach((n) => {

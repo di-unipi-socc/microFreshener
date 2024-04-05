@@ -10,16 +10,16 @@ import { MergeServicesRefactoring } from './merge-services';
 import { Refactoring, RefactoringBuilder } from './refactoring-command';
 import { SplitDatastoreRefactoring } from './split-datastore';
 import { SplitTeamsByCouplingRefactoring } from './split-teams-by-coupling';
-import { SplitTeamsByService as SplitTeamsByServiceRefactoring } from './split-teams-by-service';
+import { SplitTeamsByMicroserviceRefactoring } from './split-teams-by-microservice';
 import { UseTimeoutRefactoring } from './use-timeout';
 import { SessionService } from 'src/app/core/session/session.service';
 import { GraphService } from 'src/app/graph/graph.service';
-import { MergeTeamsRefactoring } from './merge-teams';
-import { SplitDatastoreAmongTeamsRefactoring } from './split-datastore-among-teams';
+import { SplitBoundedContextByTeamsRefactoring } from './split-bounded-context-by-teams';
 import { NotAllowedRefactoring, NeverAllowedRefactoringPolicy, RefactoringPolicy, AlwaysAllowedRefactoringPolicy } from './refactoring-policy';
 import { AnyInteractionFromTeamPolicy, SomeTeamInternalInteractionPolicy, SomeInteractionsFromTeamPolicy, AnyTeamInternalInteractionPolicy, AnyDeploymentFromTeamPolicy } from './refactoring-policy-teams';
 import { SplitServiceInTwoPods } from './split-service-in-two-pods';
 import { IgnoreAlwaysRefactoring } from './ignore-refactoring';
+import { ReorganizeTeamsByBoundedContextsRefactoring } from './reorganize-teams-by-bounded-contexts';
 
 enum REFACTORING_LIBRARY_NAMES {
   ADD_SERVICE_DISCOVERY = 'Add-service-discovery',
@@ -31,10 +31,11 @@ enum REFACTORING_LIBRARY_NAMES {
   SPLIT_DATASTORE = "Split-Datastore",
   ADD_DATA_MANAGER = "Add-data-manager",
   ADD_API_GATEWAY = "Add-api-gateway",
-  SPLIT_TEAMS_BY_SERVICE = "Split-teams-by-service",
+  SPLIT_TEAMS_BY_MICROSERVICE = "Split-teams-by-microservice",
   SPLIT_TEAMS_BY_COUPLING = "Split-teams-by-coupling",
-  MERGE_TEAMS = "Merge-teams",
-  SPLIT_SERVICE_IN_TWO_PODS = "Split-service-in-two-pods"
+  SPLIT_SERVICE_IN_TWO_PODS = "Split-service-in-two-pods",
+  REORGANIZE_TEAMS_BY_BOUNDED_CONTEXTS = "Reorganize-teams-by-bounded-contexts",
+  SPLIT_BOUNDED_CONTEXT_BY_TEAMS = "Split-bounded-context-by-teams",
 }
 
 @Injectable({
@@ -167,17 +168,17 @@ export class RefactoringFactoryService {
     }
 
     switch(refactoringName) {
-      case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_SERVICE:
-        return new SplitTeamsByServiceRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_MICROSERVICE:
+        return new SplitTeamsByMicroserviceRefactoring(this.gs.graph, smell);
       
       case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.graph, smell);
 
-      case REFACTORING_LIBRARY_NAMES.SPLIT_DATASTORE:
-        return new SplitDatastoreAmongTeamsRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.REORGANIZE_TEAMS_BY_BOUNDED_CONTEXTS:
+        return new ReorganizeTeamsByBoundedContextsRefactoring(this.gs.graph, smell);
 
-      case REFACTORING_LIBRARY_NAMES.MERGE_TEAMS:
-        return new MergeTeamsRefactoring(this.gs.graph, smell);
+      case REFACTORING_LIBRARY_NAMES.SPLIT_BOUNDED_CONTEXT_BY_TEAMS:
+        return new SplitBoundedContextByTeamsRefactoring(this.gs.graph, smell);
     }
   }
 }

@@ -7,42 +7,45 @@ import { GroupSmell } from "../smells/smell";
 import { GroupRefactoring } from "./refactoring-command";
 import { AddRunTimeLinkCommand, RemoveLinkCommand } from "src/app/architecture/interacts-with-links/interaction-with-commands";
 
-export class SplitTeamsByService extends GroupRefactoring {
+export class SplitTeamsByMicroserviceRefactoring implements GroupRefactoring {
     
     command: Command;
 
+    private datastoreUsedInItsTeam(graph: Graph, datastore: joint.shapes.microtosca.Datastore): boolean {
+        let datastoreTeam = graph.getTeamOfNode(datastore);
+        return graph.getIngoingLinks(datastore)
+                .map(link => graph.getTeamOfNode(<joint.shapes.microtosca.Node> link.getSourceElement()) == datastoreTeam)
+                .reduce((acc, curr) => acc || curr, false);
+    }
+
     constructor(graph: Graph, smell: GroupSmell) {
-        super();
-        let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
+        let sourceTeam = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         let cmds: Command[] = [];
         smell.getLinkBasedCauses().forEach(link => {
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
-            let targetNode = link.getTargetElement();
-            if(graph.isDatastore(targetNode)) {
-                // Service in one team -> Datastore in another team
+            let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
+            if(graph.isCommunicationPattern(targetNode) || ((graph.isDatastore(targetNode) && !this.datastoreUsedInItsTeam(graph, <joint.shapes.microtosca.Datastore> targetNode)))) {
+                console.debug("SLT - Communication pattern found");
+                let targetTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(targetNode);
+                let moveTarget = new RemoveMemberFromTeamGroupCommand(targetTeam, targetNode)
+                                .bind(new AddMemberToTeamGroupCommand(sourceTeam));
+                cmds.push(moveTarget);
+            } else if(graph.isDatastore(targetNode)) {
+                // Service in one team -> Datastore in another team which is used internally
                 let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
                 let splitDatastore = Sequentiable.of(new RemoveLinkCommand(graph, link))
-                    .then(new AddDatastoreCommand(graph, newDatabaseName, graph.getPointCloseTo(service)).bind(new AddMemberToTeamGroupCommand(team)))
+                    .then(new AddDatastoreCommand(graph, newDatabaseName, graph.getPointCloseTo(service)).bind(new AddMemberToTeamGroupCommand(sourceTeam)))
                     .then(new AddRunTimeLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);
-            } else if(graph.isCommunicationPattern) {
-                console.debug("SLT - Communication pattern found");
-                // Service in one team -> Communication pattern in another team which is not used by any service of its team
-                let communicationPattern = <joint.shapes.microtosca.CommunicationPattern> targetNode;
-                let communicationPatternTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(communicationPattern);
-                let moveCommunicationPattern = new RemoveMemberFromTeamGroupCommand(communicationPatternTeam, communicationPattern)
-                                                .bind(new AddMemberToTeamGroupCommand(team));
-                // Add to global command and single nodes
-                cmds.push(moveCommunicationPattern);
             }
         });
         this.command = CompositeCommand.of(cmds);
     }
 
     getName(): string {
-        return "Split teams by service";
+        return "Split teams by microservice";
     }
     getDescription(): string {
         return "Split non-service nodes to the teams where they are used by services."

@@ -7,14 +7,7 @@ export interface Refactoring extends Command {
     getDescription(): string;
 }
 
-export abstract class GroupRefactoring implements Refactoring {
-
-    abstract getName(): string;
-    abstract getDescription(): string;
-    abstract execute(): void;
-    abstract unexecute(): void;
-
-}
+export interface GroupRefactoring extends Refactoring {}
 
 export abstract class RefactoringBuilder {
     protected graph: Graph;
