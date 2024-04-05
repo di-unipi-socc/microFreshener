@@ -16,7 +16,6 @@ import { EditorNavigationService } from '../navigation/navigation.service';
 import { ToolSelectionService } from './tool-selection/tool-selection.service';
 import { ArchitectureEditingService } from '../architecture/architecture-editing.service';
 import { TeamsService } from '../teams/teams.service';
-import { GraphInvoker } from '../commands/invoker';
 import { Graph } from '../graph/model/graph';
 import { SessionService } from '../core/session/session.service';
 import { DialogAddNodeComponent } from '../architecture/dialog-add-node/dialog-add-node.component';
@@ -48,7 +47,7 @@ export class GraphEditorComponent {
     @Output() contextMenuAction: EventEmitter<ContextMenuAction> = new EventEmitter<ContextMenuAction>();
 
     constructor(
-        private graphInvoker: GraphInvoker, // Executes the commands and manages the undo/redo
+        // No direct dependencies to Invoker
         private toolSelection: ToolSelectionService, // Editor tool selection
         private architecture: ArchitectureEditingService, // Editing operations business logic
         private teams: TeamsService, // Team-related operations business logic
@@ -103,12 +102,7 @@ export class GraphEditorComponent {
             if (e.which == DELETE_KEY && this.leftClickSelectedCell) {
                 this.openDeleteNodeDialog(this.leftClickSelectedCell);
             }
-            if (e.keyCode == ZETA_KEY && e.ctrlKey) {
-                this.graphInvoker.undo();
-            }
-            if (e.keyCode == YPSILON_KEY && e.ctrlKey) {
-                this.graphInvoker.redo();
-            }
+
             // if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) {
             //     e.preventDefault();
             //     e.stopPropagation();
@@ -531,25 +525,6 @@ export class GraphEditorComponent {
             evt.preventDefault();
             evt.stopPropagation();
             console.debug("Double click cell", cellView);
-        });
-    }
-
-    _openDialogSmellComponent(node: joint.shapes.microtosca.Node, smell: NodeSmell) {
-        const ref = this.dialogService.open(DialogSmellComponent, {
-            data: {
-                model: node,
-                selectedsmell: smell
-            },
-            header: `Smell details`,
-            draggable: true
-        });
-
-        ref.onClose.subscribe((refactoringCommand) => {
-            if (refactoringCommand) {
-                this.graphInvoker.executeCommand(refactoringCommand).then(() => {
-                    this.messageService.add({ severity: 'success', summary: "Refactoring applied correctly" });
-                });
-            }
         });
     }
 

@@ -4,7 +4,7 @@ import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
 import { GraphService } from 'src/app/graph/graph.service';
 import * as joint from 'jointjs';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -26,7 +26,7 @@ export class SidebarIncomingTeamsComponent {
   constructor(
     private session: SessionService,
     private teams: TeamsService,
-    private commands: GraphInvoker,
+    private commands: Invoker,
     private graphService: GraphService
   ) {}
 

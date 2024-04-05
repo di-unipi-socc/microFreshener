@@ -5,7 +5,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { TeamsService } from '../teams.service';
 import { EditorNavigationService } from 'src/app/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';
 
 @Component({
@@ -42,7 +42,7 @@ export class SubtoolbarTeamsComponent {
     private architecture: ArchitectureEditingService,
     private teams: TeamsService,
     private dialogService: DialogService,
-    private commands: GraphInvoker,
+    private commands: Invoker,
     private navigation: EditorNavigationService,
     private messageService: MessageService
   ) {

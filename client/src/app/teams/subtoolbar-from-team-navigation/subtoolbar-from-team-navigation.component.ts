@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { SessionService } from 'src/app/core/session/session.service';
 import { TeamsService } from '../teams.service';
 import { GraphService } from 'src/app/graph/graph.service';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
@@ -27,7 +27,7 @@ export class SubtoolbarFromTeamNavigationComponent {
   constructor(
     private session: SessionService,
     private teams: TeamsService,
-    private commands: GraphInvoker,
+    private commands: Invoker,
     private messageService: MessageService
   ) {
     this.showDependencies = false;

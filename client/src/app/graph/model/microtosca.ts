@@ -354,18 +354,6 @@ joint.dia.Element.define('microtosca.Compute', ...MicrotoscaElementConfiguration
             text: 'C',
             cursor: "default"
         }
-        /*MultipleServicesInOneContainer: { // MultipleServicesInOneContainer
-            fill: ICON_COLOR_MULTIPLE_SERVICES_IN_ONE_CONTAINER,
-            event: 'smell:MultipleServicesInOneContainer:pointerdown',
-            stroke:"white",
-            strokeWidth: "1",
-            visibility: "hidden",
-            ref: 'body',
-            refX: '35%',
-            refY: '40%',
-            d: "M20.15243413209694,2.0800748598753587 L20.15243413209694,13.479177718203825 C20.15243413209694,14.41943099033625 19.365550607512933,15.206314514920258 18.425297335380503,15.206314514920258 L8.407903914425187,15.206314514920258 L4.953630320992318,19.006015467696415 L4.953630320992318,15.206314514920258 L1.8447840869027365,15.206314514920258 C0.9045308147703093,15.206314514920258 0.11764729018630199,14.41943099033625 0.11764729018630199,13.479177718203825 L0.11764729018630199,2.0800748598753587 C0.11764729018630199,1.1398215877429332 0.9045308147703093,0.3529380631589255 1.8447840869027365,0.3529380631589255 L18.425297335380503,0.3529380631589255 C19.365550607512933,0.3529380631589255 20.15243413209694,1.1398215877429332 20.15243413209694,2.0800748598753587 z",
-            magnet: false
-        },*/
     },
 }, {
         markup: [{
@@ -524,7 +512,7 @@ joint.dia.Element.define('microtosca.EdgeGroup', ...MicrotoscaElementConfigurati
             refX: '0%',
             refY: '100%',
             fontSize: NODE_LABEL_FONT_SIZE,
-            text: name != undefined ? name : '',
+            text: name != undefined ? name : ''
         },
     },
     groupName: '', // groupName of the group. each nodes connected to this node is considered memeber of the EdgeGroup
@@ -655,7 +643,7 @@ joint.dia.Element.define('microtosca.SquadGroup', ...MicrotoscaElementConfigurat
 // joint.dia.Link
 joint.shapes.standard.Link.define('microtosca.RunTimeLink', ...MicrotoscaElementConfiguration.builder({
     // joint.dia.Link.define('microtosca.RunTimeLink', {
-    smooth: true,
+    smooth: true, // false,
     attrs: {
         line: {
             cursor: 'default',

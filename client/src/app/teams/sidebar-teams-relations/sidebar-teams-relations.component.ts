@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular
 import * as d3 from 'd3';
 import { TeamsService } from '../teams.service';
 import * as joint from 'jointjs';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
 import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';
 
@@ -41,7 +41,7 @@ export class SidebarTeamsRelationsComponent {
   constructor(
     private architecture: ArchitectureEditingService,
     private teamsService: TeamsService,
-    private commands: GraphInvoker
+    private commands: Invoker
   ) {
     this.teams = [];
     this.interactingTeamsExist = false;
@@ -163,7 +163,7 @@ export class SidebarTeamsRelationsComponent {
         .on("mouseover", (event, d) => {
           let ribbonId = event.target.id;
           this.mouseOverRibbon(ribbonId);
-          let nInteractions = dataMatrix[d.source.index][d.target.index];
+          let nInteractions = d.source.value;
           this.description = `${nInteractions} interaction${nInteractions!=1 ? 's' : ''} from nodes owned by ${this.interactingTeamsNames[d.source.index]} to nodes owned by ${this.interactingTeamsNames[d.target.index]}`;
         })
         .on("mouseout", (event) => {

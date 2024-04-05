@@ -5,7 +5,7 @@ import { DialogAnalysisComponent } from '../dialog-analysis/dialog-analysis.comp
 import { GraphService } from '../../graph/graph.service';
 import { SessionService } from 'src/app/core/session/session.service';
 import { UserRole } from 'src/app/core/user-role';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { Subscription } from 'rxjs';
 import { TeamsService } from 'src/app/teams/teams.service';
 import { MessageService } from 'primeng/api';
@@ -27,7 +27,7 @@ export class SubtoolbarRefactoringComponent {
         private dialogService: DialogService,
         private as: AnalyserService,
         private teams: TeamsService,
-        private commands: GraphInvoker,
+        private commands: Invoker,
         private session: SessionService,
         private gs: GraphService,
         private messageService: MessageService

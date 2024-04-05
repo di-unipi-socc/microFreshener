@@ -5,12 +5,11 @@ import * as joint from "jointjs";
 import { Command, CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { GroupRefactoring } from "./refactoring-command";
 
-export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
+export class SplitTeamsByCouplingRefactoring implements GroupRefactoring {
 
     private command: Command;
 
     constructor(graph: Graph, smell: GroupSmell) {
-        super();
         let cmds: Command[] = [];
         let team = <joint.shapes.microtosca.SquadGroup> smell.getGroup();
         smell.getNodeBasedCauses().forEach((n) => {
@@ -41,14 +40,6 @@ export class SplitTeamsByCouplingRefactoring extends GroupRefactoring {
                     moveIfPossibleElseJustRemoveFromTeam = moveIfPossibleElseJustRemoveFromTeam.bind(new AddMemberToTeamGroupCommand(maxTeams[0]));
                 }
                 cmds.push(moveIfPossibleElseJustRemoveFromTeam);
-                // Node-specific refactoring: add a refactoring for each max-coupled team
-                maxTeams.forEach((newTeam) => {
-                    let moveNodeCommand = new RemoveMemberFromTeamGroupCommand(team, n)
-                                        .bind(new AddMemberToTeamGroupCommand(newTeam));
-                    let name = `Change ownership to ${newTeam.getName()}'s`;
-                    let description = `Move ${n.getName()} under ${newTeam.getName()}'s ownership`;
-                    this.addMemberRefactoring(n, moveNodeCommand, name, description);
-                });
             }
         });
         this.command = CompositeCommand.of(cmds);

@@ -7,22 +7,6 @@ export class CompositeCommand implements Command {
 
     private constructor(private commands: Command[]) {}
 
-    /**
-     * Inplace map on commands array.
-     * @param f 
-     */
-    apply(f: ((command: Command, ...args: any[]) => Command)) {
-        this.commands = this.commands.map((cmd) => f(cmd));
-    }
-
-    push(command: Command) {
-        this.commands.push(command);
-    }
-
-    prepend(command: Command) {
-        this.commands.unshift(command);
-    }
-
     execute() {
         this.commands.forEach(command => command.execute());
     }
@@ -37,7 +21,7 @@ export class CompositeCommand implements Command {
 
 }
 
-export class Sequentiable<T extends Command> {
+export class Sequentiable<T extends Command> implements Command {
 
     protected constructor(private command?: T) {}
 
@@ -80,7 +64,7 @@ export class Sequentiable<T extends Command> {
     };
 }
 
-export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> {
+export abstract class ElementCommand<T extends joint.shapes.microtosca.Root> implements Command {
     
     abstract execute();
     abstract unexecute();

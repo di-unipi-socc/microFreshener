@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { GroupSmell, NodeSmell, Smell } from '../smells/smell';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 import { NotAllowedRefactoring } from '../refactorings/refactoring-policy';
 import { Refactoring } from '../refactorings/refactoring-command';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -32,7 +32,7 @@ export class SidebarSmellComponent {
   private lastOdorousName: string;
 
   constructor(
-    private invoker: GraphInvoker,
+    private invoker: Invoker,
     private analysis: AnalyserService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
@@ -127,13 +127,17 @@ export class SidebarSmellComponent {
   }
 
   copy() {
-    navigator.clipboard.writeText(this.selectedRefactoring.getDescription())
-    .then(() => {
-      this.messageService.add({ severity: 'success', summary: 'Copied', detail: "Message copied to clipboard." });
-    })
-    .catch((error) => {
-      this.messageService.add({ severity: 'error', summary: 'Impossible to copy', detail: "Unable to copy to clipboard." });
-    });
+    if(navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(this.selectedRefactoring.getDescription())
+      .then(() => {
+        this.messageService.add({ severity: 'info', summary: 'Copied', detail: "Message copied to clipboard." });
+      })
+      .catch((error) => {
+        this.messageService.add({ severity: 'error', summary: 'Impossible to copy', detail: "Unable to copy to clipboard." });
+      });
+    } else {
+      this.messageService.add({ severity: 'info', summary: 'Team coordination needed', detail: this.selectedRefactoring?.getDescription(), sticky: true });
+    }
   }
 
   resetSidebar(smell?) {

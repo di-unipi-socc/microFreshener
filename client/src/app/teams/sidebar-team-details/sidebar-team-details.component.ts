@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { TeamsService } from '../teams.service';
 import { Subscription } from 'rxjs';
-import { GraphInvoker } from 'src/app/commands/invoker';
+import { Invoker } from 'src/app/commands/invoker';
 
 @Component({
   selector: 'app-sidebar-team-details',
@@ -31,7 +31,7 @@ export class SidebarTeamDetailsComponent {
   
   constructor(
     private teamService: TeamsService,
-    private commands: GraphInvoker
+    private commands: Invoker
   ) {
     this.teamsInfo = [];
   }
