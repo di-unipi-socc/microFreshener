@@ -1,0 +1,12 @@
+<p-sidebar [visible]="visible" position="right" [modal]="false" [showCloseIcon]="false" [autoZIndex]="false">
+    <!-- No enough data titles -->
+    <h2 *ngIf="teams.length == 0 || !interactingTeamsExist">Interactions among teams cannot be drawn because
+    <span *ngIf="teams.length == 0"> there are no teams to display.</span>
+    <span *ngIf="teams.length > 0 && !interactingTeamsExist"> there are no interactions among nodes of different teams.</span></h2>
+    <!-- Display data -->
+    <h1 *ngIf="teams.length > 0 && interactingTeamsExist" style="text-align: center;">Interactions among teams</h1>
+    <p style="height: 1em; text-align: center; display: block;">{{description}}</p>
+    <div #teamRelationsContainer style="display: flex; width: 100%; justify-content: center; margin-top: 2em;">
+        <div #teamRelations style="width: 100%; max-width: 700px"></div>
+    </div>
+</p-sidebar>

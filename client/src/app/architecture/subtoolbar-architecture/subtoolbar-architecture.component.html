@@ -1,0 +1,42 @@
+<p-toggleButton
+    onIcon="pi pi-fw pi-circle-fill" offIcon="pi pi-fw pi-circle-off"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Add service"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="toggledButtonsStatus[ADD_SERVICE]"
+    (onChange)="toggle(ADD_SERVICE)"
+></p-toggleButton>
+
+<p-toggleButton
+    onIcon="pi pi-fw pi-database"
+    offIcon="pi pi-fw pi-database"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Add datastore"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="toggledButtonsStatus[ADD_DATASTORE]"
+    (onChange)="toggle(ADD_DATASTORE)"
+></p-toggleButton>
+
+<p-toggleButton
+    onLabel="mR"
+    offLabel="mR"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Add message router"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="toggledButtonsStatus[ADD_MESSAGE_ROUTER]"
+    (onChange)="toggle(ADD_MESSAGE_ROUTER)"
+></p-toggleButton>
+
+<p-toggleButton
+    onLabel="mB"
+    offLabel="mB"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Add message broker"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="toggledButtonsStatus[ADD_MESSAGE_BROKER]"
+    (onChange)="toggle(ADD_MESSAGE_BROKER)"
+></p-toggleButton>

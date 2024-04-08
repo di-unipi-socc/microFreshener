@@ -1,0 +1,18 @@
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-2">
+        <div class="box">New team's name:</div>
+    </div>
+    <div class="p-col-8">
+        <input placeholder="Team name" [(ngModel)]="teamName" type="text"
+            pInputText (keydown.enter)="save()" autofocus />
+    </div>
+</div>
+
+<p class="selected-nodes">Selected nodes: <p-tag *ngFor="let node of selectedNodes">{{node.getName()}}</p-tag></p>
+
+
+
+<div class="p-grid p-justify-end">
+    <p-button label="Add team" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+</div>

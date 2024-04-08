@@ -1,0 +1,44 @@
+.team-details-card-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.team-details-card {
+    margin: 1em 0;
+    padding: 0.5em;
+    min-width: 20vw;
+    display: block;
+}
+
+.team-details-card-large {
+    min-width: 40vw;
+}
+
+h1 {
+    cursor: default;
+    font-weight: normal;
+}
+
+h1.details-title {
+    display: inline;
+}
+
+p-tag {
+    font-size: 3em;
+    margin-left: 0.1em;
+    margin-bottom: 0.2em;
+}
+
+.node-quantity-number {
+    font-size: 2em;
+}
+
+/*div.chart {
+    display: block;
+    height: 10vh;
+}*/
+
+p-card .owned-node {
+    color: #007ad9;
+    cursor: default;
+}

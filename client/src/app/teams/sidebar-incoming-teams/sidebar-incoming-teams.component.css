@@ -1,0 +1,19 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.edge-nodes-list li {
+    display: inline;
+    margin-right: 5px;
+}
+
+li {
+    margin: 5px 0;
+}
+
+p-tag.node {
+    margin-left: 2px;
+    margin-right: 2px;
+}

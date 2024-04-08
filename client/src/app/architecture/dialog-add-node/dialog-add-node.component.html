@@ -1,0 +1,13 @@
+
+<div class="p-grid p-justify-center">
+    <div class="p-col-4">
+        <div class="box">Name:</div>
+    </div>
+    <div class="p-col-6">
+        <input  [(ngModel)]="name" type="text" pInputText (keydown.enter)="save()" autofocus />
+    </div>
+</div>
+
+<div class="p-grid p-justify-end">
+    <p-button label="Add" (onClick)="save()"  [disabled]="isDisableSave()"></p-button>
+</div>

@@ -1,0 +1,41 @@
+<p-sidebar
+    [visible]="visible"
+    position="right"
+    [modal]="false"
+    [showCloseIcon]="false"
+    [autoZIndex]="false"
+    [baseZIndex]="0">
+    <p-scrollPanel [style]="{ width: '100%', height: '80vh' }">
+        <h2 *ngIf="teamsInfo.length == 0">No team to display</h2>
+        <p-card *ngFor="let info of teamsInfo" class="team-details-card" [class.team-details-card-large] = "teamSelected === true">
+            <ng-template pTemplate="header">
+                <div class="team-details-card-header">
+                <!-- 'Less info' button -->
+                    <p-button *ngIf="teamSelected" icon="pi pi-times" styleClass="p-button-secondary p-button-text" (click)="less()"></p-button>
+                </div>
+            </ng-template>
+            <!-- Team name -->
+            <h1 class="details-title">{{ info.team.getName() }}</h1>
+            <!-- 'More info' button -->
+            <p-button *ngIf="!teamSelected" icon="pi pi-fw pi-info-circle" styleClass="p-button-text" (click)="more(info.team)" pTooltip="More info" showDelay="1000" tooltipPosition="bottom"></p-button>
+            <!-- 'No services' warning -->
+            <p-tag *ngIf="info.services.length==0" severity="warning" value="Team with no services" icon="pi pi-exclamation-triangle"></p-tag>
+            <!-- Edge tag -->
+            <p-tag *ngIf="info.edge.length>0" severity="success" value="Edge" icon="pi pi-users"></p-tag>
+
+            <!-- Ownership details -->
+            <h3 *ngIf="info.services.length!=0">Owned services</h3>
+            <span class="owned-node" *ngFor="let service of info.services"><i class="pi pi-circle-fill"></i> {{service.getName()}}</span>
+            <h3 *ngIf="info.nodesQuantity-info.services.length>0">Other owned nodes</h3>
+            <span *ngFor="let n of info.datastores" class="owned-node"><i class="pi pi-database"></i> {{n.getName()}}</span> <span *ngFor="let n of info.communicationPatterns" class="owned-node"><i class="pi pi-stop"></i> {{n.getName()}}</span>
+            <div *ngIf="teamSelected">
+                <p><span class="node-quantity-number">{{info.nodesQuantity}}</span> total owned nodes</p>
+                <br/>
+                <h1 *ngIf="info.services.length!=0">{{info.team.getName()}}'s dependencies</h1>
+                <p-chart type="bar" [data]="charts.teamInteractions.outgoing.data" height="400" [options]="charts.teamInteractions.outgoing.options"></p-chart>
+                <h1 *ngIf="info.services.length!=0">Teams depending on {{info.team.getName()}}</h1>
+                <p-chart type="bar" [data]="charts.teamInteractions.ingoing.data" height="400" [options]="charts.teamInteractions.ingoing.options"></p-chart>
+            </div>
+        </p-card>
+    </p-scrollPanel>
+</p-sidebar>

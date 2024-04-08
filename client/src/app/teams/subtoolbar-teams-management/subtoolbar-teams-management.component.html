@@ -1,0 +1,68 @@
+<!-- Show Teams -->
+<!--<p-toggleButton
+    onIcon="pi pi-users" offIcon="pi pi-users"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Show team"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="showTeamToggled"
+    (onChange)="toggleShowTeam()"
+></p-toggleButton>-->
+
+<!-- Add Team -->
+<p-multiSelect
+    #teamEditingTool
+    *ngIf="addTeamToggled"
+    defaultLabel="Click on a node to add it"
+    styleClass="add-node-input"
+    filterPlaceHolder="Find a node..."
+    [showToggleAll]="false"
+    [group]="true"
+    [options]="nodeList"
+    [(ngModel)]="selectedNodes"
+    scrollHeight="500px"
+    display="chip">
+    <ng-template let-group pTemplate="group">
+        <div class="flex align-items-center">
+            <span>{{ group.label }}</span>
+        </div>
+    </ng-template>
+</p-multiSelect>
+<p-toggleButton
+    onIcon="pi pi-check" offIcon="pi pi-user-plus"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="New team"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    [(ngModel)]="addTeamToggled"
+    (onChange)="toggleAddTeam()"
+></p-toggleButton>
+<p-button
+    icon="pi pi-times"
+    styleClass="p-button-lg"
+    pTooltip="Close without saving"
+    showDelay="1000"
+    tooltipPosition="bottom"
+    *ngIf="addTeamToggled"
+    (click)="stopAddingTeamWithoutSaving()"
+></p-button>
+
+<!-- Team details list -->
+<p-toggleButton
+    onIcon="pi pi-fw pi-id-card"
+    offIcon="pi pi-fw pi-id-card"
+    pTooltip="Show teams info" showDelay="1000" tooltipPosition="bottom"
+    styleClass="p-button-text p-button-lg"
+    [(ngModel)]="showTeamsInfoToggled"
+    (onChange)="toggleTeamsInfo()">
+</p-toggleButton>
+
+<!-- Team details list -->
+<p-toggleButton
+    onIcon="pi pi-fw pi-comments"
+    offIcon="pi pi-fw pi-comments"
+    pTooltip="Show teams relations" showDelay="1000" tooltipPosition="bottom"
+    styleClass="p-button-text p-button-lg"
+    [(ngModel)]="showTeamsRelationsToggled"
+    (onChange)="toggleTeamsRelations()">
+</p-toggleButton>

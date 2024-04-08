@@ -1,0 +1,19 @@
+<div class="p-grid p-justify-center p-align-center vertical-container">
+    <div class="p-col-2">
+        <h1>Found {{smell.getName()}} for {{jointNodeModel.getName()}}</h1>
+        <p>{{smell.getDescription()}}</p>
+    </div>
+</div>
+
+<div class="p-grid p-justify-center p-align-center vertical-container">
+    <div class="p-col-2">
+        <h3>Refactor</h3>
+        <p-dropdown appendTo="body" [options]="actions" placeholder="Select an action" [(ngModel)]="selectedCommand"></p-dropdown>
+        <p *ngIf="selectedCommand"> {{selectedCommand.getDescription() || 'none'}}</p>
+    </div>
+</div>
+
+<div class="p-grid p-justify-end">
+    <button class="p-col-2" type="button" pButton (click)="save()" label="Apply" class="ui-button-success">
+    </button>
+</div>

@@ -37,13 +37,13 @@ topology_template:
       type: micro.groups.Edge
       members: [ order, shipping, gateway]
     
-    # team1:
-    #   type: micro.groups.Team
-    #   members: [shipping, rabbitmq]
+    team1:
+      type: micro.groups.Team
+      members: [shipping, rabbitmq]
     
-    # team2:
-    #   type: micro.groups.Team
-    #   members: [order, order_db]
+    team2:
+      type: micro.groups.Team
+      members: [order, order_db]
 
   relationship_templates:
     t:

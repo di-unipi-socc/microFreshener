@@ -1,0 +1,17 @@
+<p-toggleButton
+    onIcon="pi pi-fw pi-user"
+    offIcon="pi pi-fw pi-user"
+    pTooltip="Show users" showDelay="1000" tooltipPosition="bottom"
+    styleClass="p-button-text p-button-lg"
+    [(ngModel)]="showIncomingTeams"
+    (onChange)="toggleViewIncomingTeams()">
+</p-toggleButton>
+
+<p-toggleButton
+    offIcon="pi pi-fw pi-external-link"
+    onIcon="pi pi-fw pi-external-link"
+    pTooltip="Show external interactions" showDelay="1000" tooltipPosition="bottom"
+    styleClass="p-button-text p-button-lg"
+    [(ngModel)]="showDependencies"
+    (onChange)="toggleViewDependencies()">
+</p-toggleButton>

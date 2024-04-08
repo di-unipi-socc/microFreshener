@@ -1,0 +1,7 @@
+<p-toggleButton
+    onIcon="pi pi-verified" offIcon="pi pi-verified"
+    styleClass="p-button-text p-button-lg"
+    pTooltip="Identify architectural smells" showDelay="1000" tooltipPosition="bottom"
+    (click)="monitor()"
+    [(ngModel)]="monitorToggled"></p-toggleButton>
+<p-badge *ngIf="monitorToggled && smellsNumber > 0" [value]="smellsNumber" severity="warning" size="small"></p-badge>
