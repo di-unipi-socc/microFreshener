@@ -1,6 +1,6 @@
 version: "3"
 
-services:     
+services:
   server:
     container_name: microfreshener-server
     build: server
@@ -15,7 +15,7 @@ services:
       - "traefik.frontend.rule=Host:api.microfreshener.localhost"
     networks: 
       - web
-  
+
 
   client:
     container_name: microfreshener-client

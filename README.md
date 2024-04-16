@@ -1,10 +1,6 @@
 # MicroFreshener
 
-```
-MicroFreshener is a web-based prototype that permits to identify
-the architectural smells that possibly violate principles of microservices, 
-and to select suitable refactorings to resolve them.
-```
+MicroFreshener is a web-based prototype that enables to identify bad architectural smells that possibly violate principles of microservices, and to select suitable refactorings to resolve them.
 
 
 ## Table of Contents
@@ -16,21 +12,23 @@ and to select suitable refactorings to resolve them.
   <!-- * [Example of usage](#example-of-usage) -->
 - [License](#license)
 
-## MicroFreshener architecture
-
 ## Web-based interface
-`MicroFreshener` has a web-based interface that permits to :
-- draw and edit the architectures of microservices
-- analyse the architecture and 
-- apply refactorings.
+`MicroFreshener` has a web-based interface that allows to:
+- Draw and edit the architectures of microservices
+- Manage teams and their owned nodes
+- Analyse the architecture to identify architectural smells
+- Apply refactorings
 
-Examples of the web-based interface is shown below.
+`MicroFreshener` can be used either as `admin` or `team member`.
+- You can login as administrator by typing `admin` in the login page
+- You can login as a team member by typing the _exact_ name of your team in the login page
 
-![](./docs/demo.gif)
 
+<!--Examples of the web-based interface is shown below.
+![](./docs/demo.gif)-->
 
 ## Quick Guide
-In order to run the `MicroFreshener` you should run the server and the client (for local use only).
+In order to run `MicroFreshener` you should run both the server and the client (for local use only).
 
 ## Installation
 In order to use `MicroFreshener` you should first download the repository:
@@ -40,13 +38,13 @@ git clone https://github.com/di-unipi-socc/microFreshener.git
 ```
 
 ### Run the server
-Enter in the server directotry 
+Enter the server directory.
 
 ```bash
-cd /server
+cd server
 ```
 
-Create a virtual environment and install the python dependencies. Python3.8 is needed.
+Create a virtual environment and install the Python dependencies. Python3.8+ is needed.
 
 ```bash
 virtualenv -p="/usr/bin/python3.8" venv  
@@ -84,13 +82,23 @@ python manage.py runserver 0.0.0.0:8000
 The client is an Angular web application.
 
 ```bash
-cd /client
+cd client
 ```
 
-Serve the client with a local server
+Install the project dependencies.
+
+```bash
+npm install
+```
+
+Then, serve the client with a local server by typing
 
 ```bash
 sudo ng serve
+```
+or
+```bash
+sudo npm start
 ```
 
 [comment]: <> (// deploy on production host "neri.di.unipi.it")
@@ -98,19 +106,19 @@ sudo ng serve
 
 In case of `ERR_OSSL_EVP_UNSUPPORTED` error, type `export NODE_OPTIONS=--openssl-legacy-provider` before `ng serve`.
 
-Open the bowser on http://127.0.0.1:4200/.
+Open the bowser on http://localhost:4200/.
 
 
-## with docker compose
+## Install MicroFreshener using Docker compose
 
 Make sure to install the following dependencies:
 
 ```bash
-pip3 install websocket
-pip3 install docopt
-pip3 install texttable
-pip3 install dockerpty
-pip3 install websocket-client==0.32.0
+pip install websocket
+pip install docopt
+pip install texttable
+pip install dockerpty
+pip install websocket-client
 ```
 
 Create the docker network
