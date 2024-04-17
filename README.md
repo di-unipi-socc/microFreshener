@@ -136,4 +136,4 @@ docker-compose -f docker-compose.prod.yml build
 docker-compose -f docker-compose.prod.yml up
 ```
 
-Open the bowser on http://127.0.0.1.
+Open the bowser on http://localhost:80.
