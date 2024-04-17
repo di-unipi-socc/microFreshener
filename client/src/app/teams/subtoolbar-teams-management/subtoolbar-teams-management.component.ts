@@ -7,6 +7,7 @@ import { EditorNavigationService } from 'src/app/navigation/navigation.service';
 import { ToolSelectionService } from 'src/app/editor/tool-selection/tool-selection.service';
 import { Invoker } from 'src/app/commands/invoker';
 import { ArchitectureEditingService } from 'src/app/architecture/architecture-editing.service';
+import { ComputeService } from 'src/app/deployment/computes/compute.service';
 
 @Component({
   selector: 'app-subtoolbar-teams-management',
@@ -40,6 +41,7 @@ export class SubtoolbarTeamsComponent {
   constructor(
     public tools: ToolSelectionService,
     private architecture: ArchitectureEditingService,
+    private computes: ComputeService,
     private teams: TeamsService,
     private dialogService: DialogService,
     private commands: Invoker,
@@ -118,7 +120,8 @@ export class SubtoolbarTeamsComponent {
       let node = <joint.shapes.microtosca.Node> cell;
       if((this.architecture.isService(node)
         || this.architecture.isCommunicationPattern(node)
-        || this.architecture.isDatastore(node))
+        || this.architecture.isDatastore(node)
+        || this.computes.isCompute(node))
         && !this.selectedNodes.includes(node)) {
         this.selectedNodes.push(node);
         this.addTeam.hide();

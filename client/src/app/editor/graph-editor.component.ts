@@ -419,7 +419,7 @@ export class GraphEditorComponent {
         this.navigation.getPaper().on("element:pointerclick", (cellView, evt, x, y) => {
             console.debug("clicked", cellView);
             console.log("click on cell");
-            if(this.deployments.isCompute(cellView.model) || this.deployments.isDeploymentLink(cellView.model)) {
+            if(this.deployments.isDeploymentLink(cellView.model)) {
                 if(this.leftClickSelectedCell)
                     this.stopAddingLink();
                 return;
@@ -536,7 +536,7 @@ export class GraphEditorComponent {
 
     bindTeamEmbedNodes() {
         this.navigation.getPaper().on('cell:pointerdown', ((cellView, evt, x, y) => {
-            if(!this.addingLink && this.architecture.isNode(cellView.model) && !this.deployments.isCompute(cellView.model)) {
+            if(!this.addingLink && this.architecture.isNode(cellView.model)) {
                 let node = cellView.model;
                 this.draggingNode = true;
                 let team = this.teams.getTeamOfNode(node);
@@ -587,7 +587,6 @@ export class GraphEditorComponent {
                 if (
                     !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                     !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
-                    !this.deployments.isCompute(cell) && // Computes can't be in a squad
                     !this.teams.isTeamGroup(cell) &&
                     this.draggingNode)
                 {

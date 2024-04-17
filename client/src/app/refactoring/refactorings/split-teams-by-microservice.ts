@@ -24,13 +24,7 @@ export class SplitTeamsByMicroserviceRefactoring implements GroupRefactoring {
         smell.getLinkBasedCauses().forEach(link => {
             let service = <joint.shapes.microtosca.Service> link.getSourceElement();
             let targetNode = <joint.shapes.microtosca.Node> link.getTargetElement();
-            if(graph.isCommunicationPattern(targetNode) || ((graph.isDatastore(targetNode) && !this.datastoreUsedInItsTeam(graph, <joint.shapes.microtosca.Datastore> targetNode)))) {
-                console.debug("SLT - Communication pattern found");
-                let targetTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(targetNode);
-                let moveTarget = new RemoveMemberFromTeamGroupCommand(targetTeam, targetNode)
-                                .bind(new AddMemberToTeamGroupCommand(sourceTeam));
-                cmds.push(moveTarget);
-            } else if(graph.isDatastore(targetNode)) {
+            if(graph.isDatastore(targetNode) && this.datastoreUsedInItsTeam(graph, <joint.shapes.microtosca.Datastore> targetNode)) {
                 // Service in one team -> Datastore in another team which is used internally
                 let databaseName = (<joint.shapes.microtosca.Service> link.getTargetElement()).getName();
                 let newDatabaseName = `${service.getName()}'s ${databaseName}`;
@@ -39,6 +33,12 @@ export class SplitTeamsByMicroserviceRefactoring implements GroupRefactoring {
                     .then(new AddRunTimeLinkCommand(graph, service.getName(), newDatabaseName));
                 // Add to global command and single nodes
                 cmds.push(splitDatastore);
+            } else {
+                console.debug("SLT - Communication pattern found");
+                let targetTeam = <joint.shapes.microtosca.SquadGroup> graph.getTeamOfNode(targetNode);
+                let moveTarget = new RemoveMemberFromTeamGroupCommand(targetTeam, targetNode)
+                                .bind(new AddMemberToTeamGroupCommand(sourceTeam));
+                cmds.push(moveTarget);
             }
         });
         this.command = CompositeCommand.of(cmds);

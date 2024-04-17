@@ -1,7 +1,8 @@
 import { Refactoring, RefactoringBuilder } from "./refactoring-command";
-import { CompositeCommand } from "src/app/commands/icommand";
+import { CompositeCommand, ElementCommand } from "src/app/commands/icommand";
 import { AddComputeCommand, RemoveComputeCommand } from "src/app/deployment/computes/compute-commands";
 import { ChangeDeploymentLinkTargetCommand } from "src/app/deployment/deployed-on-links/deployed-on-commands";
+import { AddMemberToTeamGroupCommand } from "src/app/teams/team-commands";
 
 export class SplitServiceInTwoPods implements Refactoring {
 
@@ -39,7 +40,12 @@ export class SplitServiceInTwoPods implements Refactoring {
                 links.forEach((link) => {
                     let sourceNode = <joint.shapes.microtosca.Node> link.getSourceElement();
                     let newComputeName = sourceNode.getName() + " container";
-                    cmds.push(new AddComputeCommand(this.graph, newComputeName, this.graph.getPointCloseTo(sourceNode)));
+                    let addComputeCommand: ElementCommand<joint.shapes.microtosca.Compute> = new AddComputeCommand(this.graph, newComputeName, this.graph.getPointCloseTo(sourceNode));
+                    let sourceTeam = this.graph.getTeamOfNode(sourceNode);
+                    if(sourceTeam) {
+                        addComputeCommand = addComputeCommand.bind(new AddMemberToTeamGroupCommand(sourceTeam));
+                    }
+                    cmds.push(addComputeCommand);
                     cmds.push(new ChangeDeploymentLinkTargetCommand(this.graph, link, newComputeName));
                 });
                 // If the datastore won't be used after the application of the refactoring, remove it
