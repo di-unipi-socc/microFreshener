@@ -587,7 +587,6 @@ export class GraphEditorComponent {
                 if (
                     !cell.isLink() && // otherwise Error when cell.getBBox() is called.
                     !this.architecture.isEdgeGroup(cell) && // EdgeGroup node can't be in a squad
-                    !this.deployments.isCompute(cell) && // Computes can't be in a squad
                     !this.teams.isTeamGroup(cell) &&
                     this.draggingNode)
                 {
