@@ -2,6 +2,7 @@
 
 MicroFreshener is a web-based prototype that enables to identify bad architectural smells that possibly violate principles of microservices, and to select suitable refactorings to resolve them.
 
+![](./screenshot.png)
 
 ## Table of Contents
 - [MicroFreshener](#microfreshener-architecture)
