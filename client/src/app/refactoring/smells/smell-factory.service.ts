@@ -127,7 +127,7 @@ export class SmellFactoryService {
       let refactoringName = refactoringJson['name'];
       console.debug("Analysing refactoring", refactoringName);
       let refactoring: GroupRefactoring = <GroupRefactoring> this.refactoring.getRefactoring(refactoringName, smell);
-      smell.addRefactoring(refactoring);
+      if(refactoring) smell.addRefactoring(refactoring);
     });
     smell.addRefactoring(this.refactoring.getIgnoreRefactoring(group, smell));
 
