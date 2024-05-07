@@ -169,7 +169,7 @@ export class RefactoringFactoryService {
 
     switch(refactoringName) {
       case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_MICROSERVICE:
-        return new SplitTeamsByMicroserviceRefactoring(this.gs.graph, smell);
+        break;//return new SplitTeamsByMicroserviceRefactoring(this.gs.graph, smell);
       
       case REFACTORING_LIBRARY_NAMES.SPLIT_TEAMS_BY_COUPLING:
         return new SplitTeamsByCouplingRefactoring(this.gs.graph, smell);
