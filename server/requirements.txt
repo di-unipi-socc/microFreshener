@@ -15,9 +15,9 @@ idna==2.8
 itypes==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
-microfreshener-core==1.4.0
-#microfreshener-core @ git+https://github.com/di-unipi-socc/microFreshener-core.git@master
-#../../microFreshener-core
+microfreshener-core==1.5.0
+#../../microFreshener-core # Dev only
+#microfreshener-core @ git+https://github.com/di-unipi-socc/microFreshener-core.git@master # Dev only
 nested-lookup==0.2.19
 openapi-codec==1.3.2
 pbr==5.4.2
